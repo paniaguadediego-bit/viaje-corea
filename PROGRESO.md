@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6
 
-Caché del service worker: corea-v7
+Caché del service worker: corea-v8
 
 ## Decisiones
 - S1: datos guardados en localStorage (más simple que IndexedDB; el viaje cabe de sobra).
@@ -16,6 +16,8 @@ Caché del service worker: corea-v7
 - S5: Gastos (₩/€, cambio manual editable, categoría, totales por ciudad y categoría, barra de presupuesto), Checklist por ciudad (sitios + LP + propios) y Más (Maleta/Documentos desde checklist_documentos + propios, Notas con autoguardado).
 - S6: actualización automática (al llegar una versión nueva la app se recarga sola una vez); el navegador marca los datos como persistentes para que no se borren; pantalla siempre encendida mientras se enseña una tarjeta; "Última copia" y versión visibles en Más; manifest con id e iconos any/maskable separados; importar rechaza archivos que no son un viaje.
 - S6: prueba automática completa en modo avión (8 pestañas, gasto guardado, diccionario) y con datos vacíos o mal formados: sin errores.
+
+- Cambio pedido: aún más compacta (texto 16px, tarjetas, títulos y barra inferior más pequeños).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
