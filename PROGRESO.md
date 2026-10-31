@@ -1,7 +1,7 @@
 # Progreso
-- [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6
+- [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v16
+Caché del service worker: corea-v17
 
 ## Decisiones
 - S1: datos guardados en localStorage (más simple que IndexedDB; el viaje cabe de sobra).
@@ -35,6 +35,9 @@ Caché del service worker: corea-v16
 
 - Cambio pedido: restaurantes y cafés. Reddit bloquea el acceso automático; se recopilaron 25 sitios de guías web (Michelin, Frommer's, turismo de Busan, blogs) en contenido.js (COMIDA). Salen en Ruta ("🍜 Dónde comer y cafés"), Enseñar (marca 🍜, tarjeta para taxi y botón Naver) y Checklist. Todos con VERIFICAR.
 
+- SX Comer: data/comer.json (30 lugares públicos dados por el usuario, contenido exacto) precacheado; pestaña Comer con chips de ciudad y tipo, tarjetas con "VERIFICAR que sigue abierto", Copiar coreano, Enseñar (pantalla completa) y Naver; estado Quiero/Visitado/Descartado/Cerrado y nota por lugar; "Añadir lugar" (fuente propio). Todo en user → entra en "Exportar copia". Acceso "🍜 Comer en <ciudad>" en cada día de Hoy.
+- SX Comer: se quita la lista "Dónde comer" que estaba en contenido.js (COMIDA) para no duplicar; Comer es ahora el único sitio de restaurantes (los de la Lonely siguen en Ruta).
+
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
 - [Supuesto] Tema (Auto/Claro/Oscuro) e Importar/Exportar/Borrar viven en la pestaña Más.
@@ -54,6 +57,10 @@ Caché del service worker: corea-v16
 - [Supuesto] Naver busca por dirección en coreano; si no hay, por hangul del nombre, dirección en inglés o nombre.
 - [Supuesto] "Mañana" se calcula respecto al día que se está viendo (no solo hoy).
 - [Supuesto] Solo imágenes (no PDF): de un PDF, haz captura de pantalla y súbela.
+- [Supuesto] 9 pestañas no caben: la barra queda en Hoy, Ruta, Enseñar, Comer, Más; Corea, Seguro, Gastos y Checklist van como botones grandes arriba de Más (la pestaña Más se marca al estar en ellas; el botón atrás vuelve).
+- [Supuesto] Ciudad por defecto en Comer: la del día actual; antes del viaje, Seúl. "Todas" disponible.
+- [Supuesto] Tocar otra vez un estado lo quita. Descartado/Cerrado se ven atenuados.
+- [Supuesto] Lugares propios sin hangul: Enseñar muestra "falta hangul" y Naver busca por el nombre.
 
 ## Verificar por el usuario
 - Prueba real en tu móvil: abrir con wifi, cerrar, modo avión, abrir y recorrer las 8 pestañas.
@@ -65,3 +72,4 @@ Caché del service worker: corea-v16
 - Revisar en Seguro que teléfono y póliza son los correctos.
 - K-ETA / tarjeta de llegada: comprobar en la web oficial antes de salir.
 - Hacer fotos del pasaporte, reservas y póliza y añadirlas en Más → Fotos de documentos.
+- Comer: comprobar con Naver que los sitios siguen abiertos y marcar los cerrados.

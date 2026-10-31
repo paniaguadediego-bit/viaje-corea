@@ -16,8 +16,9 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
 4. Rutas RELATIVAS en todo (la app vive en /viaje-corea/, no en
    la raíz): start_url y scope "./", service worker con ruta
    relativa, iconos relativos.
-5. Pestañas (barra inferior): Hoy, Ruta, Enseñar, Corea, Seguro,
-   Gastos, Checklist, Más (Maleta/Documentos y Notas). No añadir
+5. Pestañas (barra inferior): Hoy, Ruta, Enseñar, Comer, Más.
+   Dentro de Más (botones arriba): Corea, Seguro, Gastos,
+   Checklist; y debajo Maleta/Documentos, Fotos y Notas. No añadir
    nada que no esté aquí. Ruta incluye un mapa esquemático de
    Corea (SVG propio, offline) con ciudades, traslados y sitios
    de interés de cada ciudad. Extras aprobados: conversor ₩↔€
@@ -60,6 +61,13 @@ seguro{producto,poliza,vigencia,viajeros_asegurados,
  asistencia{app,telefono,nota},coberturas_clave[],airhelp_plus,
  como_reclamar[],verificar}
 checklist_documentos[{id,texto,url?}]   avisos[]
+
+## data/comer.json (público, sí va al repo)
+[{id,ciudad(seul|andong|gyeongju|busan|jeonju),nombre,ko,tipo
+ (restaurante|café|mercado|plato),plato,direccion,horario,precio,
+ fuente(itinerario|guia|propio),url,nota}]. Campos pueden ser null.
+Estado (Quiero/Visitado/Descartado/Cerrado), notas y lugares
+propios se guardan en el móvil (user.comer, user.comerPropios).
 Campos opcionales: la app NO debe romperse si falta alguno.
 Crea example.trip.json FICTICIO que cumpla este esquema.
 contenido.js guarda contenido fijo y público: CATALOGO (sitios
@@ -91,6 +99,11 @@ S5 Más (Maleta/Documentos desde checklist_documentos, y Notas),
    categoría, total por ciudad, presupuesto de referencia).
 S6 Pulido, prueba completa en modo avión e instalación en
    pantalla de inicio.
+SX Comer (independiente): data/comer.json precacheado; pestaña
+   Comer con filtro por ciudad (por defecto la del día) y tipo;
+   tarjeta con hangul, precio, horario, fuente y "VERIFICAR que
+   sigue abierto"; Copiar coreano, Enseñar, Naver; estado y nota
+   por lugar; "Añadir lugar"; acceso "Comer en <ciudad>" en Hoy.
 
 ## Pruebas mínimas por sesión
 Abrir con wifi, cerrar, activar modo avión y reabrir: todo

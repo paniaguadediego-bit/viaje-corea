@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v16';
+const VERSION = 'v17';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -35,9 +35,10 @@ let dayIdx = null;
 
 const TABS = [
   ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '🗺️'], ['ensenar', 'Enseñar', '🪧'],
-  ['corea', 'Corea', '🇰🇷'], ['seguro', 'Seguro', '🛡️'], ['gastos', 'Gastos', '💶'],
-  ['checklist', 'Checklist', '✅'], ['mas', 'Más', '☰']
+  ['comer', 'Comer', '🍜'], ['mas', 'Más', '☰']
 ];
+// Secciones agrupadas dentro de "Más" (la barra no cabe con 9 pestañas).
+const EN_MAS = [['corea', 'Corea', '🇰🇷'], ['seguro', 'Seguro', '🛡️'], ['gastos', 'Gastos', '💶'], ['checklist', 'Checklist', '✅']];
 
 function todayISO() {
   const d = new Date();
@@ -228,6 +229,7 @@ function viewHoy() {
     <div class="big">${esc(d.titulo)}</div>
     <ul class="items">${arr(d.items).map(i =>
       `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${esc(i.texto)}</li>`).join('')}</ul>
+    ${d.ciudad ? `<button class="sec mini comer-hoy" data-comer="${esc(norm(d.ciudad))}">🍜 Comer en ${esc(d.ciudad)}</button>` : ''}
   </div>`;
 
   const tr = arr(trip.traslados).filter(t => t.fecha === d.fecha);
@@ -280,10 +282,9 @@ function trasladoCard(t) {
 
 const sitiosCiudad = k => {
   const base = CATALOGO[k] || [], ko = new Set(base.map(l => l.ko));
-  const extra = [...(LP[k] || []), ...(COMIDA[k] || [])].filter(l => !l.ko || !ko.has(l.ko) || l.comida);
-  return [...base, ...extra];
+  return [...base, ...(LP[k] || []).filter(l => !l.ko || !ko.has(l.ko))];
 };
-const lpTag = l => l.comida ? ' <span class="badge otro">🍜</span>' : l.lp ? ` <span class="badge otro">LP${l.top ? ' ★' : ''}</span>` : '';
+const lpTag = l => l.lp ? ` <span class="badge otro">LP${l.top ? ' ★' : ''}</span>` : '';
 const interesDe = c => arr(c.interes).length ? arr(c.interes) : (CATALOGO[norm(c.nombre)] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)).map(l => l.es);
 
 function viewRuta() {
@@ -295,9 +296,7 @@ function viewRuta() {
     <div class="muted">${esc(c.desde)} → ${esc(c.hasta)}</div>
     ${interesDe(c).length ? `<ul>${interesDe(c).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
     ${(LP[norm(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => norm(o.nombre) === norm(c.nombre)) ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[norm(c.nombre)].length})</summary><ul>
-      ${LP[norm(c.nombre)].map(l => `<li><b>${esc(l.es)}</b>${l.top ? ' ★' : ''}${l.verificar ? ' <span class="ver">VERIFICAR</span>' : ''}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></li>`).join('')}</ul></details>` : ''}
-    ${(COMIDA[norm(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => norm(o.nombre) === norm(c.nombre)) ? `<details><summary class="muted">🍜 Dónde comer y cafés (${COMIDA[norm(c.nombre)].length})</summary><ul>
-      ${COMIDA[norm(c.nombre)].map(l => `<li><b>${esc(l.es)}</b> <span class="ver">VERIFICAR</span><br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></li>`).join('')}</ul></details>` : ''}</div>`).join('');
+      ${LP[norm(c.nombre)].map(l => `<li><b>${esc(l.es)}</b>${l.top ? ' ★' : ''}${l.verificar ? ' <span class="ver">VERIFICAR</span>' : ''}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></li>`).join('')}</ul></details>` : ''}</div>`).join('');
 
   const tr = arr(trip.traslados);
   if (tr.length) html += '<h2>Traslados</h2>' + tr.map(trasladoCard).join('');
@@ -405,6 +404,11 @@ function showFull(key) {
   if (t === 'f' || t === 'd') {
     const f = t === 'f' ? FRASES[a] : ((DICC[a] || [])[1] || [])[b]; if (!f) return;
     return full(`<div class="enorme">${esc(f[1])}</div><div class="es">${esc(f[0])} · ${esc(f[2])}</div>`);
+  }
+  if (t === 'k') {
+    const c = lugaresComer().find(x => String(x.id) === key.slice(2)); if (!c) return;
+    return full(`${c.ko ? `<div class="enorme">${esc(c.ko)}</div>` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}
+      <div class="es">${esc(c.nombre || '')}${c.plato ? ' · ' + esc(c.plato) : ''}${c.direccion ? '<br>' + esc(c.direccion) : ''}</div>`);
   }
   const l = t === 'j' ? arr(trip.lugares)[a] : sitiosCiudad(a)[b];
   if (!l) return;
@@ -529,7 +533,68 @@ function viewChecklist() {
   const act = norm(ciudadActual());
   return '<p class="muted">Sitios de interés de cada ciudad y lo que quieras añadir.</p>' + cs.map(c =>
     `<details data-key="ck:${esc(norm(c.nombre))}" ${abierto('ck:' + norm(c.nombre), norm(c.nombre) === act) ? 'open' : ''}><summary class="card big">${esc(c.nombre)}</summary>
-      ${checks('c:' + norm(c.nombre), [...interesDe(c), ...(LP[norm(c.nombre)] || []).map(l => l.es + ' (LP)'), ...(COMIDA[norm(c.nombre)] || []).map(l => '🍜 ' + l.es)].map(t => ({ id: norm(t), texto: t })))}</details>`).join('');
+      ${checks('c:' + norm(c.nombre), [...interesDe(c), ...(LP[norm(c.nombre)] || []).map(l => l.es + ' (LP)')].map(t => ({ id: norm(t), texto: t })))}</details>`).join('');
+}
+
+// ---------- Comer (data/comer.json + lugares propios) ----------
+let DATOS_COMER = [];
+fetch('data/comer.json').then(r => r.json()).then(d => { DATOS_COMER = arr(d); if (tab === 'comer') render(); }).catch(() => {});
+const CIUDADES_COMER = [['seul', 'Seúl'], ['andong', 'Andong'], ['gyeongju', 'Gyeongju'], ['busan', 'Busan'], ['jeonju', 'Jeonju']];
+const TIPOS = ['todos', 'restaurante', 'café', 'mercado', 'plato'];
+const ESTADOS = [['quiero', 'Quiero'], ['visitado', 'Visitado'], ['descartado', 'Descartado'], ['cerrado', 'Cerrado']];
+const FUENTES = { itinerario: 'Itinerario', guia: 'Guía web (no verificado)', propio: 'Propio' };
+let comerCiudad = null, comerTipo = 'todos', comerForm = false;
+const lugaresComer = () => [...DATOS_COMER, ...arr(u().comerPropios)].filter(l => l && typeof l === 'object');
+const estadoDe = id => (u().comer && user.comer[id]) || {};
+
+function viewComer() {
+  if (comerCiudad === null) {
+    const k = norm(ciudadActual());
+    comerCiudad = CIUDADES_COMER.some(c => c[0] === k) ? k : 'todas';
+  }
+  const lista = lugaresComer().filter(l => (comerCiudad === 'todas' || l.ciudad === comerCiudad) && (comerTipo === 'todos' || l.tipo === comerTipo));
+  const chip = (attr, v, t, on) => `<button class="chip ${on ? 'on' : ''}" ${attr}="${esc(v)}">${esc(t)}</button>`;
+  return `<div class="chips">${chip('data-cc', 'todas', 'Todas', comerCiudad === 'todas')}${CIUDADES_COMER.map(([k, t]) => chip('data-cc', k, t, comerCiudad === k)).join('')}</div>
+    <div class="chips">${TIPOS.map(t => chip('data-ct', t, t[0].toUpperCase() + t.slice(1), comerTipo === t)).join('')}</div>
+    <div class="muted">${lista.length} lugares · "Naver" necesita conexión</div>
+    ${lista.map(cardComer).join('') || '<p class="muted">No hay lugares con este filtro.</p>'}
+    ${comerForm ? formComer() : '<button class="sec" data-act="comer-nuevo">＋ Añadir lugar</button>'}`;
+}
+
+function cardComer(l) {
+  const id = String(l.id ?? ''), e = estadoDe(id), q = l.ko || l.nombre || '';
+  const ciudad = (CIUDADES_COMER.find(c => c[0] === l.ciudad) || [])[1] || l.ciudad || '';
+  return `<div class="card comer est-${esc(e.estado || '')}">
+    <div class="big">${esc(l.nombre || 'Sin nombre')}</div>
+    ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : ''}
+    <div class="muted">${[l.tipo, l.plato].filter(Boolean).map(esc).join(' · ')}${ciudad && comerCiudad === 'todas' ? ' · ' + esc(ciudad) : ''}</div>
+    ${l.precio ? `<div>💰 ${esc(l.precio)}</div>` : ''}${l.horario ? `<div>🕒 ${esc(l.horario)}</div>` : ''}
+    ${l.direccion ? `<div class="muted">📍 ${esc(l.direccion)}</div>` : ''}
+    ${l.nota ? `<div class="muted">${esc(l.nota)}</div>` : ''}
+    <div class="muted">Fuente: ${esc(FUENTES[l.fuente] || l.fuente || '—')}${l.url ? ` · <a href="${esc(l.url)}" target="_blank" rel="noopener">enlace</a>` : ''}</div>
+    <div><span class="ver">VERIFICAR que sigue abierto</span></div>
+    <div class="acciones">
+      ${l.ko ? `<button class="sec mini" data-copy="${esc(l.ko)}">📋 Copiar coreano</button>` : ''}
+      <button class="mini" data-full="k:${esc(id)}">Enseñar</button>
+      ${q ? `<a class="btn sec mini" href="https://map.naver.com/p/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">🗺️ Naver</a>` : ''}
+      ${l.fuente === 'propio' ? `<button class="sec mini" data-delcomer="${esc(id)}">✕</button>` : ''}
+    </div>
+    <div class="chips estados">${ESTADOS.map(([k, t]) => `<button class="chip ${e.estado === k ? 'on' : ''}" data-est="${esc(id)}" data-v="${k}">${t}</button>`).join('')}</div>
+    <textarea data-cnota="${esc(id)}" rows="1" placeholder="Nota propia…">${esc(e.nota || '')}</textarea>
+  </div>`;
+}
+
+function formComer() {
+  const def = comerCiudad === 'todas' ? 'seul' : comerCiudad;
+  return `<form class="card" data-comerform>
+    <div class="muted">Nuevo lugar (se guarda en este móvil)</div>
+    <input name="nombre" placeholder="Nombre" required autocomplete="off">
+    <div class="par"><select name="ciudad">${CIUDADES_COMER.map(([k, t]) => `<option value="${k}" ${k === def ? 'selected' : ''}>${t}</option>`).join('')}</select>
+      <select name="tipo">${TIPOS.slice(1).map(t => `<option>${t}</option>`).join('')}</select></div>
+    <input name="url" type="url" placeholder="Enlace (opcional, p. ej. hilo de Reddit)" autocomplete="off">
+    <input name="nota" placeholder="Nota (opcional)" autocomplete="off">
+    <div class="par"><button>Guardar</button><button type="button" class="sec" data-act="comer-cancelar">Cancelar</button></div>
+  </form>`;
 }
 
 // ---------- Gastos ----------
@@ -578,7 +643,8 @@ function viewGastos() {
 function viewMas() {
   const t = load(K_THEME, 'auto');
   const docs = arr(trip && trip.checklist_documentos).map((d, i) => ({ id: d.id || 'd' + i, texto: d.texto, url: d.url }));
-  return `${trip ? `<h2>Maleta y documentos</h2>${checks('docs', docs)}
+  return `<div class="rejilla">${EN_MAS.map(([id, t, ic]) => `<button class="sec" data-tab="${id}"><span>${ic}</span>${t}</button>`).join('')}</div>
+    ${trip ? `<h2>Maleta y documentos</h2>${checks('docs', docs)}
     ${viewFotos()}
     <h2>Notas</h2><textarea data-notas rows="6" placeholder="Escribe aquí… (se guarda solo)">${esc(u().notas)}</textarea>` : ''}
     <h2>Datos del viaje</h2>
@@ -603,7 +669,7 @@ function render() {
   $('#title').textContent = (trip && trip.meta && trip.meta.titulo) || 'Viaje a Corea';
   $('#back').hidden = !pila.length;
   $('#tabs').innerHTML = TABS.map(([id, label, ic]) =>
-    `<button data-tab="${id}" class="${tab === id ? 'on' : ''}"><span>${ic}</span>${label}</button>`).join('');
+    `<button data-tab="${id}" class="${tab === id || (id === 'mas' && EN_MAS.some(m => m[0] === tab)) ? 'on' : ''}"><span>${ic}</span>${label}</button>`).join('');
 
   let html;
   if (!trip && tab !== 'mas') html = viewWelcome();
@@ -615,6 +681,7 @@ function render() {
     case 'corea': html = viewCorea(); break;
     case 'gastos': html = viewGastos(); break;
     case 'checklist': html = viewChecklist(); break;
+    case 'comer': html = viewComer(); break;
     default: html = viewMas();
   }
   $('#view').innerHTML = html;
@@ -645,6 +712,20 @@ document.addEventListener('click', e => {
     return;
   }
   if (e.target.closest('#back')) { history.back(); return; }
+  const cm = e.target.closest('[data-cc],[data-ct],[data-est],[data-comer],[data-delcomer]');
+  if (cm) {
+    if (cm.dataset.cc) comerCiudad = cm.dataset.cc;
+    else if (cm.dataset.ct) comerTipo = cm.dataset.ct;
+    else if (cm.dataset.comer) { comerCiudad = CIUDADES_COMER.some(c => c[0] === cm.dataset.comer) ? cm.dataset.comer : 'todas'; ir('comer'); }
+    else if (cm.dataset.delcomer) {
+      if (!confirm('¿Borrar este lugar propio?')) return;
+      u().comerPropios = arr(user.comerPropios).filter(l => String(l.id) !== cm.dataset.delcomer); saveUser();
+    } else {
+      const U = u(); U.comer = U.comer || {}; const id = cm.dataset.est, v = cm.dataset.v;
+      const e2 = U.comer[id] = U.comer[id] || {}; e2.estado = e2.estado === v ? '' : v; saveUser();
+    }
+    render(); return;
+  }
   const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub]');
   if (!b) return;
   if (b.dataset.sub) coreaSub = b.dataset.sub;
@@ -663,6 +744,8 @@ document.addEventListener('click', e => {
       ]).finally(() => location.reload());
       return;
     case 'foto': $('#fotofile').click(); return;
+    case 'comer-nuevo': comerForm = true; break;
+    case 'comer-cancelar': comerForm = false; break;
     case 'example': loadExample(); return;
     case 'wipe':
       if (!confirm('¿Borrar viaje, gastos, checklist y notas de este móvil? Exporta antes una copia.')) return;
@@ -680,6 +763,7 @@ document.addEventListener('input', e => {
     otro.value = !t.value || !c ? '' : t.dataset.conv === 'KRW' ? (v / c).toFixed(2) : Math.round(v * c);
   }
   else if (t.dataset.notas !== undefined) { u().notas = t.value; saveUser(); }
+  else if (t.dataset.cnota) { const U = u(); U.comer = U.comer || {}; (U.comer[t.dataset.cnota] = U.comer[t.dataset.cnota] || {}).nota = t.value; saveUser(); }
 });
 document.addEventListener('change', e => {
   const t = e.target;
@@ -689,7 +773,12 @@ document.addEventListener('change', e => {
 document.addEventListener('submit', e => {
   e.preventDefault();
   const f = e.target, d = Object.fromEntries(new FormData(f));
-  if (f.dataset.additem) {
+  if (f.dataset.comerform !== undefined) {
+    const nombre = (d.nombre || '').trim(); if (!nombre) return;
+    (u().comerPropios = arr(user.comerPropios)).push({ id: 'p-' + Date.now().toString(36), ciudad: d.ciudad, nombre, ko: null,
+      tipo: d.tipo, plato: null, direccion: null, horario: null, precio: null, fuente: 'propio', url: (d.url || '').trim() || null, nota: (d.nota || '').trim() || null });
+    comerForm = false; comerCiudad = d.ciudad;
+  } else if (f.dataset.additem) {
     const t = (d.t || '').trim(); if (!t) return;
     (u().extra[f.dataset.additem] = arr(user.extra[f.dataset.additem])).push(t);
   } else if (f.dataset.gasto !== undefined) {

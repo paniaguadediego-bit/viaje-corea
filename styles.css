@@ -157,3 +157,23 @@ header { display: flex; align-items: center; gap: 8px; }
 #title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #version { font-size: .75rem; flex: none; }
 .bandera { width: 1.2em; height: .8em; vertical-align: -0.05em; }
+
+/* Comer */
+.chips { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { width: auto; flex: none; min-height: 34px; padding: 4px 12px; margin: 0; border-radius: 999px;
+  background: var(--card); color: var(--fg); border: 1px solid var(--line); font-size: .85rem; }
+.chip.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+.estados { flex-wrap: wrap; overflow: visible; }
+.estados .chip { font-size: .78rem; min-height: 30px; padding: 2px 10px; }
+.comer textarea { min-height: 38px; margin-top: 6px; font-size: .9rem; }
+.comer.est-visitado { border-left: 4px solid var(--ok); }
+.comer.est-quiero { border-left: 4px solid var(--blue); }
+.comer.est-descartado, .comer.est-cerrado { opacity: .55; }
+.comer-hoy { margin-top: 6px; }
+.rejilla { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 8px 0; }
+.rejilla button { margin: 0; padding: 8px 2px; display: flex; flex-direction: column; align-items: center; font-size: .8rem; }
+.rejilla button span { font-size: 1.5rem; }
+.comer .acciones .mini, .comer .acciones a.btn.mini { min-height: 32px; padding: 4px 9px; font-size: .82rem; }
+.estados { flex-wrap: nowrap; gap: 4px; }
+.estados .chip { font-size: .7rem; min-height: 28px; padding: 2px 7px; flex: 1 1 0; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
