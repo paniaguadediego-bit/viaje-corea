@@ -548,7 +548,7 @@ function viewGastos() {
       <div class="big">Total: ${eur(total)}</div>
       ${ref ? `<div class="barra"><div style="width:${Math.min(100, total / ref * 100).toFixed(0)}%"></div></div>
         <div class="muted">Presupuesto de referencia: ${eur(ref)} · quedan ${eur(ref - total)}</div>` : ''}
-      ${cambio() ? '' : '<div class="falta">Pon el cambio para pasar ₩ a €</div>'}
+      ${cambio() ? '' : '<div class="falta">Escribe el cambio (1 € = … ₩) en el conversor para pasar ₩ a €</div>'}
     </div>
     <form class="card" data-gasto>
       <div class="muted">Nuevo gasto</div>
@@ -705,7 +705,9 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (habiaSW && !recargado) { recargado = true; location.reload(); }
   });
-  navigator.serviceWorker.register('./sw.js');
+  navigator.serviceWorker.register('./sw.js').then(r => {
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) r.update().catch(() => {}); });
+  });
 }
 // Muestra la versión de caché en Más.
 if (window.caches) caches.keys().then(k => { const v = k.find(x => x.startsWith('corea-')); window.VERSION = v; const e = $('#ver'); if (e && v) e.textContent = 'Versión: ' + v; });

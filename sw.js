@@ -1,5 +1,5 @@
 // Sube CACHE en cada sesión para que el móvil coja la versión nueva.
-const CACHE = 'corea-v12';
+const CACHE = 'corea-v13';
 const FILES = [
   './', './index.html', './styles.css', './app.js', './contenido.js', './diccionario.js', './manifest.json',
   './example.trip.json', './icons/icon.svg', './icons/icon-192.png',
@@ -7,7 +7,10 @@ const FILES = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  // cache: 'reload' evita guardar copias viejas que el navegador tenga en memoria.
+  e.waitUntil(caches.open(CACHE)
+    .then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' }))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', e => {

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6
 
-Caché del service worker: corea-v12
+Caché del service worker: corea-v13
 
 ## Decisiones
 - S1: datos guardados en localStorage (más simple que IndexedDB; el viaje cabe de sobra).
@@ -26,6 +26,8 @@ Caché del service worker: corea-v12
 - Cambio pedido: quitar los gastos compartidos (el usuario no los quiere).
 
 - Cambio pedido: Gastos mejor alineado (conversor con el cambio dentro, casillas de igual altura, bloque "Nuevo gasto") y botón atrás: "‹" en la cabecera y el gesto/botón atrás de Android vuelven a la pestaña anterior y cierran las tarjetas a pantalla completa.
+
+- Arreglo: el service worker descargaba a veces archivos viejos de la memoria del navegador al actualizarse (GitHub Pages los guarda 10 min). Ahora fuerza descarga nueva y busca actualizaciones al volver a la app.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
