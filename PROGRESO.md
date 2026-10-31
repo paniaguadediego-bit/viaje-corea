@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6
 
-Caché del service worker: corea-v15
+Caché del service worker: corea-v16
 
 ## Decisiones
 - S1: datos guardados en localStorage (más simple que IndexedDB; el viaje cabe de sobra).
@@ -32,6 +32,8 @@ Caché del service worker: corea-v15
 - Arreglo: el móvil del usuario se quedó con una versión vieja (conversor desbordado → Chrome empuja la barra inferior fuera de pantalla). El service worker pasa a "primero red, si no caché" (timeout 3 s) para que las versiones nuevas lleguen siempre con conexión; sigue funcionando sin conexión. Botón "Forzar actualización" en Más (borra caché, no datos).
 
 - Cambio pedido: número de versión arriba a la derecha (VERSION en app.js, igual que CACHE en sw.js). Hora de Canarias (Atlantic/Canary) con su bandera dibujada en SVG en lugar de la de España.
+
+- Cambio pedido: restaurantes y cafés. Reddit bloquea el acceso automático; se recopilaron 25 sitios de guías web (Michelin, Frommer's, turismo de Busan, blogs) en contenido.js (COMIDA). Salen en Ruta ("🍜 Dónde comer y cafés"), Enseñar (marca 🍜, tarjeta para taxi y botón Naver) y Checklist. Todos con VERIFICAR.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

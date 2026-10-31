@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v15';
+const VERSION = 'v16';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -280,9 +280,10 @@ function trasladoCard(t) {
 
 const sitiosCiudad = k => {
   const base = CATALOGO[k] || [], ko = new Set(base.map(l => l.ko));
-  return [...base, ...(LP[k] || []).filter(l => !l.ko || !ko.has(l.ko))];
+  const extra = [...(LP[k] || []), ...(COMIDA[k] || [])].filter(l => !l.ko || !ko.has(l.ko) || l.comida);
+  return [...base, ...extra];
 };
-const lpTag = l => l.lp ? ` <span class="badge otro">LP${l.top ? ' ★' : ''}</span>` : '';
+const lpTag = l => l.comida ? ' <span class="badge otro">🍜</span>' : l.lp ? ` <span class="badge otro">LP${l.top ? ' ★' : ''}</span>` : '';
 const interesDe = c => arr(c.interes).length ? arr(c.interes) : (CATALOGO[norm(c.nombre)] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)).map(l => l.es);
 
 function viewRuta() {
@@ -294,7 +295,9 @@ function viewRuta() {
     <div class="muted">${esc(c.desde)} → ${esc(c.hasta)}</div>
     ${interesDe(c).length ? `<ul>${interesDe(c).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
     ${(LP[norm(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => norm(o.nombre) === norm(c.nombre)) ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[norm(c.nombre)].length})</summary><ul>
-      ${LP[norm(c.nombre)].map(l => `<li><b>${esc(l.es)}</b>${l.top ? ' ★' : ''}${l.verificar ? ' <span class="ver">VERIFICAR</span>' : ''}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></li>`).join('')}</ul></details>` : ''}</div>`).join('');
+      ${LP[norm(c.nombre)].map(l => `<li><b>${esc(l.es)}</b>${l.top ? ' ★' : ''}${l.verificar ? ' <span class="ver">VERIFICAR</span>' : ''}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></li>`).join('')}</ul></details>` : ''}
+    ${(COMIDA[norm(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => norm(o.nombre) === norm(c.nombre)) ? `<details><summary class="muted">🍜 Dónde comer y cafés (${COMIDA[norm(c.nombre)].length})</summary><ul>
+      ${COMIDA[norm(c.nombre)].map(l => `<li><b>${esc(l.es)}</b> <span class="ver">VERIFICAR</span><br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></li>`).join('')}</ul></details>` : ''}</div>`).join('');
 
   const tr = arr(trip.traslados);
   if (tr.length) html += '<h2>Traslados</h2>' + tr.map(trasladoCard).join('');
@@ -526,7 +529,7 @@ function viewChecklist() {
   const act = norm(ciudadActual());
   return '<p class="muted">Sitios de interés de cada ciudad y lo que quieras añadir.</p>' + cs.map(c =>
     `<details data-key="ck:${esc(norm(c.nombre))}" ${abierto('ck:' + norm(c.nombre), norm(c.nombre) === act) ? 'open' : ''}><summary class="card big">${esc(c.nombre)}</summary>
-      ${checks('c:' + norm(c.nombre), [...interesDe(c), ...(LP[norm(c.nombre)] || []).map(l => l.es + ' (LP)')].map(t => ({ id: norm(t), texto: t })))}</details>`).join('');
+      ${checks('c:' + norm(c.nombre), [...interesDe(c), ...(LP[norm(c.nombre)] || []).map(l => l.es + ' (LP)'), ...(COMIDA[norm(c.nombre)] || []).map(l => '🍜 ' + l.es)].map(t => ({ id: norm(t), texto: t })))}</details>`).join('');
 }
 
 // ---------- Gastos ----------

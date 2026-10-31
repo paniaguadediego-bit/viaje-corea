@@ -1,5 +1,5 @@
 // Sube CACHE en cada sesión (y VERSION en app.js) para que el móvil coja la versión nueva.
-const CACHE = 'corea-v15';
+const CACHE = 'corea-v16';
 const FILES = [
   './', './index.html', './styles.css', './app.js', './contenido.js', './diccionario.js', './manifest.json',
   './example.trip.json', './icons/icon.svg', './icons/icon-192.png',

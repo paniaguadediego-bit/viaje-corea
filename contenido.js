@@ -204,3 +204,44 @@ const LP = {
     R('Casa de té Gyodong Dawan', '교동다완', 'Casa de té', 'Casa de té en un hanok de la aldea.', COMER)
   ]
 };
+
+// Dónde comer y cafés (recopilado de guías web: Michelin, Frommer's, turismo de Busan, blogs
+// gastronómicos). Todo con verificar: pueden haber cerrado o cambiado.
+const C = (es, ko, tipo, nota) => ({ es, ko, tipo, nota, comida: true, verificar: true });
+const COMIDA = {
+  seul: [
+    C('Myeongdong Kyoja', '명동교자', 'Kalguksu', 'Sopa de fideos cortados a cuchillo desde 1966; Bib Gourmand Michelin. Cola a mediodía.'),
+    C('Tosokchon Samgyetang', '토속촌 삼계탕', 'Samgyetang', 'Sopa de pollo con ginseng, junto a Gyeongbokgung. Muy famoso.'),
+    C('Hadongkwan', '하동관', 'Gomtang', 'Caldo de ternera clásico, casa con más de 80 años.'),
+    C('Jinokhwa Halmae Wonjo Dakhanmari', '진옥화할매원조닭한마리', 'Dakhanmari', 'Pollo entero cocido en caldo para compartir, en Dongdaemun.'),
+    C('Mercado Gwangjang (comida)', '광장시장', 'Mercado', 'Bindaetteok (tortita de soja verde), mayak gimbap y kalguksu en los puestos.'),
+    C('Barrio de cafés Ikseon-dong', '익선동', 'Cafés', 'Callejuelas de hanok llenas de cafés y panaderías.'),
+    C('Café Cheong Su Dang', '청수당', 'Café', 'Café con estanque y bambú en Ikseon-dong; muy popular.')
+  ],
+  andong: [
+    C('Calle del jjimdak (mercado viejo)', '안동구시장', 'Jjimdak', 'Unos 30 locales de pollo estofado; un plato da para 2-4 personas.'),
+    C('Junggang Jjimdak', '중앙찜닭', 'Jjimdak', 'De los más conocidos de la calle del jjimdak (salió en TV).'),
+    C('Yujin Jjimdak', '유진찜닭', 'Jjimdak', 'Muy recomendado; con distinción Blue Ribbon.'),
+    C('Hyundai Jjimdak', '현대찜닭', 'Jjimdak', 'Popular; los fines de semana puede haber 45 min de espera.')
+  ],
+  gyeongju: [
+    C('Calle del ssambap (Daereungwon)', '대릉원 쌈밥거리', 'Ssambap', 'Unos 15-20 locales de arroz con hojas para envolver y muchos platillos.'),
+    C('Gyodong Ssambap', '교동쌈밥', 'Ssambap', 'Ssambap con producto local en la aldea Gyochon.'),
+    C('Pan de Hwangnam', '황남빵', 'Dulce', 'Pastelito relleno de alubia roja, el recuerdo típico de Gyeongju.'),
+    C('Cafés en hanok de Hwangridan-gil', '황리단길', 'Cafés', 'Calle de cafés en casas tradicionales. Sábados: colas de 45-60 min.')
+  ],
+  busan: [
+    C('Yeongjin Dwaeji Gukbap', '영진돼지국밥', 'Dwaeji gukbap', 'Sopa de cerdo con arroz; el nombre más citado. Local principal en Saha-gu.'),
+    C('Subyeon Choego Dwaeji Gukbap', '수변최고돼지국밥', 'Dwaeji gukbap', 'Local principal en Suyeong-gu, abierto 24 h.'),
+    C('Calle del gukbap de Seomyeon', '서면시장', 'Dwaeji gukbap', 'Varios locales de gukbap seguidos junto a la estación de Seomyeon.'),
+    C('Halmae Gaya Milmyeon', '할매가야밀면', 'Milmyeon', 'Fideos fríos de trigo, el plato típico de Busan.'),
+    C('Choryang Milmyeon', '초량밀면', 'Milmyeon', 'Milmyeon cerca de la estación de Busan.'),
+    C('Ssiat hotteok', '씨앗호떡', 'Dulce', 'Tortita rellena de pipas y azúcar; puestos en la plaza BIFF (Nampo).'),
+    C('Calle de cafés de Jeonpo', '전포카페거리', 'Cafés', 'Unos 30 cafés independientes, a 10 min a pie de Seomyeon.')
+  ],
+  jeonju: [
+    C('Gajok Hoegwan', '가족회관', 'Bibimbap', 'El bibimbap más conocido de Jeonju, junto a la aldea hanok.'),
+    C('Sambaekjip', '삼백집', 'Kongnamul gukbap', 'Sopa de brotes de soja, típica para desayunar.'),
+    C('Mercado nocturno de Nambu', '남부시장', 'Mercado', 'Puestos de comida por la noche (fines de semana); verificar días.')
+  ]
+};
