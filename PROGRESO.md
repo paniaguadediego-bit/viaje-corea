@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v21
+Caché del service worker: corea-v22
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -51,6 +51,8 @@ Caché del service worker: corea-v21
 - Arreglos con el viaje real: "Seúl (vuelta)" se trata como Seúl (catálogo, mapa, comer); los traslados se sitúan en el mapa por la ciudad entre paréntesis (los pendientes salen en rojo); "Mis lugares" sin campo ciudad se agrupan por texto o por cercanía al hotel; si "dia" es el día de la semana, se muestra "Día 15 de 17 · Mar".
 
 - Cambio pedido (v21): en Comer, "Quiero ir" muy visible (cinta dorada, borde azul y fondo degradado; Visitado en verde); filtro por estado (Todos / ⭐ Quiero / ✅ Visitados / Sin marcar, con contadores); ordenar por Recomendado, Distancia al hotel o Mi valoración (estrellas 1-5 propias, guardadas en el móvil). Aspecto más cuidado: fondo y cabecera con degradados muy claros azul/rojo coreanos, tarjetas blancas con sombra suave, botones con degradado, barra inferior translúcida; modo oscuro equivalente.
+
+- Cambio pedido (v22): tarjeta "⏱️ Ahora" en Hoy (antes del viaje, cuenta atrás; durante, lo próximo con hora de hoy —items y trenes— con "en X min"; si no queda nada, lo primero de mañana; aviso de maleta la víspera de cambiar de ciudad). Frases por situación (Básicas, Taxi, Hotel, Restaurante, Compras, Transporte, Farmacia, Emergencia; 67 frases). Revisión web de 13 lugares de Comer guardada en "comprobado" (Ryusenso no está en Gyeongju; Sugyeongsa corregido; Bagel Bageler en Gyochon; Wolseon no encontrado; Mammoth activo con colas; Hongsi 4,3/5).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

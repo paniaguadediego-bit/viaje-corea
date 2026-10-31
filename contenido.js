@@ -48,35 +48,52 @@ const CATALOGO = {
 };
 
 // Frases útiles (pantalla completa).
-const FRASES = [
-  ['Hola', '안녕하세요', 'annyeonghaseyo'],
-  ['Gracias', '감사합니다', 'gamsahamnida'],
-  ['Perdón / lo siento', '죄송합니다', 'joesonghamnida'],
-  ['¡Perdone! (llamar al camarero)', '저기요', 'jeogiyo'],
-  ['Sí / No', '네 / 아니요', 'ne / aniyo'],
-  ['No hablo coreano', '한국어를 못해요', 'hangugeoreul motaeyo'],
-  ['¿Habla inglés?', '영어 하세요?', 'yeongeo haseyo?'],
-  ['Más despacio, por favor', '천천히 말해 주세요', 'cheoncheonhi malhae juseyo'],
-  ['Soy de España', '스페인 사람이에요', 'seupein saramieyo'],
-  ['¿Cuánto cuesta?', '얼마예요?', 'eolmayeyo?'],
-  ['Esto, por favor', '이거 주세요', 'igeo juseyo'],
-  ['¿Aceptan tarjeta?', '카드 돼요?', 'kadeu dwaeyo?'],
-  ['La cuenta, por favor', '계산해 주세요', 'gyesanhae juseyo'],
-  ['El recibo, por favor', '영수증 주세요', 'yeongsujeung juseyo'],
-  ['Agua, por favor', '물 주세요', 'mul juseyo'],
-  ['No puedo comer picante', '매운 거 못 먹어요', 'maeun geo mot meogeoyo'],
-  ['Menos picante, por favor', '덜 맵게 해 주세요', 'deol maepge hae juseyo'],
-  ['Tengo alergia', '알레르기가 있어요', 'allereugiga isseoyo'],
-  ['Para llevar', '포장해 주세요', 'pojanghae juseyo'],
-  ['Para tomar aquí', '여기서 먹을게요', 'yeogiseo meogeulgeyo'],
-  ['¡Está rico!', '맛있어요', 'masisseoyo'],
-  ['¿Dónde está el baño?', '화장실 어디예요?', 'hwajangsil eodiyeyo?'],
-  ['Pare aquí, por favor (taxi)', '여기 세워 주세요', 'yeogi sewo juseyo'],
-  ['Quiero hacer el check-in', '체크인 할게요', 'chekeuin halgeyo'],
-  ['¿Puedo dejar el equipaje?', '짐 맡길 수 있어요?', 'jim matgil su isseoyo?'],
-  ['¡Ayuda!', '도와주세요', 'dowajuseyo'],
-  ['Tengo que ir al hospital', '병원에 가야 해요', 'byeongwone gaya haeyo']
+// Frases útiles agrupadas por situación (pantalla completa). Solo frases de uso común y seguras.
+const FRASES_SIT = [
+  ['Básicas', [
+    ['Hola', '안녕하세요', 'annyeonghaseyo'], ['Gracias', '감사합니다', 'gamsahamnida'],
+    ['Perdón / lo siento', '죄송합니다', 'joesonghamnida'], ['¡Perdone! (llamar a alguien)', '저기요', 'jeogiyo'],
+    ['Sí / No', '네 / 아니요', 'ne / aniyo'], ['No hablo coreano', '한국어를 못해요', 'hangugeoreul motaeyo'],
+    ['¿Habla inglés?', '영어 하세요?', 'yeongeo haseyo?'], ['Más despacio, por favor', '천천히 말해 주세요', 'cheoncheonhi malhae juseyo'],
+    ['Soy de España', '스페인 사람이에요', 'seupein saramieyo'], ['¿Dónde está el baño?', '화장실 어디예요?', 'hwajangsil eodiyeyo?']]],
+  ['Taxi', [
+    ['A esta dirección, por favor', '이 주소로 가 주세요', 'i jusoro ga juseyo'], ['Pare aquí, por favor', '여기 세워 주세요', 'yeogi sewo juseyo'],
+    ['Me bajo aquí', '여기서 내릴게요', 'yeogiseo naerilgeyo'], ['Abra el maletero, por favor', '트렁크 열어 주세요', 'teureongkeu yeoreo juseyo'],
+    ['¿Cuánto se tarda?', '얼마나 걸려요?', 'eolmana geollyeoyo?'], ['Más despacio, por favor (conducir)', '천천히 가 주세요', 'cheoncheonhi ga juseyo'],
+    ['¿Aceptan tarjeta?', '카드 돼요?', 'kadeu dwaeyo?'], ['El recibo, por favor', '영수증 주세요', 'yeongsujeung juseyo']]],
+  ['Hotel', [
+    ['Quiero hacer el check-in', '체크인 할게요', 'chekeuin halgeyo'], ['Tengo una reserva', '예약했어요', 'yeyakhaesseoyo'],
+    ['¿Puedo dejar el equipaje?', '짐 맡길 수 있어요?', 'jim matgil su isseoyo?'], ['¿A qué hora es el check-out?', '체크아웃은 몇 시예요?', 'chekeuauseun myeot siyeyo?'],
+    ['¿Cuál es la contraseña del wifi?', '와이파이 비밀번호가 뭐예요?', 'waipai bimilbeonhoga mwoyeyo?'], ['No sale agua caliente', '뜨거운 물이 안 나와요', 'tteugeoun muri an nawayo'],
+    ['Más toallas, por favor', '수건 더 주세요', 'sugeon deo juseyo'], ['¿Me pide un taxi?', '택시 불러 주세요', 'taeksi bulleo juseyo']]],
+  ['Restaurante', [
+    ['Somos dos', '두 명이요', 'du myeongiyo'], ['¿Tienen carta en inglés?', '영어 메뉴 있어요?', 'yeongeo menyu isseoyo?'],
+    ['¿Qué está bueno aquí?', '뭐가 맛있어요?', 'mwoga masisseoyo?'], ['Esto, por favor', '이거 주세요', 'igeo juseyo'],
+    ['Menos picante, por favor', '덜 맵게 해 주세요', 'deol maepge hae juseyo'], ['No puedo comer picante', '매운 거 못 먹어요', 'maeun geo mot meogeoyo'],
+    ['Sin carne, por favor', '고기 빼 주세요', 'gogi ppae juseyo'], ['Tengo alergia', '알레르기가 있어요', 'allereugiga isseoyo'],
+    ['Agua, por favor', '물 주세요', 'mul juseyo'], ['Más acompañamientos, por favor', '반찬 더 주세요', 'banchan deo juseyo'],
+    ['Para llevar', '포장해 주세요', 'pojanghae juseyo'], ['Para tomar aquí', '여기서 먹을게요', 'yeogiseo meogeulgeyo'],
+    ['¡Está rico!', '맛있어요', 'masisseoyo'], ['La cuenta, por favor', '계산해 주세요', 'gyesanhae juseyo'],
+    ['Pagar por separado', '따로 계산해 주세요', 'ttaro gyesanhae juseyo'], ['He comido muy bien (al salir)', '잘 먹었습니다', 'jal meogeotseumnida']]],
+  ['Compras', [
+    ['¿Cuánto cuesta?', '얼마예요?', 'eolmayeyo?'], ['¿Aceptan tarjeta?', '카드 돼요?', 'kadeu dwaeyo?'],
+    ['Rebájemelo, por favor', '깎아 주세요', 'kkakka juseyo'], ['No necesito bolsa', '봉투 필요 없어요', 'bongtu piryo eopseoyo'],
+    ['¿Me lo puedo probar?', '입어 봐도 돼요?', 'ibeo bwado dwaeyo?'], ['¿Hacen devolución de impuestos?', '택스 리펀 돼요?', 'taekseu ripeon dwaeyo?']]],
+  ['Transporte', [
+    ['Un billete, por favor', '표 한 장 주세요', 'pyo han jang juseyo'], ['Dos billetes, por favor', '표 두 장 주세요', 'pyo du jang juseyo'],
+    ['¿Qué número de salida es?', '몇 번 출구예요?', 'myeot beon chulguyeyo?'], ['¿Dónde se compra el billete?', '표는 어디서 사요?', 'pyoneun eodiseo sayo?'],
+    ['Recargue la tarjeta de transporte, por favor', '교통카드 충전해 주세요', 'gyotongkadeu chungjeonhae juseyo']]],
+  ['Farmacia', [
+    ['¿Dónde hay una farmacia?', '약국 어디예요?', 'yakguk eodiyeyo?'], ['Me duele aquí', '여기 아파요', 'yeogi apayo'],
+    ['Tengo fiebre', '열이 나요', 'yeori nayo'], ['Medicina para el resfriado, por favor', '감기약 주세요', 'gamgiyak juseyo'],
+    ['Un analgésico, por favor', '진통제 주세요', 'jintongje juseyo'], ['Algo para la diarrea, por favor', '지사제 주세요', 'jisaje juseyo'],
+    ['Tengo alergia', '알레르기가 있어요', 'allereugiga isseoyo'], ['Tengo que ir al hospital', '병원에 가야 해요', 'byeongwone gaya haeyo']]],
+  ['Emergencia', [
+    ['¡Ayuda!', '도와주세요', 'dowajuseyo'], ['Llame a la policía', '경찰 불러 주세요', 'gyeongchal bulleo juseyo'],
+    ['Llame a una ambulancia', '구급차 불러 주세요', 'gugeupcha bulleo juseyo'], ['Estoy perdido/a', '길을 잃었어요', 'gireul ireosseoyo'],
+    ['He perdido el pasaporte', '여권을 잃어버렸어요', 'yeogwoneul ireobeoryeosseoyo'], ['He perdido la cartera', '지갑을 잃어버렸어요', 'jigabeul ireobeoryeosseoyo']]]
 ];
+const FRASES = FRASES_SIT.flatMap(([, fs]) => fs);
 
 // Guía de Corea: [título, [puntos]]. "VERIFICAR" = comprobar antes de fiarse.
 const GUIA = [

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v21';
+const VERSION = 'v22';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -227,7 +227,7 @@ function pendingAlert() {
 
 function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
-  let html = `<div class="muted reloj" id="reloj">${relojes()}</div>` + pendingAlert();
+  let html = `<div class="muted reloj" id="reloj">${relojes()}</div>` + ahora() + pendingAlert();
   const avisos = arr(trip.avisos);
   if (avisos.length) html += `<div class="card"><b>Avisos</b><ul>${avisos.map(a => `<li>${esc(a)}</li>`).join('')}</ul></div>`;
   if (!dias.length) return html + '<p class="muted">El viaje no tiene días (clave "dias").</p>';
@@ -268,6 +268,39 @@ function viewHoy() {
     ${a.nota ? `<div class="muted">${esc(a.nota)}</div>` : ''}
     <div class="acciones">${naver(a)}</div></div>`).join('');
   return html + manana(d, dias);
+}
+
+// "Ahora": lo próximo que toca hoy (o la cuenta atrás antes del viaje).
+const aMin = h => { const m = String(h || '').match(/(\d{1,2})[:.](\d{2})/); return m ? +m[1] * 60 + +m[2] : null; };
+const enTiempo = min => min < 60 ? `en ${min} min` : `en ${Math.floor(min / 60)} h${min % 60 ? ' ' + (min % 60) + ' min' : ''}`;
+function eventosDe(fecha) {
+  const d = arr(trip.dias).find(x => x.fecha === fecha), ev = [];
+  arr(d && d.items).forEach(i => { const m = aMin(i.hora); if (m != null) ev.push({ m, hora: i.hora, txt: i.texto }); });
+  arr(trip.traslados).filter(t => t.fecha === fecha).forEach(t => {
+    const m = aMin(t.tren && t.tren.salida);
+    if (m != null && !ev.some(e => e.m === m)) ev.push({ m, hora: t.tren.salida, txt: `🚆 ${t.de} → ${t.a}` });
+  });
+  return [d, ev.sort((a, b) => a.m - b.m)];
+}
+function ahora() {
+  const dias = arr(trip.dias).map(d => d.fecha).filter(Boolean).sort(); if (!dias.length) return '';
+  const hoy = todayISO(), n = new Date(), nowM = n.getHours() * 60 + n.getMinutes();
+  if (hoy < dias[0]) {
+    const falta = Math.round((new Date(dias[0] + 'T12:00') - new Date(hoy + 'T12:00')) / 864e5);
+    return `<div class="card ahora"><b>✈️ Faltan ${falta} ${falta === 1 ? 'día' : 'días'} para el viaje</b><div class="muted">Sale el ${fmtDate(dias[0])}. Revisa Más → Maleta y documentos.</div></div>`;
+  }
+  if (hoy > dias[dias.length - 1]) return '';
+  const [d, ev] = eventosDe(hoy);
+  const prox = ev.find(e => e.m >= nowM);
+  const lineas = [];
+  if (prox) lineas.push(`<div class="big">${esc(prox.hora)} · ${esc(prox.txt)}</div><div class="muted">${enTiempo(prox.m - nowM)}</div>`);
+  const sig = arr(trip.dias).find(x => x.fecha === sumaDia(hoy, 1));
+  if (d && sig && d.ciudad && sig.ciudad && ck(d.ciudad) !== ck(sig.ciudad) && nowM >= 17 * 60) lineas.push('<div>🧳 Mañana cambias de ciudad: deja la maleta preparada.</div>');
+  if (!prox) {
+    const [, evM] = eventosDe(sumaDia(hoy, 1));
+    lineas.push(evM.length ? `<div>Mañana: <b>${esc(evM[0].hora)}</b> · ${esc(evM[0].txt)}</div>` : sig ? `<div>Mañana: ${esc(sig.titulo || '')}</div>` : '<div>Nada más con hora hoy.</div>');
+  }
+  return `<div class="card ahora"><div class="muted">⏱️ AHORA</div>${lineas.join('')}</div>`;
 }
 
 // Lo imprescindible de la ciudad del día: qué ver (★ Lonely y sitios conocidos) y dónde comer.
@@ -498,7 +531,7 @@ function showFull(key) {
 }
 
 // ---------- Corea (frases, diccionario, guía) ----------
-let coreaSub = 'frases';
+let coreaSub = 'frases', fraseSit = 'Básicas';
 const sinTildes = t => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 const dFila = (e, key) => `<div class="card lugar" data-full="${key}"><div><div>${esc(e[0])}${e[3] ? ' <span class="ver">VERIFICAR</span>' : ''}</div>
   <div class="ko">${esc(e[1])}</div><div class="muted">${esc(e[2])}</div></div></div>`;
@@ -518,8 +551,12 @@ function viewCorea() {
   const seg = [['frases', 'Frases'], ['dicc', 'Diccionario'], ['guia', 'Guía']].map(([k, t]) =>
     `<button class="${coreaSub === k ? '' : 'sec'}" data-sub="${k}">${t}</button>`).join('');
   let html = `<div class="row daynav">${seg}</div>`;
-  if (coreaSub === 'frases') html += '<p class="muted">Toca una frase para verla a pantalla completa.</p>' +
-    FRASES.map((f, i) => dFila([f[0], f[1], f[2]], 'f:' + i)).join('');
+  if (coreaSub === 'frases') {
+    let off = 0; const grupos = FRASES_SIT.map(([t, fs]) => { const g = [t, fs, off]; off += fs.length; return g; });
+    const g = grupos.find(x => x[0] === fraseSit) || grupos[0];
+    html += `<div class="chips sit">${grupos.map(([t]) => `<button class="chip ${t === g[0] ? 'on' : ''}" data-sit="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+      <p class="muted">Toca una frase para verla a pantalla completa.</p>` + g[1].map((f, i) => dFila(f, 'f:' + (g[2] + i))).join('');
+  }
   else if (coreaSub === 'dicc') html += `<input id="q" type="search" placeholder="Buscar (español, coreano o romanización)" autocomplete="off">
     <div id="dres">${dResultados('')}</div>`;
   else html += `<div class="card muted">La guía Lonely Planet de 2016 solo vale para cultura. Precios y apps hay que verificarlos.</div>
@@ -673,6 +710,7 @@ function cardComer(l) {
     ${l.direccion ? `<div class="muted">📍 ${esc(l.direccion)}</div>` : ''}
     ${l.nota ? `<div class="muted">${esc(l.nota)}</div>` : ''}
     <div class="muted">Fuente: ${esc(FUENTES[l.fuente] || l.fuente || '—')}${l.url ? ` · <a href="${esc(l.url)}" target="_blank" rel="noopener">enlace</a>` : ''}</div>
+    ${l.comprobado ? `<div class="comprobado c-${esc(String(l.comprobado.estado || '').replace(/\s+/g, '-'))}">🔎 ${esc({ activo: 'Abierto según fuentes recientes', existe: 'Aparece en listados actuales', dudoso: 'Dudoso', 'no encontrado': 'No encontrado' }[l.comprobado.estado] || l.comprobado.estado)} (revisado ${esc(l.comprobado.fecha || '')})${l.comprobado.nota ? ': ' + esc(l.comprobado.nota) : ''}${l.comprobado.fuente ? ` · <a href="${esc(l.comprobado.fuente)}" target="_blank" rel="noopener">fuente</a>` : ''}</div>` : ''}
     <div>${verificado('k:' + id) ? '<span class="badge ok">✓ verificado</span>' : '<span class="ver">VERIFICAR que sigue abierto</span>'}
       <button class="sec mini verif" data-verif="k:${esc(id)}">${verificado('k:' + id) ? 'Deshacer' : '✓ Verificado'}</button></div>
     <div class="acciones">
@@ -756,7 +794,7 @@ function pendientesVerificar() {
   if (sit.length) g.push(['Sitios', sit]);
   CIUDADES_COMER.forEach(([k, t]) => {
     const ls = lugaresComer().filter(l => l.ciudad === k && estadoDe(String(l.id)).estado !== 'cerrado')
-      .map(l => ({ key: 'k:' + l.id, titulo: l.nombre, sub: [l.tipo, FUENTES[l.fuente] || l.fuente].filter(Boolean).join(' · '), q: l.ko || l.nombre }));
+      .map(l => ({ key: 'k:' + l.id, titulo: l.nombre, sub: [l.tipo, FUENTES[l.fuente] || l.fuente, l.comprobado && '🔎 ' + l.comprobado.estado].filter(Boolean).join(' · '), q: l.ko || l.nombre }));
     if (ls.length) g.push(['Comer · ' + t, ls]);
   });
   return g;
@@ -872,9 +910,10 @@ document.addEventListener('click', e => {
     }
     render(); return;
   }
-  const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub]');
+  const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub],[data-sit]');
   if (!b) return;
   if (b.dataset.sub) coreaSub = b.dataset.sub;
+  else if (b.dataset.sit) fraseSit = b.dataset.sit;
   else if (b.dataset.tab) ir(b.dataset.tab);
   else if (b.dataset.go) ir(b.dataset.go);
   else if (b.dataset.day) { dayIdx += Number(b.dataset.day); }

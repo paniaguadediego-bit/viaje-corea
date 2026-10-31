@@ -11,7 +11,13 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://thesoulofseoul.net/what-to-eat-myeongdong-restaurants-street-food/",
-"nota": "Muy turístico, fundado en 1966."
+"nota": "Muy turístico, fundado en 1966.",
+"comprobado": {
+"fecha": "2026-10-31",
+"estado": "activo",
+"nota": "En la guía Michelin Seúl (Bib Gourmand).",
+"fuente": "https://guide.michelin.com/sg/zh_CN/seoul-capital-area/kr-seoul/restaurant/myeongdong-kyoja"
+}
 },
 {
 "id": "wangbijib",
@@ -72,16 +78,22 @@
 {
 "id": "samoyed",
 "ciudad": "seul",
-"nombre": "Samoyed café (Hongdae)",
-"ko": null,
+"nombre": "Samoyed café Winters Village (Hongdae)",
+"ko": "겨울이머무는집",
 "tipo": "café",
 "plato": null,
-"direccion": null,
+"direccion": "53-33 Wausan-ro 29-gil, Mapo-gu (según guía)",
 "horario": null,
 "precio": null,
 "fuente": "itinerario",
 "url": null,
-"nota": "Enlace guardado en el itinerario original."
+"nota": "Enlace guardado en el itinerario original.",
+"comprobado": {
+"fecha": "2026-10-31",
+"estado": "existe",
+"nota": "Es \"Winters Village\" (겨울이머무는집): 2 plantas, unos 12 samoyedos. Las guías dan dos direcciones distintas: confirmar en Naver.",
+"fuente": "https://koreatravelpost.com/winters-village-samoyed-cafe-hongdae"
+}
 },
 {
 "id": "jjimdak",
@@ -101,15 +113,21 @@
 "id": "mammoth",
 "ciudad": "andong",
 "nombre": "Mammoth Bakery",
-"ko": null,
+"ko": "맘모스제과",
 "tipo": "café",
 "plato": "pan de queso crema",
-"direccion": null,
+"direccion": "34 Munhwagwangjang-gil, Andong",
 "horario": null,
 "precio": null,
 "fuente": "itinerario",
 "url": null,
-"nota": "Parada del 09/11."
+"nota": "Parada del 09/11.",
+"comprobado": {
+"fecha": "2026-10-31",
+"estado": "activo",
+"nota": "Visitante en oct. 2025: colas de hasta 1 h y el pan de queso crema se agota pronto. Horario según guías 08:30-22:00.",
+"fuente": "https://www.ktriptips.com/eng/food/1803542"
+}
 },
 {
 "id": "ganjogoe",
@@ -137,7 +155,13 @@
 "precio": "20.000-30.000 KRW",
 "fuente": "itinerario",
 "url": null,
-"nota": "Hanok en Hwangnidan-gil."
+"nota": "Hanok en Hwangnidan-gil.",
+"comprobado": {
+"fecha": "2026-10-31",
+"estado": "dudoso",
+"nota": "Solo aparece en un directorio sin fecha; sin reseñas recientes. Mirar en Naver antes de ir.",
+"fuente": "https://thatch.co/places/350139/dongri"
+}
 },
 {
 "id": "sugyeongsa",
@@ -145,13 +169,19 @@
 "nombre": "Sugyeongsa",
 "ko": "수경사",
 "tipo": "restaurante",
-"plato": "ssambap y fideos de sésamo silvestre",
-"direccion": "4-1 Sajeong-dong",
-"horario": null,
+"plato": "arroz en hoja de loto y bulgogi (fusión)",
+"direccion": "25 Sajeong-ro 57beon-gil",
+"horario": "11:00-21:00, descanso 15:30-17:00 (según guía)",
 "precio": "20.000-30.000 KRW",
 "fuente": "itinerario",
 "url": null,
-"nota": "Opciones vegetarianas."
+"nota": "Opciones vegetarianas.",
+"comprobado": {
+"fecha": "2026-10-31",
+"estado": "existe",
+"nota": "Según la ficha turística no es de ssambap: arroz en hoja de loto y bulgogi de ternera de Gyeongju (cocina fusión, en un antiguo templo). Datos corregidos.",
+"fuente": "https://www.ktriptips.com/eng/food/3113187"
+}
 },
 {
 "id": "wonjo",
@@ -165,7 +195,13 @@
 "precio": "10.000-20.000 KRW",
 "fuente": "itinerario",
 "url": null,
-"nota": "Cerca del observatorio. Bueno para desayunar o comer rápido."
+"nota": "Cerca del observatorio. Bueno para desayunar o comer rápido.",
+"comprobado": {
+"fecha": "2026-10-31",
+"estado": "existe",
+"nota": "Aparece en listados actuales (especialidad de kongguksu/soja); sin reseñas recientes con fecha.",
+"fuente": "https://www.trip.com/restaurant/south-korea/gyeongju/detail/gyeongju-wonjo-kongguk-19479084"
+}
 },
 {
 "id": "hongsi",
@@ -179,7 +215,13 @@
 "precio": "10.000-20.000 KRW",
 "fuente": "itinerario",
 "url": null,
-"nota": "Al norte del centro histórico."
+"nota": "Al norte del centro histórico.",
+"comprobado": {
+"fecha": "2026-10-31",
+"estado": "activo",
+"nota": "Bien valorado: 4,3 sobre 5 (633 reseñas). Menú de 7 entrantes, 17 platos y 2 postres; famoso por el caqui helado.",
+"fuente": "https://wanderlog.com/place/details/1464746/hongsi-hanjeongsik"
+}
 },
 {
 "id": "ryusenso",
@@ -193,7 +235,13 @@
 "precio": null,
 "fuente": "itinerario",
 "url": null,
-"nota": "Cena en Hwangnidan-gil."
+"nota": "Cena en Hwangnidan-gil.",
+"comprobado": {
+"fecha": "2026-10-31",
+"estado": "dudoso",
+"nota": "No se encuentra local en Gyeongju. Es una cadena de ramen con locales en Busan (Haeundae y Jeonpo), Daegu y Gimhae: probarlo en Busan.",
+"fuente": "https://autoreserve.com/en/restaurants/fPgDFhYWsScX4eNTMbzz"
+}
 },
 {
 "id": "wolseon",
@@ -207,7 +255,13 @@
 "precio": null,
 "fuente": "itinerario",
 "url": null,
-"nota": "Vistas a tejados y túmulos."
+"nota": "Vistas a tejados y túmulos.",
+"comprobado": {
+"fecha": "2026-10-31",
+"estado": "no encontrado",
+"nota": "No aparece en ninguna fuente. Alternativas con vistas a túmulos: Terarosa Gyeongju, Cafe Neung (azotea en Hwangnidan-gil) o Cafe OHI.",
+"fuente": "https://autoreserve.com/en/restaurants/KuoexUcbHeYBHMi3ym3h"
+}
 },
 {
 "id": "bageler",
@@ -216,12 +270,18 @@
 "ko": null,
 "tipo": "café",
 "plato": "bagels",
-"direccion": null,
-"horario": null,
+"direccion": "18 Gyochon-gil, Gyeongju",
+"horario": "11:00-20:00 (según guía)",
 "precio": null,
 "fuente": "itinerario",
 "url": null,
-"nota": "Esquina del parque junto a Cheomseongdae."
+"nota": "Esquina del parque junto a Cheomseongdae.",
+"comprobado": {
+"fecha": "2026-10-31",
+"estado": "existe",
+"nota": "Café de bagels en un hanok en la aldea Gyochon (no junto a Cheomseongdae). 11:00-20:00 según guía.",
+"fuente": "https://bh.trip.com/moments/poi-bagel-bageler-140747859"
+}
 },
 {
 "id": "pan10",
@@ -343,11 +403,17 @@
 "tipo": "restaurante",
 "plato": "sopa de brotes de soja con arroz",
 "direccion": "88 Dongmun-gil, Wansan-gu",
-"horario": null,
+"horario": "07:00-21:00 (según ficha 2025)",
 "precio": null,
 "fuente": "guia",
 "url": "https://kimchimari.com/?p=8005",
-"nota": "Un solo plato en carta."
+"nota": "Un solo plato en carta.",
+"comprobado": {
+"fecha": "2026-10-31",
+"estado": "existe",
+"nota": "Ficha turística de 2025: abre desde 1988, un solo plato. 07:00-21:00 (última comanda 20:30).",
+"fuente": "https://www.ktriptips.com/eng/food/3505721"
+}
 },
 {
 "id": "hankook",
@@ -381,15 +447,21 @@
 "id": "gajok",
 "ciudad": "jeonju",
 "nombre": "Gajok Hoegwan",
-"ko": null,
+"ko": "가족회관",
 "tipo": "restaurante",
 "plato": "bibimbap",
 "direccion": null,
-"horario": null,
+"horario": "10:30-20:00 aprox. (según guías)",
 "precio": null,
 "fuente": "guia",
 "url": "https://ie.hotels.com/go/south-korea/kr-best-local-restaurants-jeonju",
-"nota": "Cerca de Hanok Village."
+"nota": "Cerca de Hanok Village.",
+"comprobado": {
+"fecha": "2026-10-31",
+"estado": "existe",
+"nota": "Ficha turística actual; distinción Blue Ribbon 2023. Horario aprox. 10:30-20:00 (las fuentes varían).",
+"fuente": "https://www.ktriptips.com/eng/food/3104474"
+}
 },
 {
 "id": "nambu-night",
@@ -501,7 +573,13 @@
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": "https://www.theculturetrip.com/asia/south-korea/articles/10-restaurants-in-seoul-that-locals-love",
-"nota": "Lonely Planet Korea 2016, p. 69 · también en guía web"
+"nota": "Lonely Planet Korea 2016, p. 69 · también en guía web",
+"comprobado": {
+"fecha": "2026-10-31",
+"estado": "activo",
+"nota": "Reseña de un visitante en mayo de 2026.",
+"fuente": "https://myannoyingopinions.com/2026/07/18/tosokchon-samgyetang-seoul-may-2026/"
+}
 },
 {
 "id": "lp-gogung",

@@ -28,7 +28,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    api.frankfurter (solo con conexión; se guarda para offline; se
    puede fijar a mano), destacados de la ciudad en Hoy, lista
    Verificar (marca "✓ verificado" en el móvil), botón "Naver" (abre Naver Map, requiere conexión),
-   resumen "Mañana" y hora Corea/Canarias en Hoy, fotos de
+   resumen "Mañana", tarjeta "Ahora" (lo próximo con hora o cuenta
+   atrás) y hora Corea/Canarias en Hoy, frases por situación en Corea, fotos de
    documentos en Más (IndexedDB, solo en el móvil). Gastos
    compartidos: descartado por el usuario.
 6. Dato dudoso = "VERIFICAR". No inventar hangul, teléfonos,
@@ -74,7 +75,10 @@ checklist_documentos[{id,texto,url?}]   avisos[]
  (restaurante|café|mercado|plato|bar),plato,direccion,horario,precio,
  fuente(itinerario|guia|lonely|propio),url,nota}]. Campos pueden
 ser null. "lonely" = Lonely Planet Korea 2016 (página en nota);
-"guia" lleva el enlace en url.
+"guia" lleva el enlace en url. Opcional comprobado{fecha,estado
+(activo|existe|dudoso|no encontrado),nota,fuente}: revisión web
+hecha por Claude (se muestra en la tarjeta; no sustituye al ✓ del
+usuario).
 Estado (Quiero/Visitado/Descartado/Cerrado), notas y lugares
 propios se guardan en el móvil (user.comer, user.comerPropios).
 Campos opcionales: la app NO debe romperse si falta alguno.
@@ -84,7 +88,8 @@ restaurantes (clave = hangul o id de comer.json) para distancias
 en línea recta. Si un lugar no tiene, no se muestra distancia.
 Las ciudades se comparan sin paréntesis ("Seúl (vuelta)" = Seúl).
 contenido.js guarda contenido fijo y público: CATALOGO (sitios
-conocidos por ciudad con hangul seguro), FRASES y GUIA.
+conocidos por ciudad con hangul seguro), FRASES_SIT (frases por
+situación; FRASES es la lista plana) y GUIA.
 
 ## Hoja de ruta (la vital primero: el viaje empieza el 3 nov)
 S1 Estructura PWA, importar/exportar, pantalla de bienvenida
