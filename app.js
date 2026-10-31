@@ -159,6 +159,8 @@ function trasladoCard(t) {
   </div>`;
 }
 
+const interesDe = c => arr(c.interes).length ? arr(c.interes) : (CATALOGO[norm(c.nombre)] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)).map(l => l.es);
+
 function viewRuta() {
   let html = pendingAlert();
 
@@ -166,7 +168,7 @@ function viewRuta() {
   if (ciudades.length) html += '<h2>Mapa</h2>' + viewMapa() + '<h2>Ciudades</h2>' + ciudades.map((c, i) => `<div class="card" id="c-${esc(c.id)}">
     <div class="big">${i + 1}. ${esc(c.nombre)} ${c.ko ? `<span class="muted">${esc(c.ko)}</span>` : ''}</div>
     <div class="muted">${esc(c.desde)} → ${esc(c.hasta)}</div>
-    ${arr(c.interes).length ? `<ul>${arr(c.interes).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>`).join('');
+    ${interesDe(c).length ? `<ul>${interesDe(c).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>`).join('');
 
   const tr = arr(trip.traslados);
   if (tr.length) html += '<h2>Traslados</h2>' + tr.map(trasladoCard).join('');
@@ -238,28 +240,61 @@ function fraseTaxi(ko) {
   return p ? `${ko}${p} 가 주세요` : `${ko}(으)로 가 주세요`;
 }
 
+function lugarFila(l, key) {
+  return `<div class="card lugar">
+    <div><div class="big">${esc(l.es)} ${ver(l)}</div>
+    ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}</div>
+    <button data-full="${key}">Enseñar</button></div>`;
+}
+// Ciudades del viaje (en orden, sin repetir) y después el resto del catálogo.
+function ciudadesCatalogo() {
+  const ids = [...new Set(arr(trip.ciudades).map(c => norm(c.nombre)))].filter(k => CATALOGO[k]);
+  return [...ids, ...Object.keys(CATALOGO).filter(k => !ids.includes(k))];
+}
+const nombreCiudad = k => (arr(trip.ciudades).find(c => norm(c.nombre) === k) || {}).nombre || k;
+
 function viewEnsenar() {
-  const lugares = arr(trip.lugares);
-  if (!lugares.length) return '<p class="muted">No hay lugares (clave "lugares").</p>';
-  return '<p class="muted">Toca un lugar para enseñarlo a pantalla completa al taxista o en recepción.</p>' +
-    lugares.map((l, i) => `<div class="card lugar">
-      <div><div class="big">${esc(l.es)} ${ver(l)}</div>
-      ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}</div>
-      <button data-full="${i}">Enseñar</button></div>`).join('');
+  const mios = arr(trip.lugares);
+  return '<p class="muted">Toca "Enseñar" para mostrarlo a pantalla completa al taxista o en recepción.</p>' +
+    (mios.length ? '<h2>Mis lugares</h2>' + mios.map((l, i) => lugarFila(l, 'j:' + i)).join('') : '') +
+    '<h2>Sitios conocidos</h2>' +
+    ciudadesCatalogo().map(k => `<details><summary class="card big">${esc(nombreCiudad(k))}</summary>
+      ${CATALOGO[k].map((l, i) => lugarFila(l, `c:${k}:${i}`)).join('')}</details>`).join('');
 }
 
-function showFull(i) {
-  const l = arr(trip.lugares)[i]; if (!l) return;
+function full(html) {
   const div = document.createElement('div');
   div.id = 'full';
-  div.innerHTML = `<button class="sec cerrar" data-close>✕ Cerrar</button>
-    ${l.ko ? `<div class="enorme">${esc(fraseTaxi(l.ko))}</div>
+  div.innerHTML = '<button class="sec cerrar" data-close>✕ Cerrar</button>' + html;
+  document.body.appendChild(div);
+}
+function showFull(key) {
+  const [t, a, b] = key.split(':');
+  if (t === 'f') {
+    const f = FRASES[a]; if (!f) return;
+    return full(`<div class="enorme">${esc(f[1])}</div><div class="es">${esc(f[0])} · ${esc(f[2])}</div>`);
+  }
+  const l = t === 'j' ? arr(trip.lugares)[a] : (CATALOGO[a] || [])[b];
+  if (!l) return;
+  full(`${l.ko ? `<div class="enorme">${esc(fraseTaxi(l.ko))}</div>
       ${particula(l.ko) ? '' : '<div class="es">VERIFICAR partícula (으)로</div>'}`
       : '<div class="falta">falta hangul: copiar de Naver Map</div>'}
     ${l.direccion_ko ? `<div class="dir">${esc(l.direccion_ko)}</div>` : ''}
     <div class="es">${esc(l.es)}${l.romanizacion ? ' · ' + esc(l.romanizacion) : ''}
-      ${l.direccion_en ? '<br>' + esc(l.direccion_en) : ''}${l.verificar ? '<br><span class="ver">VERIFICAR</span>' : ''}</div>`;
-  document.body.appendChild(div);
+      ${l.direccion_en ? '<br>' + esc(l.direccion_en) : ''}${l.nota ? '<br>' + esc(l.nota) : ''}
+      ${l.verificar ? '<br><span class="ver">VERIFICAR</span>' : ''}</div>`);
+}
+
+// ---------- Corea (guía + frases) ----------
+function viewCorea() {
+  return `<h2>Frases útiles</h2>
+    ${FRASES.map((f, i) => `<div class="card lugar"><div><div>${esc(f[0])}</div>
+      <div class="ko">${esc(f[1])}</div><div class="muted">${esc(f[2])}</div></div>
+      <button data-full="f:${i}">⛶</button></div>`).join('')}
+    <h2>Nociones y etiqueta</h2>
+    <div class="card muted">La guía Lonely Planet de 2016 solo vale para cultura. Precios y apps hay que verificarlos.</div>
+    ${GUIA.map(([t, ps]) => `<details><summary class="card big">${esc(t)}</summary><div class="card"><ul>
+      ${ps.map(x => `<li>${esc(x).replace('VERIFICAR', '<span class="ver">VERIFICAR</span>')}</li>`).join('')}</ul></div></details>`).join('')}`;
 }
 
 // ---------- Seguro ----------
@@ -326,7 +361,7 @@ function render() {
     case 'ruta': html = viewRuta(); break;
     case 'ensenar': html = viewEnsenar(); break;
     case 'seguro': html = viewSeguro(); break;
-    case 'corea': html = viewPronto('Corea y frases útiles', 'S3'); break;
+    case 'corea': html = viewCorea(); break;
     case 'gastos': html = viewPronto('Gastos', 'S5'); break;
     case 'checklist': html = viewPronto('Checklist por ciudad', 'S5'); break;
     default: html = viewMas();
@@ -337,7 +372,7 @@ function render() {
 document.addEventListener('click', e => {
   const x = e.target.closest('[data-full],[data-close],[data-copy],[data-ciudad]');
   if (x) {
-    if (x.dataset.full) showFull(+x.dataset.full);
+    if (x.dataset.full) showFull(x.dataset.full);
     else if (x.dataset.copy) copiar(x.dataset.copy);
     else if (x.dataset.ciudad) document.getElementById('c-' + x.dataset.ciudad)?.scrollIntoView({ behavior: 'smooth' });
     else document.getElementById('full')?.remove();

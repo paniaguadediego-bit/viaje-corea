@@ -58,6 +58,8 @@ seguro{producto,poliza,vigencia,viajeros_asegurados,
 checklist_documentos[{id,texto,url?}]   avisos[]
 Campos opcionales: la app NO debe romperse si falta alguno.
 Crea example.trip.json FICTICIO que cumpla este esquema.
+contenido.js guarda contenido fijo y público: CATALOGO (sitios
+conocidos por ciudad con hangul seguro), FRASES y GUIA.
 
 ## Hoja de ruta (la vital primero: el viaje empieza el 3 nov)
 S1 Estructura PWA, importar/exportar, pantalla de bienvenida

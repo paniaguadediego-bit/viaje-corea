@@ -102,3 +102,8 @@ nav#tabs button.on { color: var(--blue); font-weight: 700; box-shadow: inset 0 3
 #full .cerrar { position: absolute; top: calc(10px + env(safe-area-inset-top)); right: 10px; width: auto; }
 .falta { color: var(--red); font-weight: 700; }
 #full .falta { color: #c00; font-size: 1.4rem; }
+
+details > summary { list-style: none; cursor: pointer; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::after { content: " ▸"; color: var(--muted); }
+details[open] > summary::after { content: " ▾"; }
