@@ -17,7 +17,6 @@ const CATALOGO = {
     { es: 'Aeropuerto de Incheon', ko: '인천국제공항', romanizacion: 'Incheon Gukje Gonghang' }
   ],
   andong: [
-    { es: 'Aldea Hahoe', ko: '하회마을', romanizacion: 'Hahoe Maeul' },
     { es: 'Academia Dosan Seowon', ko: '도산서원', romanizacion: 'Dosan Seowon' },
     { es: 'Estación de Andong', ko: '안동역', romanizacion: 'Andong-yeok' }
   ],
@@ -131,3 +130,77 @@ const GUIA = [
     'K-ETA y tarjeta de llegada: comprobar si hacen falta para tu fecha. VERIFICAR en la web oficial.'
   ]]
 ];
+
+// Recomendaciones de la guía Lonely Planet Korea (2016). Nombre y hangul de la guía;
+// descripciones resumidas. top = "elección del autor". Restaurantes: pueden haber cerrado (verificar).
+const R = (es, ko, tipo, nota, extra = {}) => ({ es, ko, tipo, nota, lp: true, ...extra });
+const COMER = { verificar: true };
+const LP = {
+  seul: [
+    R('Santuario Jongmyo', '종묘', 'Santuario', 'Santuario real de la dinastía Joseon (Unesco).', { top: true }),
+    R('Templo Jogye-sa', '조계사', 'Templo', 'Templo budista principal, en pleno centro.', { top: true }),
+    R('Arroyo Cheonggyecheon', '청계천', 'Paseo', 'Arroyo urbano recuperado para pasear.', { top: true }),
+    R('Palacio Deoksugung', '덕수궁', 'Palacio', 'Palacio junto al Ayuntamiento; cambio de guardia.', { top: true }),
+    R('Museo Nacional de Corea', '국립중앙박물관', 'Museo', 'El gran museo de historia y arte del país.', { top: true }),
+    R('Memorial de la Guerra de Corea', '전쟁 기념관', 'Museo', 'Historia militar y de la Guerra de Corea.', { top: true }),
+    R('Templo Gilsang-sa', '길상사', 'Templo', 'Templo tranquilo en una ladera del norte.', { top: true }),
+    R('Templo Bongeun-sa', '봉은사', 'Templo', 'Templo budista en medio de Gangnam.', { top: true }),
+    R('Museo del Mueble Coreano', '한국가구박물관', 'Museo', 'Casas y muebles tradicionales; visita guiada con reserva.', { top: true, verificar: true }),
+    R('Mercado de Dongdaemun', '동대문시장', 'Mercado', 'Enorme zona de mercados y tiendas, abierta hasta tarde.', { top: true }),
+    R('Woo Rae Oak', '우래옥', 'Restaurante', 'Clásico de naengmyeon (fideos fríos) y barbacoa.', { top: true, ...COMER }),
+    R('Jaha Sonmandoo', '자하손만두', 'Restaurante', 'Mandu (empanadillas) caseros.', { top: true, ...COMER }),
+    R('Casa de té Suyeon Sanbang', '수연산방', 'Casa de té', 'Casa de té en un hanok antiguo.', { top: true, ...COMER }),
+    R('Casa de té Dawon', '다원', 'Casa de té', 'Té tradicional en un patio de Insadong.', { top: true, ...COMER })
+  ],
+  andong: [
+    R('Aldea Hahoe', '안동 하회마을', 'Aldea', 'Lo mejor de la zona (Unesco). Ve temprano por la mañana.', { top: true }),
+    R('Museo de Máscaras de Hahoe', '', 'Museo', 'Máscaras tradicionales coreanas y del mundo, a 2 km de la aldea.'),
+    R('Academia Byeongsan Seowon', '병산서원', 'Academia', 'Antigua escuela confuciana (1572) junto al río.'),
+    R('Aldea folclórica de Andong', '안동민속촌', 'Aldea', 'Casas tradicionales trasladadas, en una ladera sobre la ciudad.'),
+    R('Museo del Folclore de Andong', '안동 민속박물관', 'Museo', 'Vida y costumbres tradicionales de la región.'),
+    R('Museo del Soju', '소주 박물관', 'Museo', 'Sobre el soju de Andong (45 %), patrimonio cultural.'),
+    R('Buda de Jebiwon', '제비원', 'Santuario', 'Gran Buda tallado en la roca, a las afueras.'),
+    R('Andong jjimdak (plato)', '안동찜닭', 'Comida', 'Pollo estofado con fideos: el plato típico de Andong.'),
+    R('Yangban Bapsang', '양반 밥상', 'Restaurante', 'Comida tradicional de la zona.', COMER),
+    R('Jaerim Galbi', '재림 갈비', 'Restaurante', 'Barbacoa de costillas de cerdo y bulgogi a buen precio.', COMER)
+  ],
+  gyeongju: [
+    R('Museo Nacional de Gyeongju', '국립경주박물관', 'Museo', 'Quizá el mejor museo de historia de Corea: coronas de oro Silla y la gran campana.'),
+    R('Fortaleza Banwolseong', '반월성', 'Ruinas', 'Restos del palacio Silla junto al observatorio.'),
+    R('Pagoda de Bunhwang-sa', '분황사', 'Pagoda', 'La pagoda fechada más antigua de Corea, de ladrillo.'),
+    R('Tumbas de Noseo-dong', '노서동 고분', 'Tumbas', 'Túmulos Silla gratuitos junto a la zona comercial.'),
+    R('Templo Golgul-sa', '골굴사', 'Templo', 'Buda tallado en la roca y arte marcial budista (sunmudo).'),
+    R('Tumbas reales de Samneung', '삼릉', 'Tumbas', 'Tres tumbas en un bosque de pinos, al pie de Namsan.'),
+    R('Aldea de Yangdong', '경주 양동마을', 'Aldea', 'Aldea tradicional (Unesco), menos turística que Hahoe.'),
+    R('Lago Bomun', '보문 단지', 'Zona', 'Lago con hoteles y paseo, a 5 km del centro.'),
+    R('Dosolmaeul', '도솔마을', 'Restaurante', 'Comida coreana casera en una casa tradicional.', { top: true, ...COMER }),
+    R('Kuro Ssambap', '구로쌈밥', 'Restaurante', 'Ssambap: decenas de platillos para envolver en hojas.', COMER)
+  ],
+  busan: [
+    R('Templo Beomeo-sa', '범어사', 'Templo', 'Gran templo en la montaña Geumjeong.'),
+    R('Fortaleza de Geumjeong', '금정산성', 'Fortaleza', 'Murallas en la montaña; se combina con el teleférico.'),
+    R('Parque costero Igidae', '이기대', 'Paseo', 'Sendero junto a los acantilados con vistas al puente Gwangan.'),
+    R('Parque Taejongdae', '태종대유원지', 'Parque', 'Acantilados y faro en el extremo sur de la isla Yeongdo.'),
+    R('Cementerio de la ONU', '재한 유엔 기념공원', 'Memorial', 'Cementerio de soldados de la ONU caídos en la guerra.'),
+    R('Parque Yongdusan', '용두산 공원', 'Parque', 'Parque con la Torre de Busan, en el centro.'),
+    R('Museo de Historia Moderna de Busan', '부산 근대역사관', 'Museo', 'Historia de la ciudad en el siglo XX.'),
+    R('Mercado Bujeon', '부전시장', 'Mercado', 'Gran mercado local, muy auténtico.'),
+    R('Noran Mahura', '청사포 노란 마후라', 'Restaurante', 'Marisco en el puerto pesquero de Cheongsapo.', { top: true, ...COMER }),
+    R('Sulbing', '설빙', 'Postres', 'Cadena de bingsu (hielo raspado con toppings).', { top: true, ...COMER }),
+    R('Casa de té Maru', '마루', 'Casa de té', 'Casa de té tradicional.', { top: true, ...COMER })
+  ],
+  jeonju: [
+    R('Escuela confuciana Jeonju Hyanggyo', '전주향교', 'Histórico', 'Antigua escuela confuciana con árboles enormes (ginkgos).'),
+    R('Museo del Vino Tradicional', '전통술박물관', 'Museo', 'Licores tradicionales coreanos; a veces con cata.'),
+    R('Puerta Pungnammun', '풍남문', 'Puerta', 'Antigua puerta de la muralla, junto al mercado Nambu.'),
+    R('Mirador Omokdae', '오목대', 'Mirador', 'Pabellón en una colina con vistas a toda la aldea hanok.'),
+    R('Aldea Jaman (murales)', '자만마을', 'Barrio', 'Callejuelas llenas de murales de colores.'),
+    R('Jeonju Gaeksa', '전주 객사', 'Histórico', 'Antigua casa de huéspedes oficial, en el centro.'),
+    R('Museo del Hanji', '전주한지박물관', 'Museo', 'El papel tradicional coreano, especialidad de Jeonju.'),
+    R('Hanguk-jip', '한국집', 'Restaurante', 'Bibimbap de Jeonju clásico.', { top: true, ...COMER }),
+    R('Yetchon Makgeolli', '옛촌막걸리', 'Restaurante', 'Makgeolli en tetera con muchos platillos incluidos.', { top: true, ...COMER }),
+    R('Hyundai-ok', '현대옥', 'Restaurante', 'Kongnamul gukbap (sopa de brotes de soja) en el mercado Nambu.', COMER),
+    R('Veteran', '베테랑', 'Restaurante', 'Kalguksu (sopa de fideos cortados a cuchillo).', COMER),
+    R('Casa de té Gyodong Dawan', '교동다완', 'Casa de té', 'Casa de té en un hanok de la aldea.', COMER)
+  ]
+};

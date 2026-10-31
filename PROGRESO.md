@@ -1,7 +1,7 @@
 # Progreso
-- [x] S1  - [x] S2  - [x] S3  - [x] S4  - [ ] S5  - [ ] S6
+- [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [ ] S6
 
-Caché del service worker: corea-v4
+Caché del service worker: corea-v6
 
 ## Decisiones
 - S1: datos guardados en localStorage (más simple que IndexedDB; el viaje cabe de sobra).
@@ -12,7 +12,8 @@ Caché del service worker: corea-v4
 - Cambio pedido: que Claude haga lo que pueda de "Qué debes hacer tú". Añadido contenido.js con un catálogo PÚBLICO de sitios conocidos por ciudad (con hangul seguro): alimenta los sitios de interés en Ruta (si la ciudad no trae "interes") y la sección "Sitios conocidos" en Enseñar.
 - Los datos privados (hoteles, póliza, teléfono del seguro) NO se pueden hacer desde aquí: no están en el repo y no deben estarlo.
 - S4: diccionario (587 entradas ES→KO en diccionario.js) dentro de la pestaña Corea, con subpestañas Frases / Diccionario / Guía (no se añaden pestañas nuevas).
-- Lonely Planet: no accesible desde esta sesión (no está en Notion y los Proyectos de claude.ai no se ven desde aquí). Pendiente de que el usuario la adjunte.
+- Lonely Planet 2016: el usuario la adjuntó como texto. Se añadieron a contenido.js (LP) unas 10-14 recomendaciones por ciudad con el nombre y hangul de la guía y resúmenes propios (no se copia texto). Salen en Ruta (desplegable "Lonely Planet 2016 recomienda"), en Enseñar (marca LP, ★ = elección del autor) y en Checklist. Restaurantes con VERIFICAR (la guía es de 2016). La guía NO se sube al repo.
+- S5: Gastos (₩/€, cambio manual editable, categoría, totales por ciudad y categoría, barra de presupuesto), Checklist por ciudad (sitios + LP + propios) y Más (Maleta/Documentos desde checklist_documentos + propios, Notas con autoguardado).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
@@ -27,6 +28,9 @@ Caché del service worker: corea-v4
 - [Supuesto] Si el hangul no termina en sílaba coreana (p. ej. un número), se muestra "(으)로" con aviso VERIFICAR.
 - [Supuesto] Corea: frases primero (lo más usado), luego la guía en apartados plegables.
 - [Supuesto] "Estación de Gyeongju" = 경주역 (antes 신경주역), marcado VERIFICAR.
+- [Supuesto] El usuario pidió "lo siguiente": se hicieron S4 y S5 en la misma sesión.
+- [Supuesto] Los gastos se guardan en su moneda y se pasan a € con el cambio actual.
+- [Supuesto] Museo de Máscaras de Hahoe sin hangul (la guía no lo da): marca "falta hangul".
 
 ## Verificar por el usuario
 - Activar GitHub Pages (Settings → Pages → rama main, carpeta / root).

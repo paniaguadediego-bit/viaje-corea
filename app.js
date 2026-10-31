@@ -159,6 +159,11 @@ function trasladoCard(t) {
   </div>`;
 }
 
+const sitiosCiudad = k => {
+  const base = CATALOGO[k] || [], ko = new Set(base.map(l => l.ko));
+  return [...base, ...(LP[k] || []).filter(l => !l.ko || !ko.has(l.ko))];
+};
+const lpTag = l => l.lp ? ` <span class="badge otro">LP${l.top ? ' ★' : ''}</span>` : '';
 const interesDe = c => arr(c.interes).length ? arr(c.interes) : (CATALOGO[norm(c.nombre)] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)).map(l => l.es);
 
 function viewRuta() {
@@ -168,7 +173,9 @@ function viewRuta() {
   if (ciudades.length) html += '<h2>Mapa</h2>' + viewMapa() + '<h2>Ciudades</h2>' + ciudades.map((c, i) => `<div class="card" id="c-${esc(c.id)}">
     <div class="big">${i + 1}. ${esc(c.nombre)} ${c.ko ? `<span class="muted">${esc(c.ko)}</span>` : ''}</div>
     <div class="muted">${esc(c.desde)} → ${esc(c.hasta)}</div>
-    ${interesDe(c).length ? `<ul>${interesDe(c).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>`).join('');
+    ${interesDe(c).length ? `<ul>${interesDe(c).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+    ${(LP[norm(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => norm(o.nombre) === norm(c.nombre)) ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[norm(c.nombre)].length})</summary><ul>
+      ${LP[norm(c.nombre)].map(l => `<li><b>${esc(l.es)}</b>${l.top ? ' ★' : ''}${l.verificar ? ' <span class="ver">VERIFICAR</span>' : ''}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></li>`).join('')}</ul></details>` : ''}</div>`).join('');
 
   const tr = arr(trip.traslados);
   if (tr.length) html += '<h2>Traslados</h2>' + tr.map(trasladoCard).join('');
@@ -242,13 +249,13 @@ function fraseTaxi(ko) {
 
 function lugarFila(l, key) {
   return `<div class="card lugar">
-    <div><div class="big">${esc(l.es)} ${ver(l)}</div>
+    <div><div class="big">${esc(l.es)}${lpTag(l)} ${ver(l)}</div>
     ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}</div>
     <button data-full="${key}">Enseñar</button></div>`;
 }
 // Ciudades del viaje (en orden, sin repetir) y después el resto del catálogo.
 function ciudadesCatalogo() {
-  const ids = [...new Set(arr(trip.ciudades).map(c => norm(c.nombre)))].filter(k => CATALOGO[k]);
+  const ids = [...new Set(arr(trip.ciudades).map(c => norm(c.nombre)))].filter(k => CATALOGO[k] || LP[k]);
   return [...ids, ...Object.keys(CATALOGO).filter(k => !ids.includes(k))];
 }
 const nombreCiudad = k => (arr(trip.ciudades).find(c => norm(c.nombre) === k) || {}).nombre || k;
@@ -259,7 +266,7 @@ function viewEnsenar() {
     (mios.length ? '<h2>Mis lugares</h2>' + mios.map((l, i) => lugarFila(l, 'j:' + i)).join('') : '') +
     '<h2>Sitios conocidos</h2>' +
     ciudadesCatalogo().map(k => `<details><summary class="card big">${esc(nombreCiudad(k))}</summary>
-      ${CATALOGO[k].map((l, i) => lugarFila(l, `c:${k}:${i}`)).join('')}</details>`).join('');
+      ${sitiosCiudad(k).map((l, i) => lugarFila(l, `c:${k}:${i}`)).join('')}</details>`).join('');
 }
 
 function full(html) {
@@ -274,7 +281,7 @@ function showFull(key) {
     const f = t === 'f' ? FRASES[a] : ((DICC[a] || [])[1] || [])[b]; if (!f) return;
     return full(`<div class="enorme">${esc(f[1])}</div><div class="es">${esc(f[0])} · ${esc(f[2])}</div>`);
   }
-  const l = t === 'j' ? arr(trip.lugares)[a] : (CATALOGO[a] || [])[b];
+  const l = t === 'j' ? arr(trip.lugares)[a] : sitiosCiudad(a)[b];
   if (!l) return;
   full(`${l.ko ? `<div class="enorme">${esc(fraseTaxi(l.ko))}</div>
       ${particula(l.ko) ? '' : '<div class="es">VERIFICAR partícula (으)로</div>'}`
@@ -351,9 +358,97 @@ function viewPronto(nombre, ses) {
   return `<div class="card"><div class="big">${nombre}</div><p class="muted">Llega en la sesión ${ses}.</p></div>`;
 }
 
+// ---------- datos del usuario (gastos, checks, notas) ----------
+function u() { // asegura la forma de "user" aunque venga de una copia antigua
+  user.gastos = arr(user.gastos);
+  if (!user.checklist || typeof user.checklist !== 'object') user.checklist = {};
+  if (!user.extra || typeof user.extra !== 'object') user.extra = {};
+  if (typeof user.notas !== 'string') user.notas = '';
+  return user;
+}
+const saveUser = () => save(K_USER, user);
+
+// Lista de casillas: base (del JSON o catálogo) + elementos propios. scope separa cada lista.
+function checks(scope, base) {
+  const U = u(), propios = arr(U.extra[scope]);
+  const items = [...base.map(b => ({ ...b, propio: false })), ...propios.map((t, i) => ({ id: 'p' + i, texto: t, propio: true, i }))];
+  const hechos = items.filter(it => U.checklist[scope + '|' + it.id]).length;
+  return `<div class="muted">${hechos} de ${items.length} hechos</div>
+    ${items.map(it => { const k = scope + '|' + it.id; return `<label class="check card">
+      <input type="checkbox" data-check="${esc(k)}" ${U.checklist[k] ? 'checked' : ''}>
+      <span>${esc(it.texto)}${it.url ? ` · <a href="${esc(it.url)}" target="_blank" rel="noopener">enlace</a>` : ''}</span>
+      ${it.propio ? `<button class="sec mini" data-delitem="${esc(scope)}" data-i="${it.i}">✕</button>` : ''}</label>`; }).join('')}
+    <form class="row" data-additem="${esc(scope)}"><input name="t" placeholder="Añadir…" autocomplete="off"><button class="mini">＋</button></form>`;
+}
+
+function ciudadesUnicas() {
+  const vistas = new Set();
+  return arr(trip.ciudades).filter(c => { const k = norm(c.nombre); if (vistas.has(k)) return false; vistas.add(k); return true; });
+}
+function ciudadActual() {
+  const d = arr(trip.dias).find(d => d.fecha === todayISO());
+  if (d && d.ciudad) return d.ciudad;
+  const t = todayISO(), c = arr(trip.ciudades).find(c => c.desde <= t && t < c.hasta);
+  return c ? c.nombre : (arr(trip.ciudades)[0] || {}).nombre || '';
+}
+
+// Recuerda qué desplegables están abiertos entre redibujados.
+const abiertos = {};
+const abierto = (k, def) => (k in abiertos ? abiertos[k] : def);
+document.addEventListener('toggle', e => { const k = e.target.dataset && e.target.dataset.key; if (k) abiertos[k] = e.target.open; }, true);
+
+// ---------- Checklist por ciudad ----------
+function viewChecklist() {
+  const cs = ciudadesUnicas();
+  if (!cs.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
+  const act = norm(ciudadActual());
+  return '<p class="muted">Sitios de interés de cada ciudad y lo que quieras añadir.</p>' + cs.map(c =>
+    `<details data-key="ck:${esc(norm(c.nombre))}" ${abierto('ck:' + norm(c.nombre), norm(c.nombre) === act) ? 'open' : ''}><summary class="card big">${esc(c.nombre)}</summary>
+      ${checks('c:' + norm(c.nombre), [...interesDe(c), ...(LP[norm(c.nombre)] || []).map(l => l.es + ' (LP)')].map(t => ({ id: norm(t), texto: t })))}</details>`).join('');
+}
+
+// ---------- Gastos ----------
+const CATS = ['Comida', 'Transporte', 'Alojamiento', 'Entradas', 'Compras', 'Otros'];
+const cambio = () => Number(u().cambio) || Number(trip.meta && trip.meta.cambio_won_por_euro) || 0;
+const aEur = g => g.moneda === 'EUR' ? g.importe : (cambio() ? g.importe / cambio() : 0);
+const eur = n => n.toLocaleString('es-ES', { maximumFractionDigits: 2 }) + ' €';
+const won = n => '₩' + Math.round(n).toLocaleString('es-ES');
+
+function viewGastos() {
+  const U = u(), G = U.gastos, ref = Number(trip.meta && trip.meta.presupuesto_referencia) || 0;
+  const total = G.reduce((a, g) => a + aEur(g), 0);
+  const suma = key => { const m = {}; G.forEach(g => { m[g[key] || '—'] = (m[g[key] || '—'] || 0) + aEur(g); }); return m; };
+  const tabla = m => Object.entries(m).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div class="lugar"><span>${esc(k)}</span><b>${eur(v)}</b></div>`).join('');
+  const act = ciudadActual();
+  return `<div class="card">
+      <div class="big">Total: ${eur(total)}</div>
+      ${ref ? `<div class="barra"><div style="width:${Math.min(100, total / ref * 100).toFixed(0)}%"></div></div>
+        <div class="muted">Presupuesto de referencia: ${eur(ref)} · quedan ${eur(ref - total)}</div>` : ''}
+      ${cambio() ? '' : '<div class="falta">Pon el cambio para pasar ₩ a €</div>'}
+    </div>
+    <form class="card" data-gasto>
+      <div class="row"><input name="importe" type="number" inputmode="decimal" step="any" min="0" placeholder="Importe" required>
+        <select name="moneda"><option value="KRW">₩</option><option value="EUR">€</option></select></div>
+      <input name="concepto" placeholder="Concepto (opcional)" autocomplete="off">
+      <div class="row"><select name="cat">${CATS.map(c => `<option>${c}</option>`).join('')}</select>
+        <select name="ciudad">${ciudadesUnicas().map(c => `<option ${norm(c.nombre) === norm(act) ? 'selected' : ''}>${esc(c.nombre)}</option>`).join('')}<option>Otra</option></select></div>
+      <button>Añadir gasto</button>
+    </form>
+    <div class="card row"><span>Cambio: 1 € =</span><input data-cambio type="number" inputmode="decimal" step="any" value="${cambio() || ''}" placeholder="₩"><span>₩</span></div>
+    ${G.length ? `<h2>Por ciudad</h2><div class="card">${tabla(suma('ciudad'))}</div>
+      <h2>Por categoría</h2><div class="card">${tabla(suma('cat'))}</div>
+      <h2>Últimos gastos</h2>${G.slice().reverse().map(g => `<div class="card lugar"><div>
+        <b>${g.moneda === 'EUR' ? eur(g.importe) : won(g.importe)}</b>${g.moneda === 'EUR' ? '' : ` <span class="muted">≈ ${eur(aEur(g))}</span>`}
+        <div class="muted">${esc(g.fecha)} · ${esc(g.ciudad)} · ${esc(g.cat)}${g.concepto ? ' · ' + esc(g.concepto) : ''}</div></div>
+        <button class="sec mini" data-delgasto="${esc(g.id)}">✕</button></div>`).join('')}` : '<p class="muted">Aún no hay gastos.</p>'}`;
+}
+
 function viewMas() {
   const t = load(K_THEME, 'auto');
-  return `<h2>Datos del viaje</h2>
+  const docs = arr(trip && trip.checklist_documentos).map((d, i) => ({ id: d.id || 'd' + i, texto: d.texto, url: d.url }));
+  return `${trip ? `<h2>Maleta y documentos</h2>${checks('docs', docs)}
+    <h2>Notas</h2><textarea data-notas rows="6" placeholder="Escribe aquí… (se guarda solo)">${esc(u().notas)}</textarea>` : ''}
+    <h2>Datos del viaje</h2>
     <button data-act="import">📂 Importar viaje</button>
     <button class="sec" data-act="export">💾 Exportar copia</button>
     <p class="muted">La copia incluye el viaje, gastos, checklist y notas. Guárdala fuera del móvil.</p>
@@ -362,7 +457,6 @@ function viewMas() {
       ${['auto', 'light', 'dark'].map(v => `<button class="${t === v ? '' : 'sec'}" data-theme="${v}">
         ${{ auto: 'Auto', light: 'Claro', dark: 'Oscuro' }[v]}</button>`).join('')}
     </div>
-    ${viewPronto('Maleta / Documentos y Notas', 'S5')}
     <h2>Borrar</h2>
     <button class="danger" data-act="wipe">Borrar datos de este móvil</button>`;
 }
@@ -382,14 +476,21 @@ function render() {
     case 'ensenar': html = viewEnsenar(); break;
     case 'seguro': html = viewSeguro(); break;
     case 'corea': html = viewCorea(); break;
-    case 'gastos': html = viewPronto('Gastos', 'S5'); break;
-    case 'checklist': html = viewPronto('Checklist por ciudad', 'S5'); break;
+    case 'gastos': html = viewGastos(); break;
+    case 'checklist': html = viewChecklist(); break;
     default: html = viewMas();
   }
   $('#view').innerHTML = html;
 }
 
 document.addEventListener('click', e => {
+  const del = e.target.closest('[data-delitem],[data-delgasto]');
+  if (del) {
+    e.preventDefault();
+    if (del.dataset.delgasto) { if (!confirm('¿Borrar este gasto?')) return; u().gastos = user.gastos.filter(g => g.id !== del.dataset.delgasto); }
+    else arr(u().extra[del.dataset.delitem]).splice(+del.dataset.i, 1);
+    saveUser(); render(); return;
+  }
   const x = e.target.closest('[data-full],[data-close],[data-copy],[data-ciudad]');
   if (x) {
     if (x.dataset.full) showFull(x.dataset.full);
@@ -417,7 +518,27 @@ document.addEventListener('click', e => {
   render();
 });
 document.addEventListener('input', e => {
-  if (e.target.id === 'q') $('#dres').innerHTML = dResultados(e.target.value);
+  const t = e.target;
+  if (t.id === 'q') $('#dres').innerHTML = dResultados(t.value);
+  else if (t.dataset.notas !== undefined) { u().notas = t.value; saveUser(); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.check) { u().checklist[t.dataset.check] = t.checked; if (!t.checked) delete user.checklist[t.dataset.check]; saveUser(); render(); }
+  else if (t.dataset.cambio !== undefined) { u().cambio = Number(t.value) || 0; saveUser(); render(); }
+});
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target, d = Object.fromEntries(new FormData(f));
+  if (f.dataset.additem) {
+    const t = (d.t || '').trim(); if (!t) return;
+    (u().extra[f.dataset.additem] = arr(user.extra[f.dataset.additem])).push(t);
+  } else if (f.dataset.gasto !== undefined) {
+    const importe = Number(d.importe); if (!(importe > 0)) return;
+    u().gastos.push({ id: Date.now().toString(36), fecha: todayISO(), importe, moneda: d.moneda,
+      concepto: (d.concepto || '').trim(), cat: d.cat, ciudad: d.ciudad });
+  } else return;
+  saveUser(); render();
 });
 $('#file').addEventListener('change', e => {
   if (e.target.files[0]) importFile(e.target.files[0]);
