@@ -81,6 +81,8 @@ hecha por Claude (se muestra en la tarjeta; no sustituye al ✓ del
 usuario).
 Estado (Quiero/Visitado/Descartado/Cerrado), notas y lugares
 propios se guardan en el móvil (user.comer, user.comerPropios).
+"Hecho/visitado" es UNA marca por sitio (user.hecho, clave = hangul
+o nombre): Checklist, Ciudades, Enseñar, Hoy y Comer la comparten.
 Campos opcionales: la app NO debe romperse si falta alguno.
 Crea example.trip.json FICTICIO que cumpla este esquema.
 data/coords.json: coordenadas aproximadas PÚBLICAS de sitios y

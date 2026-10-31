@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v22
+Caché del service worker: corea-v23
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -54,6 +54,8 @@ Caché del service worker: corea-v22
 
 - Cambio pedido (v22): tarjeta "⏱️ Ahora" en Hoy (antes del viaje, cuenta atrás; durante, lo próximo con hora de hoy —items y trenes— con "en X min"; si no queda nada, lo primero de mañana; aviso de maleta la víspera de cambiar de ciudad). Frases por situación (Básicas, Taxi, Hotel, Restaurante, Compras, Transporte, Farmacia, Emergencia; 67 frases). Revisión web de 13 lugares de Comer guardada en "comprobado" (Ryusenso no está en Gyeongju; Sugyeongsa corregido; Bagel Bageler en Gyochon; Wolseon no encontrado; Mammoth activo con colas; Hongsi 4,3/5).
 
+- Cambio pedido (v23): "hecho/visitado" unificado. Tachar en Checklist marca el sitio en toda la app: tachado con ✓ en Ciudades (botón redondo para marcar desde ahí), ✅ y atenuado en Enseñar, tachado en los destacados de Hoy y "Visitado" en Comer; y al revés. Checklist por ciudad ahora lista sitios (catálogo + Lonely), "Para comer" (Quiero, Visitado e itinerario) y "Mis cosas"; contador hechos/total.
+
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
 - [Supuesto] Tema (Auto/Claro/Oscuro) e Importar/Exportar/Borrar viven en la pestaña Más.
@@ -82,6 +84,7 @@ Caché del service worker: corea-v22
 - [Supuesto] Cambio automático: api.frankfurter.dev (y .app de reserva), datos del Banco Central Europeo; se actualiza como mucho cada 6 h. Escribir un cambio a mano lo fija hasta pulsar "Usar cambio automático".
 - [Supuesto] Lista Verificar incluye todos los lugares de Comer (salvo los marcados Cerrado), lo marcado con verificar en el viaje y los sitios dudosos.
 - [Supuesto] "Valoración": no hay puntuaciones públicas sin conexión ni API sin cuenta; se usa una valoración propia (1-5) y un orden "Recomendado" (Quiero, itinerario, ★ Lonely, guía web; Descartado/Cerrado al final; Visitado baja).
+- [Supuesto] El mismo sitio se reconoce por su hangul (o por el nombre si no tiene): p. ej. "Mercado Gwangjang" en Comer y en Ciudades comparten marca. Las marcas antiguas del checklist se respetan.
 
 ## Verificar por el usuario
 - Prueba real en tu móvil: abrir con wifi, cerrar, modo avión, abrir y recorrer las 8 pestañas.

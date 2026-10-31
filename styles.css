@@ -268,3 +268,13 @@ nav#tabs button.on span { background: var(--tint-b); border-radius: 10px; paddin
 .comprobado { font-size: .82em; margin: 4px 0; padding: 4px 8px; border-radius: 8px; background: var(--tint-b); }
 .comprobado.c-activo { background: color-mix(in srgb, var(--ok) 14%, var(--card)); }
 .comprobado.c-dudoso, .comprobado.c-no-encontrado { background: var(--tint-r); }
+
+/* hecho / visitado en toda la app */
+.tachado, .tachado b { text-decoration: line-through; color: var(--muted); }
+.hecho-card { opacity: .6; }
+.hlist { list-style: none; padding-left: 0; }
+.hlist li { display: flex; gap: 8px; align-items: flex-start; }
+.hk { width: 26px; height: 26px; min-height: 26px !important; padding: 0; margin: 0; flex: none; border-radius: 50%;
+  background: var(--card) !important; color: transparent; border: 1.5px solid var(--line); box-shadow: none; font-size: .9rem; line-height: 1; }
+.hk.on { background: var(--ok) !important; color: #fff; border-color: var(--ok); }
+.sub { margin: 8px 0 2px; font-weight: 600; }

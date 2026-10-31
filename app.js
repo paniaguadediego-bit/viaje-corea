@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v22';
+const VERSION = 'v23';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -308,14 +308,14 @@ function destacados(ciudad) {
   const k = ck(ciudad); if (!k) return '';
   const lp = (LP[k] || []);
   const ver_ = [...lp.filter(l => l.top), ...(CATALOGO[k] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)), ...lp.filter(l => !l.top)]
-    .map(l => l.es).filter((x, i, a) => a.indexOf(x) === i).slice(0, 5);
+    .filter((l, i, a) => a.findIndex(x => x.es === l.es) === i).slice(0, 5);
   const enCiudad = lugaresComer().filter(l => l.ciudad === k && !['descartado', 'cerrado'].includes(estadoDe(String(l.id)).estado));
   const comer_ = [...enCiudad.filter(l => estadoDe(String(l.id)).estado === 'quiero'), ...enCiudad.filter(l => l.fuente === 'itinerario'), ...enCiudad.filter(l => /★/.test(l.nota || ''))]
-    .map(l => l.nombre).filter((x, i, a) => x && a.indexOf(x) === i).slice(0, 4);
+    .filter((l, i, a) => l.nombre && a.findIndex(x => x.nombre === l.nombre) === i).slice(0, 4);
   if (!ver_.length && !comer_.length) return '';
   return `<div class="card destacados"><b>⭐ Destacados en ${esc(ciudad)}</b>
-    ${ver_.length ? `<div>👀 ${ver_.map(esc).join(' · ')}</div>` : ''}
-    ${comer_.length ? `<div>🍜 ${comer_.map(esc).join(' · ')}</div>` : ''}
+    ${ver_.length ? `<div>👀 ${ver_.map(l => hecho(l, k) ? `<s class="tachado">${esc(l.es)}</s> ✅` : esc(l.es)).join(' · ')}</div>` : ''}
+    ${comer_.length ? `<div>🍜 ${comer_.map(l => hecho(l, k) ? `<s class="tachado">${esc(l.nombre)}</s> ✅` : esc(l.nombre)).join(' · ')}</div>` : ''}
     <div class="acciones"><button class="sec mini" data-tab="ciudades">Ver la ciudad</button></div></div>`;
 }
 
@@ -378,9 +378,9 @@ function viewCiudades() {
   return ciudades.map((c, i) => `<div class="card" id="c-${esc(c.id)}">
     <div class="big">${i + 1}. ${esc(c.nombre)} ${c.ko ? `<span class="muted">${esc(c.ko)}</span>` : ''}</div>
     <div class="muted">${esc(c.desde)} → ${esc(c.hasta)}</div>
-    ${interesDe(c).length ? `<ul>${interesDe(c).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
-    ${(LP[ck(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => ck(o.nombre) === ck(c.nombre)) ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[ck(c.nombre)].length})</summary><ul>
-      ${LP[ck(c.nombre)].map(l => `<li><b>${esc(l.es)}</b>${l.top ? ' ★' : ''} ${ver(l)}${distHotel(l, ck(c.nombre))}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></li>`).join('')}</ul></details>` : ''}
+    ${interesDe(c).length ? `<ul class="hlist">${interesDe(c).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}<span>${esc(x)}</span></li>`; }).join('')}</ul>` : ''}
+    ${(LP[ck(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => ck(o.nombre) === ck(c.nombre)) ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[ck(c.nombre)].length})</summary><ul class="hlist">
+      ${LP[ck(c.nombre)].map(l => `<li class="${hecho(l, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(l, ck(c.nombre))}<div><b>${esc(l.es)}</b>${l.top ? ' ★' : ''} ${ver(l)}${distHotel(l, ck(c.nombre))}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></div></li>`).join('')}</ul></details>` : ''}
     <div class="acciones"><button class="sec mini" data-comer="${esc(ck(c.nombre))}">🍜 Comer aquí</button></div></div>`).join('');
 }
 
@@ -455,8 +455,8 @@ function fraseTaxi(ko) {
 }
 
 function lugarFila(l, key, k) {
-  return `<div class="card lugar">
-    <div><div class="big">${esc(l.es)}${lpTag(l)} ${ver(l)}</div>${k ? distHotel(l, k) : ''}
+  return `<div class="card lugar ${hecho(l, k) ? 'hecho-card' : ''}">
+    <div><div class="big">${esc(l.es)}${lpTag(l)}${tick(l, k)} ${ver(l)}</div>${k ? distHotel(l, k) : ''}
     ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}</div>
     <div class="acciones col">${naver(l)}<button class="mini" data-full="${key}">Enseñar</button></div></div>`;
 }
@@ -607,6 +607,7 @@ function u() { // asegura la forma de "user" aunque venga de una copia antigua
   if (!user.extra || typeof user.extra !== 'object') user.extra = {};
   if (typeof user.notas !== 'string') user.notas = '';
   if (!user.verif || typeof user.verif !== 'object') user.verif = {};
+  if (!user.hecho || typeof user.hecho !== 'object') user.hecho = {};
   return user;
 }
 const saveUser = () => save(K_USER, user);
@@ -616,7 +617,7 @@ function checks(scope, base) {
   const U = u(), propios = arr(U.extra[scope]);
   const items = [...base.map(b => ({ ...b, propio: false })), ...propios.map((t, i) => ({ id: 'p' + i, texto: t, propio: true, i }))];
   const hechos = items.filter(it => U.checklist[scope + '|' + it.id]).length;
-  return `<div class="muted">${hechos} de ${items.length} hechos</div>
+  return `${items.length ? `<div class="muted">${hechos} de ${items.length} hechos</div>` : ''}
     ${items.map(it => { const k = scope + '|' + it.id; return `<label class="check card">
       <input type="checkbox" data-check="${esc(k)}" ${U.checklist[k] ? 'checked' : ''}>
       <span>${esc(it.texto)}${it.url ? ` · <a href="${esc(it.url)}" target="_blank" rel="noopener">enlace</a>` : ''}</span>
@@ -640,14 +641,52 @@ const abiertos = {};
 const abierto = (k, def) => (k in abiertos ? abiertos[k] : def);
 document.addEventListener('toggle', e => { const k = e.target.dataset && e.target.dataset.key; if (k) abiertos[k] = e.target.open; }, true);
 
+// ---------- "Hecho / visitado": una sola marca por sitio para toda la app ----------
+// Clave por hangul (si lo hay) o por nombre: así el mismo sitio en Ciudades, Enseñar, Comer y Checklist comparte marca.
+const hKey = l => 'p:' + (typeof l === 'string' ? norm(l) : (l && l.ko ? String(l.ko).replace(/\s+/g, '') : norm(l && (l.es || l.nombre))));
+function hecho(l, k) {
+  const U = u(), key = hKey(l);
+  if (U.hecho[key]) return true;
+  if (l && typeof l === 'object' && l.id != null && estadoDe(String(l.id)).estado === 'visitado') return true;
+  if (k) { // marcas antiguas del checklist
+    const n = norm(typeof l === 'string' ? l : (l.es || l.nombre));
+    if (U.checklist['c:' + k + '|' + n] || U.checklist['c:' + k + '|' + n + 'lp']) return true;
+  }
+  return false;
+}
+function marcarHecho(key, v) {
+  const U = u();
+  if (v) U.hecho[key] = todayISO(); else delete U.hecho[key];
+  // Comer: el mismo sitio pasa a "Visitado" (o lo deja de estar)
+  lugaresComer().filter(l => hKey(l) === key).forEach(l => {
+    U.comer = U.comer || {}; const e = U.comer[l.id] = U.comer[l.id] || {};
+    if (v) e.estado = 'visitado'; else if (e.estado === 'visitado') e.estado = '';
+  });
+  // quita marcas antiguas equivalentes al desmarcar
+  if (!v) Object.keys(U.checklist).forEach(k2 => { if (k2.startsWith('c:') && 'p:' + k2.split('|')[1]?.replace(/lp$/, '') === key) delete U.checklist[k2]; });
+  saveUser();
+}
+const tick = (l, k) => hecho(l, k) ? ' <span class="badge ok">✅</span>' : '';
+const btnHecho = (l, k) => `<button class="hk ${hecho(l, k) ? 'on' : ''}" data-hk="${esc(hKey(l))}" data-v="${hecho(l, k) ? 0 : 1}" aria-label="Hecho">✓</button>`;
+
 // ---------- Checklist por ciudad ----------
 function viewChecklist() {
   const cs = ciudadesUnicas();
   if (!cs.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
   const act = ck(ciudadActual());
-  return '<p class="muted">Sitios de interés de cada ciudad y lo que quieras añadir.</p>' + cs.map(c =>
-    `<details data-key="ck:${esc(ck(c.nombre))}" ${abierto('ck:' + ck(c.nombre), ck(c.nombre) === act) ? 'open' : ''}><summary class="card big">${esc(c.nombre)}</summary>
-      ${checks('c:' + ck(c.nombre), [...interesDe(c), ...(LP[ck(c.nombre)] || []).map(l => l.es + ' (LP)')].map(t => ({ id: norm(t), texto: t })))}</details>`).join('');
+  const fila = (l, k, txt) => `<label class="check card"><input type="checkbox" data-hk="${esc(hKey(l))}" ${hecho(l, k) ? 'checked' : ''}><span>${txt}</span></label>`;
+  return '<p class="muted">Lo que taches aquí sale tachado en toda la app (Ciudades, Enseñar, Hoy y Comer como "Visitado").</p>' + cs.map(c => {
+    const k = ck(c.nombre);
+    const sitios = [...(arr(c.interes).length ? arr(c.interes) : []), ...sitiosCiudad(k).filter(l => !/^(Estación|Aeropuerto|Terminal)/.test(l.es))]
+      .filter((l, i, a) => a.findIndex(x => hKey(x) === hKey(l)) === i);
+    const comer = lugaresComer().filter(l => l.ciudad === k && (['quiero', 'visitado'].includes(estadoDe(String(l.id)).estado) || l.fuente === 'itinerario'))
+      .filter(l => !sitios.some(x => hKey(x) === hKey(l)));
+    const hechos = [...sitios, ...comer].filter(l => hecho(l, k)).length;
+    return `<details data-key="ck:${esc(k)}" ${abierto('ck:' + k, k === act) ? 'open' : ''}><summary class="card big">${esc(c.nombre)} <span class="muted">${hechos}/${sitios.length + comer.length}</span></summary>
+      ${sitios.map(l => fila(l, k, typeof l === 'string' ? esc(l) : esc(l.es) + (l.lp ? ' <span class="muted">(LP)</span>' : ''))).join('')}
+      ${comer.length ? '<div class="muted sub">🍜 Para comer</div>' + comer.map(l => fila(l, k, esc(l.nombre) + (estadoDe(String(l.id)).estado === 'quiero' ? ' <span class="muted">⭐</span>' : ''))).join('') : ''}
+      <div class="muted sub">Mis cosas</div>${checks('c:' + k, [])}</details>`;
+  }).join('');
 }
 
 // ---------- Comer (data/comer.json + lugares propios) ----------
@@ -867,6 +906,8 @@ document.addEventListener('click', e => {
     arr(u().extra[del.dataset.delitem]).splice(+del.dataset.i, 1);
     saveUser(); render(); return;
   }
+  const hk = e.target.closest('button[data-hk]');
+  if (hk) { marcarHecho(hk.dataset.hk, hk.dataset.v === '1'); render(); return; }
   const vf = e.target.closest('[data-verif]');
   if (vf) {
     const U = u(), k = vf.dataset.verif;
@@ -906,7 +947,10 @@ document.addEventListener('click', e => {
       u().comerPropios = arr(user.comerPropios).filter(l => String(l.id) !== cm.dataset.delcomer); saveUser();
     } else {
       const U = u(); U.comer = U.comer || {}; const id = cm.dataset.est, v = cm.dataset.v;
-      const e2 = U.comer[id] = U.comer[id] || {}; e2.estado = e2.estado === v ? '' : v; saveUser();
+      const e2 = U.comer[id] = U.comer[id] || {}; e2.estado = e2.estado === v ? '' : v;
+      const lc = lugaresComer().find(x => String(x.id) === id);
+      if (lc) { if (e2.estado === 'visitado') U.hecho[hKey(lc)] = todayISO(); else if (v === 'visitado') delete U.hecho[hKey(lc)]; }
+      saveUser();
     }
     render(); return;
   }
@@ -953,7 +997,8 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   const t = e.target;
-  if (t.dataset.check) { u().checklist[t.dataset.check] = t.checked; if (!t.checked) delete user.checklist[t.dataset.check]; saveUser(); render(); }
+  if (t.dataset.hk) { marcarHecho(t.dataset.hk, t.checked); render(); }
+  else if (t.dataset.check) { u().checklist[t.dataset.check] = t.checked; if (!t.checked) delete user.checklist[t.dataset.check]; saveUser(); render(); }
   else if (t.dataset.cambio !== undefined) { Object.assign(u(), { cambio: Number(t.value) || 0, cambioManual: true }); saveUser(); render(); }
 });
 document.addEventListener('submit', e => {
