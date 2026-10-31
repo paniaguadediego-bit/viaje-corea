@@ -22,7 +22,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    Corea (SVG propio, offline) con ciudades, traslados y sitios
    de interés de cada ciudad. Extras aprobados: conversor ₩↔€
    en Gastos, botón "Naver" (abre Naver Map, requiere conexión),
-   resumen "Mañana" y hora Corea/España en Hoy, fotos de
+   resumen "Mañana" y hora Corea/Canarias en Hoy, fotos de
    documentos en Más (IndexedDB, solo en el móvil). Gastos
    compartidos: descartado por el usuario.
 6. Dato dudoso = "VERIFICAR". No inventar hangul, teléfonos,
@@ -30,7 +30,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    "verificar": true, mostrar una marca visible.
 7. Mobile-first, compacto pero legible, una mano, tema claro/oscuro.
 8. Cada sesión acaba con: cómo probarlo en modo avión, versión
-   de caché del service worker subida, PROGRESO.md actualizado
+   subida (CACHE en sw.js y VERSION en app.js, iguales), PROGRESO.md actualizado
    y commit en main.
 
 ## Cómo trabajar

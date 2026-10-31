@@ -153,3 +153,7 @@ form > input { display: block; width: 100%; margin: 6px 0; }
 header { display: flex; align-items: center; gap: 8px; }
 #back { width: 40px; min-height: 36px; height: 36px; padding: 0; margin: 0; font-size: 1.6rem; line-height: 1; flex: none; }
 #back[hidden] { display: none; }
+
+#title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#version { font-size: .75rem; flex: none; }
+.bandera { width: 1.2em; height: .8em; vertical-align: -0.05em; }

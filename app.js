@@ -1,5 +1,8 @@
 'use strict';
 
+// Versión visible arriba. Súbela a la vez que CACHE en sw.js.
+const VERSION = 'v15';
+
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c =>
@@ -55,8 +58,10 @@ function estadoBadge(t) {
 
 // Hora en Corea y en España.
 const horaEn = tz => new Date().toLocaleTimeString('es-ES', { timeZone: tz, hour: '2-digit', minute: '2-digit' });
-const relojes = () => `🇰🇷 ${horaEn('Asia/Seoul')} · 🇪🇸 ${horaEn('Europe/Madrid')}`;
-setInterval(() => { const e = document.getElementById('reloj'); if (e) e.textContent = relojes(); }, 30000);
+// Bandera de Canarias (no existe como emoji): blanco, azul y amarillo.
+const CANARIAS = '<svg class="bandera" viewBox="0 0 3 2" aria-label="Canarias"><rect width="1" height="2" fill="#fff"/><rect x="1" width="1" height="2" fill="#0768a9"/><rect x="2" width="1" height="2" fill="#fc0"/><rect width="3" height="2" fill="none" stroke="#999" stroke-width=".08"/></svg>';
+const relojes = () => `🇰🇷 ${horaEn('Asia/Seoul')} · ${CANARIAS} ${horaEn('Atlantic/Canary')}`;
+setInterval(() => { const e = document.getElementById('reloj'); if (e) e.innerHTML = relojes(); }, 30000);
 
 function sumaDia(iso, n) {
   const d = new Date(iso + 'T12:00:00Z'); if (isNaN(d)) return '';
