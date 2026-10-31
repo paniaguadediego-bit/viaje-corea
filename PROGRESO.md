@@ -1,7 +1,7 @@
 # Progreso
-- [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [ ] S6
+- [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6
 
-Caché del service worker: corea-v6
+Caché del service worker: corea-v7
 
 ## Decisiones
 - S1: datos guardados en localStorage (más simple que IndexedDB; el viaje cabe de sobra).
@@ -14,6 +14,8 @@ Caché del service worker: corea-v6
 - S4: diccionario (587 entradas ES→KO en diccionario.js) dentro de la pestaña Corea, con subpestañas Frases / Diccionario / Guía (no se añaden pestañas nuevas).
 - Lonely Planet 2016: el usuario la adjuntó como texto. Se añadieron a contenido.js (LP) unas 10-14 recomendaciones por ciudad con el nombre y hangul de la guía y resúmenes propios (no se copia texto). Salen en Ruta (desplegable "Lonely Planet 2016 recomienda"), en Enseñar (marca LP, ★ = elección del autor) y en Checklist. Restaurantes con VERIFICAR (la guía es de 2016). La guía NO se sube al repo.
 - S5: Gastos (₩/€, cambio manual editable, categoría, totales por ciudad y categoría, barra de presupuesto), Checklist por ciudad (sitios + LP + propios) y Más (Maleta/Documentos desde checklist_documentos + propios, Notas con autoguardado).
+- S6: actualización automática (al llegar una versión nueva la app se recarga sola una vez); el navegador marca los datos como persistentes para que no se borren; pantalla siempre encendida mientras se enseña una tarjeta; "Última copia" y versión visibles en Más; manifest con id e iconos any/maskable separados; importar rechaza archivos que no son un viaje.
+- S6: prueba automática completa en modo avión (8 pestañas, gasto guardado, diccionario) y con datos vacíos o mal formados: sin errores.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
@@ -33,6 +35,8 @@ Caché del service worker: corea-v6
 - [Supuesto] Museo de Máscaras de Hahoe sin hangul (la guía no lo da): marca "falta hangul".
 
 ## Verificar por el usuario
+- Prueba real en tu móvil: abrir con wifi, cerrar, modo avión, abrir y recorrer las 8 pestañas.
+- Exportar una copia antes de salir y guardarla en Drive o enviártela por correo.
 - Activar GitHub Pages (Settings → Pages → rama main, carpeta / root).
 - Importar el trip.json real y revisar Hoy y Ruta.
 - Probar en modo avión tras abrir una vez con wifi.

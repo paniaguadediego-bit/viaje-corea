@@ -52,7 +52,7 @@ function importFile(file) {
   r.onload = () => {
     try {
       const obj = JSON.parse(r.result);
-      if (!obj || typeof obj !== 'object') throw new Error();
+      if (!obj || typeof obj !== 'object' || Array.isArray(obj)) throw new Error();
       if (obj.trip && obj.user) { // copia exportada por esta app
         trip = obj.trip; user = obj.user; save(K_USER, user);
       } else {
@@ -75,6 +75,7 @@ function exportCopy() {
   a.href = URL.createObjectURL(blob);
   a.download = `corea-copia-${todayISO()}.json`;
   document.body.appendChild(a); a.click(); a.remove();
+  localStorage.setItem('corea.ultimaCopia', todayISO());
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 async function loadExample() {
@@ -274,6 +275,8 @@ function full(html) {
   div.id = 'full';
   div.innerHTML = '<button class="sec cerrar" data-close>✕ Cerrar</button>' + html;
   document.body.appendChild(div);
+  // Mantiene la pantalla encendida mientras se enseña la tarjeta.
+  if (navigator.wakeLock) navigator.wakeLock.request('screen').then(l => { div._lock = l; }).catch(() => {});
 }
 function showFull(key) {
   const [t, a, b] = key.split(':');
@@ -451,14 +454,16 @@ function viewMas() {
     <h2>Datos del viaje</h2>
     <button data-act="import">📂 Importar viaje</button>
     <button class="sec" data-act="export">💾 Exportar copia</button>
-    <p class="muted">La copia incluye el viaje, gastos, checklist y notas. Guárdala fuera del móvil.</p>
+    <p class="muted">La copia incluye el viaje, gastos, checklist y notas. Guárdala fuera del móvil.
+      Última copia: <b>${esc(localStorage.getItem('corea.ultimaCopia') || 'nunca')}</b></p>
     <h2>Tema</h2>
     <div class="row">
       ${['auto', 'light', 'dark'].map(v => `<button class="${t === v ? '' : 'sec'}" data-theme="${v}">
         ${{ auto: 'Auto', light: 'Claro', dark: 'Oscuro' }[v]}</button>`).join('')}
     </div>
     <h2>Borrar</h2>
-    <button class="danger" data-act="wipe">Borrar datos de este móvil</button>`;
+    <button class="danger" data-act="wipe">Borrar datos de este móvil</button>
+    <p class="muted" id="ver">Versión: ${esc(window.VERSION || '…')}</p>`;
 }
 
 // ---------- render ----------
@@ -496,7 +501,7 @@ document.addEventListener('click', e => {
     if (x.dataset.full) showFull(x.dataset.full);
     else if (x.dataset.copy) copiar(x.dataset.copy);
     else if (x.dataset.ciudad) document.getElementById('c-' + x.dataset.ciudad)?.scrollIntoView({ behavior: 'smooth' });
-    else document.getElementById('full')?.remove();
+    else { const f = document.getElementById('full'); if (f) { f._lock?.release().catch(() => {}); f.remove(); } }
     return;
   }
   const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub]');
@@ -546,4 +551,18 @@ $('#file').addEventListener('change', e => {
 });
 
 render();
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+
+// Pide al navegador que no borre los datos guardados si falta espacio.
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+
+if ('serviceWorker' in navigator) {
+  // Si llega una versión nueva, recarga una vez para usarla (sin perder datos).
+  const habiaSW = !!navigator.serviceWorker.controller;
+  let recargado = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (habiaSW && !recargado) { recargado = true; location.reload(); }
+  });
+  navigator.serviceWorker.register('./sw.js');
+}
+// Muestra la versión de caché en Más.
+if (window.caches) caches.keys().then(k => { const v = k.find(x => x.startsWith('corea-')); window.VERSION = v; const e = $('#ver'); if (e && v) e.textContent = 'Versión: ' + v; });
