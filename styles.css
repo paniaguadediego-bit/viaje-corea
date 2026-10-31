@@ -140,4 +140,3 @@ a.btn.mini { display: inline-block; width: auto; min-height: 36px; padding: 6px 
 #full .fotofull { max-width: 100%; max-height: 75vh; object-fit: contain; }
 #full button.danger { width: auto; margin-top: 12px; }
 .conv input { flex: 1; min-width: 0; width: auto; }
-[data-viajeros] { width: 100%; }

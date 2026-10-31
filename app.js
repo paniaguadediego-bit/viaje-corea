@@ -516,28 +516,6 @@ const aEur = g => g.moneda === 'EUR' ? g.importe : (cambio() ? g.importe / cambi
 const eur = n => n.toLocaleString('es-ES', { maximumFractionDigits: 2 }) + ' €';
 const won = n => '₩' + Math.round(n).toLocaleString('es-ES');
 
-// Viajeros para repartir gastos: los de la app (editables) o los del viaje.
-function viajeros() {
-  const v = u().viajeros != null ? user.viajeros : (trip.meta && trip.meta.viajeros);
-  return (Array.isArray(v) ? v : String(v || '').split(',')).map(x => String(x).trim()).filter(Boolean);
-}
-// Quién debe a quién (en €). Gastos sin pagador no cuentan.
-function balances() {
-  const vs = viajeros(), saldo = Object.fromEntries(vs.map(v => [v, 0]));
-  u().gastos.forEach(g => {
-    if (!g.pagador || !(g.pagador in saldo)) return;
-    const v = aEur(g), para = g.para && g.para in saldo ? [g.para] : vs;
-    saldo[g.pagador] += v; para.forEach(p => { saldo[p] -= v / para.length; });
-  });
-  const deu = Object.entries(saldo).filter(x => x[1] < -0.005).map(x => [...x]);
-  const acr = Object.entries(saldo).filter(x => x[1] > 0.005).map(x => [...x]);
-  const pagos = [];
-  deu.forEach(d => acr.forEach(a => {
-    const m = Math.min(-d[1], a[1]); if (m < 0.005) return;
-    pagos.push(`${esc(d[0])} → ${esc(a[0])}: <b>${eur(m)}</b>`); d[1] += m; a[1] -= m;
-  }));
-  return pagos;
-}
 
 function viewGastos() {
   const U = u(), G = U.gastos, ref = Number(trip.meta && trip.meta.presupuesto_referencia) || 0;
@@ -560,21 +538,16 @@ function viewGastos() {
       <div class="row"><input name="importe" type="number" inputmode="decimal" step="any" min="0" placeholder="Importe" required>
         <select name="moneda"><option value="KRW">₩</option><option value="EUR">€</option></select></div>
       <input name="concepto" placeholder="Concepto (opcional)" autocomplete="off">
-      ${viajeros().length > 1 ? `<div class="row"><select name="pagador">${viajeros().map(v => `<option>${esc(v)}</option>`).join('')}</select>
-        <select name="para"><option value="">Para todos</option>${viajeros().map(v => `<option value="${esc(v)}">Solo ${esc(v)}</option>`).join('')}</select></div>` : ''}
       <div class="row"><select name="cat">${CATS.map(c => `<option>${c}</option>`).join('')}</select>
         <select name="ciudad">${ciudadesUnicas().map(c => `<option ${norm(c.nombre) === norm(act) ? 'selected' : ''}>${esc(c.nombre)}</option>`).join('')}<option>Otra</option></select></div>
       <button>Añadir gasto</button>
     </form>
-    ${viajeros().length > 1 ? `<h2>Cuentas entre viajeros</h2><div class="card">${balances().map(x => `<div>${x}</div>`).join('') || '<div class="muted">Estáis en paz.</div>'}</div>` : ''}
-    <div class="card"><div class="muted">Viajeros (separados por comas) para repartir gastos</div>
-      <input data-viajeros value="${esc(viajeros().join(', '))}" placeholder="Ana, Luis"></div>
     <div class="card row"><span>Cambio: 1 € =</span><input data-cambio type="number" inputmode="decimal" step="any" value="${cambio() || ''}" placeholder="₩"><span>₩</span></div>
     ${G.length ? `<h2>Por ciudad</h2><div class="card">${tabla(suma('ciudad'))}</div>
       <h2>Por categoría</h2><div class="card">${tabla(suma('cat'))}</div>
       <h2>Últimos gastos</h2>${G.slice().reverse().map(g => `<div class="card lugar"><div>
         <b>${g.moneda === 'EUR' ? eur(g.importe) : won(g.importe)}</b>${g.moneda === 'EUR' ? '' : ` <span class="muted">≈ ${eur(aEur(g))}</span>`}
-        <div class="muted">${esc(g.fecha)} · ${esc(g.ciudad)} · ${esc(g.cat)}${g.concepto ? ' · ' + esc(g.concepto) : ''}${g.pagador ? ` · pagó ${esc(g.pagador)}${g.para ? ' (solo ' + esc(g.para) + ')' : ''}` : ''}</div></div>
+        <div class="muted">${esc(g.fecha)} · ${esc(g.ciudad)} · ${esc(g.cat)}${g.concepto ? ' · ' + esc(g.concepto) : ''}</div></div>
         <button class="sec mini" data-delgasto="${esc(g.id)}">✕</button></div>`).join('')}` : '<p class="muted">Aún no hay gastos.</p>'}`;
 }
 
@@ -678,7 +651,6 @@ document.addEventListener('change', e => {
   const t = e.target;
   if (t.dataset.check) { u().checklist[t.dataset.check] = t.checked; if (!t.checked) delete user.checklist[t.dataset.check]; saveUser(); render(); }
   else if (t.dataset.cambio !== undefined) { u().cambio = Number(t.value) || 0; saveUser(); render(); }
-  else if (t.dataset.viajeros !== undefined) { u().viajeros = t.value.split(',').map(x => x.trim()).filter(Boolean); saveUser(); render(); }
 });
 document.addEventListener('submit', e => {
   e.preventDefault();
@@ -689,8 +661,7 @@ document.addEventListener('submit', e => {
   } else if (f.dataset.gasto !== undefined) {
     const importe = Number(d.importe); if (!(importe > 0)) return;
     u().gastos.push({ id: Date.now().toString(36), fecha: todayISO(), importe, moneda: d.moneda,
-      concepto: (d.concepto || '').trim(), cat: d.cat, ciudad: d.ciudad,
-      ...(d.pagador ? { pagador: d.pagador, para: d.para || '' } : {}) });
+      concepto: (d.concepto || '').trim(), cat: d.cat, ciudad: d.ciudad });
   } else return;
   saveUser(); render();
 });
