@@ -39,6 +39,22 @@ function estadoBadge(t) {
   return t.estado ? `<span class="badge otro">${esc(t.estado)}</span>` : '';
 }
 
+// Hora en Corea y en España.
+const horaEn = tz => new Date().toLocaleTimeString('es-ES', { timeZone: tz, hour: '2-digit', minute: '2-digit' });
+const relojes = () => `🇰🇷 ${horaEn('Asia/Seoul')} · 🇪🇸 ${horaEn('Europe/Madrid')}`;
+setInterval(() => { const e = document.getElementById('reloj'); if (e) e.textContent = relojes(); }, 30000);
+
+function sumaDia(iso, n) {
+  const d = new Date(iso + 'T12:00:00Z'); if (isNaN(d)) return '';
+  d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10);
+}
+
+// Botón para abrir un sitio en Naver Map (necesita conexión).
+function naver(l) {
+  const q = (l && (l.direccion_ko || l.ko || l.direccion_en || l.es || l.nombre)) || '';
+  return q ? `<a class="btn sec mini" href="https://map.naver.com/p/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">🗺️ Naver</a>` : '';
+}
+
 // ---------- tema ----------
 function applyTheme() {
   const t = load(K_THEME, 'auto');
@@ -106,7 +122,7 @@ function pendingAlert() {
 
 function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
-  let html = pendingAlert();
+  let html = `<div class="muted reloj" id="reloj">${relojes()}</div>` + pendingAlert();
   const avisos = arr(trip.avisos);
   if (avisos.length) html += `<div class="card"><b>Avisos</b><ul>${avisos.map(a => `<li>${esc(a)}</li>`).join('')}</ul></div>`;
   if (!dias.length) return html + '<p class="muted">El viaje no tiene días (clave "dias").</p>';
@@ -142,8 +158,29 @@ function viewHoy() {
     ${a.ko ? `<div class="ko">${esc(a.ko)}</div>` : ''}
     ${a.direccion_ko ? `<div>${esc(a.direccion_ko)}</div>` : ''}
     ${a.direccion_en ? `<div class="muted">${esc(a.direccion_en)}</div>` : ''}
-    ${a.nota ? `<div class="muted">${esc(a.nota)}</div>` : ''}</div>`).join('');
-  return html;
+    ${a.nota ? `<div class="muted">${esc(a.nota)}</div>` : ''}
+    <div class="acciones">${naver(a)}</div></div>`).join('');
+  return html + manana(d, dias);
+}
+
+// Resumen del día siguiente al que se está viendo.
+function manana(d, dias) {
+  const f = sumaDia(d.fecha, 1); if (!f) return '';
+  const sig = dias.find(x => x.fecha === f);
+  const tr = arr(trip.traslados).filter(t => t.fecha === f);
+  const lineas = [];
+  if (sig && sig.ciudad && d.ciudad && norm(sig.ciudad) !== norm(d.ciudad))
+    lineas.push(`🧳 Cambias de ciudad: ${esc(d.ciudad)} → ${esc(sig.ciudad)}. Deja el alojamiento y revisa la hora de salida.`);
+  tr.forEach(t => {
+    const sal = t.tren && t.tren.salida ? ` · sale ${esc(t.tren.salida)}` : '';
+    lineas.push(`${isPend(t) ? '⚠️' : '🚆'} ${esc(t.de)} → ${esc(t.a)}${sal} ${estadoBadge(t)}`);
+  });
+  if (sig) {
+    if (sig.titulo) lineas.push(`📌 ${esc(sig.titulo)}`);
+    arr(sig.items).filter(i => i.hora).slice(0, 3).forEach(i => lineas.push(`<span class="hora">${esc(i.hora)}</span>${esc(i.texto)}`));
+  }
+  if (!lineas.length) return '';
+  return `<h2>Mañana · ${fmtDate(f)}</h2><div class="card manana"><ul class="items">${lineas.map(l => `<li>${l}</li>`).join('')}</ul></div>`;
 }
 
 function trasladoCard(t) {
@@ -252,7 +289,7 @@ function lugarFila(l, key) {
   return `<div class="card lugar">
     <div><div class="big">${esc(l.es)}${lpTag(l)} ${ver(l)}</div>
     ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}</div>
-    <button data-full="${key}">Enseñar</button></div>`;
+    <div class="acciones col">${naver(l)}<button class="mini" data-full="${key}">Enseñar</button></div></div>`;
 }
 // Ciudades del viaje (en orden, sin repetir) y después el resto del catálogo.
 function ciudadesCatalogo() {
@@ -423,7 +460,12 @@ function viewGastos() {
   const suma = key => { const m = {}; G.forEach(g => { m[g[key] || '—'] = (m[g[key] || '—'] || 0) + aEur(g); }); return m; };
   const tabla = m => Object.entries(m).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div class="lugar"><span>${esc(k)}</span><b>${eur(v)}</b></div>`).join('');
   const act = ciudadActual();
-  return `<div class="card">
+  return `<div class="card conv">
+      <div class="muted">Conversor rápido${cambio() ? ` (1 € = ${won(cambio())})` : ''}</div>
+      <div class="row"><input data-conv="KRW" type="number" inputmode="decimal" placeholder="₩">
+        <span>⇄</span><input data-conv="EUR" type="number" inputmode="decimal" placeholder="€"></div>
+    </div>
+    <div class="card">
       <div class="big">Total: ${eur(total)}</div>
       ${ref ? `<div class="barra"><div style="width:${Math.min(100, total / ref * 100).toFixed(0)}%"></div></div>
         <div class="muted">Presupuesto de referencia: ${eur(ref)} · quedan ${eur(ref - total)}</div>` : ''}
@@ -525,6 +567,10 @@ document.addEventListener('click', e => {
 document.addEventListener('input', e => {
   const t = e.target;
   if (t.id === 'q') $('#dres').innerHTML = dResultados(t.value);
+  else if (t.dataset.conv) {
+    const otro = document.querySelector(`[data-conv="${t.dataset.conv === 'KRW' ? 'EUR' : 'KRW'}"]`), v = Number(t.value), c = cambio();
+    otro.value = !t.value || !c ? '' : t.dataset.conv === 'KRW' ? (v / c).toFixed(2) : Math.round(v * c);
+  }
   else if (t.dataset.notas !== undefined) { u().notas = t.value; saveUser(); }
 });
 document.addEventListener('change', e => {

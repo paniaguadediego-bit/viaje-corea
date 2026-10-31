@@ -20,7 +20,9 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    Gastos, Checklist, Más (Maleta/Documentos y Notas). No añadir
    nada que no esté aquí. Ruta incluye un mapa esquemático de
    Corea (SVG propio, offline) con ciudades, traslados y sitios
-   de interés de cada ciudad.
+   de interés de cada ciudad. Extras aprobados: conversor ₩↔€
+   en Gastos, botón "Naver" (abre Naver Map, requiere conexión),
+   resumen "Mañana" y hora Corea/España en Hoy.
 6. Dato dudoso = "VERIFICAR". No inventar hangul, teléfonos,
    horarios ni precios. Si un objeto del JSON trae
    "verificar": true, mostrar una marca visible.

@@ -124,3 +124,11 @@ button.mini { width: auto; min-height: 36px; padding: 6px 12px; margin: 0; flex:
 .barra { height: 10px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 6px 0; }
 .barra div { height: 100%; background: var(--blue); }
 [data-cambio] { width: 110px; flex: none; }
+
+.reloj { text-align: right; font-size: .85em; margin-top: -2px; }
+.acciones { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.acciones.col { flex-direction: column; margin-top: 0; flex: none; }
+a.btn.mini { display: inline-block; width: auto; min-height: 36px; padding: 6px 10px; margin: 0; font-size: .9rem; }
+.btn.sec { background: var(--card); color: var(--fg); border: 1px solid var(--line); }
+.manana { border-left: 4px solid var(--blue); }
+.conv input { text-align: center; font-size: 1.1rem; font-weight: 700; }

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6
 
-Caché del service worker: corea-v8
+Caché del service worker: corea-v9
 
 ## Decisiones
 - S1: datos guardados en localStorage (más simple que IndexedDB; el viaje cabe de sobra).
@@ -19,6 +19,8 @@ Caché del service worker: corea-v8
 
 - Cambio pedido: aún más compacta (texto 16px, tarjetas, títulos y barra inferior más pequeños).
 
+- Cambio pedido (mejoras tipo TripIt/Wanderlog): conversor rápido ₩↔€ en Gastos; botón "🗺️ Naver" en hoteles (Hoy) y lugares (Enseñar); tarjeta "Mañana" en Hoy (cambio de ciudad, traslados con hora y estado, plan con horas); hora de Corea y España arriba en Hoy.
+
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
 - [Supuesto] Tema (Auto/Claro/Oscuro) e Importar/Exportar/Borrar viven en la pestaña Más.
@@ -35,6 +37,8 @@ Caché del service worker: corea-v8
 - [Supuesto] El usuario pidió "lo siguiente": se hicieron S4 y S5 en la misma sesión.
 - [Supuesto] Los gastos se guardan en su moneda y se pasan a € con el cambio actual.
 - [Supuesto] Museo de Máscaras de Hahoe sin hangul (la guía no lo da): marca "falta hangul".
+- [Supuesto] Naver busca por dirección en coreano; si no hay, por hangul del nombre, dirección en inglés o nombre.
+- [Supuesto] "Mañana" se calcula respecto al día que se está viendo (no solo hoy).
 
 ## Verificar por el usuario
 - Prueba real en tu móvil: abrir con wifi, cerrar, modo avión, abrir y recorrer las 8 pestañas.
