@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v17';
+const VERSION = 'v18';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -540,9 +540,9 @@ function viewChecklist() {
 let DATOS_COMER = [];
 fetch('data/comer.json').then(r => r.json()).then(d => { DATOS_COMER = arr(d); if (tab === 'comer') render(); }).catch(() => {});
 const CIUDADES_COMER = [['seul', 'Seúl'], ['andong', 'Andong'], ['gyeongju', 'Gyeongju'], ['busan', 'Busan'], ['jeonju', 'Jeonju']];
-const TIPOS = ['todos', 'restaurante', 'café', 'mercado', 'plato'];
+const TIPOS = ['todos', 'restaurante', 'café', 'mercado', 'plato', 'bar'];
 const ESTADOS = [['quiero', 'Quiero'], ['visitado', 'Visitado'], ['descartado', 'Descartado'], ['cerrado', 'Cerrado']];
-const FUENTES = { itinerario: 'Itinerario', guia: 'Guía web (no verificado)', propio: 'Propio' };
+const FUENTES = { itinerario: 'Itinerario', guia: 'Guía web (no verificado)', lonely: 'Lonely Planet 2016', propio: 'Propio' };
 let comerCiudad = null, comerTipo = 'todos', comerForm = false;
 const lugaresComer = () => [...DATOS_COMER, ...arr(u().comerPropios)].filter(l => l && typeof l === 'object');
 const estadoDe = id => (u().comer && user.comer[id]) || {};

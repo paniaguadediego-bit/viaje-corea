@@ -64,8 +64,10 @@ checklist_documentos[{id,texto,url?}]   avisos[]
 
 ## data/comer.json (público, sí va al repo)
 [{id,ciudad(seul|andong|gyeongju|busan|jeonju),nombre,ko,tipo
- (restaurante|café|mercado|plato),plato,direccion,horario,precio,
- fuente(itinerario|guia|propio),url,nota}]. Campos pueden ser null.
+ (restaurante|café|mercado|plato|bar),plato,direccion,horario,precio,
+ fuente(itinerario|guia|lonely|propio),url,nota}]. Campos pueden
+ser null. "lonely" = Lonely Planet Korea 2016 (página en nota);
+"guia" lleva el enlace en url.
 Estado (Quiero/Visitado/Descartado/Cerrado), notas y lugares
 propios se guardan en el móvil (user.comer, user.comerPropios).
 Campos opcionales: la app NO debe romperse si falta alguno.

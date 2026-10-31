@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v17
+Caché del service worker: corea-v18
 
 ## Decisiones
 - S1: datos guardados en localStorage (más simple que IndexedDB; el viaje cabe de sobra).
@@ -38,6 +38,9 @@ Caché del service worker: corea-v17
 - SX Comer: data/comer.json (30 lugares públicos dados por el usuario, contenido exacto) precacheado; pestaña Comer con chips de ciudad y tipo, tarjetas con "VERIFICAR que sigue abierto", Copiar coreano, Enseñar (pantalla completa) y Naver; estado Quiero/Visitado/Descartado/Cerrado y nota por lugar; "Añadir lugar" (fuente propio). Todo en user → entra en "Exportar copia". Acceso "🍜 Comer en <ciudad>" en cada día de Hoy.
 - SX Comer: se quita la lista "Dónde comer" que estaba en contenido.js (COMIDA) para no duplicar; Comer es ahora el único sitio de restaurantes (los de la Lonely siguen en Ruta).
 
+- Cambio pedido: Comer con todo lo recopilado. data/comer.json pasa a 116 lugares: los 30 del usuario (sin tocar), 19 de guías web con su enlace (la lista anterior) y 67 de la Lonely Planet 2016 (nombre y hangul de la guía, página en la nota, ★ si es elección del autor, precio por símbolos y horario "LP 2016"). Nuevo tipo "bar" y fuente "lonely". Los restaurantes de la Lonely salen ya solo en Comer (quitados de Ruta/Enseñar).
+- Cambio pedido: sitios de la Lonely que faltaban añadidos a Ruta/Enseñar/Checklist (25 en Seúl, 4 en Gyeongju, 5 en Busan, 2 en Jeonju).
+
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
 - [Supuesto] Tema (Auto/Claro/Oscuro) e Importar/Exportar/Borrar viven en la pestaña Más.
@@ -61,6 +64,8 @@ Caché del service worker: corea-v17
 - [Supuesto] Ciudad por defecto en Comer: la del día actual; antes del viaje, Seúl. "Todas" disponible.
 - [Supuesto] Tocar otra vez un estado lo quita. Descartado/Cerrado se ven atenuados.
 - [Supuesto] Lugares propios sin hangul: Enseñar muestra "falta hangul" y Naver busca por el nombre.
+- [Supuesto] No se añaden de la Lonely: tiendas, estadios, karaoke, festivales fuera de fechas y lo de la isla de Ulleungdo/costa de Pohang (la guía lo mete en la zona de Gyeongju).
+- [Supuesto] Duplicados guía web/Lonely se unen en una tarjeta (fuente Lonely + enlace web).
 
 ## Verificar por el usuario
 - Prueba real en tu móvil: abrir con wifi, cerrar, modo avión, abrir y recorrer las 8 pestañas.
