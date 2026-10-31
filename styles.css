@@ -107,3 +107,7 @@ details > summary { list-style: none; cursor: pointer; }
 details > summary::-webkit-details-marker { display: none; }
 details > summary::after { content: " ▸"; color: var(--muted); }
 details[open] > summary::after { content: " ▾"; }
+
+input[type="search"] { font: inherit; width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--card); color: var(--fg); margin: 6px 0; }
+[data-full].card { cursor: pointer; }

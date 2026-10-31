@@ -1,0 +1,218 @@
+'use strict';
+// Diccionario ES -> KO para el viaje. [español, hangul, romanización, 'v' si hay que verificar]
+// Formas educadas (-요). Solo entradas de uso común y seguras.
+const DICC = [
+['Básico', [
+['hola','안녕하세요','annyeonghaseyo'],['adiós (al que se va)','안녕히 가세요','annyeonghi gaseyo'],
+['adiós (al que se queda)','안녕히 계세요','annyeonghi gyeseyo'],['gracias','감사합니다','gamsahamnida'],
+['gracias (más cercano)','고마워요','gomawoyo'],['de nada','천만에요','cheonmaneyo'],
+['perdón, lo siento','죄송합니다','joesonghamnida'],['lo siento (cercano)','미안해요','mianhaeyo'],
+['disculpe (con permiso)','실례합니다','sillyehamnida'],['¡perdone! (llamar a alguien)','저기요','jeogiyo'],
+['sí','네','ne'],['no','아니요','aniyo'],['vale, está bien (me gusta)','좋아요','joayo'],
+['no pasa nada / estoy bien','괜찮아요','gwaenchanayo'],['no, gracias (no lo necesito)','괜찮아요','gwaenchanayo'],
+['no sé','몰라요','mollayo'],['entendido','알겠습니다','algetseumnida'],['no entiendo','모르겠어요','moreugesseoyo'],
+['por favor, deme…','…주세요','…juseyo'],['encantado/a','반갑습니다','bangapseumnida'],
+['me llamo…','제 이름은 …입니다','je ireumeun …imnida'],['¿cómo se llama?','이름이 뭐예요?','ireumi mwoyeyo?'],
+['un momento','잠시만요','jamsimanyo'],['espere, por favor','잠깐만요','jamkkanmanyo'],
+['repítalo, por favor','다시 한 번 말해 주세요','dasi han beon malhae juseyo'],
+['más despacio, por favor','천천히 말해 주세요','cheoncheonhi malhae juseyo'],
+['¿qué es esto?','이게 뭐예요?','ige mwoyeyo?'],['¿dónde está…?','…어디예요?','…eodiyeyo?'],
+['¿hay…? / ¿tiene…?','…있어요?','…isseoyo?'],['hay / tengo','있어요','isseoyo'],['no hay / no tengo','없어요','eopseoyo'],
+['¿puedo…?','…해도 돼요?','…haedo dwaeyo?'],['no se puede','안 돼요','an dwaeyo'],
+['bienvenido (en tiendas)','어서 오세요','eoseo oseyo'],['¡salud! (brindis)','건배','geonbae'],
+['¡que aproveche!','맛있게 드세요','masitge deuseyo'],['antes de comer (gracias por la comida)','잘 먹겠습니다','jal meokgetseumnida'],
+['después de comer (he comido bien)','잘 먹었습니다','jal meogeotseumnida'],['¡felicidades!','축하해요','chukahaeyo'],
+['¿de verdad?','진짜요?','jinjjayo?'],['¡cuidado!','조심하세요','josimhaseyo'],
+['no hablo coreano','한국어를 못해요','hangugeoreul motaeyo'],['¿habla inglés?','영어 하세요?','yeongeo haseyo?'],
+['soy de España','스페인 사람이에요','seupein saramieyo'],['esto','이거','igeo'],['eso','그거','geugeo'],['aquello','저거','jeogeo'],
+['uno más','하나 더','hana deo'],['este no','이거 말고','igeo malgo'],['muy','아주','aju'],['demasiado','너무','neomu'],
+['un poco','조금','jogeum'],['mucho','많이','mani'],['y (entre nombres)','하고','hago'],['también','도','do']
+]],
+['Números', [
+['cero','영 / 공','yeong / gong'],['1 (sino-coreano)','일','il'],['2','이','i'],['3','삼','sam'],['4','사','sa'],
+['5','오','o'],['6','육','yuk'],['7','칠','chil'],['8','팔','pal'],['9','구','gu'],['10','십','sip'],
+['100','백','baek'],['1.000','천','cheon'],['10.000','만','man'],['100.000','십만','simman'],['1.000.000','백만','baengman'],
+['1 (nativo, para contar)','하나','hana'],['2 (nativo)','둘','dul'],['3 (nativo)','셋','set'],['4 (nativo)','넷','net'],
+['5 (nativo)','다섯','daseot'],['6 (nativo)','여섯','yeoseot'],['7 (nativo)','일곱','ilgop'],['8 (nativo)','여덟','yeodeol'],
+['9 (nativo)','아홉','ahop'],['10 (nativo)','열','yeol'],
+['won (moneda)','원','won'],['1.000 wones','천 원','cheon won'],['5.000 wones','오천 원','ocheon won'],
+['10.000 wones','만 원','man won'],['50.000 wones','오만 원','oman won'],
+['una persona','한 명','han myeong'],['dos personas','두 명','du myeong'],['tres personas','세 명','se myeong'],
+['cuatro personas','네 명','ne myeong'],['somos dos','두 명이요','du myeongiyo'],
+['una cosa / unidad','한 개','han gae'],['dos cosas','두 개','du gae'],['una botella','한 병','han byeong'],
+['un vaso','한 잔','han jan'],['una ración','1인분','irinbun'],['dos raciones','2인분','iinbun'],
+['un billete (entrada)','한 장','han jang'],['dos billetes','두 장','du jang'],['número','번호','beonho']
+]],
+['Tiempo y fechas', [
+['hoy','오늘','oneul'],['mañana','내일','naeil'],['ayer','어제','eoje'],['ahora','지금','jigeum'],
+['luego / más tarde','나중에','najunge'],['mañana (parte del día) / desayuno','아침','achim'],
+['mediodía / comida','점심','jeomsim'],['cena / tarde-noche','저녁','jeonyeok'],['noche','밤','bam'],
+['a. m.','오전','ojeon'],['p. m.','오후','ohu'],['hora (en punto)','시','si'],['minuto','분','bun'],['y media','반','ban'],
+['¿qué hora es?','몇 시예요?','myeot siyeyo?'],['día','일','il'],['semana','주','ju'],['mes','월','wol'],['año','년','nyeon'],
+['lunes','월요일','woryoil'],['martes','화요일','hwayoil'],['miércoles','수요일','suyoil'],['jueves','목요일','mogyoil'],
+['viernes','금요일','geumyoil'],['sábado','토요일','toyoil'],['domingo','일요일','iryoil'],['fin de semana','주말','jumal'],
+['noviembre','십일월','sibirwol'],['temprano','일찍','iljjik'],['tarde (con retraso)','늦게','neutge'],['siempre','항상','hangsang'],
+['abierto (negocio)','영업 중','yeongeop jung'],['día de cierre','휴무','humu'],['horario de apertura','영업시간','yeongeop sigan']
+]],
+['Transporte', [
+['estación','역','yeok'],['metro','지하철','jihacheol'],['autobús','버스','beoseu'],['taxi','택시','taeksi'],
+['tren','기차','gicha'],['KTX (tren rápido)','케이티엑스','keitiekseu'],['aeropuerto','공항','gonghang'],['avión','비행기','bihaenggi'],
+['billete','표','pyo'],['taquilla','매표소','maepyoso'],['andén','승강장','seunggangjang'],['salida','출구','chulgu'],
+['entrada','입구','ipgu'],['transbordo','환승','hwanseung'],['línea (de metro)','호선','hoseon'],
+['parada de autobús','버스 정류장','beoseu jeongnyujang'],['terminal de autobuses','버스 터미널','beoseu teomineol'],
+['terminal de autobuses exprés','고속버스터미널','gosok beoseu teomineol'],['solo ida','편도','pyeondo'],['ida y vuelta','왕복','wangbok'],
+['asiento','좌석','jwaseok'],['número de asiento','좌석 번호','jwaseok beonho'],['vagón (n.º)','호차','hocha'],
+['próxima estación','다음 역','daeum yeok'],['última parada','종점','jongjeom'],['tarjeta de transporte','교통카드','gyotong kadeu'],
+['recargar','충전','chungjeon'],['horario (tabla)','시간표','siganpyo'],['retraso','지연','jiyeon'],['cancelado','취소','chwiso'],
+['puerta (de embarque)','게이트','geiteu'],['llegadas','도착','dochak'],['salidas','출발','chulbal'],['pasaporte','여권','yeogwon'],
+['aduana','세관','segwan'],['inmigración','출입국','churipguk'],['equipaje','짐','jim'],['maleta','캐리어','kaerieo'],
+['taquillas (consigna)','물품보관함','mulpum bogwanham'],['conductor (trato educado)','기사님','gisanim'],
+['bicicleta','자전거','jajeongeo'],['a pie','걸어서','georeoseo'],
+['¿cuánto se tarda?','얼마나 걸려요?','eolmana geollyeoyo?'],['¿cuánto cuesta hasta…?','…까지 얼마예요?','…kkaji eolmayeyo?'],
+['¿va a…?','…에 가요?','…e gayo?'],['¿dónde se compra el billete?','표는 어디서 사요?','pyoneun eodiseo sayo?'],
+['a esta dirección, por favor','이 주소로 가 주세요','i jusoro ga juseyo'],['pare aquí, por favor','여기 세워 주세요','yeogi sewo juseyo'],
+['abra el maletero, por favor','트렁크 열어 주세요','teureongkeu yeoreo juseyo'],['me bajo aquí','여기서 내릴게요','yeogiseo naerilgeyo']
+]],
+['Direcciones', [
+['derecha','오른쪽','oreunjjok'],['izquierda','왼쪽','oenjjok'],['todo recto','쭉 가세요','jjuk gaseyo'],
+['aquí','여기','yeogi'],['ahí','거기','geogi'],['allí','저기','jeogi'],['está cerca','가까워요','gakkawoyo'],['está lejos','멀어요','meoreoyo'],
+['delante','앞','ap'],['detrás','뒤','dwi'],['al lado','옆','yeop'],['dentro','안','an'],['fuera','밖','bak'],
+['arriba','위','wi'],['abajo','아래','arae'],['planta / piso','층','cheung'],['norte','북','buk'],['sur','남','nam'],
+['este','동','dong'],['oeste','서','seo'],['mapa','지도','jido'],['calle / camino','길','gil'],['cruce','사거리','sageori'],
+['semáforo','신호등','sinhodeung'],['puente','다리','dari'],['estoy perdido/a','길을 잃었어요','gireul ireosseoyo']
+]],
+['Alojamiento', [
+['hotel','호텔','hotel'],['habitación','방','bang'],['reserva','예약','yeyak'],['tengo una reserva','예약했어요','yeyakhaesseoyo'],
+['check-in','체크인','chekeuin'],['check-out','체크아웃','chekeuaut'],['¿a qué hora es el check-out?','체크아웃은 몇 시예요?','chekeuauseun myeot siyeyo?'],
+['llave','열쇠','yeolsoe'],['tarjeta llave','카드키','kadeuki'],['contraseña del wifi','와이파이 비밀번호','waipai bimilbeonho'],
+['recepción','프런트','peureonteu'],['ascensor','엘리베이터','ellibeiteo'],['toalla','수건','sugeon'],['manta / edredón','이불','ibul'],
+['almohada','베개','begae'],['baño / aseo','화장실','hwajangsil'],['ducha','샤워','syawo'],['agua caliente','뜨거운 물','tteugeoun mul'],
+['no sale agua caliente','뜨거운 물이 안 나와요','tteugeoun muri an nawayo'],['aire acondicionado','에어컨','eeokeon'],
+['calefacción','난방','nanbang'],['suelo radiante tradicional','온돌','ondol'],['desayuno','아침 식사','achim siksa'],
+['secador de pelo','드라이어','deuraieo'],['enchufe','콘센트','konsenteu'],['cargador','충전기','chungjeongi'],
+['lavadora','세탁기','setakgi'],['papel higiénico','휴지','hyuji'],['basura','쓰레기','sseuregi'],['reciclaje','분리수거','bullisugeo'],
+['zapatillas','슬리퍼','seullipeo'],['limpieza','청소','cheongso'],['está roto','고장 났어요','gojang nasseoyo'],
+['hay mucho ruido','시끄러워요','sikkeureowoyo'],['casa tradicional','한옥','hanok'],['guesthouse','게스트하우스','geseuteuhauseu'],
+['¿puedo dejar el equipaje?','짐 맡길 수 있어요?','jim matgil su isseoyo?']
+]],
+['Restaurante', [
+['restaurante','식당','sikdang'],['menú / carta','메뉴','menyu'],['¿tienen carta en inglés?','영어 메뉴 있어요?','yeongeo menyu isseoyo?'],
+['¿cuántos son?','몇 분이세요?','myeot buniseyo?'],['quiero pedir','주문할게요','jumunhalgeyo'],['¿qué está bueno aquí?','뭐가 맛있어요?','mwoga masisseoyo?'],
+['esto, por favor','이거 주세요','igeo juseyo'],['más, por favor','더 주세요','deo juseyo'],['agua, por favor','물 주세요','mul juseyo'],
+['la cuenta, por favor','계산해 주세요','gyesanhae juseyo'],['¿dónde se paga?','어디서 계산해요?','eodiseo gyesanhaeyo?'],
+['pagar por separado','따로 계산해 주세요','ttaro gyesanhae juseyo'],['para llevar','포장해 주세요','pojanghae juseyo'],
+['para tomar aquí','여기서 먹을게요','yeogiseo meogeulgeyo'],['autoservicio','셀프','selpeu'],['máquina de pedidos','키오스크','kioseukeu'],
+['está rico','맛있어요','masisseoyo'],['pica','매워요','maewoyo'],['algo que no pique','안 매운 거','an maeun geo'],
+['menos picante, por favor','덜 맵게 해 주세요','deol maepge hae juseyo'],['no puedo comer picante','매운 거 못 먹어요','maeun geo mot meogeoyo'],
+['salado','짜요','jjayo'],['dulce','달아요','darayo'],['caliente (quema)','뜨거워요','tteugeowoyo'],['frío (comida)','차가워요','chagawoyo'],
+['quítele…, por favor','…빼 주세요','…ppae juseyo'],['sin carne, por favor','고기 빼 주세요','gogi ppae juseyo'],
+['no como carne','고기 안 먹어요','gogi an meogeoyo'],['soy vegetariano/a','채식주의자예요','chaesikjuuijayeyo'],
+['tengo alergia','알레르기가 있어요','allereugiga isseoyo'],['alergia al cacahuete','땅콩 알레르기','ttangkong allereugi'],
+['alergia al marisco','해산물 알레르기','haesanmul allereugi'],['cuchara','숟가락','sutgarak'],['palillos','젓가락','jeotgarak'],
+['tenedor','포크','pokeu'],['cuchillo','칼','kal'],['plato','접시','jeopsi'],['vaso','컵','keop'],['servilleta','냅킨','naepkin'],
+['tijeras','가위','gawi'],['acompañamientos','반찬','banchan'],['mercado','시장','sijang'],['puesto callejero (carpa)','포장마차','pojangmacha'],
+['tienda 24 h','편의점','pyeonuijeom'],['panadería','빵집','ppangjip'],['cafetería','카페','kape']
+]],
+['Comida', [
+['arroz (cocido)','밥','bap'],['arroz (grano)','쌀','ssal'],['sopa','국','guk'],['guiso','찌개','jjigae'],['sopa espesa / estofado','탕','tang'],
+['fideos','국수','guksu'],['fideos fríos','냉면','naengmyeon'],['ramen instantáneo','라면','ramyeon'],['kimchi','김치','gimchi'],
+['bibimbap','비빔밥','bibimbap'],['bulgogi','불고기','bulgogi'],['costillas (galbi)','갈비','galbi'],['panceta a la parrilla','삼겹살','samgyeopsal'],
+['pollo frito','치킨','chikin'],['pasteles de arroz picantes','떡볶이','tteokbokki'],['rollito de arroz y alga','김밥','gimbap'],
+['empanadillas','만두','mandu'],['sopa de pollo con ginseng','삼계탕','samgyetang'],['tortita salada','전','jeon'],
+['tortita de cebolleta','파전','pajeon'],['pastel de arroz','떡','tteok'],['tofu','두부','dubu'],['huevo','계란','gyeran'],
+['carne','고기','gogi'],['ternera','소고기','sogogi'],['cerdo','돼지고기','dwaejigogi'],['pollo','닭고기','dakgogi'],
+['pescado','생선','saengseon'],['marisco','해산물','haesanmul'],['gamba','새우','saeu'],['pulpo','문어','muneo'],
+['pulpo pequeño','낙지','nakji'],['calamar','오징어','ojingeo'],['alga','김','gim'],['verdura','채소','chaeso'],
+['fruta','과일','gwail'],['manzana','사과','sagwa'],['pera','배','bae'],['mandarina','귤','gyul'],['caqui','감','gam'],
+['plátano','바나나','banana'],['fresa','딸기','ttalgi'],['uva','포도','podo'],['cebolla','양파','yangpa'],['ajo','마늘','maneul'],
+['cebolleta','파','pa'],['guindilla','고추','gochu'],['pasta de guindilla','고추장','gochujang'],['pasta de soja','된장','doenjang'],
+['salsa de soja','간장','ganjang'],['sal','소금','sogeum'],['azúcar','설탕','seoltang'],['pan','빵','ppang'],
+['cacahuete','땅콩','ttangkong'],['frutos secos','견과류','gyeongwaryu'],['leche','우유','uyu'],['queso','치즈','chijeu'],
+['helado','아이스크림','aiseukeurim']
+]],
+['Bebidas', [
+['agua','물','mul'],['té','차','cha'],['té verde','녹차','nokcha'],['café','커피','keopi'],['americano','아메리카노','amerikano'],
+['café con leche','카페라테','kape rate'],['con hielo (frío)','아이스','aiseu'],['caliente (bebida)','따뜻한 거','ttatteutan geo'],
+['hielo','얼음','eoreum'],['sin hielo, por favor','얼음 빼 주세요','eoreum ppae juseyo'],['cerveza','맥주','maekju'],
+['soju','소주','soju'],['vino de arroz (makgeolli)','막걸리','makgeolli'],['vino','와인','wain'],['zumo','주스','juseu'],
+['refresco','음료수','eumnyosu'],['agua con gas','탄산수','tansansu'],['el pequeño','작은 거','jageun geo'],['el grande','큰 거','keun geo']
+]],
+['Compras y dinero', [
+['¿cuánto cuesta?','얼마예요?','eolmayeyo?'],['es caro','비싸요','bissayo'],['es barato','싸요','ssayo'],['descuento','할인','harin'],
+['rebájemelo, por favor','깎아 주세요','kkakka juseyo'],['tarjeta','카드','kadeu'],['¿aceptan tarjeta?','카드 돼요?','kadeu dwaeyo?'],
+['efectivo','현금','hyeongeum'],['recibo','영수증','yeongsujeung'],['bolsa','봉투','bongtu'],['¿necesita bolsa?','봉투 필요하세요?','bongtu piryohaseyo?'],
+['talla','사이즈','saijeu'],['¿me lo puedo probar?','입어 봐도 돼요?','ibeo bwado dwaeyo?'],['devolución de impuestos','택스 리펀','taekseu ripeon'],
+['regalo','선물','seonmul'],['recuerdo (souvenir)','기념품','ginyeompum'],['cosméticos','화장품','hwajangpum'],['supermercado','마트','mateu'],
+['grandes almacenes','백화점','baekhwajeom'],['cajero automático','현금인출기','hyeongeum inchulgi'],['cambio de moneda','환전','hwanjeon'],
+['casa de cambio','환전소','hwanjeonso'],['euro','유로','yuro'],['el cambio (vuelta)','거스름돈','geoseureumdon'],['tienda','가게','gage'],
+['centro comercial','쇼핑몰','syopingmol']
+]],
+['Salud', [
+['hospital','병원','byeongwon'],['farmacia','약국','yakguk'],['médico','의사','uisa'],['dentista','치과','chigwa'],['medicina','약','yak'],
+['me duele','아파요','apayo'],['me duele aquí','여기 아파요','yeogi apayo'],['cabeza','머리','meori'],['estómago / barriga','배','bae'],
+['garganta / cuello','목','mok'],['ojo','눈','nun'],['mano','손','son'],['pie','발','bal'],['pierna','다리','dari'],['brazo','팔','pal'],
+['espalda','등','deung'],['corazón','심장','simjang'],['sangre','피','pi'],['dolor de cabeza','두통','dutong'],['fiebre','열','yeol'],
+['tengo fiebre','열이 나요','yeori nayo'],['resfriado','감기','gamgi'],['medicina para el resfriado','감기약','gamgiyak'],['tos','기침','gichim'],
+['diarrea','설사','seolsa'],['antidiarreico','지사제','jisaje'],['analgésico','진통제','jintongje'],['estoy mareado/a','어지러워요','eojireowoyo'],
+['tengo náuseas','토할 것 같아요','tohal geot gatayo'],['tirita','밴드','baendeu'],['herida','상처','sangcheo'],['me he caído','넘어졌어요','neomeojyeosseoyo'],
+['alergia','알레르기','allereugi'],['diabetes','당뇨','dangnyo'],['embarazo','임신','imsin'],['seguro (médico)','보험','boheom'],
+['urgencias','응급실','eunggeupsil'],['ambulancia','구급차','gugeupcha'],['mascarilla','마스크','maseukeu'],
+['tengo que ir al hospital','병원에 가야 해요','byeongwone gaya haeyo']
+]],
+['Emergencias', [
+['¡ayuda!','도와주세요','dowajuseyo'],['policía','경찰','gyeongchal'],['comisaría','경찰서','gyeongchalseo'],
+['llame a la policía','경찰 불러 주세요','gyeongchal bulleo juseyo'],['llame a una ambulancia','구급차 불러 주세요','gugeupcha bulleo juseyo'],
+['¡fuego!','불이야','buriya'],['ladrón','도둑','doduk'],['he perdido…','…잃어버렸어요','…ireobeoryeosseoyo'],
+['he perdido el pasaporte','여권을 잃어버렸어요','yeogwoneul ireobeoryeosseoyo'],['cartera','지갑','jigap'],['móvil','핸드폰','haendeupon'],
+['embajada','대사관','daesagwan'],['Embajada de España','스페인 대사관','seupein daesagwan'],['objetos perdidos','분실물 센터','bunsilmul senteo'],
+['accidente','사고','sago'],['peligro','위험','wiheom'],['salida de emergencia','비상구','bisanggu'],['terremoto','지진','jijin'],['refugio','대피소','daepiso']
+]],
+['Lugares y turismo', [
+['palacio','궁','gung'],['templo budista','절','jeol'],['museo','박물관','bangmulgwan'],['museo de arte','미술관','misulgwan'],
+['parque','공원','gongwon'],['montaña','산','san'],['playa','해변','haebyeon'],['mar','바다','bada'],['río','강','gang'],['isla','섬','seom'],
+['pueblo / aldea','마을','maeul'],['centro de la ciudad','시내','sinae'],['banco','은행','eunhaeng'],['correos','우체국','ucheguk'],
+['oficina de turismo','관광안내소','gwangwang annaeso'],['baño público','공중화장실','gongjung hwajangsil'],['iglesia','교회','gyohoe'],
+['catedral (católica)','성당','seongdang'],['mirador','전망대','jeonmangdae'],['mercado nocturno','야시장','yasijang'],
+['sauna coreana','찜질방','jjimjilbang'],['entrada (ticket)','입장권','ipjanggwon'],['precio de entrada','입장료','ipjangnyo'],
+['prohibido','금지','geumji'],['prohibido hacer fotos','사진 촬영 금지','sajin chwaryeong geumji'],['no tocar','만지지 마세요','manjiji maseyo'],
+['¿puedo hacer fotos?','사진 찍어도 돼요?','sajin jjigeodo dwaeyo?'],['¿me hace una foto?','사진 좀 찍어 주세요','sajin jom jjigeo juseyo'],
+['turista','관광객','gwangwanggaek'],['hojas de otoño','단풍','danpung'],['estancia en templo','템플스테이','tempeul seutei']
+]],
+['Personas e idiomas', [
+['yo','저','jeo'],['amigo/a','친구','chingu'],['familia','가족','gajok'],['marido','남편','nampyeon'],['mujer (esposa)','아내','anae'],
+['niño/a','아이','ai'],['hombre','남자','namja'],['mujer','여자','yeoja'],['dueño/a (trato a tenderos)','사장님','sajangnim'],
+['España','스페인','seupein'],['Corea','한국','hanguk'],['coreano (idioma)','한국어','hangugeo'],['inglés','영어','yeongeo'],
+['español (idioma)','스페인어','seupeineo'],['nombre','이름','ireum'],['edad','나이','nai']
+]],
+['Adjetivos y estados', [
+['bueno','좋아요','joayo'],['malo','나빠요','nappayo'],['grande','커요','keoyo'],['pequeño','작아요','jagayo'],
+['hay mucho','많아요','manayo'],['hay poco','적어요','jeogeoyo'],['hace frío','추워요','chuwoyo'],['hace calor','더워요','deowoyo'],
+['bonito','예뻐요','yeppeoyo'],['difícil','어려워요','eoryeowoyo'],['fácil','쉬워요','swiwoyo'],['rápido','빨라요','ppallayo'],
+['despacio','천천히','cheoncheonhi'],['estoy cansado/a','피곤해요','pigonhaeyo'],['tengo hambre','배고파요','baegopayo'],
+['estoy lleno/a','배불러요','baebulleoyo'],['tengo sed','목말라요','mongmallayo'],['es divertido','재미있어요','jaemiisseoyo'],
+['es aburrido','재미없어요','jaemieopseoyo'],['limpio','깨끗해요','kkaekkeutaeyo'],['sucio','더러워요','deoreowoyo'],
+['tranquilo / silencioso','조용해요','joyonghaeyo'],['ocupado (en uso)','사용 중','sayong jung'],['asiento libre','빈자리','binjari'],
+['completo (sin plazas)','만석','manseok'],['estoy contento/a','기뻐요','gippeoyo'],['soy feliz','행복해요','haengbokhaeyo']
+]],
+['Verbos', [
+['ir','가요','gayo'],['venir','와요','wayo'],['comer','먹어요','meogeoyo'],['beber','마셔요','masyeoyo'],['comprar','사요','sayo'],
+['ver / mirar','봐요','bwayo'],['dormir','자요','jayo'],['esperar','기다려요','gidaryeoyo'],['buscar','찾아요','chajayo'],
+['pagar','계산해요','gyesanhaeyo'],['reservar','예약해요','yeyakhaeyo'],['caminar','걸어요','georeoyo'],['hablar','말해요','malhaeyo'],
+['saber','알아요','arayo'],['necesitar','필요해요','piryohaeyo'],['llamar por teléfono','전화해요','jeonhwahaeyo'],['abrir','열어요','yeoreoyo'],
+['cerrar','닫아요','dadayo'],['subir (a un vehículo)','타요','tayo'],['bajar (de un vehículo)','내려요','naeryeoyo'],['cambiar','바꿔요','bakkwoyo'],
+['descansar','쉬어요','swieoyo'],['gustar','좋아해요','joahaeyo'],['sentarse','앉아요','anjayo'],['salir','나가요','nagayo'],
+['entrar','들어가요','deureogayo'],['leer','읽어요','ilgeoyo'],['enviar','보내요','bonaeyo'],['hacer fotos','사진 찍어요','sajin jjigeoyo']
+]],
+['Colores y clima', [
+['rojo','빨간색','ppalgansaek'],['azul','파란색','paransaek'],['amarillo','노란색','noransaek'],['verde','초록색','choroksaek'],
+['negro','검은색','geomeunsaek'],['blanco','흰색','huinsaek'],['gris','회색','hoesaek'],['rosa','분홍색','bunhongsaek'],
+['naranja (color)','주황색','juhwangsaek'],['morado','보라색','borasaek'],['tiempo (clima)','날씨','nalssi'],['lluvia','비','bi'],
+['nieve','눈','nun'],['viento','바람','baram'],['paraguas','우산','usan'],['está nublado','흐려요','heuryeoyo'],['otoño','가을','gaeul'],
+['abrigo','외투','oetu'],['guantes','장갑','janggap'],['calentador de bolsillo','핫팩','hatpaek']
+]],
+['Móvil e internet', [
+['wifi','와이파이','waipai'],['contraseña','비밀번호','bimilbeonho'],['batería','배터리','baeteori'],['batería externa','보조배터리','bojo baeteori'],
+['tarjeta SIM','유심','yusim'],['internet','인터넷','inteonet'],['teléfono','전화','jeonhwa'],['número de teléfono','전화번호','jeonhwa beonho'],
+['¿puedo cargar el móvil?','핸드폰 충전해도 돼요?','haendeupon chungjeonhaedo dwaeyo?']
+]]
+];

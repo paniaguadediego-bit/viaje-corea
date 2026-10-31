@@ -270,8 +270,8 @@ function full(html) {
 }
 function showFull(key) {
   const [t, a, b] = key.split(':');
-  if (t === 'f') {
-    const f = FRASES[a]; if (!f) return;
+  if (t === 'f' || t === 'd') {
+    const f = t === 'f' ? FRASES[a] : ((DICC[a] || [])[1] || [])[b]; if (!f) return;
     return full(`<div class="enorme">${esc(f[1])}</div><div class="es">${esc(f[0])} · ${esc(f[2])}</div>`);
   }
   const l = t === 'j' ? arr(trip.lugares)[a] : (CATALOGO[a] || [])[b];
@@ -285,17 +285,37 @@ function showFull(key) {
       ${l.verificar ? '<br><span class="ver">VERIFICAR</span>' : ''}</div>`);
 }
 
-// ---------- Corea (guía + frases) ----------
+// ---------- Corea (frases, diccionario, guía) ----------
+let coreaSub = 'frases';
+const sinTildes = t => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+const dFila = (e, key) => `<div class="card lugar" data-full="${key}"><div><div>${esc(e[0])}${e[3] ? ' <span class="ver">VERIFICAR</span>' : ''}</div>
+  <div class="ko">${esc(e[1])}</div><div class="muted">${esc(e[2])}</div></div></div>`;
+
+function dResultados(q) {
+  q = sinTildes(q).trim();
+  if (!q) return DICC.map(([cat, es], ci) => `<details><summary class="card big">${esc(cat)} <span class="muted">${es.length}</span></summary>
+    ${es.map((e, i) => dFila(e, `d:${ci}:${i}`)).join('')}</details>`).join('');
+  const res = [];
+  DICC.forEach(([, es], ci) => es.forEach((e, i) => {
+    if (sinTildes(e[0]).includes(q) || sinTildes(e[2]).includes(q) || e[1].includes(q)) res.push(dFila(e, `d:${ci}:${i}`));
+  }));
+  return res.length ? res.slice(0, 80).join('') : '<p class="muted">Sin resultados. Prueba con otra palabra.</p>';
+}
+
 function viewCorea() {
-  return `<h2>Frases útiles</h2>
-    ${FRASES.map((f, i) => `<div class="card lugar"><div><div>${esc(f[0])}</div>
-      <div class="ko">${esc(f[1])}</div><div class="muted">${esc(f[2])}</div></div>
-      <button data-full="f:${i}">⛶</button></div>`).join('')}
-    <h2>Nociones y etiqueta</h2>
-    <div class="card muted">La guía Lonely Planet de 2016 solo vale para cultura. Precios y apps hay que verificarlos.</div>
+  const seg = [['frases', 'Frases'], ['dicc', 'Diccionario'], ['guia', 'Guía']].map(([k, t]) =>
+    `<button class="${coreaSub === k ? '' : 'sec'}" data-sub="${k}">${t}</button>`).join('');
+  let html = `<div class="row daynav">${seg}</div>`;
+  if (coreaSub === 'frases') html += '<p class="muted">Toca una frase para verla a pantalla completa.</p>' +
+    FRASES.map((f, i) => dFila([f[0], f[1], f[2]], 'f:' + i)).join('');
+  else if (coreaSub === 'dicc') html += `<input id="q" type="search" placeholder="Buscar (español, coreano o romanización)" autocomplete="off">
+    <div id="dres">${dResultados('')}</div>`;
+  else html += `<div class="card muted">La guía Lonely Planet de 2016 solo vale para cultura. Precios y apps hay que verificarlos.</div>
     ${GUIA.map(([t, ps]) => `<details><summary class="card big">${esc(t)}</summary><div class="card"><ul>
       ${ps.map(x => `<li>${esc(x).replace('VERIFICAR', '<span class="ver">VERIFICAR</span>')}</li>`).join('')}</ul></div></details>`).join('')}`;
+  return html;
 }
+
 
 // ---------- Seguro ----------
 function viewSeguro() {
@@ -378,9 +398,10 @@ document.addEventListener('click', e => {
     else document.getElementById('full')?.remove();
     return;
   }
-  const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go]');
+  const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub]');
   if (!b) return;
-  if (b.dataset.tab) { tab = b.dataset.tab; window.scrollTo(0, 0); }
+  if (b.dataset.sub) coreaSub = b.dataset.sub;
+  else if (b.dataset.tab) { tab = b.dataset.tab; window.scrollTo(0, 0); }
   else if (b.dataset.go) { tab = b.dataset.go; window.scrollTo(0, 0); }
   else if (b.dataset.day) { dayIdx += Number(b.dataset.day); }
   else if (b.dataset.theme) { save(K_THEME, b.dataset.theme); }
@@ -394,6 +415,9 @@ document.addEventListener('click', e => {
       trip = null; user = { gastos: [], checklist: {}, notas: '' }; dayIdx = null; tab = 'hoy';
   }
   render();
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'q') $('#dres').innerHTML = dResultados(e.target.value);
 });
 $('#file').addEventListener('change', e => {
   if (e.target.files[0]) importFile(e.target.files[0]);

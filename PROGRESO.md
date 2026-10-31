@@ -1,7 +1,7 @@
 # Progreso
-- [x] S1  - [x] S2  - [x] S3  - [ ] S4  - [ ] S5  - [ ] S6
+- [x] S1  - [x] S2  - [x] S3  - [x] S4  - [ ] S5  - [ ] S6
 
-Caché del service worker: corea-v3
+Caché del service worker: corea-v4
 
 ## Decisiones
 - S1: datos guardados en localStorage (más simple que IndexedDB; el viaje cabe de sobra).
@@ -11,6 +11,8 @@ Caché del service worker: corea-v3
 - Cambio pedido: mapa esquemático de Corea en Ruta con ciudades, traslados (azul comprado, rojo discontinuo pendiente) y sitios de interés por ciudad. Nuevos campos opcionales en ciudades: lat, lon, interes[].
 - Cambio pedido: que Claude haga lo que pueda de "Qué debes hacer tú". Añadido contenido.js con un catálogo PÚBLICO de sitios conocidos por ciudad (con hangul seguro): alimenta los sitios de interés en Ruta (si la ciudad no trae "interes") y la sección "Sitios conocidos" en Enseñar.
 - Los datos privados (hoteles, póliza, teléfono del seguro) NO se pueden hacer desde aquí: no están en el repo y no deben estarlo.
+- S4: diccionario (587 entradas ES→KO en diccionario.js) dentro de la pestaña Corea, con subpestañas Frases / Diccionario / Guía (no se añaden pestañas nuevas).
+- Lonely Planet: no accesible desde esta sesión (no está en Notion y los Proyectos de claude.ai no se ven desde aquí). Pendiente de que el usuario la adjunte.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
