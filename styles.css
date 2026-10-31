@@ -132,3 +132,12 @@ a.btn.mini { display: inline-block; width: auto; min-height: 36px; padding: 6px 
 .btn.sec { background: var(--card); color: var(--fg); border: 1px solid var(--line); }
 .manana { border-left: 4px solid var(--blue); }
 .conv input { text-align: center; font-size: 1.1rem; font-weight: 700; }
+
+.fotos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.fotos figure { margin: 0; padding: 4px; cursor: pointer; }
+.fotos img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; display: block; }
+.fotos figcaption { font-size: .75em; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#full .fotofull { max-width: 100%; max-height: 75vh; object-fit: contain; }
+#full button.danger { width: auto; margin-top: 12px; }
+.conv input { flex: 1; min-width: 0; width: auto; }
+[data-viajeros] { width: 100%; }

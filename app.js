@@ -62,6 +62,64 @@ function applyTheme() {
   else document.documentElement.setAttribute('data-theme', t);
 }
 
+// ---------- fotos de documentos (IndexedDB, solo en este móvil) ----------
+let fotos = [];
+function db() {
+  return new Promise((ok, ko) => {
+    const r = indexedDB.open('corea', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('fotos', { keyPath: 'id' });
+    r.onsuccess = () => ok(r.result); r.onerror = () => ko(r.error);
+  });
+}
+async function dbOp(modo, fn) {
+  const d = await db();
+  return new Promise((ok, ko) => {
+    const tx = d.transaction('fotos', modo), st = tx.objectStore('fotos'), r = fn(st);
+    tx.oncomplete = () => ok(r && r.result); tx.onerror = () => ko(tx.error);
+  });
+}
+const cargarFotos = () => dbOp('readonly', st => st.getAll()).then(f => { fotos = arr(f).sort((a, b) => a.id.localeCompare(b.id)); }).catch(() => {});
+const guardarFoto = f => dbOp('readwrite', st => st.put(f));
+const borrarFoto = id => dbOp('readwrite', st => st.delete(id));
+
+// Reduce la foto (máx. 1600 px, JPEG) para que ocupe poco.
+function comprimir(file) {
+  return new Promise((ok, ko) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const k = Math.min(1, 1600 / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); ok(c.toDataURL('image/jpeg', 0.8));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); ko(); };
+    img.src = url;
+  });
+}
+async function anadirFotos(files) {
+  for (const f of files) {
+    try {
+      const data = await comprimir(f);
+      const nombre = (prompt('Nombre del documento:', f.name.replace(/\.[^.]+$/, '')) || 'Documento').trim();
+      await guardarFoto({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), nombre, data, fecha: todayISO() });
+    } catch { alert('No se pudo leer la imagen: ' + f.name); }
+  }
+  await cargarFotos(); render();
+}
+function viewFotos() {
+  return `<h2>Fotos de documentos</h2>
+    <p class="muted">Pasaporte, reservas, póliza… Se guardan solo en este móvil y se ven sin conexión.</p>
+    <div class="fotos">${fotos.map(f => `<figure class="card" data-foto="${esc(f.id)}"><img src="${f.data}" alt="">
+      <figcaption>${esc(f.nombre)}</figcaption></figure>`).join('')}</div>
+    <button class="sec" data-act="foto">📷 Añadir foto</button>`;
+}
+function showFoto(id) {
+  const f = fotos.find(x => x.id === id); if (!f) return;
+  full(`<img class="fotofull" src="${f.data}" alt=""><div class="es">${esc(f.nombre)}</div>
+    <button class="danger mini" data-delfoto="${esc(f.id)}">Borrar foto</button>`);
+}
+
 // ---------- importar / exportar ----------
 function importFile(file) {
   const r = new FileReader();
@@ -71,6 +129,9 @@ function importFile(file) {
       if (!obj || typeof obj !== 'object' || Array.isArray(obj)) throw new Error();
       if (obj.trip && obj.user) { // copia exportada por esta app
         trip = obj.trip; user = obj.user; save(K_USER, user);
+        if (Array.isArray(obj.fotos)) {
+          dbOp('readwrite', st => { st.clear(); obj.fotos.forEach(f => f && f.id && st.put(f)); }).then(cargarFotos).then(render).catch(() => {});
+        }
       } else {
         trip = obj;
       }
@@ -84,8 +145,9 @@ function importFile(file) {
   };
   r.readAsText(file);
 }
-function exportCopy() {
-  const data = { exportado: new Date().toISOString(), trip, user };
+async function exportCopy() {
+  await cargarFotos();
+  const data = { exportado: new Date().toISOString(), trip, user, fotos };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -454,6 +516,29 @@ const aEur = g => g.moneda === 'EUR' ? g.importe : (cambio() ? g.importe / cambi
 const eur = n => n.toLocaleString('es-ES', { maximumFractionDigits: 2 }) + ' €';
 const won = n => '₩' + Math.round(n).toLocaleString('es-ES');
 
+// Viajeros para repartir gastos: los de la app (editables) o los del viaje.
+function viajeros() {
+  const v = u().viajeros != null ? user.viajeros : (trip.meta && trip.meta.viajeros);
+  return (Array.isArray(v) ? v : String(v || '').split(',')).map(x => String(x).trim()).filter(Boolean);
+}
+// Quién debe a quién (en €). Gastos sin pagador no cuentan.
+function balances() {
+  const vs = viajeros(), saldo = Object.fromEntries(vs.map(v => [v, 0]));
+  u().gastos.forEach(g => {
+    if (!g.pagador || !(g.pagador in saldo)) return;
+    const v = aEur(g), para = g.para && g.para in saldo ? [g.para] : vs;
+    saldo[g.pagador] += v; para.forEach(p => { saldo[p] -= v / para.length; });
+  });
+  const deu = Object.entries(saldo).filter(x => x[1] < -0.005).map(x => [...x]);
+  const acr = Object.entries(saldo).filter(x => x[1] > 0.005).map(x => [...x]);
+  const pagos = [];
+  deu.forEach(d => acr.forEach(a => {
+    const m = Math.min(-d[1], a[1]); if (m < 0.005) return;
+    pagos.push(`${esc(d[0])} → ${esc(a[0])}: <b>${eur(m)}</b>`); d[1] += m; a[1] -= m;
+  }));
+  return pagos;
+}
+
 function viewGastos() {
   const U = u(), G = U.gastos, ref = Number(trip.meta && trip.meta.presupuesto_referencia) || 0;
   const total = G.reduce((a, g) => a + aEur(g), 0);
@@ -475,16 +560,21 @@ function viewGastos() {
       <div class="row"><input name="importe" type="number" inputmode="decimal" step="any" min="0" placeholder="Importe" required>
         <select name="moneda"><option value="KRW">₩</option><option value="EUR">€</option></select></div>
       <input name="concepto" placeholder="Concepto (opcional)" autocomplete="off">
+      ${viajeros().length > 1 ? `<div class="row"><select name="pagador">${viajeros().map(v => `<option>${esc(v)}</option>`).join('')}</select>
+        <select name="para"><option value="">Para todos</option>${viajeros().map(v => `<option value="${esc(v)}">Solo ${esc(v)}</option>`).join('')}</select></div>` : ''}
       <div class="row"><select name="cat">${CATS.map(c => `<option>${c}</option>`).join('')}</select>
         <select name="ciudad">${ciudadesUnicas().map(c => `<option ${norm(c.nombre) === norm(act) ? 'selected' : ''}>${esc(c.nombre)}</option>`).join('')}<option>Otra</option></select></div>
       <button>Añadir gasto</button>
     </form>
+    ${viajeros().length > 1 ? `<h2>Cuentas entre viajeros</h2><div class="card">${balances().map(x => `<div>${x}</div>`).join('') || '<div class="muted">Estáis en paz.</div>'}</div>` : ''}
+    <div class="card"><div class="muted">Viajeros (separados por comas) para repartir gastos</div>
+      <input data-viajeros value="${esc(viajeros().join(', '))}" placeholder="Ana, Luis"></div>
     <div class="card row"><span>Cambio: 1 € =</span><input data-cambio type="number" inputmode="decimal" step="any" value="${cambio() || ''}" placeholder="₩"><span>₩</span></div>
     ${G.length ? `<h2>Por ciudad</h2><div class="card">${tabla(suma('ciudad'))}</div>
       <h2>Por categoría</h2><div class="card">${tabla(suma('cat'))}</div>
       <h2>Últimos gastos</h2>${G.slice().reverse().map(g => `<div class="card lugar"><div>
         <b>${g.moneda === 'EUR' ? eur(g.importe) : won(g.importe)}</b>${g.moneda === 'EUR' ? '' : ` <span class="muted">≈ ${eur(aEur(g))}</span>`}
-        <div class="muted">${esc(g.fecha)} · ${esc(g.ciudad)} · ${esc(g.cat)}${g.concepto ? ' · ' + esc(g.concepto) : ''}</div></div>
+        <div class="muted">${esc(g.fecha)} · ${esc(g.ciudad)} · ${esc(g.cat)}${g.concepto ? ' · ' + esc(g.concepto) : ''}${g.pagador ? ` · pagó ${esc(g.pagador)}${g.para ? ' (solo ' + esc(g.para) + ')' : ''}` : ''}</div></div>
         <button class="sec mini" data-delgasto="${esc(g.id)}">✕</button></div>`).join('')}` : '<p class="muted">Aún no hay gastos.</p>'}`;
 }
 
@@ -492,11 +582,12 @@ function viewMas() {
   const t = load(K_THEME, 'auto');
   const docs = arr(trip && trip.checklist_documentos).map((d, i) => ({ id: d.id || 'd' + i, texto: d.texto, url: d.url }));
   return `${trip ? `<h2>Maleta y documentos</h2>${checks('docs', docs)}
+    ${viewFotos()}
     <h2>Notas</h2><textarea data-notas rows="6" placeholder="Escribe aquí… (se guarda solo)">${esc(u().notas)}</textarea>` : ''}
     <h2>Datos del viaje</h2>
     <button data-act="import">📂 Importar viaje</button>
     <button class="sec" data-act="export">💾 Exportar copia</button>
-    <p class="muted">La copia incluye el viaje, gastos, checklist y notas. Guárdala fuera del móvil.
+    <p class="muted">La copia incluye el viaje, gastos, checklist, notas y fotos. Guárdala fuera del móvil.
       Última copia: <b>${esc(localStorage.getItem('corea.ultimaCopia') || 'nunca')}</b></p>
     <h2>Tema</h2>
     <div class="row">
@@ -538,6 +629,14 @@ document.addEventListener('click', e => {
     else arr(u().extra[del.dataset.delitem]).splice(+del.dataset.i, 1);
     saveUser(); render(); return;
   }
+  const fo = e.target.closest('[data-foto],[data-delfoto]');
+  if (fo) {
+    if (fo.dataset.foto) showFoto(fo.dataset.foto);
+    else if (confirm('¿Borrar esta foto?')) {
+      borrarFoto(fo.dataset.delfoto).then(cargarFotos).then(() => { document.getElementById('full')?.remove(); render(); });
+    }
+    return;
+  }
   const x = e.target.closest('[data-full],[data-close],[data-copy],[data-ciudad]');
   if (x) {
     if (x.dataset.full) showFull(x.dataset.full);
@@ -556,10 +655,12 @@ document.addEventListener('click', e => {
   else switch (b.dataset.act) {
     case 'import': $('#file').click(); return;
     case 'export': exportCopy(); return;
+    case 'foto': $('#fotofile').click(); return;
     case 'example': loadExample(); return;
     case 'wipe':
       if (!confirm('¿Borrar viaje, gastos, checklist y notas de este móvil? Exporta antes una copia.')) return;
       localStorage.removeItem(K_TRIP); localStorage.removeItem(K_USER);
+      dbOp('readwrite', st => st.clear()).catch(() => {}); fotos = [];
       trip = null; user = { gastos: [], checklist: {}, notas: '' }; dayIdx = null; tab = 'hoy';
   }
   render();
@@ -577,6 +678,7 @@ document.addEventListener('change', e => {
   const t = e.target;
   if (t.dataset.check) { u().checklist[t.dataset.check] = t.checked; if (!t.checked) delete user.checklist[t.dataset.check]; saveUser(); render(); }
   else if (t.dataset.cambio !== undefined) { u().cambio = Number(t.value) || 0; saveUser(); render(); }
+  else if (t.dataset.viajeros !== undefined) { u().viajeros = t.value.split(',').map(x => x.trim()).filter(Boolean); saveUser(); render(); }
 });
 document.addEventListener('submit', e => {
   e.preventDefault();
@@ -587,9 +689,14 @@ document.addEventListener('submit', e => {
   } else if (f.dataset.gasto !== undefined) {
     const importe = Number(d.importe); if (!(importe > 0)) return;
     u().gastos.push({ id: Date.now().toString(36), fecha: todayISO(), importe, moneda: d.moneda,
-      concepto: (d.concepto || '').trim(), cat: d.cat, ciudad: d.ciudad });
+      concepto: (d.concepto || '').trim(), cat: d.cat, ciudad: d.ciudad,
+      ...(d.pagador ? { pagador: d.pagador, para: d.para || '' } : {}) });
   } else return;
   saveUser(); render();
+});
+$('#fotofile').addEventListener('change', e => {
+  if (e.target.files.length) anadirFotos([...e.target.files]);
+  e.target.value = '';
 });
 $('#file').addEventListener('change', e => {
   if (e.target.files[0]) importFile(e.target.files[0]);
@@ -597,6 +704,7 @@ $('#file').addEventListener('change', e => {
 });
 
 render();
+cargarFotos().then(() => { if (tab === 'mas') render(); });
 
 // Pide al navegador que no borre los datos guardados si falta espacio.
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});

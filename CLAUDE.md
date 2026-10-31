@@ -22,7 +22,9 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    Corea (SVG propio, offline) con ciudades, traslados y sitios
    de interés de cada ciudad. Extras aprobados: conversor ₩↔€
    en Gastos, botón "Naver" (abre Naver Map, requiere conexión),
-   resumen "Mañana" y hora Corea/España en Hoy.
+   resumen "Mañana" y hora Corea/España en Hoy, fotos de
+   documentos en Más (IndexedDB, solo en el móvil) y gastos
+   compartidos entre viajeros.
 6. Dato dudoso = "VERIFICAR". No inventar hangul, teléfonos,
    horarios ni precios. Si un objeto del JSON trae
    "verificar": true, mostrar una marca visible.

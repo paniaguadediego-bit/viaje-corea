@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6
 
-Caché del service worker: corea-v9
+Caché del service worker: corea-v10
 
 ## Decisiones
 - S1: datos guardados en localStorage (más simple que IndexedDB; el viaje cabe de sobra).
@@ -21,6 +21,8 @@ Caché del service worker: corea-v9
 
 - Cambio pedido (mejoras tipo TripIt/Wanderlog): conversor rápido ₩↔€ en Gastos; botón "🗺️ Naver" en hoteles (Hoy) y lugares (Enseñar); tarjeta "Mañana" en Hoy (cambio de ciudad, traslados con hora y estado, plan con horas); hora de Corea y España arriba en Hoy.
 
+- Cambio pedido: fotos de documentos en Más (se reducen a 1600 px JPEG y se guardan en IndexedDB; se ven sin conexión; entran en "Exportar copia") y gastos compartidos (pagó / para todos o solo uno; "Cuentas entre viajeros" dice quién debe a quién).
+
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
 - [Supuesto] Tema (Auto/Claro/Oscuro) e Importar/Exportar/Borrar viven en la pestaña Más.
@@ -39,6 +41,8 @@ Caché del service worker: corea-v9
 - [Supuesto] Museo de Máscaras de Hahoe sin hangul (la guía no lo da): marca "falta hangul".
 - [Supuesto] Naver busca por dirección en coreano; si no hay, por hangul del nombre, dirección en inglés o nombre.
 - [Supuesto] "Mañana" se calcula respecto al día que se está viendo (no solo hoy).
+- [Supuesto] Viajeros: se toman de meta.viajeros y se pueden editar en Gastos. Con 1 viajero no aparece el reparto.
+- [Supuesto] Solo imágenes (no PDF): de un PDF, haz captura de pantalla y súbela.
 
 ## Verificar por el usuario
 - Prueba real en tu móvil: abrir con wifi, cerrar, modo avión, abrir y recorrer las 8 pestañas.
@@ -49,3 +53,4 @@ Caché del service worker: corea-v9
 - Añadir a "lugares" del trip.json los hoteles con su hangul (copiado de Naver Map o de la reserva).
 - Revisar en Seguro que teléfono y póliza son los correctos.
 - K-ETA / tarjeta de llegada: comprobar en la web oficial antes de salir.
+- Hacer fotos del pasaporte, reservas y póliza y añadirlas en Más → Fotos de documentos.
