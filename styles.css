@@ -123,7 +123,6 @@ button.mini { width: auto; min-height: 36px; padding: 6px 12px; margin: 0; flex:
 .check input:checked + span { text-decoration: line-through; color: var(--muted); }
 .barra { height: 10px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 6px 0; }
 .barra div { height: 100%; background: var(--blue); }
-[data-cambio] { width: 110px; flex: none; }
 
 .reloj { text-align: right; font-size: .85em; margin-top: -2px; }
 .acciones { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
@@ -131,7 +130,6 @@ button.mini { width: auto; min-height: 36px; padding: 6px 12px; margin: 0; flex:
 a.btn.mini { display: inline-block; width: auto; min-height: 36px; padding: 6px 10px; margin: 0; font-size: .9rem; }
 .btn.sec { background: var(--card); color: var(--fg); border: 1px solid var(--line); }
 .manana { border-left: 4px solid var(--blue); }
-.conv input { text-align: center; font-size: 1.1rem; font-weight: 700; }
 
 .fotos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .fotos figure { margin: 0; padding: 4px; cursor: pointer; }
@@ -139,4 +137,17 @@ a.btn.mini { display: inline-block; width: auto; min-height: 36px; padding: 6px 
 .fotos figcaption { font-size: .75em; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #full .fotofull { max-width: 100%; max-height: 75vh; object-fit: contain; }
 #full button.danger { width: auto; margin-top: 12px; }
-.conv input { flex: 1; min-width: 0; width: auto; }
+
+/* filas de dos casillas alineadas */
+.par { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
+.par > input, .par > select { flex: 1; min-width: 0; width: auto; margin: 0; }
+.par > span { flex: none; color: var(--muted); }
+.par > .moneda { flex: 0 0 72px; }
+input, select { height: 42px; box-sizing: border-box; }
+form > input { display: block; width: 100%; margin: 6px 0; }
+.conv .par input { text-align: center; font-size: 1.1rem; font-weight: 700; }
+.cambio { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+.cambio input { width: 90px; height: 36px; text-align: center; }
+header { display: flex; align-items: center; gap: 8px; }
+#back { width: 40px; min-height: 36px; height: 36px; padding: 0; margin: 0; font-size: 1.6rem; line-height: 1; flex: none; }
+#back[hidden] { display: none; }

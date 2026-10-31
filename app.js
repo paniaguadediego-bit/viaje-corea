@@ -14,6 +14,20 @@ const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 let trip = load(K_TRIP, null);
 let user = load(K_USER, { gastos: [], checklist: {}, notas: '' });
 let tab = 'hoy';
+// Historial de pestañas para el botón atrás (el de la app y el de Android).
+const pila = [];
+function ir(t) {
+  if (t === tab) return;
+  pila.push(tab); tab = t; history.pushState({ t }, ''); window.scrollTo(0, 0);
+}
+function cerrarFull() {
+  const f = document.getElementById('full'); if (!f) return false;
+  f._lock?.release().catch(() => {}); f.remove(); return true;
+}
+window.addEventListener('popstate', () => {
+  if (cerrarFull()) return;
+  if (pila.length) { tab = pila.pop(); render(); window.scrollTo(0, 0); }
+});
 let dayIdx = null;
 
 const TABS = [
@@ -136,7 +150,7 @@ function importFile(file) {
         trip = obj;
       }
       save(K_TRIP, trip);
-      dayIdx = null; tab = 'hoy';
+      dayIdx = null; tab = 'hoy'; pila.length = 0;
       render();
       alert('Viaje importado y guardado en el móvil.');
     } catch {
@@ -374,6 +388,7 @@ function full(html) {
   div.id = 'full';
   div.innerHTML = '<button class="sec cerrar" data-close>✕ Cerrar</button>' + html;
   document.body.appendChild(div);
+  history.pushState({ full: 1 }, '');
   // Mantiene la pantalla encendida mientras se enseña la tarjeta.
   if (navigator.wakeLock) navigator.wakeLock.request('screen').then(l => { div._lock = l; }).catch(() => {});
 }
@@ -524,9 +539,10 @@ function viewGastos() {
   const tabla = m => Object.entries(m).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div class="lugar"><span>${esc(k)}</span><b>${eur(v)}</b></div>`).join('');
   const act = ciudadActual();
   return `<div class="card conv">
-      <div class="muted">Conversor rápido${cambio() ? ` (1 € = ${won(cambio())})` : ''}</div>
-      <div class="row"><input data-conv="KRW" type="number" inputmode="decimal" placeholder="₩">
-        <span>⇄</span><input data-conv="EUR" type="number" inputmode="decimal" placeholder="€"></div>
+      <div class="muted">Conversor rápido</div>
+      <div class="par"><input data-conv="KRW" type="number" inputmode="decimal" placeholder="₩ wones">
+        <span>⇄</span><input data-conv="EUR" type="number" inputmode="decimal" placeholder="€ euros"></div>
+      <label class="cambio muted">Cambio: 1 € = <input data-cambio type="number" inputmode="decimal" step="any" value="${cambio() || ''}" placeholder="1500"> ₩</label>
     </div>
     <div class="card">
       <div class="big">Total: ${eur(total)}</div>
@@ -535,14 +551,14 @@ function viewGastos() {
       ${cambio() ? '' : '<div class="falta">Pon el cambio para pasar ₩ a €</div>'}
     </div>
     <form class="card" data-gasto>
-      <div class="row"><input name="importe" type="number" inputmode="decimal" step="any" min="0" placeholder="Importe" required>
-        <select name="moneda"><option value="KRW">₩</option><option value="EUR">€</option></select></div>
+      <div class="muted">Nuevo gasto</div>
+      <div class="par"><input name="importe" type="number" inputmode="decimal" step="any" min="0" placeholder="Importe" required>
+        <select name="moneda" class="moneda"><option value="KRW">₩</option><option value="EUR">€</option></select></div>
       <input name="concepto" placeholder="Concepto (opcional)" autocomplete="off">
-      <div class="row"><select name="cat">${CATS.map(c => `<option>${c}</option>`).join('')}</select>
+      <div class="par"><select name="cat">${CATS.map(c => `<option>${c}</option>`).join('')}</select>
         <select name="ciudad">${ciudadesUnicas().map(c => `<option ${norm(c.nombre) === norm(act) ? 'selected' : ''}>${esc(c.nombre)}</option>`).join('')}<option>Otra</option></select></div>
       <button>Añadir gasto</button>
     </form>
-    <div class="card row"><span>Cambio: 1 € =</span><input data-cambio type="number" inputmode="decimal" step="any" value="${cambio() || ''}" placeholder="₩"><span>₩</span></div>
     ${G.length ? `<h2>Por ciudad</h2><div class="card">${tabla(suma('ciudad'))}</div>
       <h2>Por categoría</h2><div class="card">${tabla(suma('cat'))}</div>
       <h2>Últimos gastos</h2>${G.slice().reverse().map(g => `<div class="card lugar"><div>
@@ -576,6 +592,7 @@ function viewMas() {
 function render() {
   applyTheme();
   $('#title').textContent = (trip && trip.meta && trip.meta.titulo) || 'Viaje a Corea';
+  $('#back').hidden = !pila.length;
   $('#tabs').innerHTML = TABS.map(([id, label, ic]) =>
     `<button data-tab="${id}" class="${tab === id ? 'on' : ''}"><span>${ic}</span>${label}</button>`).join('');
 
@@ -606,7 +623,7 @@ document.addEventListener('click', e => {
   if (fo) {
     if (fo.dataset.foto) showFoto(fo.dataset.foto);
     else if (confirm('¿Borrar esta foto?')) {
-      borrarFoto(fo.dataset.delfoto).then(cargarFotos).then(() => { document.getElementById('full')?.remove(); render(); });
+      borrarFoto(fo.dataset.delfoto).then(cargarFotos).then(() => { history.back(); render(); });
     }
     return;
   }
@@ -615,14 +632,15 @@ document.addEventListener('click', e => {
     if (x.dataset.full) showFull(x.dataset.full);
     else if (x.dataset.copy) copiar(x.dataset.copy);
     else if (x.dataset.ciudad) document.getElementById('c-' + x.dataset.ciudad)?.scrollIntoView({ behavior: 'smooth' });
-    else { const f = document.getElementById('full'); if (f) { f._lock?.release().catch(() => {}); f.remove(); } }
+    else history.back();
     return;
   }
+  if (e.target.closest('#back')) { history.back(); return; }
   const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub]');
   if (!b) return;
   if (b.dataset.sub) coreaSub = b.dataset.sub;
-  else if (b.dataset.tab) { tab = b.dataset.tab; window.scrollTo(0, 0); }
-  else if (b.dataset.go) { tab = b.dataset.go; window.scrollTo(0, 0); }
+  else if (b.dataset.tab) ir(b.dataset.tab);
+  else if (b.dataset.go) ir(b.dataset.go);
   else if (b.dataset.day) { dayIdx += Number(b.dataset.day); }
   else if (b.dataset.theme) { save(K_THEME, b.dataset.theme); }
   else switch (b.dataset.act) {
@@ -634,7 +652,7 @@ document.addEventListener('click', e => {
       if (!confirm('¿Borrar viaje, gastos, checklist y notas de este móvil? Exporta antes una copia.')) return;
       localStorage.removeItem(K_TRIP); localStorage.removeItem(K_USER);
       dbOp('readwrite', st => st.clear()).catch(() => {}); fotos = [];
-      trip = null; user = { gastos: [], checklist: {}, notas: '' }; dayIdx = null; tab = 'hoy';
+      trip = null; user = { gastos: [], checklist: {}, notas: '' }; dayIdx = null; tab = 'hoy'; pila.length = 0;
   }
   render();
 });
