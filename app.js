@@ -1,14 +1,17 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v18';
+const VERSION = 'v19';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const arr = v => (Array.isArray(v) ? v : []);
-const ver = o => (o && o.verificar ? '<span class="ver">VERIFICAR</span>' : '');
+// Clave estable para marcar algo como verificado en este móvil.
+const vKey = o => 'v:' + String((o && (o.id || o.tramo || o.ko || o.es || o.nombre || (o.de && o.a ? o.de + '>' + o.a : '') || o.producto)) || '');
+const verificado = k => !!(user && user.verif && user.verif[k]);
+const ver = o => (o && o.verificar ? (verificado(vKey(o)) ? '<span class="badge ok">✓ verificado</span>' : '<span class="ver">VERIFICAR</span>') : '');
 
 const K_TRIP = 'corea.trip', K_USER = 'corea.user', K_THEME = 'corea.theme';
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
@@ -34,11 +37,11 @@ window.addEventListener('popstate', () => {
 let dayIdx = null;
 
 const TABS = [
-  ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '🗺️'], ['ensenar', 'Enseñar', '🪧'],
-  ['comer', 'Comer', '🍜'], ['mas', 'Más', '☰']
+  ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '🗺️'], ['ciudades', 'Ciudades', '🏯'], ['ensenar', 'Enseñar', '🪧'],
+  ['comer', 'Comer', '🍜'], ['conv', '₩/€', '💱'], ['mas', 'Más', '☰']
 ];
 // Secciones agrupadas dentro de "Más" (la barra no cabe con 9 pestañas).
-const EN_MAS = [['corea', 'Corea', '🇰🇷'], ['seguro', 'Seguro', '🛡️'], ['gastos', 'Gastos', '💶'], ['checklist', 'Checklist', '✅']];
+const EN_MAS = [['corea', 'Corea', '🇰🇷'], ['seguro', 'Seguro', '🛡️'], ['checklist', 'Checklist', '✅'], ['verificar', 'Verificar', '🔎']];
 
 function todayISO() {
   const d = new Date();
@@ -230,7 +233,8 @@ function viewHoy() {
     <ul class="items">${arr(d.items).map(i =>
       `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${esc(i.texto)}</li>`).join('')}</ul>
     ${d.ciudad ? `<button class="sec mini comer-hoy" data-comer="${esc(norm(d.ciudad))}">🍜 Comer en ${esc(d.ciudad)}</button>` : ''}
-  </div>`;
+  </div>
+  ${destacados(d.ciudad)}`;
 
   const tr = arr(trip.traslados).filter(t => t.fecha === d.fecha);
   if (tr.length) html += '<h2>Traslado de hoy</h2>' + tr.map(trasladoCard).join('');
@@ -244,6 +248,22 @@ function viewHoy() {
     ${a.nota ? `<div class="muted">${esc(a.nota)}</div>` : ''}
     <div class="acciones">${naver(a)}</div></div>`).join('');
   return html + manana(d, dias);
+}
+
+// Lo imprescindible de la ciudad del día: qué ver (★ Lonely y sitios conocidos) y dónde comer.
+function destacados(ciudad) {
+  const k = norm(ciudad); if (!k) return '';
+  const lp = (LP[k] || []);
+  const ver_ = [...lp.filter(l => l.top), ...(CATALOGO[k] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)), ...lp.filter(l => !l.top)]
+    .map(l => l.es).filter((x, i, a) => a.indexOf(x) === i).slice(0, 5);
+  const enCiudad = lugaresComer().filter(l => l.ciudad === k && !['descartado', 'cerrado'].includes(estadoDe(String(l.id)).estado));
+  const comer_ = [...enCiudad.filter(l => estadoDe(String(l.id)).estado === 'quiero'), ...enCiudad.filter(l => l.fuente === 'itinerario'), ...enCiudad.filter(l => /★/.test(l.nota || ''))]
+    .map(l => l.nombre).filter((x, i, a) => x && a.indexOf(x) === i).slice(0, 4);
+  if (!ver_.length && !comer_.length) return '';
+  return `<div class="card destacados"><b>⭐ Destacados en ${esc(ciudad)}</b>
+    ${ver_.length ? `<div>👀 ${ver_.map(esc).join(' · ')}</div>` : ''}
+    ${comer_.length ? `<div>🍜 ${comer_.map(esc).join(' · ')}</div>` : ''}
+    <div class="acciones"><button class="sec mini" data-tab="ciudades">Ver la ciudad</button></div></div>`;
 }
 
 // Resumen del día siguiente al que se está viendo.
@@ -289,15 +309,7 @@ const interesDe = c => arr(c.interes).length ? arr(c.interes) : (CATALOGO[norm(c
 
 function viewRuta() {
   let html = pendingAlert();
-
-  const ciudades = arr(trip.ciudades);
-  if (ciudades.length) html += '<h2>Mapa</h2>' + viewMapa() + '<h2>Ciudades</h2>' + ciudades.map((c, i) => `<div class="card" id="c-${esc(c.id)}">
-    <div class="big">${i + 1}. ${esc(c.nombre)} ${c.ko ? `<span class="muted">${esc(c.ko)}</span>` : ''}</div>
-    <div class="muted">${esc(c.desde)} → ${esc(c.hasta)}</div>
-    ${interesDe(c).length ? `<ul>${interesDe(c).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
-    ${(LP[norm(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => norm(o.nombre) === norm(c.nombre)) ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[norm(c.nombre)].length})</summary><ul>
-      ${LP[norm(c.nombre)].map(l => `<li><b>${esc(l.es)}</b>${l.top ? ' ★' : ''}${l.verificar ? ' <span class="ver">VERIFICAR</span>' : ''}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></li>`).join('')}</ul></details>` : ''}</div>`).join('');
-
+  if (arr(trip.ciudades).length) html += '<h2>Mapa</h2>' + viewMapa();
   const tr = arr(trip.traslados);
   if (tr.length) html += '<h2>Traslados</h2>' + tr.map(trasladoCard).join('');
   const vuelos = arr(trip.vuelos);
@@ -305,6 +317,18 @@ function viewRuta() {
     <div class="big">${esc(v.tramo)} ${ver(v)}</div>
     <div class="muted">${esc(v.fecha)} · ${esc(v.aerolinea)}</div>${estadoBadge(v)}</div>`).join('');
   return html || '<p class="muted">Sin datos de ruta.</p>';
+}
+
+function viewCiudades() {
+  const ciudades = arr(trip.ciudades);
+  if (!ciudades.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
+  return ciudades.map((c, i) => `<div class="card" id="c-${esc(c.id)}">
+    <div class="big">${i + 1}. ${esc(c.nombre)} ${c.ko ? `<span class="muted">${esc(c.ko)}</span>` : ''}</div>
+    <div class="muted">${esc(c.desde)} → ${esc(c.hasta)}</div>
+    ${interesDe(c).length ? `<ul>${interesDe(c).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+    ${(LP[norm(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => norm(o.nombre) === norm(c.nombre)) ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[norm(c.nombre)].length})</summary><ul>
+      ${LP[norm(c.nombre)].map(l => `<li><b>${esc(l.es)}</b>${l.top ? ' ★' : ''} ${ver(l)}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></li>`).join('')}</ul></details>` : ''}
+    <div class="acciones"><button class="sec mini" data-comer="${esc(norm(c.nombre))}">🍜 Comer aquí</button></div></div>`).join('');
 }
 
 
@@ -381,20 +405,42 @@ function ciudadesCatalogo() {
 }
 const nombreCiudad = k => (arr(trip.ciudades).find(c => norm(c.nombre) === k) || {}).nombre || k;
 
+// Ciudad de un lugar propio: campo "ciudad" si lo trae; si no, se busca el nombre de la ciudad en sus textos.
+function ciudadDeLugar(l) {
+  if (l.ciudad) return norm(l.ciudad);
+  const txt = norm([l.es, l.direccion_en, l.nota].join(' ')), ko = [l.ko, l.direccion_ko].join(' ');
+  const c = ciudadesUnicas().find(c => (norm(c.nombre) && txt.includes(norm(c.nombre))) || (c.ko && ko.includes(c.ko)));
+  return c ? norm(c.nombre) : '';
+}
 function viewEnsenar() {
-  const mios = arr(trip.lugares);
+  const mios = arr(trip.lugares).map((l, i) => [l, i]).filter(([l]) => l && typeof l === 'object');
+  const grupos = [...ciudadesUnicas().map(c => norm(c.nombre)), ''];
+  const act = norm(ciudadActual());
+  const misLugares = grupos.map(k => {
+    const ls = mios.filter(([l]) => ciudadDeLugar(l) === k); if (!ls.length) return '';
+    return `<details data-key="mis:${esc(k)}" ${abierto('mis:' + k, k === act) ? 'open' : ''}><summary class="card big">${esc(k ? nombreCiudad(k) : 'Otros')} <span class="muted">${ls.length}</span></summary>
+      ${ls.map(([l, i]) => lugarFila(l, 'j:' + i)).join('')}</details>`;
+  }).join('');
   return '<p class="muted">Toca "Enseñar" para mostrarlo a pantalla completa al taxista o en recepción.</p>' +
-    (mios.length ? '<h2>Mis lugares</h2>' + mios.map((l, i) => lugarFila(l, 'j:' + i)).join('') : '') +
+    (mios.length ? '<h2>Mis lugares</h2>' + misLugares : '') +
     '<h2>Sitios conocidos</h2>' +
     ciudadesCatalogo().map(k => `<details><summary class="card big">${esc(nombreCiudad(k))}</summary>
       ${sitiosCiudad(k).map((l, i) => lugarFila(l, `c:${k}:${i}`)).join('')}</details>`).join('');
 }
 
+// Reduce la letra hasta que cada línea quepa en la pantalla (los nombres coreanos largos no se parten).
+function ajustarTexto(div) {
+  div.querySelectorAll('.enorme, .dir').forEach(el => {
+    let fs = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > el.clientWidth + 1 && fs > 14) { fs -= 2; el.style.fontSize = fs + 'px'; }
+  });
+}
 function full(html) {
   const div = document.createElement('div');
   div.id = 'full';
   div.innerHTML = '<button class="sec cerrar" data-close>✕ Cerrar</button>' + html;
   document.body.appendChild(div);
+  ajustarTexto(div);
   history.pushState({ full: 1 }, '');
   // Mantiene la pantalla encendida mientras se enseña la tarjeta.
   if (navigator.wakeLock) navigator.wakeLock.request('screen').then(l => { div._lock = l; }).catch(() => {});
@@ -418,7 +464,7 @@ function showFull(key) {
     ${l.direccion_ko ? `<div class="dir">${esc(l.direccion_ko)}</div>` : ''}
     <div class="es">${esc(l.es)}${l.romanizacion ? ' · ' + esc(l.romanizacion) : ''}
       ${l.direccion_en ? '<br>' + esc(l.direccion_en) : ''}${l.nota ? '<br>' + esc(l.nota) : ''}
-      ${l.verificar ? '<br><span class="ver">VERIFICAR</span>' : ''}</div>`);
+      ${l.verificar ? '<br>' + ver(l) : ''}</div>`);
 }
 
 // ---------- Corea (frases, diccionario, guía) ----------
@@ -493,6 +539,7 @@ function u() { // asegura la forma de "user" aunque venga de una copia antigua
   if (!user.checklist || typeof user.checklist !== 'object') user.checklist = {};
   if (!user.extra || typeof user.extra !== 'object') user.extra = {};
   if (typeof user.notas !== 'string') user.notas = '';
+  if (!user.verif || typeof user.verif !== 'object') user.verif = {};
   return user;
 }
 const saveUser = () => save(K_USER, user);
@@ -538,7 +585,7 @@ function viewChecklist() {
 
 // ---------- Comer (data/comer.json + lugares propios) ----------
 let DATOS_COMER = [];
-fetch('data/comer.json').then(r => r.json()).then(d => { DATOS_COMER = arr(d); if (tab === 'comer') render(); }).catch(() => {});
+fetch('data/comer.json').then(r => r.json()).then(d => { DATOS_COMER = arr(d); if (['comer', 'hoy', 'verificar', 'mas'].includes(tab)) render(); }).catch(() => {});
 const CIUDADES_COMER = [['seul', 'Seúl'], ['andong', 'Andong'], ['gyeongju', 'Gyeongju'], ['busan', 'Busan'], ['jeonju', 'Jeonju']];
 const TIPOS = ['todos', 'restaurante', 'café', 'mercado', 'plato', 'bar'];
 const ESTADOS = [['quiero', 'Quiero'], ['visitado', 'Visitado'], ['descartado', 'Descartado'], ['cerrado', 'Cerrado']];
@@ -568,11 +615,12 @@ function cardComer(l) {
     <div class="big">${esc(l.nombre || 'Sin nombre')}</div>
     ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : ''}
     <div class="muted">${[l.tipo, l.plato].filter(Boolean).map(esc).join(' · ')}${ciudad && comerCiudad === 'todas' ? ' · ' + esc(ciudad) : ''}</div>
-    ${l.precio ? `<div>💰 ${esc(l.precio)}</div>` : ''}${l.horario ? `<div>🕒 ${esc(l.horario)}</div>` : ''}
+    ${l.precio ? `<div>💰 ${esc(l.precio)}${precioEur(l.precio)}</div>` : ''}${l.horario ? `<div>🕒 ${esc(l.horario)}</div>` : ''}
     ${l.direccion ? `<div class="muted">📍 ${esc(l.direccion)}</div>` : ''}
     ${l.nota ? `<div class="muted">${esc(l.nota)}</div>` : ''}
     <div class="muted">Fuente: ${esc(FUENTES[l.fuente] || l.fuente || '—')}${l.url ? ` · <a href="${esc(l.url)}" target="_blank" rel="noopener">enlace</a>` : ''}</div>
-    <div><span class="ver">VERIFICAR que sigue abierto</span></div>
+    <div>${verificado('k:' + id) ? '<span class="badge ok">✓ verificado</span>' : '<span class="ver">VERIFICAR que sigue abierto</span>'}
+      <button class="sec mini verif" data-verif="k:${esc(id)}">${verificado('k:' + id) ? 'Deshacer' : '✓ Verificado'}</button></div>
     <div class="acciones">
       ${l.ko ? `<button class="sec mini" data-copy="${esc(l.ko)}">📋 Copiar coreano</button>` : ''}
       <button class="mini" data-full="k:${esc(id)}">Enseñar</button>
@@ -597,60 +645,90 @@ function formComer() {
   </form>`;
 }
 
-// ---------- Gastos ----------
-const CATS = ['Comida', 'Transporte', 'Alojamiento', 'Entradas', 'Compras', 'Otros'];
-const cambio = () => Number(u().cambio) || Number(trip.meta && trip.meta.cambio_won_por_euro) || 0;
-const aEur = g => g.moneda === 'EUR' ? g.importe : (cambio() ? g.importe / cambio() : 0);
+// ---------- Conversor ₩/€ (cambio automático del BCE con conexión; manual opcional) ----------
+const cambio = () => Number(u().cambio) || Number(trip && trip.meta && trip.meta.cambio_won_por_euro) || 0;
 const eur = n => n.toLocaleString('es-ES', { maximumFractionDigits: 2 }) + ' €';
 const won = n => '₩' + Math.round(n).toLocaleString('es-ES');
-
-
-function viewGastos() {
-  const U = u(), G = U.gastos, ref = Number(trip.meta && trip.meta.presupuesto_referencia) || 0;
-  const total = G.reduce((a, g) => a + aEur(g), 0);
-  const suma = key => { const m = {}; G.forEach(g => { m[g[key] || '—'] = (m[g[key] || '—'] || 0) + aEur(g); }); return m; };
-  const tabla = m => Object.entries(m).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div class="lugar"><span>${esc(k)}</span><b>${eur(v)}</b></div>`).join('');
-  const act = ciudadActual();
+// "20.000-30.000 KRW" -> " (≈ 13-20 €)"
+function precioEur(p) {
+  const c = cambio(); if (!c || !/KRW|₩|won/i.test(p)) return '';
+  const ns = (String(p).match(/\d[\d.,]*/g) || []).map(x => Number(x.replace(/[.,]/g, ''))).filter(n => n >= 100);
+  return ns.length ? ` <span class="muted">(≈ ${ns.map(n => Math.round(n / c)).join('-')} €)</span>` : '';
+}
+async function actualizarCambio(forzar) {
+  const U = u();
+  if (!navigator.onLine || (U.cambioManual && !forzar)) return;
+  if (!forzar && U.cambioTs && Date.now() - U.cambioTs < 6 * 3600e3) return;
+  const urls = ['https://api.frankfurter.dev/v1/latest?base=EUR&symbols=KRW', 'https://api.frankfurter.app/latest?from=EUR&to=KRW'];
+  for (const url of urls) {
+    try {
+      const d = await (await fetch(url, { cache: 'no-store' })).json();
+      const r = d && d.rates && Number(d.rates.KRW);
+      if (r > 0) {
+        Object.assign(U, { cambio: Math.round(r * 100) / 100, cambioFecha: d.date || todayISO(), cambioTs: Date.now(), cambioManual: false });
+        saveUser(); if (tab === 'conv') render(); return true;
+      }
+    } catch { /* probar la siguiente */ }
+  }
+  if (forzar) alert('No se pudo actualizar el cambio (¿sin conexión?).');
+}
+function viewConv() {
+  const U = u(), c = cambio();
+  const info = U.cambioManual ? 'Cambio manual' : U.cambioFecha ? `Cambio oficial del ${esc(U.cambioFecha)} (BCE)` : 'Sin cambio automático todavía';
   return `<div class="card conv">
-      <div class="muted">Conversor rápido</div>
-      <div class="par"><input data-conv="KRW" type="number" inputmode="decimal" placeholder="₩ wones">
+      <div class="par"><input data-conv="KRW" type="number" inputmode="decimal" placeholder="₩ wones" autofocus>
         <span>⇄</span><input data-conv="EUR" type="number" inputmode="decimal" placeholder="€ euros"></div>
-      <label class="cambio muted">Cambio: 1 € = <input data-cambio type="number" inputmode="decimal" step="any" value="${cambio() || ''}" placeholder="1500"> ₩</label>
+      <div class="muted">${c ? `1 € = ${won(c)} · ${info}` : 'Falta el cambio: conéctate o escríbelo abajo.'}</div>
     </div>
+    ${c ? `<div class="card tabla">${[1000, 5000, 10000, 20000, 50000, 100000].map(n => `<div class="lugar"><span>${won(n)}</span><b>${eur(n / c)}</b></div>`).join('')}</div>` : ''}
     <div class="card">
-      <div class="big">Total: ${eur(total)}</div>
-      ${ref ? `<div class="barra"><div style="width:${Math.min(100, total / ref * 100).toFixed(0)}%"></div></div>
-        <div class="muted">Presupuesto de referencia: ${eur(ref)} · quedan ${eur(ref - total)}</div>` : ''}
-      ${cambio() ? '' : '<div class="falta">Escribe el cambio (1 € = … ₩) en el conversor para pasar ₩ a €</div>'}
-    </div>
-    <form class="card" data-gasto>
-      <div class="muted">Nuevo gasto</div>
-      <div class="par"><input name="importe" type="number" inputmode="decimal" step="any" min="0" placeholder="Importe" required>
-        <select name="moneda" class="moneda"><option value="KRW">₩</option><option value="EUR">€</option></select></div>
-      <input name="concepto" placeholder="Concepto (opcional)" autocomplete="off">
-      <div class="par"><select name="cat">${CATS.map(c => `<option>${c}</option>`).join('')}</select>
-        <select name="ciudad">${ciudadesUnicas().map(c => `<option ${norm(c.nombre) === norm(act) ? 'selected' : ''}>${esc(c.nombre)}</option>`).join('')}<option>Otra</option></select></div>
-      <button>Añadir gasto</button>
-    </form>
-    ${G.length ? `<h2>Por ciudad</h2><div class="card">${tabla(suma('ciudad'))}</div>
-      <h2>Por categoría</h2><div class="card">${tabla(suma('cat'))}</div>
-      <h2>Últimos gastos</h2>${G.slice().reverse().map(g => `<div class="card lugar"><div>
-        <b>${g.moneda === 'EUR' ? eur(g.importe) : won(g.importe)}</b>${g.moneda === 'EUR' ? '' : ` <span class="muted">≈ ${eur(aEur(g))}</span>`}
-        <div class="muted">${esc(g.fecha)} · ${esc(g.ciudad)} · ${esc(g.cat)}${g.concepto ? ' · ' + esc(g.concepto) : ''}</div></div>
-        <button class="sec mini" data-delgasto="${esc(g.id)}">✕</button></div>`).join('')}` : '<p class="muted">Aún no hay gastos.</p>'}`;
+      <label class="cambio muted">Cambio manual: 1 € = <input data-cambio type="number" inputmode="decimal" step="any" value="${c || ''}" placeholder="1500"> ₩</label>
+      <button class="sec" data-act="cambio-auto">🔄 Usar cambio automático (actualizar ahora)</button>
+      <p class="muted">Con conexión se actualiza solo cada pocas horas y se guarda para usarlo sin conexión. Si escribes uno a mano, se usa el tuyo hasta que pulses el botón.</p>
+    </div>`;
+}
+
+// ---------- Verificar: todo lo dudoso en una lista ----------
+function pendientesVerificar() {
+  const g = [];
+  const mi = [];
+  [['vuelos', 'Vuelo', v => v.tramo], ['alojamientos', 'Alojamiento', a => a.nombre], ['traslados', 'Traslado', t => `${t.de} → ${t.a}`], ['lugares', 'Lugar', l => l.es]]
+    .forEach(([k, t, f]) => arr(trip && trip[k]).forEach(o => { if (o && o.verificar) mi.push({ key: vKey(o), titulo: f(o), sub: t, q: o.direccion_ko || o.ko || f(o) }); }));
+  if (trip && trip.seguro && trip.seguro.verificar) mi.push({ key: vKey(trip.seguro), titulo: trip.seguro.producto || 'Seguro', sub: 'Seguro' });
+  if (mi.length) g.push(['Mi viaje', mi]);
+  const sit = [];
+  Object.keys(LP).forEach(k => [...(CATALOGO[k] || []), ...LP[k]].forEach(l => { if (l.verificar) sit.push({ key: vKey(l), titulo: l.es, sub: nombreCiudad(k), q: l.ko || l.es }); }));
+  if (sit.length) g.push(['Sitios', sit]);
+  CIUDADES_COMER.forEach(([k, t]) => {
+    const ls = lugaresComer().filter(l => l.ciudad === k && estadoDe(String(l.id)).estado !== 'cerrado')
+      .map(l => ({ key: 'k:' + l.id, titulo: l.nombre, sub: [l.tipo, FUENTES[l.fuente] || l.fuente].filter(Boolean).join(' · '), q: l.ko || l.nombre }));
+    if (ls.length) g.push(['Comer · ' + t, ls]);
+  });
+  return g;
+}
+function viewVerificar() {
+  const g = pendientesVerificar();
+  const total = g.reduce((a, [, ls]) => a + ls.length, 0), hechos = g.reduce((a, [, ls]) => a + ls.filter(x => verificado(x.key)).length, 0);
+  return `<div class="card"><b>${hechos} de ${total} verificados</b>
+    <div class="muted">Abre cada uno en Naver (con conexión), comprueba que existe y sigue abierto, y pulsa "✓". Si ha cerrado, márcalo como "Cerrado" en Comer.</div></div>
+    ${g.map(([t, ls]) => { const p = ls.filter(x => !verificado(x.key)).length; return `<details data-key="vf:${esc(t)}" ${abierto('vf:' + t, false) ? 'open' : ''}><summary class="card big">${esc(t)} <span class="muted">${p ? p + ' pendientes' : '✓ todo'}</span></summary>
+      ${ls.map(x => `<div class="card lugar ${verificado(x.key) ? 'hecho' : ''}"><div><div>${esc(x.titulo)}</div><div class="muted">${esc(x.sub || '')}</div></div>
+        <div class="acciones">${x.q ? `<a class="btn sec mini" href="https://map.naver.com/p/search/${encodeURIComponent(x.q)}" target="_blank" rel="noopener">🗺️</a>` : ''}
+        <button class="mini ${verificado(x.key) ? 'sec' : ''}" data-verif="${esc(x.key)}">${verificado(x.key) ? 'Deshacer' : '✓'}</button></div></div>`).join('')}</details>`; }).join('')}`;
 }
 
 function viewMas() {
   const t = load(K_THEME, 'auto');
   const docs = arr(trip && trip.checklist_documentos).map((d, i) => ({ id: d.id || 'd' + i, texto: d.texto, url: d.url }));
-  return `<div class="rejilla">${EN_MAS.map(([id, t, ic]) => `<button class="sec" data-tab="${id}"><span>${ic}</span>${t}</button>`).join('')}</div>
+  const pend = trip ? pendientesVerificar().reduce((a, [, ls]) => a + ls.filter(x => !verificado(x.key)).length, 0) : 0;
+  return `<div class="rejilla">${EN_MAS.map(([id, t, ic]) => `<button class="sec" data-tab="${id}"><span>${ic}</span>${t}${id === 'verificar' && pend ? ` (${pend})` : ''}</button>`).join('')}</div>
     ${trip ? `<h2>Maleta y documentos</h2>${checks('docs', docs)}
     ${viewFotos()}
     <h2>Notas</h2><textarea data-notas rows="6" placeholder="Escribe aquí… (se guarda solo)">${esc(u().notas)}</textarea>` : ''}
     <h2>Datos del viaje</h2>
     <button data-act="import">📂 Importar viaje</button>
     <button class="sec" data-act="export">💾 Exportar copia</button>
-    <p class="muted">La copia incluye el viaje, gastos, checklist, notas y fotos. Guárdala fuera del móvil.
+    <p class="muted">La copia incluye el viaje, checklist, notas, fotos, lo marcado en Comer y lo verificado. Guárdala fuera del móvil.
       Última copia: <b>${esc(localStorage.getItem('corea.ultimaCopia') || 'nunca')}</b></p>
     <h2>Tema</h2>
     <div class="row">
@@ -672,14 +750,16 @@ function render() {
     `<button data-tab="${id}" class="${tab === id || (id === 'mas' && EN_MAS.some(m => m[0] === tab)) ? 'on' : ''}"><span>${ic}</span>${label}</button>`).join('');
 
   let html;
-  if (!trip && tab !== 'mas') html = viewWelcome();
+  if (!trip && tab !== 'mas' && tab !== 'conv') html = viewWelcome();
   else switch (tab) {
     case 'hoy': html = viewHoy(); break;
     case 'ruta': html = viewRuta(); break;
     case 'ensenar': html = viewEnsenar(); break;
     case 'seguro': html = viewSeguro(); break;
     case 'corea': html = viewCorea(); break;
-    case 'gastos': html = viewGastos(); break;
+    case 'ciudades': html = viewCiudades(); break;
+    case 'conv': html = viewConv(); break;
+    case 'verificar': html = viewVerificar(); break;
     case 'checklist': html = viewChecklist(); break;
     case 'comer': html = viewComer(); break;
     default: html = viewMas();
@@ -688,11 +768,16 @@ function render() {
 }
 
 document.addEventListener('click', e => {
-  const del = e.target.closest('[data-delitem],[data-delgasto]');
+  const del = e.target.closest('[data-delitem]');
   if (del) {
     e.preventDefault();
-    if (del.dataset.delgasto) { if (!confirm('¿Borrar este gasto?')) return; u().gastos = user.gastos.filter(g => g.id !== del.dataset.delgasto); }
-    else arr(u().extra[del.dataset.delitem]).splice(+del.dataset.i, 1);
+    arr(u().extra[del.dataset.delitem]).splice(+del.dataset.i, 1);
+    saveUser(); render(); return;
+  }
+  const vf = e.target.closest('[data-verif]');
+  if (vf) {
+    const U = u(), k = vf.dataset.verif;
+    if (U.verif[k]) delete U.verif[k]; else U.verif[k] = todayISO();
     saveUser(); render(); return;
   }
   const fo = e.target.closest('[data-foto],[data-delfoto]');
@@ -707,7 +792,7 @@ document.addEventListener('click', e => {
   if (x) {
     if (x.dataset.full) showFull(x.dataset.full);
     else if (x.dataset.copy) copiar(x.dataset.copy);
-    else if (x.dataset.ciudad) document.getElementById('c-' + x.dataset.ciudad)?.scrollIntoView({ behavior: 'smooth' });
+    else if (x.dataset.ciudad) { ir('ciudades'); render(); document.getElementById('c-' + x.dataset.ciudad)?.scrollIntoView(); }
     else history.back();
     return;
   }
@@ -745,10 +830,11 @@ document.addEventListener('click', e => {
       return;
     case 'foto': $('#fotofile').click(); return;
     case 'comer-nuevo': comerForm = true; break;
+    case 'cambio-auto': actualizarCambio(true); return;
     case 'comer-cancelar': comerForm = false; break;
     case 'example': loadExample(); return;
     case 'wipe':
-      if (!confirm('¿Borrar viaje, gastos, checklist y notas de este móvil? Exporta antes una copia.')) return;
+      if (!confirm('¿Borrar viaje, checklist, notas, fotos y lo marcado de este móvil? Exporta antes una copia.')) return;
       localStorage.removeItem(K_TRIP); localStorage.removeItem(K_USER);
       dbOp('readwrite', st => st.clear()).catch(() => {}); fotos = [];
       trip = null; user = { gastos: [], checklist: {}, notas: '' }; dayIdx = null; tab = 'hoy'; pila.length = 0;
@@ -768,7 +854,7 @@ document.addEventListener('input', e => {
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.dataset.check) { u().checklist[t.dataset.check] = t.checked; if (!t.checked) delete user.checklist[t.dataset.check]; saveUser(); render(); }
-  else if (t.dataset.cambio !== undefined) { u().cambio = Number(t.value) || 0; saveUser(); render(); }
+  else if (t.dataset.cambio !== undefined) { Object.assign(u(), { cambio: Number(t.value) || 0, cambioManual: true }); saveUser(); render(); }
 });
 document.addEventListener('submit', e => {
   e.preventDefault();
@@ -781,10 +867,6 @@ document.addEventListener('submit', e => {
   } else if (f.dataset.additem) {
     const t = (d.t || '').trim(); if (!t) return;
     (u().extra[f.dataset.additem] = arr(user.extra[f.dataset.additem])).push(t);
-  } else if (f.dataset.gasto !== undefined) {
-    const importe = Number(d.importe); if (!(importe > 0)) return;
-    u().gastos.push({ id: Date.now().toString(36), fecha: todayISO(), importe, moneda: d.moneda,
-      concepto: (d.concepto || '').trim(), cat: d.cat, ciudad: d.ciudad });
   } else return;
   saveUser(); render();
 });
@@ -799,6 +881,8 @@ $('#file').addEventListener('change', e => {
 
 render();
 cargarFotos().then(() => { if (tab === 'mas') render(); });
+actualizarCambio(false);
+window.addEventListener('online', () => actualizarCambio(false));
 
 // Pide al navegador que no borre los datos guardados si falta espacio.
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
@@ -811,7 +895,7 @@ if ('serviceWorker' in navigator) {
     if (habiaSW && !recargado) { recargado = true; location.reload(); }
   });
   navigator.serviceWorker.register('./sw.js').then(r => {
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) r.update().catch(() => {}); });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) { r.update().catch(() => {}); actualizarCambio(false); } });
   });
 }
 // Muestra la versión de caché en Más.

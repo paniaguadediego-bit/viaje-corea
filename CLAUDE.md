@@ -16,13 +16,18 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
 4. Rutas RELATIVAS en todo (la app vive en /viaje-corea/, no en
    la raíz): start_url y scope "./", service worker con ruta
    relativa, iconos relativos.
-5. Pestañas (barra inferior): Hoy, Ruta, Enseñar, Comer, Más.
-   Dentro de Más (botones arriba): Corea, Seguro, Gastos,
-   Checklist; y debajo Maleta/Documentos, Fotos y Notas. No añadir
+5. Pestañas (barra inferior): Hoy, Ruta, Ciudades, Enseñar,
+   Comer, ₩/€ (conversor), Más. Dentro de Más (botones arriba):
+   Corea, Seguro, Checklist, Verificar; y debajo Maleta/
+   Documentos, Fotos y Notas. Gastos: quitado (el usuario usa
+   otra app). No añadir
    nada que no esté aquí. Ruta incluye un mapa esquemático de
    Corea (SVG propio, offline) con ciudades, traslados y sitios
-   de interés de cada ciudad. Extras aprobados: conversor ₩↔€
-   en Gastos, botón "Naver" (abre Naver Map, requiere conexión),
+   (las fichas de ciudad con sitios van en Ciudades). Extras
+   aprobados: conversor ₩↔€ con cambio automático del BCE vía
+   api.frankfurter (solo con conexión; se guarda para offline; se
+   puede fijar a mano), destacados de la ciudad en Hoy, lista
+   Verificar (marca "✓ verificado" en el móvil), botón "Naver" (abre Naver Map, requiere conexión),
    resumen "Mañana" y hora Corea/Canarias en Hoy, fotos de
    documentos en Más (IndexedDB, solo en el móvil). Gastos
    compartidos: descartado por el usuario.
@@ -56,7 +61,7 @@ traslados[{id,fecha,de,a,estado,pasos[],frase_ko,
  romanizacion,tren{salida,llegada,comprado},verificar}]
 dias[{fecha,dia,ciudad,titulo,items[{hora?,texto}]}]
 lugares[{id,es,ko,romanizacion,direccion_ko,direccion_en,
- verificar,nota}]
+ verificar,nota,ciudad?}]  (sin "ciudad", se deduce del texto)
 seguro{producto,poliza,vigencia,viajeros_asegurados,
  asistencia{app,telefono,nota},coberturas_clave[],airhelp_plus,
  como_reclamar[],verificar}

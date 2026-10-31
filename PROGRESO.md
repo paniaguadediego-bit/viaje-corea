@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v18
+Caché del service worker: corea-v19
 
 ## Pendiente (para después)
 - Comer y sitios: añadir una notita con la distancia a nuestro hotel de esa ciudad. Necesita coordenadas (lat/lon): las de los hoteles irían en trip.json (privado, alojamientos[].lat/lon) y las de los lugares en data/comer.json y contenido.js. Cálculo en línea recta sin conexión (aprox. "a 1,2 km"); la ruta real seguiría en Naver.
@@ -44,6 +44,9 @@ Caché del service worker: corea-v18
 - Cambio pedido: Comer con todo lo recopilado. data/comer.json pasa a 116 lugares: los 30 del usuario (sin tocar), 19 de guías web con su enlace (la lista anterior) y 67 de la Lonely Planet 2016 (nombre y hangul de la guía, página en la nota, ★ si es elección del autor, precio por símbolos y horario "LP 2016"). Nuevo tipo "bar" y fuente "lonely". Los restaurantes de la Lonely salen ya solo en Comer (quitados de Ruta/Enseñar).
 - Cambio pedido: sitios de la Lonely que faltaban añadidos a Ruta/Enseñar/Checklist (25 en Seúl, 4 en Gyeongju, 5 en Busan, 2 en Jeonju).
 
+- Notas del usuario (WhatsApp): Ruta separada de Ciudades (nueva pestaña Ciudades; el mapa lleva a la ficha); "Destacados en <ciudad>" en Hoy (★ Lonely y sitios conocidos + Comer: Quiero, itinerario y ★); Enseñar → "Mis lugares" agrupados por ciudad; Gastos quitado; conversor ₩/€ como pestaña propia con cambio automático (BCE, se guarda para offline, opción manual) y precios KRW de Comer con "≈ €"; lista Verificar en Más (con Naver y "✓", también en cada tarjeta de Comer).
+- Arreglo: las tarjetas a pantalla completa reducen la letra para que los nombres coreanos largos no se corten.
+
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
 - [Supuesto] Tema (Auto/Claro/Oscuro) e Importar/Exportar/Borrar viven en la pestaña Más.
@@ -69,6 +72,8 @@ Caché del service worker: corea-v18
 - [Supuesto] Lugares propios sin hangul: Enseñar muestra "falta hangul" y Naver busca por el nombre.
 - [Supuesto] No se añaden de la Lonely: tiendas, estadios, karaoke, festivales fuera de fechas y lo de la isla de Ulleungdo/costa de Pohang (la guía lo mete en la zona de Gyeongju).
 - [Supuesto] Duplicados guía web/Lonely se unen en una tarjeta (fuente Lonely + enlace web).
+- [Supuesto] Cambio automático: api.frankfurter.dev (y .app de reserva), datos del Banco Central Europeo; se actualiza como mucho cada 6 h. Escribir un cambio a mano lo fija hasta pulsar "Usar cambio automático".
+- [Supuesto] Lista Verificar incluye todos los lugares de Comer (salvo los marcados Cerrado), lo marcado con verificar en el viaje y los sitios dudosos.
 
 ## Verificar por el usuario
 - Prueba real en tu móvil: abrir con wifi, cerrar, modo avión, abrir y recorrer las 8 pestañas.
