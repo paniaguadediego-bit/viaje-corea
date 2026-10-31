@@ -3,6 +3,9 @@
 
 Caché del service worker: corea-v18
 
+## Pendiente (para después)
+- Comer y sitios: añadir una notita con la distancia a nuestro hotel de esa ciudad. Necesita coordenadas (lat/lon): las de los hoteles irían en trip.json (privado, alojamientos[].lat/lon) y las de los lugares en data/comer.json y contenido.js. Cálculo en línea recta sin conexión (aprox. "a 1,2 km"); la ruta real seguiría en Naver.
+
 ## Decisiones
 - S1: datos guardados en localStorage (más simple que IndexedDB; el viaje cabe de sobra).
 - S1: el commit se hace directamente en main (sin PR), por petición del usuario.
