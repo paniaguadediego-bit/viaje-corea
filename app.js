@@ -584,6 +584,7 @@ function viewMas() {
         ${{ auto: 'Auto', light: 'Claro', dark: 'Oscuro' }[v]}</button>`).join('')}
     </div>
     <h2>Borrar</h2>
+    <button class="sec" data-act="update">🔄 Forzar actualización (no borra tus datos)</button>
     <button class="danger" data-act="wipe">Borrar datos de este móvil</button>
     <p class="muted" id="ver">Versión: ${esc(window.VERSION || '…')}</p>`;
 }
@@ -646,6 +647,13 @@ document.addEventListener('click', e => {
   else switch (b.dataset.act) {
     case 'import': $('#file').click(); return;
     case 'export': exportCopy(); return;
+    case 'update':
+      // Quita el service worker y la caché (no toca viaje, gastos, notas ni fotos) y recarga.
+      Promise.all([
+        navigator.serviceWorker ? navigator.serviceWorker.getRegistrations().then(rs => Promise.all(rs.map(r => r.unregister()))) : 0,
+        window.caches ? caches.keys().then(ks => Promise.all(ks.map(k => caches.delete(k)))) : 0
+      ]).finally(() => location.reload());
+      return;
     case 'foto': $('#fotofile').click(); return;
     case 'example': loadExample(); return;
     case 'wipe':

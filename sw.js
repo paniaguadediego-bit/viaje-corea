@@ -1,5 +1,5 @@
 // Sube CACHE en cada sesión para que el móvil coja la versión nueva.
-const CACHE = 'corea-v13';
+const CACHE = 'corea-v14';
 const FILES = [
   './', './index.html', './styles.css', './app.js', './contenido.js', './diccionario.js', './manifest.json',
   './example.trip.json', './icons/icon.svg', './icons/icon-192.png',
@@ -19,9 +19,23 @@ self.addEventListener('activate', e => {
     .then(() => self.clients.claim()));
 });
 
-// Primero caché (offline); si no está, red.
+// Con conexión: primero la red (así llegan siempre las versiones nuevas) y se guarda copia.
+// Sin conexión o si la red tarda más de 3 s: la copia guardada.
 self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  e.respondWith(caches.match(e.request, { ignoreSearch: true })
-    .then(r => r || fetch(e.request).catch(() => caches.match('./index.html'))));
+  const req = e.request;
+  if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
+  e.respondWith((async () => {
+    const cache = await caches.open(CACHE);
+    const red = fetch(req, { cache: 'no-cache' }).then(r => {
+      if (r.ok) cache.put(req, r.clone());
+      return r;
+    });
+    const guardada = await cache.match(req, { ignoreSearch: true });
+    const tiempo = new Promise(ok => setTimeout(ok, 3000));
+    try {
+      const r = await (guardada ? Promise.race([red, tiempo]) : red);
+      if (r) return r;
+    } catch (err) { /* sin conexión */ }
+    return guardada || (await cache.match('./index.html')) || Response.error();
+  })());
 });

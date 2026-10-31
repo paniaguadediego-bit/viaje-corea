@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6
 
-Caché del service worker: corea-v13
+Caché del service worker: corea-v14
 
 ## Decisiones
 - S1: datos guardados en localStorage (más simple que IndexedDB; el viaje cabe de sobra).
@@ -28,6 +28,8 @@ Caché del service worker: corea-v13
 - Cambio pedido: Gastos mejor alineado (conversor con el cambio dentro, casillas de igual altura, bloque "Nuevo gasto") y botón atrás: "‹" en la cabecera y el gesto/botón atrás de Android vuelven a la pestaña anterior y cierran las tarjetas a pantalla completa.
 
 - Arreglo: el service worker descargaba a veces archivos viejos de la memoria del navegador al actualizarse (GitHub Pages los guarda 10 min). Ahora fuerza descarga nueva y busca actualizaciones al volver a la app.
+
+- Arreglo: el móvil del usuario se quedó con una versión vieja (conversor desbordado → Chrome empuja la barra inferior fuera de pantalla). El service worker pasa a "primero red, si no caché" (timeout 3 s) para que las versiones nuevas lleguen siempre con conexión; sigue funcionando sin conexión. Botón "Forzar actualización" en Más (borra caché, no datos).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
