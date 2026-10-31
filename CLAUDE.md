@@ -18,11 +18,13 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    relativa, iconos relativos.
 5. Pestañas (barra inferior): Hoy, Ruta, Enseñar, Corea, Seguro,
    Gastos, Checklist, Más (Maleta/Documentos y Notas). No añadir
-   nada que no esté aquí.
+   nada que no esté aquí. Ruta incluye un mapa esquemático de
+   Corea (SVG propio, offline) con ciudades, traslados y sitios
+   de interés de cada ciudad.
 6. Dato dudoso = "VERIFICAR". No inventar hangul, teléfonos,
    horarios ni precios. Si un objeto del JSON trae
    "verificar": true, mostrar una marca visible.
-7. Mobile-first, texto grande, una mano, tema claro/oscuro.
+7. Mobile-first, compacto pero legible, una mano, tema claro/oscuro.
 8. Cada sesión acaba con: cómo probarlo en modo avión, versión
    de caché del service worker subida, PROGRESO.md actualizado
    y commit en main.
@@ -44,7 +46,7 @@ meta{titulo,salida_espana,vuelta_espana,viajeros,
 vuelos[{tramo,fecha,aerolinea,estado,verificar}]
 alojamientos[{id,nombre,ciudad,fechas,noches,coste_eur,pago,
  direccion_en,direccion_ko,ko,nota,verificar}]
-ciudades[{id,nombre,ko,desde,hasta}]
+ciudades[{id,nombre,ko,desde,hasta,lat?,lon?,interes[]?}]
 traslados[{id,fecha,de,a,estado,pasos[],frase_ko,
  romanizacion,tren{salida,llegada,comprado},verificar}]
 dias[{fecha,dia,ciudad,titulo,items[{hora?,texto}]}]

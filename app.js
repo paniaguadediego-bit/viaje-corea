@@ -161,19 +161,135 @@ function trasladoCard(t) {
 
 function viewRuta() {
   let html = pendingAlert();
+
+  const ciudades = arr(trip.ciudades);
+  if (ciudades.length) html += '<h2>Mapa</h2>' + viewMapa() + '<h2>Ciudades</h2>' + ciudades.map((c, i) => `<div class="card" id="c-${esc(c.id)}">
+    <div class="big">${i + 1}. ${esc(c.nombre)} ${c.ko ? `<span class="muted">${esc(c.ko)}</span>` : ''}</div>
+    <div class="muted">${esc(c.desde)} → ${esc(c.hasta)}</div>
+    ${arr(c.interes).length ? `<ul>${arr(c.interes).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>`).join('');
+
+  const tr = arr(trip.traslados);
+  if (tr.length) html += '<h2>Traslados</h2>' + tr.map(trasladoCard).join('');
   const vuelos = arr(trip.vuelos);
   if (vuelos.length) html += '<h2>Vuelos</h2>' + vuelos.map(v => `<div class="card">
     <div class="big">${esc(v.tramo)} ${ver(v)}</div>
     <div class="muted">${esc(v.fecha)} · ${esc(v.aerolinea)}</div>${estadoBadge(v)}</div>`).join('');
-
-  const ciudades = arr(trip.ciudades);
-  if (ciudades.length) html += '<h2>Ciudades</h2>' + ciudades.map((c, i) => `<div class="card">
-    <div class="big">${i + 1}. ${esc(c.nombre)} ${c.ko ? `<span class="muted">${esc(c.ko)}</span>` : ''}</div>
-    <div class="muted">${esc(c.desde)} → ${esc(c.hasta)}</div></div>`).join('');
-
-  const tr = arr(trip.traslados);
-  if (tr.length) html += '<h2>Traslados</h2>' + tr.map(trasladoCard).join('');
   return html || '<p class="muted">Sin datos de ruta.</p>';
+}
+
+
+// ---------- mapa esquemático (SVG propio, sin internet) ----------
+// Coordenadas aproximadas de reserva si el JSON no trae lat/lon.
+const COORDS = {
+  seul: [37.57, 126.98], incheon: [37.46, 126.44], andong: [36.57, 128.73],
+  gyeongju: [35.86, 129.22], busan: [35.18, 129.08], jeonju: [35.82, 127.15]
+};
+// Contorno simplificado de Corea del Sur [lon, lat].
+const COSTA = [[126.55,37.75],[127,38],[127.5,38.3],[128,38.3],[128.35,38.6],[128.59,38.2],
+  [128.9,37.75],[129.12,37.5],[129.4,37],[129.4,36.4],[129.57,36.08],[129.45,35.5],[129.15,35.1],
+  [128.6,34.85],[128.4,34.83],[127.7,34.7],[127.3,34.5],[126.7,34.3],[126.5,34.3],[126.35,34.75],
+  [126.4,35],[126.4,35.3],[126.6,35.98],[126.15,36.75],[126.6,37],[126.6,37.45]];
+const norm = t => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/g, '');
+const XY = ([lat, lon]) => [((lon - 125.9) * 81 + 10).toFixed(1), ((38.75 - lat) * 100 + 10).toFixed(1)];
+function coordsDe(nombre) {
+  const c = arr(trip.ciudades).find(c => norm(c.nombre) === norm(nombre) && c.lat != null && c.lon != null);
+  return c ? [c.lat, c.lon] : COORDS[norm(nombre)];
+}
+
+function viewMapa() {
+  const ciudades = arr(trip.ciudades);
+  const pts = []; // ciudades únicas con coordenadas
+  ciudades.forEach((c, i) => {
+    const k = coordsDe(c.nombre); if (!k) return;
+    const p = pts.find(p => String(p.k) === String(k));
+    if (p) p.n.push(i + 1); else pts.push({ k, nombre: c.nombre, n: [i + 1], id: c.id });
+  });
+  if (!pts.length) return '';
+  let tramos = arr(trip.traslados).map(t => ({ a: coordsDe(t.de), b: coordsDe(t.a), pend: isPend(t) }));
+  const conTraslado = new Set(arr(trip.traslados).map(t => norm(t.de) + '>' + norm(t.a)));
+  ciudades.forEach((c, i) => { // completa tramos sin traslado definido
+    const d = ciudades[i + 1]; if (!d || conTraslado.has(norm(c.nombre) + '>' + norm(d.nombre))) return;
+    tramos.push({ a: coordsDe(c.nombre), b: coordsDe(d.nombre), pend: false });
+  });
+  tramos = tramos.filter(t => t.a && t.b && String(t.a) !== String(t.b));
+  const costa = COSTA.map(([lon, lat]) => XY([lat, lon]).join(',')).join(' ');
+  return `<svg class="mapa" viewBox="0 0 335 495" role="img" aria-label="Mapa de la ruta">
+    <polygon class="tierra" points="${costa}"/>
+    ${tramos.map(t => { const [x1, y1] = XY(t.a), [x2, y2] = XY(t.b);
+      return `<line class="${t.pend ? 'pend' : 'ok'}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`; }).join('')}
+    ${pts.map(p => { const [x, y] = XY(p.k); const izq = x > 230;
+      return `<circle r="8" cx="${x}" cy="${y}" data-ciudad="${esc(p.id)}"/>
+      <text x="${izq ? x - 12 : +x + 12}" y="${+y + 5}" text-anchor="${izq ? 'end' : 'start'}">${p.n.join('·')}. ${esc(p.nombre)}</text>`; }).join('')}
+  </svg>
+  <div class="leyenda muted">Mapa esquemático · <b style="color:var(--blue)">━</b> comprado ·
+    <b style="color:var(--red)">┅</b> pendiente · toca una ciudad</div>`;
+}
+
+// ---------- Enseñar ----------
+// 로 si termina en vocal o en ㄹ; 으로 en otra consonante.
+function particula(ko) {
+  const c = String(ko).trim().slice(-1).charCodeAt(0);
+  if (c < 0xAC00 || c > 0xD7A3) return null; // no termina en hangul: no se puede saber
+  const jong = (c - 0xAC00) % 28;
+  return jong === 0 || jong === 8 ? '로' : '으로';
+}
+function fraseTaxi(ko) {
+  const p = particula(ko);
+  return p ? `${ko}${p} 가 주세요` : `${ko}(으)로 가 주세요`;
+}
+
+function viewEnsenar() {
+  const lugares = arr(trip.lugares);
+  if (!lugares.length) return '<p class="muted">No hay lugares (clave "lugares").</p>';
+  return '<p class="muted">Toca un lugar para enseñarlo a pantalla completa al taxista o en recepción.</p>' +
+    lugares.map((l, i) => `<div class="card lugar">
+      <div><div class="big">${esc(l.es)} ${ver(l)}</div>
+      ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}</div>
+      <button data-full="${i}">Enseñar</button></div>`).join('');
+}
+
+function showFull(i) {
+  const l = arr(trip.lugares)[i]; if (!l) return;
+  const div = document.createElement('div');
+  div.id = 'full';
+  div.innerHTML = `<button class="sec cerrar" data-close>✕ Cerrar</button>
+    ${l.ko ? `<div class="enorme">${esc(fraseTaxi(l.ko))}</div>
+      ${particula(l.ko) ? '' : '<div class="es">VERIFICAR partícula (으)로</div>'}`
+      : '<div class="falta">falta hangul: copiar de Naver Map</div>'}
+    ${l.direccion_ko ? `<div class="dir">${esc(l.direccion_ko)}</div>` : ''}
+    <div class="es">${esc(l.es)}${l.romanizacion ? ' · ' + esc(l.romanizacion) : ''}
+      ${l.direccion_en ? '<br>' + esc(l.direccion_en) : ''}${l.verificar ? '<br><span class="ver">VERIFICAR</span>' : ''}</div>`;
+  document.body.appendChild(div);
+}
+
+// ---------- Seguro ----------
+function viewSeguro() {
+  const s = trip.seguro;
+  if (!s) return '<p class="muted">No hay datos del seguro (clave "seguro").</p>';
+  const as = s.asistencia || {};
+  const lista = (t, a, tag = 'ul') => arr(a).length ? `<h2>${t}</h2><div class="card"><${tag}>${arr(a).map(x => `<li>${esc(x)}</li>`).join('')}</${tag}></div>` : '';
+  const air = s.airhelp_plus === true ? 'Sí' : s.airhelp_plus === false ? 'No' : esc(s.airhelp_plus ?? '');
+  return `<div class="card">
+      <div class="big">${esc(s.producto || 'Seguro')} ${ver(s)}</div>
+      ${s.poliza ? `<div>Póliza: <b>${esc(s.poliza)}</b></div>` : ''}
+      ${s.vigencia ? `<div>Vigencia: ${esc(s.vigencia)}</div>` : ''}
+      ${arr(s.viajeros_asegurados).length ? `<div class="muted">Asegurados: ${arr(s.viajeros_asegurados).map(esc).join(', ')}</div>` : ''}
+    </div>
+    <h2>Asistencia</h2><div class="card">
+      ${as.telefono ? `<div class="ko">${esc(as.telefono)}</div>
+        <div class="row"><a class="btn" href="tel:${esc(String(as.telefono).replace(/[^\d+]/g, ''))}">📞 Llamar</a>
+        <button class="sec" data-copy="${esc(as.telefono)}">📋 Copiar</button></div>` : '<div class="muted">Sin teléfono</div>'}
+      ${as.app ? `<div>App: ${esc(as.app)}</div>` : ''}
+      ${as.nota ? `<div class="muted">${esc(as.nota)}</div>` : ''}
+    </div>
+    ${lista('Coberturas clave', s.coberturas_clave)}
+    ${s.airhelp_plus != null ? `<div class="card">AirHelp+: <b>${air}</b></div>` : ''}
+    ${lista('Cómo reclamar', s.como_reclamar, 'ol')}`;
+}
+function copiar(t) {
+  const ok = () => alert('Copiado: ' + t);
+  if (navigator.clipboard) navigator.clipboard.writeText(t).then(ok, () => prompt('Copia el texto:', t));
+  else prompt('Copia el texto:', t);
 }
 
 function viewPronto(nombre, ses) {
@@ -208,8 +324,8 @@ function render() {
   else switch (tab) {
     case 'hoy': html = viewHoy(); break;
     case 'ruta': html = viewRuta(); break;
-    case 'ensenar': html = viewPronto('Enseñar (tarjetas para taxi y hotel)', 'S2'); break;
-    case 'seguro': html = viewPronto('Seguro', 'S2'); break;
+    case 'ensenar': html = viewEnsenar(); break;
+    case 'seguro': html = viewSeguro(); break;
     case 'corea': html = viewPronto('Corea y frases útiles', 'S3'); break;
     case 'gastos': html = viewPronto('Gastos', 'S5'); break;
     case 'checklist': html = viewPronto('Checklist por ciudad', 'S5'); break;
@@ -219,6 +335,14 @@ function render() {
 }
 
 document.addEventListener('click', e => {
+  const x = e.target.closest('[data-full],[data-close],[data-copy],[data-ciudad]');
+  if (x) {
+    if (x.dataset.full) showFull(+x.dataset.full);
+    else if (x.dataset.copy) copiar(x.dataset.copy);
+    else if (x.dataset.ciudad) document.getElementById('c-' + x.dataset.ciudad)?.scrollIntoView({ behavior: 'smooth' });
+    else document.getElementById('full')?.remove();
+    return;
+  }
   const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go]');
   if (!b) return;
   if (b.dataset.tab) { tab = b.dataset.tab; window.scrollTo(0, 0); }

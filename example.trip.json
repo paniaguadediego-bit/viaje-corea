@@ -1,57 +1,287 @@
 {
-  "meta": {
-    "titulo": "Corea 2026 (EJEMPLO)",
-    "salida_espana": "2026-11-02",
-    "vuelta_espana": "2026-11-19",
-    "viajeros": ["Viajero Ejemplo"],
-    "presupuesto_referencia": 2000,
-    "cambio_won_por_euro": 1500
+ "meta": {
+  "titulo": "Corea 2026 (EJEMPLO)",
+  "salida_espana": "2026-11-02",
+  "vuelta_espana": "2026-11-19",
+  "viajeros": [
+   "Viajero Ejemplo"
+  ],
+  "presupuesto_referencia": 2000,
+  "cambio_won_por_euro": 1500
+ },
+ "vuelos": [
+  {
+   "tramo": "Madrid → Seúl (ICN)",
+   "fecha": "2026-11-02",
+   "aerolinea": "Aerolínea Ficticia",
+   "estado": "COMPRADO",
+   "verificar": false
   },
-  "vuelos": [
-    { "tramo": "Madrid → Seúl (ICN)", "fecha": "2026-11-02", "aerolinea": "Aerolínea Ficticia", "estado": "COMPRADO", "verificar": false },
-    { "tramo": "Seúl (ICN) → Madrid", "fecha": "2026-11-19", "aerolinea": "Aerolínea Ficticia", "estado": "COMPRADO", "verificar": true }
-  ],
-  "alojamientos": [
-    { "id": "h-seul", "nombre": "Hotel Ejemplo Seúl", "ciudad": "Seúl", "fechas": "3-6 nov", "noches": 3, "coste_eur": 0, "pago": "ficticio", "direccion_en": "Example street 1, Seoul", "direccion_ko": "", "ko": "", "nota": "Dato ficticio de prueba", "verificar": true },
-    { "id": "h-busan", "nombre": "Hostal Ejemplo Busan", "ciudad": "Busan", "fechas": "11-14 nov", "noches": 3, "coste_eur": 0, "pago": "ficticio", "direccion_en": "Example road 2, Busan", "verificar": true }
-  ],
-  "ciudades": [
-    { "id": "seul1", "nombre": "Seúl", "ko": "서울", "desde": "2026-11-03", "hasta": "2026-11-06" },
-    { "id": "andong", "nombre": "Andong", "ko": "안동", "desde": "2026-11-06", "hasta": "2026-11-08" },
-    { "id": "gyeongju", "nombre": "Gyeongju", "ko": "경주", "desde": "2026-11-08", "hasta": "2026-11-11" },
-    { "id": "busan", "nombre": "Busan", "ko": "부산", "desde": "2026-11-11", "hasta": "2026-11-14" },
-    { "id": "jeonju", "nombre": "Jeonju", "ko": "전주", "desde": "2026-11-14", "hasta": "2026-11-16" },
-    { "id": "seul2", "nombre": "Seúl", "ko": "서울", "desde": "2026-11-16", "hasta": "2026-11-19" }
-  ],
-  "traslados": [
-    { "id": "t1", "fecha": "2026-11-06", "de": "Seúl", "a": "Andong", "estado": "COMPRADO",
-      "pasos": ["Ir a la estación (ejemplo)", "Tren a Andong (ejemplo)", "Taxi al alojamiento"],
-      "tren": { "salida": "VERIFICAR", "llegada": "VERIFICAR", "comprado": true }, "verificar": true },
-    { "id": "t2", "fecha": "2026-11-08", "de": "Andong", "a": "Gyeongju", "estado": "PENDIENTE DE COMPRAR",
-      "pasos": ["Paso de ejemplo 1", "Paso de ejemplo 2"],
-      "tren": { "salida": "VERIFICAR", "llegada": "VERIFICAR", "comprado": false }, "verificar": true },
-    { "id": "t3", "fecha": "2026-11-11", "de": "Gyeongju", "a": "Busan", "estado": "COMPRADO", "pasos": ["Paso de ejemplo"] }
-  ],
-  "dias": [
-    { "fecha": "2026-11-03", "dia": 1, "ciudad": "Seúl", "titulo": "Llegada (ejemplo)", "items": [ { "hora": "VERIFICAR", "texto": "Aterrizaje en ICN" }, { "texto": "Comprar tarjeta de transporte" } ] },
-    { "fecha": "2026-11-04", "dia": 2, "ciudad": "Seúl", "titulo": "Día de ejemplo en Seúl", "items": [ { "texto": "Actividad ficticia" } ] },
-    { "fecha": "2026-11-06", "dia": 4, "ciudad": "Andong", "titulo": "Viaje a Andong (ejemplo)", "items": [ { "texto": "Traslado en tren" } ] },
-    { "fecha": "2026-11-08", "dia": 6, "ciudad": "Gyeongju", "titulo": "Viaje a Gyeongju (ejemplo)", "items": [] },
-    { "fecha": "2026-11-11", "dia": 9, "ciudad": "Busan", "titulo": "Llegada a Busan (ejemplo)" }
-  ],
-  "lugares": [
-    { "id": "l1", "es": "Hotel Ejemplo Seúl", "ko": "", "romanizacion": "", "direccion_ko": "", "direccion_en": "Example street 1, Seoul", "verificar": true, "nota": "Falta hangul (ejemplo)" }
-  ],
-  "seguro": {
-    "producto": "Seguro Ficticio", "poliza": "XXXX-EJEMPLO", "vigencia": "2026-11-02 a 2026-11-19",
-    "viajeros_asegurados": ["Viajero Ejemplo"],
-    "asistencia": { "app": "App ficticia", "telefono": "+00 000 000 000", "nota": "Número ficticio" },
-    "coberturas_clave": ["Cobertura de ejemplo"], "airhelp_plus": false,
-    "como_reclamar": ["Paso de ejemplo"], "verificar": true
+  {
+   "tramo": "Seúl (ICN) → Madrid",
+   "fecha": "2026-11-19",
+   "aerolinea": "Aerolínea Ficticia",
+   "estado": "COMPRADO",
+   "verificar": true
+  }
+ ],
+ "alojamientos": [
+  {
+   "id": "h-seul",
+   "nombre": "Hotel Ejemplo Seúl",
+   "ciudad": "Seúl",
+   "fechas": "3-6 nov",
+   "noches": 3,
+   "coste_eur": 0,
+   "pago": "ficticio",
+   "direccion_en": "Example street 1, Seoul",
+   "direccion_ko": "",
+   "ko": "",
+   "nota": "Dato ficticio de prueba",
+   "verificar": true
   },
-  "checklist_documentos": [
-    { "id": "d1", "texto": "Pasaporte (ejemplo)" },
-    { "id": "d2", "texto": "Trámite de entrada (VERIFICAR si aplica)", "url": "https://example.com" }
+  {
+   "id": "h-busan",
+   "nombre": "Hostal Ejemplo Busan",
+   "ciudad": "Busan",
+   "fechas": "11-14 nov",
+   "noches": 3,
+   "coste_eur": 0,
+   "pago": "ficticio",
+   "direccion_en": "Example road 2, Busan",
+   "verificar": true
+  }
+ ],
+ "ciudades": [
+  {
+   "id": "seul1",
+   "nombre": "Seúl",
+   "ko": "서울",
+   "desde": "2026-11-03",
+   "hasta": "2026-11-06",
+   "interes": [
+    "Palacio Gyeongbokgung",
+    "Barrio Bukchon Hanok",
+    "Myeongdong"
+   ]
+  },
+  {
+   "id": "andong",
+   "nombre": "Andong",
+   "ko": "안동",
+   "desde": "2026-11-06",
+   "hasta": "2026-11-08",
+   "interes": [
+    "Aldea folclórica Hahoe"
+   ]
+  },
+  {
+   "id": "gyeongju",
+   "nombre": "Gyeongju",
+   "ko": "경주",
+   "desde": "2026-11-08",
+   "hasta": "2026-11-11",
+   "interes": [
+    "Templo Bulguksa",
+    "Gruta Seokguram",
+    "Parque de túmulos Daereungwon"
+   ]
+  },
+  {
+   "id": "busan",
+   "nombre": "Busan",
+   "ko": "부산",
+   "desde": "2026-11-11",
+   "hasta": "2026-11-14",
+   "interes": [
+    "Playa Haeundae",
+    "Aldea cultural Gamcheon",
+    "Mercado Jagalchi"
+   ]
+  },
+  {
+   "id": "jeonju",
+   "nombre": "Jeonju",
+   "ko": "전주",
+   "desde": "2026-11-14",
+   "hasta": "2026-11-16",
+   "interes": [
+    "Aldea Hanok de Jeonju"
+   ]
+  },
+  {
+   "id": "seul2",
+   "nombre": "Seúl",
+   "ko": "서울",
+   "desde": "2026-11-16",
+   "hasta": "2026-11-19",
+   "interes": [
+    "Palacio Changdeokgung",
+    "Insadong"
+   ]
+  }
+ ],
+ "traslados": [
+  {
+   "id": "t1",
+   "fecha": "2026-11-06",
+   "de": "Seúl",
+   "a": "Andong",
+   "estado": "COMPRADO",
+   "pasos": [
+    "Ir a la estación (ejemplo)",
+    "Tren a Andong (ejemplo)",
+    "Taxi al alojamiento"
+   ],
+   "tren": {
+    "salida": "VERIFICAR",
+    "llegada": "VERIFICAR",
+    "comprado": true
+   },
+   "verificar": true
+  },
+  {
+   "id": "t2",
+   "fecha": "2026-11-08",
+   "de": "Andong",
+   "a": "Gyeongju",
+   "estado": "PENDIENTE DE COMPRAR",
+   "pasos": [
+    "Paso de ejemplo 1",
+    "Paso de ejemplo 2"
+   ],
+   "tren": {
+    "salida": "VERIFICAR",
+    "llegada": "VERIFICAR",
+    "comprado": false
+   },
+   "verificar": true
+  },
+  {
+   "id": "t3",
+   "fecha": "2026-11-11",
+   "de": "Gyeongju",
+   "a": "Busan",
+   "estado": "COMPRADO",
+   "pasos": [
+    "Paso de ejemplo"
+   ]
+  }
+ ],
+ "dias": [
+  {
+   "fecha": "2026-11-03",
+   "dia": 1,
+   "ciudad": "Seúl",
+   "titulo": "Llegada (ejemplo)",
+   "items": [
+    {
+     "hora": "VERIFICAR",
+     "texto": "Aterrizaje en ICN"
+    },
+    {
+     "texto": "Comprar tarjeta de transporte"
+    }
+   ]
+  },
+  {
+   "fecha": "2026-11-04",
+   "dia": 2,
+   "ciudad": "Seúl",
+   "titulo": "Día de ejemplo en Seúl",
+   "items": [
+    {
+     "texto": "Actividad ficticia"
+    }
+   ]
+  },
+  {
+   "fecha": "2026-11-06",
+   "dia": 4,
+   "ciudad": "Andong",
+   "titulo": "Viaje a Andong (ejemplo)",
+   "items": [
+    {
+     "texto": "Traslado en tren"
+    }
+   ]
+  },
+  {
+   "fecha": "2026-11-08",
+   "dia": 6,
+   "ciudad": "Gyeongju",
+   "titulo": "Viaje a Gyeongju (ejemplo)",
+   "items": []
+  },
+  {
+   "fecha": "2026-11-11",
+   "dia": 9,
+   "ciudad": "Busan",
+   "titulo": "Llegada a Busan (ejemplo)"
+  }
+ ],
+ "lugares": [
+  {
+   "id": "l1",
+   "es": "Hotel Ejemplo Seúl",
+   "ko": "",
+   "romanizacion": "",
+   "direccion_ko": "",
+   "direccion_en": "Example street 1, Seoul",
+   "verificar": true,
+   "nota": "Falta hangul (ejemplo)"
+  },
+  {
+   "id": "l2",
+   "es": "Estación de Seúl",
+   "ko": "서울역",
+   "romanizacion": "Seoul-yeok",
+   "direccion_ko": "",
+   "direccion_en": "",
+   "verificar": false,
+   "nota": ""
+  },
+  {
+   "id": "l3",
+   "es": "Gyeongju (ciudad)",
+   "ko": "경주",
+   "romanizacion": "Gyeongju",
+   "verificar": false
+  }
+ ],
+ "seguro": {
+  "producto": "Seguro Ficticio",
+  "poliza": "XXXX-EJEMPLO",
+  "vigencia": "2026-11-02 a 2026-11-19",
+  "viajeros_asegurados": [
+   "Viajero Ejemplo"
   ],
-  "avisos": ["Estos datos son FICTICIOS. Importa tu trip.json real."]
+  "asistencia": {
+   "app": "App ficticia",
+   "telefono": "+00 000 000 000",
+   "nota": "Número ficticio"
+  },
+  "coberturas_clave": [
+   "Cobertura de ejemplo"
+  ],
+  "airhelp_plus": false,
+  "como_reclamar": [
+   "Paso de ejemplo"
+  ],
+  "verificar": true
+ },
+ "checklist_documentos": [
+  {
+   "id": "d1",
+   "texto": "Pasaporte (ejemplo)"
+  },
+  {
+   "id": "d2",
+   "texto": "Trámite de entrada (VERIFICAR si aplica)",
+   "url": "https://example.com"
+  }
+ ],
+ "avisos": [
+  "Estos datos son FICTICIOS. Importa tu trip.json real."
+ ]
 }
