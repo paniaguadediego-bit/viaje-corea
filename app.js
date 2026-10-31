@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v20';
+const VERSION = 'v21';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -252,7 +252,7 @@ function viewHoy() {
     <div class="big">${esc(d.titulo)}</div>
     <ul class="items">${arr(d.items).map(i =>
       `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${esc(i.texto)}</li>`).join('')}</ul>
-    ${d.ciudad ? `<button class="sec mini comer-hoy" data-comer="${esc(ck(d.ciudad))}">🍜 Comer en ${esc(d.ciudad)}</button>` : ''}
+    ${CIUDADES_COMER.some(c => c[0] === ck(d.ciudad)) ? `<button class="sec mini comer-hoy" data-comer="${esc(ck(d.ciudad))}">🍜 Comer en ${esc(d.ciudad)}</button>` : ''}
   </div>
   ${destacados(d.ciudad)}`;
 
@@ -620,7 +620,7 @@ const CIUDADES_COMER = [['seul', 'Seúl'], ['andong', 'Andong'], ['gyeongju', 'G
 const TIPOS = ['todos', 'restaurante', 'café', 'mercado', 'plato', 'bar'];
 const ESTADOS = [['quiero', 'Quiero'], ['visitado', 'Visitado'], ['descartado', 'Descartado'], ['cerrado', 'Cerrado']];
 const FUENTES = { itinerario: 'Itinerario', guia: 'Guía web (no verificado)', lonely: 'Lonely Planet 2016', propio: 'Propio' };
-let comerCiudad = null, comerTipo = 'todos', comerForm = false;
+let comerCiudad = null, comerTipo = 'todos', comerForm = false, comerEstado = 'todos', comerOrden = 'rec';
 const lugaresComer = () => [...DATOS_COMER, ...arr(u().comerPropios)].filter(l => l && typeof l === 'object');
 const estadoDe = id => (u().comer && user.comer[id]) || {};
 
@@ -629,19 +629,43 @@ function viewComer() {
     const k = ck(ciudadActual());
     comerCiudad = CIUDADES_COMER.some(c => c[0] === k) ? k : 'todas';
   }
-  const lista = lugaresComer().filter(l => (comerCiudad === 'todas' || l.ciudad === comerCiudad) && (comerTipo === 'todos' || l.tipo === comerTipo));
+  const base = lugaresComer().filter(l => (comerCiudad === 'todas' || l.ciudad === comerCiudad) && (comerTipo === 'todos' || l.tipo === comerTipo));
+  const est = l => estadoDe(String(l.id)).estado || '';
+  const n = v => base.filter(l => est(l) === v).length;
+  let lista = base.filter(l => comerEstado === 'todos' ? true : comerEstado === 'pendiente' ? !est(l) : est(l) === comerEstado);
+  lista = ordenarComer(lista);
   const chip = (attr, v, t, on) => `<button class="chip ${on ? 'on' : ''}" ${attr}="${esc(v)}">${esc(t)}</button>`;
   return `<div class="chips">${chip('data-cc', 'todas', 'Todas', comerCiudad === 'todas')}${CIUDADES_COMER.map(([k, t]) => chip('data-cc', k, t, comerCiudad === k)).join('')}</div>
     <div class="chips">${TIPOS.map(t => chip('data-ct', t, t[0].toUpperCase() + t.slice(1), comerTipo === t)).join('')}</div>
-    <div class="muted">${lista.length} lugares · "Naver" necesita conexión</div>
+    <div class="chips">${chip('data-ce', 'todos', 'Todos', comerEstado === 'todos')}${chip('data-ce', 'quiero', `⭐ Quiero (${n('quiero')})`, comerEstado === 'quiero')}${chip('data-ce', 'visitado', `✅ Visitados (${n('visitado')})`, comerEstado === 'visitado')}${chip('data-ce', 'pendiente', 'Sin marcar', comerEstado === 'pendiente')}</div>
+    <div class="orden"><span class="muted">${lista.length} lugares · Ordenar:</span>
+      ${[['rec', 'Recomendado'], ['dist', 'Distancia'], ['val', 'Mi valoración']].map(([k, t]) => chip('data-co', k, t, comerOrden === k)).join('')}</div>
     ${lista.map(cardComer).join('') || '<p class="muted">No hay lugares con este filtro.</p>'}
     ${comerForm ? formComer() : '<button class="sec" data-act="comer-nuevo">＋ Añadir lugar</button>'}`;
+}
+
+// Orden: recomendado (Quiero, itinerario, ★ Lonely, guía…), distancia al hotel o mi valoración.
+function puntos(l) {
+  const e = estadoDe(String(l.id));
+  if (['descartado', 'cerrado'].includes(e.estado)) return -100;
+  return (e.estado === 'quiero' ? 100 : 0) + (l.fuente === 'itinerario' ? 50 : 0) + (/★/.test(l.nota || '') ? 30 : 0)
+    + (l.fuente === 'guia' ? 20 : l.fuente === 'lonely' ? 10 : 0) + (Number(e.val) || 0) * 5 - (e.estado === 'visitado' ? 40 : 0);
+}
+function distKm(l) { const h = hotelDe(l.ciudad), p = coordsLugar(l); return h && p ? km(h, p) : Infinity; }
+function ordenarComer(ls) {
+  const r = ls.map((l, i) => [l, i]);
+  const f = comerOrden === 'dist' ? ([a], [b]) => distKm(a) - distKm(b)
+    : comerOrden === 'val' ? ([a], [b]) => (Number(estadoDe(String(b.id)).val) || 0) - (Number(estadoDe(String(a.id)).val) || 0) || puntos(b) - puntos(a)
+    : ([a], [b]) => puntos(b) - puntos(a);
+  return r.sort((x, y) => f(x, y) || x[1] - y[1]).map(x => x[0]);
 }
 
 function cardComer(l) {
   const id = String(l.id ?? ''), e = estadoDe(id), q = l.ko || l.nombre || '';
   const ciudad = (CIUDADES_COMER.find(c => c[0] === l.ciudad) || [])[1] || l.ciudad || '';
+  const cinta = { quiero: '⭐ QUIERO IR', visitado: '✅ VISITADO', descartado: 'DESCARTADO', cerrado: '🚫 CERRADO' }[e.estado];
   return `<div class="card comer est-${esc(e.estado || '')}">
+    ${cinta ? `<div class="cinta">${cinta}</div>` : ''}
     <div class="big">${esc(l.nombre || 'Sin nombre')}</div>
     ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : ''}
     <div class="muted">${[l.tipo, l.plato].filter(Boolean).map(esc).join(' · ')}${ciudad && comerCiudad === 'todas' ? ' · ' + esc(ciudad) : ''}${distHotel(l, l.ciudad)}</div>
@@ -657,7 +681,8 @@ function cardComer(l) {
       ${q ? `<a class="btn sec mini" href="https://map.naver.com/p/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">🗺️ Naver</a>` : ''}
       ${l.fuente === 'propio' ? `<button class="sec mini" data-delcomer="${esc(id)}">✕</button>` : ''}
     </div>
-    <div class="chips estados">${ESTADOS.map(([k, t]) => `<button class="chip ${e.estado === k ? 'on' : ''}" data-est="${esc(id)}" data-v="${k}">${t}</button>`).join('')}</div>
+    <div class="chips estados">${ESTADOS.map(([k, t]) => `<button class="chip ${e.estado === k ? 'on' : ''} e-${k}" data-est="${esc(id)}" data-v="${k}">${k === 'quiero' ? '⭐ ' : ''}${t}</button>`).join('')}</div>
+    <div class="estrellas">Mi valoración: ${[1, 2, 3, 4, 5].map(v => `<button class="star ${(Number(e.val) || 0) >= v ? 'on' : ''}" data-val="${esc(id)}" data-n="${v}" aria-label="${v} estrellas">★</button>`).join('')}</div>
     <textarea data-cnota="${esc(id)}" rows="1" placeholder="Nota propia…">${esc(e.nota || '')}</textarea>
   </div>`;
 }
@@ -827,9 +852,15 @@ document.addEventListener('click', e => {
     return;
   }
   if (e.target.closest('#back')) { history.back(); return; }
-  const cm = e.target.closest('[data-cc],[data-ct],[data-est],[data-comer],[data-delcomer]');
+  const cm = e.target.closest('[data-cc],[data-ct],[data-ce],[data-co],[data-val],[data-est],[data-comer],[data-delcomer]');
   if (cm) {
-    if (cm.dataset.cc) comerCiudad = cm.dataset.cc;
+    if (cm.dataset.ce) comerEstado = cm.dataset.ce;
+    else if (cm.dataset.co) comerOrden = cm.dataset.co;
+    else if (cm.dataset.val) {
+      const U = u(); U.comer = U.comer || {}; const o = U.comer[cm.dataset.val] = U.comer[cm.dataset.val] || {};
+      const v = Number(cm.dataset.n); o.val = Number(o.val) === v ? 0 : v; saveUser();
+    }
+    else if (cm.dataset.cc) comerCiudad = cm.dataset.cc;
     else if (cm.dataset.ct) comerTipo = cm.dataset.ct;
     else if (cm.dataset.comer) { comerCiudad = CIUDADES_COMER.some(c => c[0] === cm.dataset.comer) ? cm.dataset.comer : 'todas'; ir('comer'); }
     else if (cm.dataset.delcomer) {

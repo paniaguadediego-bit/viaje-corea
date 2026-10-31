@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v20
+Caché del service worker: corea-v21
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -50,6 +50,8 @@ Caché del service worker: corea-v20
 - Distancia al hotel: "📍 X km del hotel" en Comer, Enseñar y Ciudades (Lonely). Hoteles con lat/lon en el trip.json del usuario (privado, devuelto por el chat, no en el repo); lugares en data/coords.json (~200 públicos, aprox. ±300 m). 21 restaurantes sin ubicación conocida: sin distancia.
 - Arreglos con el viaje real: "Seúl (vuelta)" se trata como Seúl (catálogo, mapa, comer); los traslados se sitúan en el mapa por la ciudad entre paréntesis (los pendientes salen en rojo); "Mis lugares" sin campo ciudad se agrupan por texto o por cercanía al hotel; si "dia" es el día de la semana, se muestra "Día 15 de 17 · Mar".
 
+- Cambio pedido (v21): en Comer, "Quiero ir" muy visible (cinta dorada, borde azul y fondo degradado; Visitado en verde); filtro por estado (Todos / ⭐ Quiero / ✅ Visitados / Sin marcar, con contadores); ordenar por Recomendado, Distancia al hotel o Mi valoración (estrellas 1-5 propias, guardadas en el móvil). Aspecto más cuidado: fondo y cabecera con degradados muy claros azul/rojo coreanos, tarjetas blancas con sombra suave, botones con degradado, barra inferior translúcida; modo oscuro equivalente.
+
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
 - [Supuesto] Tema (Auto/Claro/Oscuro) e Importar/Exportar/Borrar viven en la pestaña Más.
@@ -77,6 +79,7 @@ Caché del service worker: corea-v20
 - [Supuesto] Duplicados guía web/Lonely se unen en una tarjeta (fuente Lonely + enlace web).
 - [Supuesto] Cambio automático: api.frankfurter.dev (y .app de reserva), datos del Banco Central Europeo; se actualiza como mucho cada 6 h. Escribir un cambio a mano lo fija hasta pulsar "Usar cambio automático".
 - [Supuesto] Lista Verificar incluye todos los lugares de Comer (salvo los marcados Cerrado), lo marcado con verificar en el viaje y los sitios dudosos.
+- [Supuesto] "Valoración": no hay puntuaciones públicas sin conexión ni API sin cuenta; se usa una valoración propia (1-5) y un orden "Recomendado" (Quiero, itinerario, ★ Lonely, guía web; Descartado/Cerrado al final; Visitado baja).
 
 ## Verificar por el usuario
 - Prueba real en tu móvil: abrir con wifi, cerrar, modo avión, abrir y recorrer las 8 pestañas.
