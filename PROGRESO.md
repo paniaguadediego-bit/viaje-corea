@@ -1,10 +1,10 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v19
+Caché del service worker: corea-v20
 
 ## Pendiente (para después)
-- Comer y sitios: añadir una notita con la distancia a nuestro hotel de esa ciudad. Necesita coordenadas (lat/lon): las de los hoteles irían en trip.json (privado, alojamientos[].lat/lon) y las de los lugares en data/comer.json y contenido.js. Cálculo en línea recta sin conexión (aprox. "a 1,2 km"); la ruta real seguiría en Naver.
+- (Hecho en v20) Distancia al hotel.
 
 ## Decisiones
 - S1: datos guardados en localStorage (más simple que IndexedDB; el viaje cabe de sobra).
@@ -46,6 +46,9 @@ Caché del service worker: corea-v19
 
 - Notas del usuario (WhatsApp): Ruta separada de Ciudades (nueva pestaña Ciudades; el mapa lleva a la ficha); "Destacados en <ciudad>" en Hoy (★ Lonely y sitios conocidos + Comer: Quiero, itinerario y ★); Enseñar → "Mis lugares" agrupados por ciudad; Gastos quitado; conversor ₩/€ como pestaña propia con cambio automático (BCE, se guarda para offline, opción manual) y precios KRW de Comer con "≈ €"; lista Verificar en Más (con Naver y "✓", también en cada tarjeta de Comer).
 - Arreglo: las tarjetas a pantalla completa reducen la letra para que los nombres coreanos largos no se corten.
+
+- Distancia al hotel: "📍 X km del hotel" en Comer, Enseñar y Ciudades (Lonely). Hoteles con lat/lon en el trip.json del usuario (privado, devuelto por el chat, no en el repo); lugares en data/coords.json (~200 públicos, aprox. ±300 m). 21 restaurantes sin ubicación conocida: sin distancia.
+- Arreglos con el viaje real: "Seúl (vuelta)" se trata como Seúl (catálogo, mapa, comer); los traslados se sitúan en el mapa por la ciudad entre paréntesis (los pendientes salen en rojo); "Mis lugares" sin campo ciudad se agrupan por texto o por cercanía al hotel; si "dia" es el día de la semana, se muestra "Día 15 de 17 · Mar".
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

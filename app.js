@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v19';
+const VERSION = 'v20';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -76,6 +76,26 @@ function sumaDia(iso, n) {
 function naver(l) {
   const q = (l && (l.direccion_ko || l.ko || l.direccion_en || l.es || l.nombre)) || '';
   return q ? `<a class="btn sec mini" href="https://map.naver.com/p/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">🗺️ Naver</a>` : '';
+}
+
+// ---------- distancias al hotel (línea recta, sin conexión) ----------
+let COORDS_LUGARES = {};
+fetch('data/coords.json').then(r => r.json()).then(d => { COORDS_LUGARES = d || {}; render(); }).catch(() => {});
+const coordsLugar = l => {
+  if (!l) return null;
+  if (l.lat != null && l.lon != null) return [Number(l.lat), Number(l.lon)];
+  return COORDS_LUGARES[l.id] || COORDS_LUGARES[l.ko] || COORDS_LUGARES[l.es] || null;
+};
+function km([a, b], [c, d]) {
+  const r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2;
+  return 12742 * Math.asin(Math.sqrt(x));
+}
+// Hotel de una ciudad con coordenadas (de trip.json, privado).
+const hotelDe = k => { const h = arr(trip && trip.alojamientos).find(a => a && ck(a.ciudad) === k && a.lat != null && a.lon != null); return h ? [Number(h.lat), Number(h.lon)] : null; };
+function distHotel(l, k) {
+  const h = hotelDe(k), p = coordsLugar(l); if (!h || !p) return '';
+  const d = km(h, p);
+  return ` <span class="dist">📍 ${d < 1 ? Math.round(d * 10) * 100 + ' m' : d.toLocaleString('es-ES', { maximumFractionDigits: d < 10 ? 1 : 0 }) + ' km'} del hotel</span>`;
 }
 
 // ---------- tema ----------
@@ -224,7 +244,7 @@ function viewHoy() {
 
   html += `<div class="daynav row">
     <button class="sec" data-day="-1" ${dayIdx === 0 ? 'disabled' : ''}>◀</button>
-    <div class="label">Día ${esc(d.dia ?? dayIdx + 1)} de ${dias.length}${esHoy ? '<br>HOY' : ''}</div>
+    <div class="label">Día ${/^\d+$/.test(String(d.dia ?? '')) ? esc(d.dia) : dayIdx + 1} de ${dias.length}${d.dia && !/^\d+$/.test(String(d.dia)) ? ' · ' + esc(d.dia) : ''}${esHoy ? '<br>HOY' : ''}</div>
     <button class="sec" data-day="1" ${dayIdx === dias.length - 1 ? 'disabled' : ''}>▶</button>
   </div>
   <div class="card">
@@ -232,7 +252,7 @@ function viewHoy() {
     <div class="big">${esc(d.titulo)}</div>
     <ul class="items">${arr(d.items).map(i =>
       `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${esc(i.texto)}</li>`).join('')}</ul>
-    ${d.ciudad ? `<button class="sec mini comer-hoy" data-comer="${esc(norm(d.ciudad))}">🍜 Comer en ${esc(d.ciudad)}</button>` : ''}
+    ${d.ciudad ? `<button class="sec mini comer-hoy" data-comer="${esc(ck(d.ciudad))}">🍜 Comer en ${esc(d.ciudad)}</button>` : ''}
   </div>
   ${destacados(d.ciudad)}`;
 
@@ -252,7 +272,7 @@ function viewHoy() {
 
 // Lo imprescindible de la ciudad del día: qué ver (★ Lonely y sitios conocidos) y dónde comer.
 function destacados(ciudad) {
-  const k = norm(ciudad); if (!k) return '';
+  const k = ck(ciudad); if (!k) return '';
   const lp = (LP[k] || []);
   const ver_ = [...lp.filter(l => l.top), ...(CATALOGO[k] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)), ...lp.filter(l => !l.top)]
     .map(l => l.es).filter((x, i, a) => a.indexOf(x) === i).slice(0, 5);
@@ -272,7 +292,7 @@ function manana(d, dias) {
   const sig = dias.find(x => x.fecha === f);
   const tr = arr(trip.traslados).filter(t => t.fecha === f);
   const lineas = [];
-  if (sig && sig.ciudad && d.ciudad && norm(sig.ciudad) !== norm(d.ciudad))
+  if (sig && sig.ciudad && d.ciudad && ck(sig.ciudad) !== ck(d.ciudad))
     lineas.push(`🧳 Cambias de ciudad: ${esc(d.ciudad)} → ${esc(sig.ciudad)}. Deja el alojamiento y revisa la hora de salida.`);
   tr.forEach(t => {
     const sal = t.tren && t.tren.salida ? ` · sale ${esc(t.tren.salida)}` : '';
@@ -305,7 +325,7 @@ const sitiosCiudad = k => {
   return [...base, ...(LP[k] || []).filter(l => !l.ko || !ko.has(l.ko))];
 };
 const lpTag = l => l.lp ? ` <span class="badge otro">LP${l.top ? ' ★' : ''}</span>` : '';
-const interesDe = c => arr(c.interes).length ? arr(c.interes) : (CATALOGO[norm(c.nombre)] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)).map(l => l.es);
+const interesDe = c => arr(c.interes).length ? arr(c.interes) : (CATALOGO[ck(c.nombre)] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)).map(l => l.es);
 
 function viewRuta() {
   let html = pendingAlert();
@@ -326,9 +346,9 @@ function viewCiudades() {
     <div class="big">${i + 1}. ${esc(c.nombre)} ${c.ko ? `<span class="muted">${esc(c.ko)}</span>` : ''}</div>
     <div class="muted">${esc(c.desde)} → ${esc(c.hasta)}</div>
     ${interesDe(c).length ? `<ul>${interesDe(c).map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
-    ${(LP[norm(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => norm(o.nombre) === norm(c.nombre)) ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[norm(c.nombre)].length})</summary><ul>
-      ${LP[norm(c.nombre)].map(l => `<li><b>${esc(l.es)}</b>${l.top ? ' ★' : ''} ${ver(l)}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></li>`).join('')}</ul></details>` : ''}
-    <div class="acciones"><button class="sec mini" data-comer="${esc(norm(c.nombre))}">🍜 Comer aquí</button></div></div>`).join('');
+    ${(LP[ck(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => ck(o.nombre) === ck(c.nombre)) ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[ck(c.nombre)].length})</summary><ul>
+      ${LP[ck(c.nombre)].map(l => `<li><b>${esc(l.es)}</b>${l.top ? ' ★' : ''} ${ver(l)}${distHotel(l, ck(c.nombre))}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></li>`).join('')}</ul></details>` : ''}
+    <div class="acciones"><button class="sec mini" data-comer="${esc(ck(c.nombre))}">🍜 Comer aquí</button></div></div>`).join('');
 }
 
 
@@ -344,10 +364,19 @@ const COSTA = [[126.55,37.75],[127,38],[127.5,38.3],[128,38.3],[128.35,38.6],[12
   [128.6,34.85],[128.4,34.83],[127.7,34.7],[127.3,34.5],[126.7,34.3],[126.5,34.3],[126.35,34.75],
   [126.4,35],[126.4,35.3],[126.6,35.98],[126.15,36.75],[126.6,37],[126.6,37.45]];
 const norm = t => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/g, '');
+const ck = t => norm(String(t || '').replace(/\(.*?\)/g, ''));
+// Ciudad mencionada en un texto ("Starria Hostel (Seúl)" -> "seul"; aeropuerto -> "incheon").
+function ciudadEnTexto(t) {
+  const n = norm(t);
+  if (/incheon|aeropuerto|icn/.test(n)) return 'incheon';
+  const c = ciudadesUnicas().find(c => ck(c.nombre) && n.includes(ck(c.nombre)));
+  return c ? ck(c.nombre) : ck(t);
+}
 const XY = ([lat, lon]) => [((lon - 125.9) * 81 + 10).toFixed(1), ((38.75 - lat) * 100 + 10).toFixed(1)];
 function coordsDe(nombre) {
-  const c = arr(trip.ciudades).find(c => norm(c.nombre) === norm(nombre) && c.lat != null && c.lon != null);
-  return c ? [c.lat, c.lon] : COORDS[norm(nombre)];
+  const k = ck(nombre);
+  const c = arr(trip.ciudades).find(c => ck(c.nombre) === k && c.lat != null && c.lon != null);
+  return c ? [c.lat, c.lon] : COORDS[k];
 }
 
 function viewMapa() {
@@ -359,10 +388,10 @@ function viewMapa() {
     if (p) p.n.push(i + 1); else pts.push({ k, nombre: c.nombre, n: [i + 1], id: c.id });
   });
   if (!pts.length) return '';
-  let tramos = arr(trip.traslados).map(t => ({ a: coordsDe(t.de), b: coordsDe(t.a), pend: isPend(t) }));
-  const conTraslado = new Set(arr(trip.traslados).map(t => norm(t.de) + '>' + norm(t.a)));
+  let tramos = arr(trip.traslados).map(t => ({ a: coordsDe(ciudadEnTexto(t.de)), b: coordsDe(ciudadEnTexto(t.a)), pend: isPend(t) }));
+  const conTraslado = new Set(arr(trip.traslados).map(t => ciudadEnTexto(t.de) + '>' + ciudadEnTexto(t.a)));
   ciudades.forEach((c, i) => { // completa tramos sin traslado definido
-    const d = ciudades[i + 1]; if (!d || conTraslado.has(norm(c.nombre) + '>' + norm(d.nombre))) return;
+    const d = ciudades[i + 1]; if (!d || conTraslado.has(ck(c.nombre) + '>' + ck(d.nombre))) return;
     tramos.push({ a: coordsDe(c.nombre), b: coordsDe(d.nombre), pend: false });
   });
   tramos = tramos.filter(t => t.a && t.b && String(t.a) !== String(t.b));
@@ -392,40 +421,41 @@ function fraseTaxi(ko) {
   return p ? `${ko}${p} 가 주세요` : `${ko}(으)로 가 주세요`;
 }
 
-function lugarFila(l, key) {
+function lugarFila(l, key, k) {
   return `<div class="card lugar">
-    <div><div class="big">${esc(l.es)}${lpTag(l)} ${ver(l)}</div>
+    <div><div class="big">${esc(l.es)}${lpTag(l)} ${ver(l)}</div>${k ? distHotel(l, k) : ''}
     ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}</div>
     <div class="acciones col">${naver(l)}<button class="mini" data-full="${key}">Enseñar</button></div></div>`;
 }
 // Ciudades del viaje (en orden, sin repetir) y después el resto del catálogo.
 function ciudadesCatalogo() {
-  const ids = [...new Set(arr(trip.ciudades).map(c => norm(c.nombre)))].filter(k => CATALOGO[k] || LP[k]);
+  const ids = [...new Set(arr(trip.ciudades).map(c => ck(c.nombre)))].filter(k => CATALOGO[k] || LP[k]);
   return [...ids, ...Object.keys(CATALOGO).filter(k => !ids.includes(k))];
 }
-const nombreCiudad = k => (arr(trip.ciudades).find(c => norm(c.nombre) === k) || {}).nombre || k;
+const nombreCiudad = k => ((arr(trip.ciudades).find(c => ck(c.nombre) === k) || {}).nombre || k).replace(/\s*\(.*?\)/g, '');
 
 // Ciudad de un lugar propio: campo "ciudad" si lo trae; si no, se busca el nombre de la ciudad en sus textos.
 function ciudadDeLugar(l) {
-  if (l.ciudad) return norm(l.ciudad);
+  if (l.ciudad) return ck(l.ciudad);
   const txt = norm([l.es, l.direccion_en, l.nota].join(' ')), ko = [l.ko, l.direccion_ko].join(' ');
-  const c = ciudadesUnicas().find(c => (norm(c.nombre) && txt.includes(norm(c.nombre))) || (c.ko && ko.includes(c.ko)));
-  return c ? norm(c.nombre) : '';
+  const c = ciudadesUnicas().find(c => (ck(c.nombre) && txt.includes(ck(c.nombre))) || (c.ko && ko.includes(c.ko)))
+    || ciudadesUnicas().find(c => { const h = hotelDe(ck(c.nombre)), p = coordsLugar(l); return h && p && km(h, p) < 25; });
+  return c ? ck(c.nombre) : '';
 }
 function viewEnsenar() {
   const mios = arr(trip.lugares).map((l, i) => [l, i]).filter(([l]) => l && typeof l === 'object');
-  const grupos = [...ciudadesUnicas().map(c => norm(c.nombre)), ''];
-  const act = norm(ciudadActual());
+  const grupos = [...ciudadesUnicas().map(c => ck(c.nombre)), ''];
+  const act = ck(ciudadActual());
   const misLugares = grupos.map(k => {
     const ls = mios.filter(([l]) => ciudadDeLugar(l) === k); if (!ls.length) return '';
     return `<details data-key="mis:${esc(k)}" ${abierto('mis:' + k, k === act) ? 'open' : ''}><summary class="card big">${esc(k ? nombreCiudad(k) : 'Otros')} <span class="muted">${ls.length}</span></summary>
-      ${ls.map(([l, i]) => lugarFila(l, 'j:' + i)).join('')}</details>`;
+      ${ls.map(([l, i]) => lugarFila(l, 'j:' + i, k)).join('')}</details>`;
   }).join('');
   return '<p class="muted">Toca "Enseñar" para mostrarlo a pantalla completa al taxista o en recepción.</p>' +
     (mios.length ? '<h2>Mis lugares</h2>' + misLugares : '') +
     '<h2>Sitios conocidos</h2>' +
     ciudadesCatalogo().map(k => `<details><summary class="card big">${esc(nombreCiudad(k))}</summary>
-      ${sitiosCiudad(k).map((l, i) => lugarFila(l, `c:${k}:${i}`)).join('')}</details>`).join('');
+      ${sitiosCiudad(k).map((l, i) => lugarFila(l, `c:${k}:${i}`, k)).join('')}</details>`).join('');
 }
 
 // Reduce la letra hasta que cada línea quepa en la pantalla (los nombres coreanos largos no se parten).
@@ -559,7 +589,7 @@ function checks(scope, base) {
 
 function ciudadesUnicas() {
   const vistas = new Set();
-  return arr(trip.ciudades).filter(c => { const k = norm(c.nombre); if (vistas.has(k)) return false; vistas.add(k); return true; });
+  return arr(trip.ciudades).filter(c => { const k = ck(c.nombre); if (vistas.has(k)) return false; vistas.add(k); return true; });
 }
 function ciudadActual() {
   const d = arr(trip.dias).find(d => d.fecha === todayISO());
@@ -577,10 +607,10 @@ document.addEventListener('toggle', e => { const k = e.target.dataset && e.targe
 function viewChecklist() {
   const cs = ciudadesUnicas();
   if (!cs.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
-  const act = norm(ciudadActual());
+  const act = ck(ciudadActual());
   return '<p class="muted">Sitios de interés de cada ciudad y lo que quieras añadir.</p>' + cs.map(c =>
-    `<details data-key="ck:${esc(norm(c.nombre))}" ${abierto('ck:' + norm(c.nombre), norm(c.nombre) === act) ? 'open' : ''}><summary class="card big">${esc(c.nombre)}</summary>
-      ${checks('c:' + norm(c.nombre), [...interesDe(c), ...(LP[norm(c.nombre)] || []).map(l => l.es + ' (LP)')].map(t => ({ id: norm(t), texto: t })))}</details>`).join('');
+    `<details data-key="ck:${esc(ck(c.nombre))}" ${abierto('ck:' + ck(c.nombre), ck(c.nombre) === act) ? 'open' : ''}><summary class="card big">${esc(c.nombre)}</summary>
+      ${checks('c:' + ck(c.nombre), [...interesDe(c), ...(LP[ck(c.nombre)] || []).map(l => l.es + ' (LP)')].map(t => ({ id: norm(t), texto: t })))}</details>`).join('');
 }
 
 // ---------- Comer (data/comer.json + lugares propios) ----------
@@ -596,7 +626,7 @@ const estadoDe = id => (u().comer && user.comer[id]) || {};
 
 function viewComer() {
   if (comerCiudad === null) {
-    const k = norm(ciudadActual());
+    const k = ck(ciudadActual());
     comerCiudad = CIUDADES_COMER.some(c => c[0] === k) ? k : 'todas';
   }
   const lista = lugaresComer().filter(l => (comerCiudad === 'todas' || l.ciudad === comerCiudad) && (comerTipo === 'todos' || l.tipo === comerTipo));
@@ -614,7 +644,7 @@ function cardComer(l) {
   return `<div class="card comer est-${esc(e.estado || '')}">
     <div class="big">${esc(l.nombre || 'Sin nombre')}</div>
     ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : ''}
-    <div class="muted">${[l.tipo, l.plato].filter(Boolean).map(esc).join(' · ')}${ciudad && comerCiudad === 'todas' ? ' · ' + esc(ciudad) : ''}</div>
+    <div class="muted">${[l.tipo, l.plato].filter(Boolean).map(esc).join(' · ')}${ciudad && comerCiudad === 'todas' ? ' · ' + esc(ciudad) : ''}${distHotel(l, l.ciudad)}</div>
     ${l.precio ? `<div>💰 ${esc(l.precio)}${precioEur(l.precio)}</div>` : ''}${l.horario ? `<div>🕒 ${esc(l.horario)}</div>` : ''}
     ${l.direccion ? `<div class="muted">📍 ${esc(l.direccion)}</div>` : ''}
     ${l.nota ? `<div class="muted">${esc(l.nota)}</div>` : ''}

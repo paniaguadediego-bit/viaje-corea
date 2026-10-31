@@ -187,3 +187,5 @@ header { display: flex; align-items: center; gap: 8px; }
 .tabla .lugar { padding: 2px 0; }
 .conv .par input { font-size: 1.3rem; height: 52px; }
 nav#tabs button { font-size: .58rem; }
+
+.dist { color: var(--blue); font-size: .85em; white-space: nowrap; }

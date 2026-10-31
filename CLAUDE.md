@@ -55,7 +55,9 @@ meta{titulo,salida_espana,vuelta_espana,viajeros,
  presupuesto_referencia,cambio_won_por_euro}
 vuelos[{tramo,fecha,aerolinea,estado,verificar}]
 alojamientos[{id,nombre,ciudad,fechas,noches,coste_eur,pago,
- direccion_en,direccion_ko,ko,nota,verificar}]
+ direccion_en,direccion_ko,ko,nota,verificar,lat?,lon?}]
+ (lat/lon del hotel: privados, solo en trip.json; sirven para
+ "📍 a X km del hotel")
 ciudades[{id,nombre,ko,desde,hasta,lat?,lon?,interes[]?}]
 traslados[{id,fecha,de,a,estado,pasos[],frase_ko,
  romanizacion,tren{salida,llegada,comprado},verificar}]
@@ -77,6 +79,10 @@ Estado (Quiero/Visitado/Descartado/Cerrado), notas y lugares
 propios se guardan en el móvil (user.comer, user.comerPropios).
 Campos opcionales: la app NO debe romperse si falta alguno.
 Crea example.trip.json FICTICIO que cumpla este esquema.
+data/coords.json: coordenadas aproximadas PÚBLICAS de sitios y
+restaurantes (clave = hangul o id de comer.json) para distancias
+en línea recta. Si un lugar no tiene, no se muestra distancia.
+Las ciudades se comparan sin paréntesis ("Seúl (vuelta)" = Seúl).
 contenido.js guarda contenido fijo y público: CATALOGO (sitios
 conocidos por ciudad con hangul seguro), FRASES y GUIA.
 

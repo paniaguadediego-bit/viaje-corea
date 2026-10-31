@@ -1,8 +1,8 @@
 // Sube CACHE en cada sesión (y VERSION en app.js) para que el móvil coja la versión nueva.
-const CACHE = 'corea-v19';
+const CACHE = 'corea-v20';
 const FILES = [
   './', './index.html', './styles.css', './app.js', './contenido.js', './diccionario.js', './manifest.json',
-  './example.trip.json', './data/comer.json', './icons/icon.svg', './icons/icon-192.png',
+  './example.trip.json', './data/comer.json', './data/coords.json', './icons/icon.svg', './icons/icon-192.png',
   './icons/icon-512.png', './icons/apple-touch-icon.png'
 ];
 
