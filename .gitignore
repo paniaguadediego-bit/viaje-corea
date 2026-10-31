@@ -1,0 +1,4 @@
+trip.json
+*.pdf
+/private/
+.DS_Store
