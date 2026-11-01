@@ -290,3 +290,45 @@ nav#tabs button.on span { background: var(--tint-b); border-radius: 10px; paddin
 .imp-tit { display: flex; gap: 6px; align-items: center; }
 .ko-s { font-size: .9em; font-weight: 600; }
 .credito { font-size: .7em; color: var(--muted); margin-top: 2px; }
+
+/* ===== v25: centrado y personalidad ===== */
+main { max-width: 640px; margin-left: auto; margin-right: auto; }
+h2 { text-align: center; }
+.chips { justify-content: safe center; }
+.orden, .acciones.centro, .daynav { justify-content: center; }
+.conv, .ahora, .welcome { text-align: center; }
+.alert { text-align: left; }
+.conv .par { max-width: 420px; margin-left: auto; margin-right: auto; }
+.cambio { justify-content: center; }
+details > summary.card { text-align: center; }
+.rejilla { max-width: 480px; margin-left: auto; margin-right: auto; }
+
+/* Ciudades: cada una con su color, icono, hangul de fondo y lema */
+.ciudad { padding: 0; overflow: hidden; border: 1px solid color-mix(in srgb, var(--c1) 25%, var(--line));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c1) 6%, var(--card)), var(--card) 40%); }
+.ciudad > *:not(.ciudad-hero) { margin-left: 10px; margin-right: 10px; }
+.ciudad-hero { position: relative; text-align: center; color: #fff; padding: 16px 12px 14px; overflow: hidden;
+  background: linear-gradient(135deg, var(--c1), var(--c2)); }
+.ciudad-ko { position: absolute; right: -6px; bottom: -18px; font-size: 5.5rem; font-weight: 900; opacity: .14; line-height: 1; pointer-events: none; }
+.ciudad-ic { font-size: 2rem; line-height: 1; }
+.ciudad-num { position: absolute; left: 12px; top: 10px; width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.22);
+  font-weight: 800; font-size: .85rem; display: flex; align-items: center; justify-content: center; }
+.ciudad-nom { font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; margin-top: 2px; }
+.ciudad-lema { font-size: .9rem; opacity: .92; font-style: italic; }
+.ciudad-fechas { display: inline-block; margin-top: 8px; font-size: .78rem; background: rgba(255,255,255,.2); padding: 3px 10px; border-radius: 999px; }
+.ciudad .imp { background: linear-gradient(120deg, color-mix(in srgb, var(--c1) 9%, var(--card)), var(--card) 70%); }
+.ciudad .hk.on { background: var(--c1) !important; border-color: var(--c1); }
+.ciudad h2, .ciudad summary { color: var(--c1); }
+.ics { font-size: 1rem; }
+.dia { border-left: 5px solid var(--c1); }
+
+/* Comer: color e icono por tipo */
+.comer { border-left: 5px solid var(--tc, var(--line)); }
+.tipo-restaurante { --tc: #e07a2e; }
+.tipo-cafe { --tc: #8b5a3c; }
+.tipo-mercado { --tc: #3c9a5f; }
+.tipo-plato { --tc: #cd2e3a; }
+.tipo-bar { --tc: #7b4bb3; }
+.comer:not(.est-quiero):not(.est-visitado) { background: linear-gradient(120deg, color-mix(in srgb, var(--tc) 7%, var(--card)), var(--card) 55%); }
+.ic-tipo { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; border-radius: 50%;
+  background: color-mix(in srgb, var(--tc, var(--blue)) 16%, var(--card)); font-size: 1rem; vertical-align: middle; }

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v24';
+const VERSION = 'v25';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -52,6 +52,7 @@ function fmtDate(iso) {
   const d = new Date(iso + 'T12:00:00');
   return isNaN(d) ? esc(iso) : d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
 }
+const fmtCorto = iso => { const d = new Date(String(iso) + 'T12:00:00'); return isNaN(d) ? esc(iso || '') : d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }); };
 const isPend = t => /pendiente/i.test(t.estado || '');
 const isOk = t => /comprad/i.test(t.estado || '') || (t.tren && t.tren.comprado === true);
 function estadoBadge(t) {
@@ -97,6 +98,32 @@ function distHotel(l, k) {
   const d = km(h, p);
   return ` <span class="dist">📍 ${d < 1 ? Math.round(d * 10) * 100 + ' m' : d.toLocaleString('es-ES', { maximumFractionDigits: d < 10 ? 1 : 0 }) + ' km'} del hotel</span>`;
 }
+
+// ---------- personalidad: color, icono y lema por ciudad; iconos por tipo de sitio ----------
+const TEMA = {
+  seul: { ic: '🏙️', c1: '#0047a0', c2: '#cd2e3a', lema: 'Palacios, hanoks y barrios que no duermen' },
+  andong: { ic: '🎭', c1: '#7a4a1e', c2: '#c98b4a', lema: 'Máscaras, aldeas y academias confucianas' },
+  gyeongju: { ic: '👑', c1: '#8a6a00', c2: '#d9a93a', lema: 'La antigua capital Silla: túmulos y templos' },
+  busan: { ic: '🌊', c1: '#0b6e78', c2: '#36a9b8', lema: 'Mar, mercados y templos junto a la costa' },
+  jeonju: { ic: '🍚', c1: '#2c6e45', c2: '#79b363', lema: 'Hanok, bibimbap y papel hanji' },
+  incheon: { ic: '✈️', c1: '#3b4a63', c2: '#7d8ca6', lema: '' }
+};
+const tema = k => TEMA[k] || { ic: '📍', c1: '#475569', c2: '#94a3b8', lema: '' };
+const varsTema = k => { const t = tema(k); return `--c1:${t.c1};--c2:${t.c2}`; };
+function icSitio(t) {
+  t = norm(t);
+  if (/palacio|fortaleza|ruinas|puerta/.test(t)) return '🏯';
+  if (/templo|santuario|gruta|pagoda|buda|iglesia|catedral/.test(t)) return '🛕';
+  if (/museo|historic|academia|escuela|arquitectura|teatro/.test(t)) return '🏛️';
+  if (/aldea|barrio|calle|zona/.test(t)) return '🏘️';
+  if (/parque|monta|paseo|mirador|lago|playa|teleferico|barco/.test(t)) return '🌳';
+  if (/mercado/.test(t)) return '🧺';
+  if (/tumba|tumulo/.test(t)) return '⛰️';
+  if (/sauna/.test(t)) return '♨️';
+  return '📍';
+}
+const IC_COMER = { restaurante: '🍲', 'café': '☕', mercado: '🧺', plato: '🥢', bar: '🍶' };
+const tipoClase = t => 'tipo-' + norm(t || 'otro');
 
 // ---------- tema ----------
 function applyTheme() {
@@ -247,8 +274,8 @@ function viewHoy() {
     <div class="label">Día ${/^\d+$/.test(String(d.dia ?? '')) ? esc(d.dia) : dayIdx + 1} de ${dias.length}${d.dia && !/^\d+$/.test(String(d.dia)) ? ' · ' + esc(d.dia) : ''}${esHoy ? '<br>HOY' : ''}</div>
     <button class="sec" data-day="1" ${dayIdx === dias.length - 1 ? 'disabled' : ''}>▶</button>
   </div>
-  <div class="card">
-    <div class="muted">${fmtDate(d.fecha)} · ${esc(d.ciudad)}</div>
+  <div class="card dia" style="${varsTema(ck(d.ciudad))}">
+    <div class="muted">${tema(ck(d.ciudad)).ic} ${fmtDate(d.fecha)} · ${esc(d.ciudad)}</div>
     <div class="big">${esc(d.titulo)}</div>
     <ul class="items">${arr(d.items).map(i =>
       `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${esc(i.texto)}</li>`).join('')}</ul>
@@ -377,7 +404,7 @@ function imprescindibles(k) {
   const ls = (typeof IMPRES !== 'undefined' && IMPRES[k]) || []; if (!ls.length) return '';
   return `<div class="impres">${ls.map(l => `<div class="imp ${hecho(l, k) ? 'hecho-card' : ''}">
     <div class="foto" data-wiki="${esc(l.wiki)}"><span>📷</span></div>
-    <div class="imp-txt"><div class="imp-tit">${btnHecho(l, k)}<b>${esc(l.es)}</b></div>
+    <div class="imp-txt"><div class="imp-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b></div>
       <div class="ko-s">${esc(l.ko)}${distHotel(l, k)}</div>
       <div class="muted">${esc(l.desc)}${l.lp ? ' <span class="badge otro">LP</span>' : ''}</div>
       <div class="credito" data-cred="${esc(l.wiki)}"></div></div></div>`).join('')}</div>`;
@@ -418,14 +445,20 @@ async function descargarFotos() {
 function viewCiudades() {
   const ciudades = arr(trip.ciudades);
   if (!ciudades.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
-  return ciudades.map((c, i) => `<div class="card" id="c-${esc(c.id)}">
-    <div class="big">${i + 1}. ${esc(c.nombre)} ${c.ko ? `<span class="muted">${esc(c.ko)}</span>` : ''}</div>
-    <div class="muted">${esc(c.desde)} → ${esc(c.hasta)}</div>
+  return ciudades.map((c, i) => { const k = ck(c.nombre), t = tema(k); return `<div class="card ciudad" id="c-${esc(c.id)}" style="${varsTema(k)}">
+    <div class="ciudad-hero">
+      <div class="ciudad-ko">${esc(c.ko || '')}</div>
+      <div class="ciudad-ic">${t.ic}</div>
+      <div class="ciudad-num">${i + 1}</div>
+      <div class="ciudad-nom">${esc(c.nombre)}</div>
+      ${t.lema ? `<div class="ciudad-lema">${esc(t.lema)}</div>` : ''}
+      <div class="ciudad-fechas">${fmtCorto(c.desde)} → ${fmtCorto(c.hasta)}</div>
+    </div>
     ${arr(trip.ciudades).slice(0, i).some(o => ck(o.nombre) === ck(c.nombre)) ? '' : imprescindibles(ck(c.nombre))}
-    ${interesDe(c).length ? `<ul class="hlist">${interesDe(c).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}<span>${esc(x)}</span></li>`; }).join('')}</ul>` : ''}
+    ${interesDe(c).length ? `<ul class="hlist">${interesDe(c).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}<span><span class="ics">${icSitio(x)}</span> ${esc(x)}</span></li>`; }).join('')}</ul>` : ''}
     ${(LP[ck(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => ck(o.nombre) === ck(c.nombre)) ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[ck(c.nombre)].length})</summary><ul class="hlist">
-      ${LP[ck(c.nombre)].map(l => `<li class="${hecho(l, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(l, ck(c.nombre))}<div><b>${esc(l.es)}</b>${l.top ? ' ★' : ''} ${ver(l)}${distHotel(l, ck(c.nombre))}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></div></li>`).join('')}</ul></details>` : ''}
-    <div class="acciones"><button class="sec mini" data-comer="${esc(ck(c.nombre))}">🍜 Comer aquí</button></div></div>`).join('');
+      ${LP[ck(c.nombre)].map(l => `<li class="${hecho(l, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(l, ck(c.nombre))}<div><span class="ics">${icSitio(l.tipo + ' ' + l.es)}</span> <b>${esc(l.es)}</b>${l.top ? ' ★' : ''} ${ver(l)}${distHotel(l, ck(c.nombre))}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></div></li>`).join('')}</ul></details>` : ''}
+    <div class="acciones centro"><button class="sec mini" data-comer="${esc(ck(c.nombre))}">🍜 Comer aquí</button></div></div>`; }).join('');
 }
 
 
@@ -784,9 +817,9 @@ function cardComer(l) {
   const id = String(l.id ?? ''), e = estadoDe(id), q = l.ko || l.nombre || '';
   const ciudad = (CIUDADES_COMER.find(c => c[0] === l.ciudad) || [])[1] || l.ciudad || '';
   const cinta = { quiero: '⭐ QUIERO IR', visitado: '✅ VISITADO', descartado: 'DESCARTADO', cerrado: '🚫 CERRADO' }[e.estado];
-  return `<div class="card comer est-${esc(e.estado || '')}">
+  return `<div class="card comer ${tipoClase(l.tipo)} est-${esc(e.estado || '')}">
     ${cinta ? `<div class="cinta">${cinta}</div>` : ''}
-    <div class="big">${esc(l.nombre || 'Sin nombre')}</div>
+    <div class="big"><span class="ic-tipo">${IC_COMER[l.tipo] || '🍽️'}</span> ${esc(l.nombre || 'Sin nombre')}</div>
     ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : ''}
     <div class="muted">${[l.tipo, l.plato].filter(Boolean).map(esc).join(' · ')}${ciudad && comerCiudad === 'todas' ? ' · ' + esc(ciudad) : ''}${distHotel(l, l.ciudad)}</div>
     ${l.precio ? `<div>💰 ${esc(l.precio)}${precioEur(l.precio)}</div>` : ''}${l.horario ? `<div>🕒 ${esc(l.horario)}</div>` : ''}
@@ -852,7 +885,7 @@ function viewConv() {
   const U = u(), c = cambio();
   const info = U.cambioManual ? 'Cambio manual' : U.cambioFecha ? `Cambio oficial del ${esc(U.cambioFecha)} (BCE)` : 'Sin cambio automático todavía';
   return `<div class="card conv">
-      <div class="par"><input data-conv="KRW" type="number" inputmode="decimal" placeholder="₩ wones" autofocus>
+      <div class="par"><input data-conv="KRW" type="number" inputmode="decimal" placeholder="₩ wones">
         <span>⇄</span><input data-conv="EUR" type="number" inputmode="decimal" placeholder="€ euros"></div>
       <div class="muted">${c ? `1 € = ${won(c)} · ${info}` : 'Falta el cambio: conéctate o escríbelo abajo.'}</div>
     </div>
