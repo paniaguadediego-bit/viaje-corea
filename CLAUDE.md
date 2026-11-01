@@ -19,7 +19,10 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
 5. Pestañas (barra inferior): Hoy, Ruta, Ciudades, Corea,
    Comer, Planes (League of Legends y cosmética: PLANES en contenido.js,
    con distancia al hotel y "cerca"), Más. Corea tiene apartados:
-   Guía (primero, con iconos por tema), Enseñar, Frases, Diccionario. Dentro de Más
+   Guía (primero, con iconos por tema), Historia (historia.js: 22
+   capítulos de historia y cultura para leer sin conexión, con índice,
+   anterior/siguiente y marca de leído en user.leidos), Enseñar, Frases,
+   Diccionario. Dentro de Más
    (botones arriba): Checklist, Seguro, Verificar, ₩/€ (conversor); y debajo Maleta/
    Documentos, Fotos y Notas. Gastos: quitado (el usuario usa
    otra app). No añadir

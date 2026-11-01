@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v47
+Caché del service worker: corea-v48
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -94,6 +94,7 @@ Caché del service worker: corea-v47
 - v45: quitado el botón "Comer en <ciudad>" de Hoy; la pestaña Comer ya abre en la ciudad del día.
 - v46: nueva pestaña ⭐ Planes (sustituye a ₩/€ en la barra; el conversor pasa a un botón en Más). 10 sitios: 🎮 LoL Park, T1 Base Camp Hongdae, Gangnam y Busan; 💄 Olive Young Myeongdong Town, Gangnam y Gwangbok, Daiso Myeongdong, Lotte y Shinsegae centrales. Cada uno con descripción, dirección, horario con VERIFICAR, distancia al hotel, "Cerca" (otros planes a ≤1,5 km) y "Cerca de vuestro plan" (sitios del itinerario a ≤1 km con su día), Naver y Enseñar. En Hoy, "Sitios de hoy" añade "⭐ Cerca" con los planes a ≤1 km de los sitios del día. Coordenadas aproximadas añadidas a 16 sitios que no tenían (Seochon, Namdaemun, Hongdae, Coex, Starfield, Naksan, museo de máscaras, Buyongdae, museo del soju, Gyochon, Woljeonggyo, Dongbaekseom, Songdo, Cheongsapo, BIFF Square, museo del hanji) y a Yangban Bapsang (frente al puente Woryeonggyo, según la Lonely). [Supuesto] 18 restaurantes de la Lonely sin dirección siguen sin distancia (no se inventa su ubicación).
 - v47: Ciudades: cada sitio (imprescindibles, recomendados LP y lista de interés) lleva el desplegable "📖 Más de la Lonely" con el resumen ampliado de la guía (DIA_LP, ahora 99 sitios: 63 nuevos sacados de la LP 2016) o "📖 Más info" (DIA_INFO). Sin texto ampliado solo quedan Woryeonggyo, Dosan Seowon y Haedong Yonggungsa (la LP 2016 no los describe; tienen su descripción corta). Arreglo: foto, círculo ✓ y texto ya no se solapan en las fichas LP (columna de foto y foto de 64 px; texto con min-width 0).
+- v48: Guía con 11 temas nuevos (leer hangul en 10 minutos, metro y KTX, clima en noviembre, tiendas 24 h, baños, internet, compras y tax free, salud y farmacias, beber a la coreana, templos, fechas del viaje: Pepero Day, Suneung con fecha VERIFICAR, kimjang). Nuevo apartado Corea → 📜 Historia (historia.js, precacheado): 22 capítulos, unas 7.500 palabras (unos 35 min): mito de Dangun, Tres Reinos, Silla, Goryeo, Joseon, Sejong y el hangul, Yi Sun-sin, fin de Joseon, ocupación, guerra, milagro del Han, democracia, Corea del Norte, personajes, cultura, religión, arte, Hallyu, deporte, curiosidades y la ruta contada por la historia. Índice, "Seguir leyendo", anterior/Leído ▶ y marca de leído (user.leidos, va en la copia exportada).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

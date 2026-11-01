@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v47';
+const VERSION = 'v48';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -873,13 +873,33 @@ function dResultados(q) {
 }
 
 const icGuia = t => [[/t-money|transporte/i, '🚇'], [/taxi/i, '🚕'], [/propina/i, '💸'], [/zapato/i, '👟'], [/enchufe/i, '🔌'], [/^apps/i, '📱'], [/pago/i, '💳'],
-  [/^comida/i, '🍜'], [/^etiqueta/i, '🙇'], [/seguridad|emergencia/i, '🚨'], [/entrada/i, '🛂'], [/básico/i, '🇰🇷'], [/consejos/i, '💡'], [/llevar/i, '🎒'], [/mesa/i, '🥢'], [/saber estar/i, '🤝']]
+  [/hangul/i, '🔤'], [/metro y ktx/i, '🚄'], [/clima/i, '🍂'], [/24 h/i, '🏪'], [/baños/i, '🚻'], [/internet/i, '📶'], [/tax free/i, '🛍️'], [/farmacia/i, '💊'], [/beber/i, '🍶'], [/^templos/i, '🛕'], [/fechas/i, '📅'], [/^comida/i, '🍜'], [/^etiqueta/i, '🙇'], [/seguridad|emergencia/i, '🚨'], [/entrada/i, '🛂'], [/básico/i, '🇰🇷'], [/consejos/i, '💡'], [/llevar/i, '🎒'], [/mesa/i, '🥢'], [/saber estar/i, '🤝']]
   .find(([r]) => r.test(t))?.[1] || '📌';
+// Historia de Corea para leer en el avión: índice, capítulo, anterior/siguiente y marca de leído (en el móvil).
+let histCap = null;
+const minLect = c => Math.max(1, Math.round(c.p.join(' ').split(/\s+/).length / 220));
+function viewHistoria() {
+  const H = typeof HISTORIA_COREA !== 'undefined' ? HISTORIA_COREA : []; if (!H.length) return '';
+  const U = u(); U.leidos = U.leidos || {};
+  const tot = H.reduce((a, c) => a + minLect(c), 0), leidos = H.filter((c, i) => U.leidos[i]).length;
+  if (histCap === null || !H[histCap]) {
+    const sig = H.findIndex((c, i) => !U.leidos[i]);
+    return `<div class="card hist-cab"><b>📜 Historia y cultura de Corea</b><div class="muted">${H.length} capítulos · unos ${tot} minutos de lectura · ${leidos} leídos</div>
+      ${sig >= 0 ? `<button data-hc="${sig}">${leidos ? '▶ Seguir leyendo' : '▶ Empezar'}: ${esc(H[sig].t)}</button>` : '<div>✅ ¡Todo leído!</div>'}</div>
+      <div class="hist-ind">${H.map((c, i) => `<button class="sec hist-it ${U.leidos[i] ? 'leido' : ''}" data-hc="${i}"><span>${c.ic}</span><span class="hist-t">${i + 1}. ${esc(c.t)}</span><small>${U.leidos[i] ? '✓' : minLect(c) + ' min'}</small></button>`).join('')}</div>`;
+  }
+  const c = H[histCap], i = histCap;
+  return `<div class="card hist-cap"><div class="muted centro">Capítulo ${i + 1} de ${H.length} · ${minLect(c)} min</div>
+    <h3 class="hist-h">${c.ic} ${esc(c.t)}</h3>${c.p.map(x => `<p>${esc(x)}</p>`).join('')}</div>
+    <div class="row hist-nav"><button class="sec" data-hc="${i - 1}" ${i === 0 ? 'disabled' : ''}>◀</button><button class="sec" data-hc="ind">Índice</button>
+      <button data-hc="${i + 1 < H.length ? i + 1 : 'ind'}" data-leido="${i}">${i + 1 < H.length ? 'Leído ▶' : 'Leído ✓'}</button></div>`;
+}
 function viewCorea() {
-  const seg = [['guia', '🧭 Guía'], ['ensenar', '🪧 Enseñar'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.']].map(([k, t]) =>
+  const seg = [['guia', '🧭 Guía'], ['historia', '📜 Historia'], ['ensenar', '🪧 Enseñar'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.']].map(([k, t]) =>
     `<button class="${coreaSub === k ? '' : 'sec'}" data-sub="${k}">${t}</button>`).join('');
-  let html = `<div class="row daynav">${seg}</div>`;
+  let html = `<div class="row daynav seg5">${seg}</div>`;
   if (coreaSub === 'ensenar') html += viewEnsenar();
+  else if (coreaSub === 'historia') html += viewHistoria();
   else if (coreaSub === 'frases') {
     let off = 0; const grupos = FRASES_SIT.map(([t, fs]) => { const g = [t, fs, off]; off += fs.length; return g; });
     const g = grupos.find(x => x[0] === fraseSit) || grupos[0];
@@ -1343,6 +1363,9 @@ document.addEventListener('click', e => {
   // Desplegables con data-key: los controla la app (así no se cierran si la pantalla se redibuja).
   const sm = e.target.closest('details[data-key] > summary');
   if (sm) { e.preventDefault(); const dt = sm.parentElement; abiertos[dt.dataset.key] = !dt.open; dt.open = abiertos[dt.dataset.key]; return; }
+  const hc = e.target.closest('[data-hc]');
+  if (hc) { if (hc.dataset.leido !== undefined) { const U = u(); U.leidos = U.leidos || {}; U.leidos[hc.dataset.leido] = 1; saveUser(); }
+    histCap = hc.dataset.hc === 'ind' ? null : +hc.dataset.hc; render(); window.scrollTo(0, 0); return; }
   const pc = e.target.closest('[data-pc]');
   if (pc) { planesCiudad = pc.dataset.pc; render(); return; }
   const gs = e.target.closest('[data-guia]');

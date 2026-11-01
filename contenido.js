@@ -161,6 +161,61 @@ const GUIA = [
   ['Entrada al país', [
     'K-ETA y tarjeta de llegada: comprobar si hacen falta para tu fecha. VERIFICAR en la web oficial.'
   ]],
+  ['Leer hangul en 10 minutos', [
+    'El hangul es un alfabeto, no ideogramas: 14 consonantes y 10 vocales básicas que se agrupan en bloques de sílaba (consonante + vocal + consonante final opcional).',
+    'Vocales verticales (a la derecha de la consonante): ㅏ a, ㅓ eo (una o abierta), ㅣ i. Horizontales (debajo): ㅗ o, ㅜ u, ㅡ eu (una u sin redondear).',
+    'Consonantes clave: ㄱ g/k, ㄴ n, ㄷ d/t, ㄹ r/l, ㅁ m, ㅂ b/p, ㅅ s, ㅇ muda al inicio y "ng" al final, ㅈ j, ㅎ h.',
+    'Ejemplos: 서울 = 서 (s+eo) + 울 (u+l) = Seo-ul. 부산 = Bu-san. 김치 = Kim-chi.',
+    'Truco: rótulos útiles que verás mucho: 출구 (salida), 입구 (entrada), 화장실 (baño), 역 (estación), 약국 (farmacia).'
+  ]],
+  ['Metro y KTX', [
+    'Cada línea tiene número y color. Las estaciones tienen número de salida (출구): Naver Map te dice cuál usar y ahorra muchos paseos.',
+    'Los últimos metros salen hacia medianoche. VERIFICAR en Naver Map la víspera si volvéis tarde.',
+    'En el andén se hace cola en las marcas del suelo, a los lados de las puertas.',
+    'KTX: el billete indica coche (호차) y asiento. Los coches están numerados en el andén; hay sitio para maletas al final de cada coche. Sed puntuales: no esperan.'
+  ]],
+  ['Clima en noviembre', [
+    'Otoño frío y seco: en Seúl, de unos 3-5 °C por la mañana a 12-14 °C por la tarde; Busan es más templado. VERIFICAR la previsión.',
+    'Principios de noviembre es aún época de hojas rojas y doradas (danpung) en palacios y templos.',
+    'Ropa por capas: los interiores (metro, tiendas, suelos con calefacción ondol) están calientes y la calle fría.'
+  ]],
+  ['Tiendas 24 h', [
+    'GS25, CU, 7-Eleven y Emart24 están por todas partes: comida preparada, gimbap triangular, ramyeon con máquina de agua caliente, café, cajero, recarga T-money.',
+    'Muchas tienen mesas para comer allí mismo, incluso fuera. Ofertas 1+1 y 2+1 en bebidas y snacks.'
+  ]],
+  ['Baños', [
+    'Hay baños públicos gratis y limpios en metro, estaciones, parques y centros comerciales.',
+    'En algunos baños antiguos el papel se tira a la papelera, no al váter: fíjate en el cartel.',
+    'Lleva pañuelos: en algunos baños de mercados no hay papel.'
+  ]],
+  ['Internet y móvil', [
+    'Wifi gratis en metro, cafés y muchas calles; aun así, la eSIM con datos es muy útil para Naver Map y Papago.',
+    'Algunas apps coreanas piden número coreano para registrarse: tenedlas probadas antes del viaje.'
+  ]],
+  ['Compras y tax free', [
+    'En tiendas con el cartel "Tax Free" se puede pedir la devolución del IVA con el pasaporte; en muchas te lo descuentan en el momento.',
+    'El importe mínimo y el límite cambian: VERIFICAR en la tienda. Guarda los recibos; en el aeropuerto hay quioscos de devolución.'
+  ]],
+  ['Salud y farmacias', [
+    'Farmacia = 약국 (yakguk). Hay muchas, pero cierran pronto y algunos domingos; en zonas turísticas suele haber alguna abierta.',
+    'Los medicamentos básicos (analgésicos, resfriado) se piden en el mostrador: frases en Corea → Frases → Farmacia.',
+    'Para algo serio: llamar al seguro (pestaña Seguro) antes de pagar. Urgencias: 119.'
+  ]],
+  ['Beber a la coreana', [
+    'Soju (aguardiente suave, unos 16-17 %), makgeolli (vino de arroz turbio, ideal con tortitas pajeon) y cerveza con pollo frito (chimaek).',
+    'Se sirve a los demás con las dos manos y no a uno mismo; no se rellena un vaso que no está vacío.',
+    'Ante alguien mayor, se bebe girando un poco la cabeza a un lado: es un gesto de respeto.'
+  ]],
+  ['Templos', [
+    'Ropa discreta, hablar bajo y no pisar el umbral de las salas. Si entras, descálzate y no te pongas delante del Buda central.',
+    'Las fotos dentro de las salas suelen estar mal vistas: mira si hay cartel.',
+    'Muchos templos ofrecen templestay (dormir y vivir la rutina monástica) con reserva.'
+  ]],
+  ['Fechas de vuestro viaje', [
+    '11 de noviembre: Pepero Day, el "día de San Valentín" de los palitos de chocolate Pepero (11/11 parecen cuatro palitos). Tiendas llenas de cajas de regalo.',
+    'Mediados de noviembre: Suneung, el examen de acceso a la universidad. Ese día se retrasa la entrada al trabajo, hay policía llevando a estudiantes rezagados y se evitan despegues y aterrizajes durante la prueba de comprensión oral de inglés. La fecha exacta de 2026: VERIFICAR.',
+    'Noviembre es temporada de kimjang: las familias preparan el kimchi para el invierno. Verás montañas de coles en los mercados.'
+  ]],
   ['Lo básico (Lonely Planet)', [
     'Moneda: won (₩). Idioma: coreano. Hora: 9 horas más que el meridiano de Greenwich (8 más que la España peninsular en noviembre).',
     'Cajeros: busca los que dicen "Global"; aceptan tarjetas extranjeras. Pocos abren 24 h.',

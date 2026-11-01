@@ -563,3 +563,16 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .mas-lp { margin-top: 4px; }
 .mas-lp summary { color: var(--blue); font-weight: 700; font-size: .85rem; }
 .mas-lp p { margin: 4px 0 0; font-size: .9em; line-height: 1.45; }
+
+.daynav.seg5 { gap: 4px; }
+.daynav.seg5 button { font-size: .74rem; padding: 6px 2px; min-height: 36px; letter-spacing: -.02em; }
+.hist-cab button { margin-top: 8px; }
+.hist-ind { display: flex; flex-direction: column; gap: 4px; }
+.hist-it { display: grid; grid-template-columns: 28px 1fr auto; gap: 8px; align-items: center; text-align: left; margin: 0; padding: 8px 10px; font-size: .9rem; }
+.hist-it span:first-child { font-size: 1.2rem; }
+.hist-it small { color: var(--muted); font-size: .75rem; }
+.hist-it.leido { opacity: .65; }
+.hist-cap { padding: 12px 14px; }
+.hist-h { margin: 4px 0 10px; font-size: 1.2rem; text-align: center; line-height: 1.25; }
+.hist-cap p { font-size: 1.02rem; line-height: 1.6; margin: 0 0 12px; }
+.hist-nav button:first-child, .hist-nav button:nth-child(2) { flex: .6; }
