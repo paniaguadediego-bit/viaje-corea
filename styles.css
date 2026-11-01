@@ -470,3 +470,5 @@ b.mayus { color: var(--red); }
   background: linear-gradient(135deg, var(--tint-r), var(--card)); }
 .pdf-ic small { font-size: .7rem; font-weight: 800; color: var(--red); }
 .pdf-ic.grande { font-size: 4rem; width: 120px; background: none; }
+
+.tl-pasos-btn { width: auto; min-height: 38px; margin: 6px 0 0; padding: 6px 12px; background: var(--tint-b) !important; color: var(--blue); font-weight: 700; font-size: .9rem; box-shadow: none; border-radius: 10px; }

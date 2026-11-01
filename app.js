@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v36';
+const VERSION = 'v37';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -93,7 +93,7 @@ function naver(l) {
 
 // ---------- distancias al hotel (línea recta, sin conexión) ----------
 let COORDS_LUGARES = {};
-fetch('data/coords.json').then(r => r.json()).then(d => { COORDS_LUGARES = d || {}; render(); }).catch(() => {});
+fetch('data/coords.json').then(r => r.json()).then(d => { COORDS_LUGARES = d || {}; if (['ciudades', 'comer', 'corea', 'checklist'].includes(tab)) render(); }).catch(() => {});
 const coordsLugar = l => {
   if (!l) return null;
   if (l.lat != null && l.lon != null) return [Number(l.lat), Number(l.lon)];
@@ -439,6 +439,8 @@ function medio(t) {
   if (/aeropuerto|vuelo/.test(x)) return ['✈️', 'Aeropuerto'];
   return ['🚕', 'Taxi'];
 }
+// Qué "Paso a paso" están abiertos (lo controla la app, no el navegador).
+const pasosAb = {};
 function trasladoCard(t) {
   const tren = t.tren || {}, [ic, nom] = medio(t), pend = isPend(t);
   const d = new Date(String(t.fecha) + 'T12:00:00');
@@ -449,7 +451,9 @@ function trasladoCard(t) {
       <div class="tl-top"><span class="tl-ic" title="${nom}">${ic}</span><div class="tl-ruta"><b>${esc(t.de)}</b><span class="tl-flecha">↓</span><b>${esc(t.a)}</b></div></div>
       <div class="tl-meta">${estadoBadge(t)} ${ver(t)}</div>
       ${tren.salida || tren.llegada ? `<div class="tl-horas"><span>${esc(tren.salida || '?')}</span><i>→</i><span>${esc(tren.llegada || '?')}</span>${tren.comprado === false ? '<em class="badge pend">billete sin comprar</em>' : ''}</div>` : ''}
-      ${arr(t.pasos).length ? `<details class="tl-pasos" ${pend ? 'open' : ''}><summary>Paso a paso (${arr(t.pasos).length})</summary><ol>${arr(t.pasos).map(p => `<li>${resaltar(p)}</li>`).join('')}</ol></details>` : ''}
+      ${arr(t.pasos).length ? (() => { const k = 'p:' + (t.id || t.fecha + t.de), ab = k in pasosAb ? pasosAb[k] : pend;
+        return `<div class="tl-pasos"><button class="tl-pasos-btn" data-pasos="${esc(k)}" data-v="${ab ? 0 : 1}">${ab ? '▾' : '▸'} Paso a paso (${arr(t.pasos).length})</button>
+        ${ab ? `<ol>${arr(t.pasos).map(p => `<li>${resaltar(p)}</li>`).join('')}</ol>` : ''}</div>`; })() : ''}
       ${t.frase_ko ? `<div class="ko">${esc(t.frase_ko)}</div>` : ''}
       ${t.romanizacion ? `<div class="muted">${esc(t.romanizacion)}</div>` : ''}
     </div>
@@ -1235,6 +1239,8 @@ document.addEventListener('click', e => {
     }
     render(); return;
   }
+  const ps = e.target.closest('[data-pasos]');
+  if (ps) { pasosAb[ps.dataset.pasos] = ps.dataset.v === '1'; render(); return; }
   const pg = e.target.closest('[data-pg]');
   if (pg) { platoGrupo = +pg.dataset.pg; render(); return; }
   const cs = e.target.closest('[data-csel]');
