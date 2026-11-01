@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v29';
+const VERSION = 'v30';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -478,6 +478,33 @@ async function descargarFotos() {
   alert(`Fotos guardadas para usar sin conexión: ${n} de ${ts.length}.`); render();
 }
 
+// Sección de la Lonely Planet: cabecera propia y una tarjeta por recomendación.
+let lpAbierta = true, lpTodos = false;
+function seccionLP(k) {
+  const ls = LP[k] || []; if (!ls.length) return '';
+  const tops = ls.filter(l => l.top).length;
+  return `<div class="lp">
+    <button class="lp-cab" data-act="lp">
+      <span class="lp-logo">LP</span>
+      <span class="lp-tit"><b>Recomendado por Lonely Planet</b><small>${ls.length} sitios${tops ? ` · ${tops} ★ elección del autor` : ''} · edición 2016</small></span>
+      <span class="lp-flecha">${lpAbierta ? '▾' : '▸'}</span>
+    </button>
+    ${lpAbierta ? `<div class="lp-lista">${(() => {
+      // primero lo del plan, luego las ★ del autor, luego el resto
+      const ord = porPlan(ls, k).map((l, i) => [l, i]).sort((a, b) => (enPlan(a[0], k) ? 0 : a[0].top ? 1 : 2) - (enPlan(b[0], k) ? 0 : b[0].top ? 1 : 2) || a[1] - b[1]).map(x => x[0]);
+      return lpTodos ? ord : ord.slice(0, 8);
+    })().map(l => `<div class="lp-item ${hecho(l, k) ? 'hecho-card' : ''} ${l.top ? 'top' : ''}">
+      ${wikiDe(l) ? `<div class="foto lpf" data-wiki="${esc(wikiDe(l))}"><span>${icSitio(l.tipo + ' ' + l.es)}</span></div>` : `<div class="foto lpf vacia"><span>${icSitio(l.tipo + ' ' + l.es)}</span></div>`}
+      <div class="lp-txt">
+        <div class="lp-nom">${btnHecho(l, k)}<b>${esc(l.es)}</b></div>
+        <div class="lp-meta"><span class="lp-tipo">${esc(l.tipo)}</span>${l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(l)}</div>
+        <div class="lp-nota">${esc(l.nota)}</div>
+        <div class="lp-pie">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, k)}${planBadge(l, k)}</div>
+      </div></div>`).join('')}
+      ${ls.length > 8 ? `<button class="sec lp-mas" data-act="lptodos">${lpTodos ? 'Ver menos' : `Ver los ${ls.length - 8} restantes`}</button>` : ''}</div>` : ''}
+  </div>`;
+}
+
 // Ciudades: 5 botones; al tocar uno se despliega su ficha debajo. Por defecto, la ciudad del día.
 let ciudadSel = null, historiaAbierta = false;
 function viewCiudades() {
@@ -502,9 +529,7 @@ function viewCiudades() {
     ${h && historiaAbierta ? `<div class="historia"><b>📜 Historia de ${esc(nombreCiudad(k))}</b>${h.txt.map(p => `<p>${esc(p).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}<div class="muted">Resumen de la Lonely Planet 2016 (LP) y datos generales.</div></div>` : ''}
     ${imprescindibles(k)}
     ${interesDe(c).length ? `<ul class="hlist">${porPlan(interesDe(c).map(x => (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x), ck(c.nombre)).map(o => typeof o === 'string' ? o : o.es).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}${miniFoto(o)}<span><span class="ics">${icSitio(x)}</span> ${esc(x)}${planBadge(o, ck(c.nombre))}</span></li>`; }).join('')}</ul>` : ''}
-    ${(LP[ck(c.nombre)] || []).length ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[ck(c.nombre)].length})</summary><ul class="hlist">
-      ${porPlan(LP[ck(c.nombre)], ck(c.nombre)).map(l => `<li class="${hecho(l, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(l, ck(c.nombre))}${miniFoto(l)}<div><span class="ics">${icSitio(l.tipo + ' ' + l.es)}</span> <b>${esc(l.es)}</b>${l.top ? ' ★' : ''} ${ver(l)}${distHotel(l, ck(c.nombre))}${planBadge(l, ck(c.nombre))}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></div></li>`).join('')}</ul></details>` : ''}
-    <div class="acciones centro"><button class="sec mini" data-comer="${esc(k)}">🍜 Comer aquí</button></div></div>`;
+    ${seccionLP(k)}</div>`;
 }
 
 
@@ -1088,7 +1113,7 @@ document.addEventListener('click', e => {
     render(); return;
   }
   const cs = e.target.closest('[data-csel]');
-  if (cs) { ciudadSel = cs.dataset.csel; historiaAbierta = false; render(); return; }
+  if (cs) { ciudadSel = cs.dataset.csel; historiaAbierta = false; lpTodos = false; render(); return; }
   const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub],[data-sit]');
   if (!b) return;
   if (b.dataset.sub) coreaSub = b.dataset.sub;
@@ -1111,6 +1136,8 @@ document.addEventListener('click', e => {
     case 'comer-nuevo': comerForm = true; break;
     case 'cambio-auto': actualizarCambio(true); return;
     case 'historia': historiaAbierta = !historiaAbierta; break;
+    case 'lp': lpAbierta = !lpAbierta; break;
+    case 'lptodos': lpTodos = !lpTodos; break;
     case 'fotos': descargarFotos(); return;
     case 'comer-cancelar': comerForm = false; break;
     case 'example': loadExample(); return;

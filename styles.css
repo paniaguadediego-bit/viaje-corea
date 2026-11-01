@@ -361,3 +361,32 @@ details > summary.card { text-align: center; }
 .historia p { margin: 6px 0; line-height: 1.45; }
 
 .rejilla { grid-template-columns: repeat(3, 1fr); }
+
+/* Lonely Planet en Ciudades */
+.lp { margin: 10px; border-radius: 14px; overflow: hidden; border: 1px solid #b9d3ef; background: var(--card); }
+.lp-cab { display: flex; align-items: center; gap: 10px; width: 100%; margin: 0; padding: 10px 12px; border-radius: 0; text-align: left;
+  background: linear-gradient(135deg, #0a5aa8, #2f8fd8) !important; color: #fff; box-shadow: none; }
+.lp-logo { flex: none; width: 38px; height: 38px; border-radius: 50%; background: #fff; color: #0a5aa8; font-weight: 900; font-size: .95rem;
+  display: flex; align-items: center; justify-content: center; letter-spacing: -.04em; box-shadow: 0 0 0 3px rgba(255,255,255,.35); }
+.lp-tit { flex: 1; display: flex; flex-direction: column; line-height: 1.2; }
+.lp-tit small { opacity: .85; font-weight: 500; font-size: .75rem; }
+.lp-flecha { font-size: 1.1rem; }
+.lp-lista { padding: 6px; display: grid; gap: 6px; background: linear-gradient(180deg, #eef5fd, var(--card)); }
+.lp-item { display: grid; grid-template-columns: 72px 1fr; gap: 10px; padding: 8px; border-radius: 12px; background: var(--card);
+  border: 1px solid var(--line); box-shadow: var(--sombra); }
+.lp-item.top { border: 1.5px solid #f2b705; background: linear-gradient(135deg, #fffaeb, var(--card) 60%); }
+.lpf { width: 72px; height: 72px; border-radius: 10px; font-size: 1.6rem; }
+.lpf.vacia { background: linear-gradient(135deg, #e3eefb, #f6e9ec); }
+.lp-nom { display: flex; gap: 6px; align-items: center; }
+.lp-nom b { line-height: 1.2; }
+.lp-meta { display: flex; flex-wrap: wrap; gap: 4px; margin: 3px 0; align-items: center; }
+.lp-tipo { font-size: .7rem; font-weight: 700; color: #0a5aa8; background: #e3eefb; padding: 1px 8px; border-radius: 999px; }
+.lp-top { font-size: .7rem; font-weight: 800; color: #6b4a00; background: linear-gradient(135deg, #ffe08a, #f2b705); padding: 1px 8px; border-radius: 999px; }
+.lp-nota { font-size: .85rem; color: var(--muted); line-height: 1.35; }
+.lp-pie { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 3px; font-size: .85rem; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lp { border-color: #24476b; } :root:not([data-theme="light"]) .lp-lista { background: linear-gradient(180deg, #13243a, var(--card)); }
+  :root:not([data-theme="light"]) .lp-item.top { background: linear-gradient(135deg, #3a3010, var(--card) 60%); } :root:not([data-theme="light"]) .lp-tipo { background: #1d3557; color: #9cc8ff; } }
+:root[data-theme="dark"] .lp { border-color: #24476b; } :root[data-theme="dark"] .lp-lista { background: linear-gradient(180deg, #13243a, var(--card)); }
+:root[data-theme="dark"] .lp-item.top { background: linear-gradient(135deg, #3a3010, var(--card) 60%); } :root[data-theme="dark"] .lp-tipo { background: #1d3557; color: #9cc8ff; }
+
+.lp-mas { margin: 2px 0 0; font-weight: 700; color: #0a5aa8; }
