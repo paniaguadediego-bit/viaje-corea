@@ -33,7 +33,10 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    despliega la ciudad elegida; botón 📜 Historia). Extras
    aprobados: conversor ₩↔€ con cambio automático del BCE vía
    api.frankfurter (solo con conexión; se guarda para offline; se
-   puede fijar a mano), destacados de la ciudad en Hoy, lista
+   puede fijar a mano), tiempo previsto por día (Open-Meteo, sin clave,
+   hasta 16 días; solo con conexión, se guarda para offline y muestra
+   "hace X h") en la tarjeta del día de Hoy y en cada día de Ruta,
+   destacados de la ciudad en Hoy, lista
    Verificar (marca "✓ verificado" en el móvil), botón "Naver" (abre Naver Map, requiere conexión),
    resumen "Mañana", tarjeta "Ahora" (lo próximo con hora o cuenta
    atrás) y hora Corea/Canarias en Hoy, frases por situación en Corea, fotos y PDF de

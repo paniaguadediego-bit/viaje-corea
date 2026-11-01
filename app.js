@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v48';
+const VERSION = 'v49';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -342,6 +342,7 @@ function viewHoy() {
   <div class="card dia" style="${varsTema(ck(d.ciudad))}">
     <div class="muted">${tema(ck(d.ciudad)).ic} ${fmtDate(d.fecha)} · ${esc(d.ciudad)}</div>
     <div class="big">${esc(d.titulo)}</div>
+    ${lineaTiempo(d)}
     <ul class="items">${arr(d.items).map(i =>
       `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${resaltar(i.texto)}</li>`).join('')}</ul>
   </div>
@@ -546,7 +547,7 @@ function estanciaCard(c) {
   return `<div class="tl"><div class="tl-fecha tl-pin" style="${varsTema(k)}">${tema(k).ic}</div><div class="card estancia" style="${varsTema(k)}"><div class="big">${esc(c.nombre)}</div>
     <div class="muted">${fmtCorto(c.desde)}${c.hasta ? ' → ' + fmtCorto(c.hasta) : ''}${noches ? ` · ${noches} noche${noches > 1 ? 's' : ''}` : ''}${ns.length ? ` · Día ${ns[0]}${ns.length > 1 ? '-' + ns[ns.length - 1] : ''}` : ''}</div>
     ${h ? `<div class="muted">🛏️ ${esc(h.nombre)}</div>` : ''}
-    ${ds.map(d => `<button class="dad-dia ${d.fecha === todayISO() ? 'on' : ''}" data-dia="${d.n - 1}"><span class="hora">${fmtCorto(d.fecha)}</span><span>${esc((dias[d.n - 1] || {}).titulo || '')}</span></button>`).join('')}</div></div>`;
+    ${ds.map(d => `<button class="dad-dia ${d.fecha === todayISO() ? 'on' : ''}" data-dia="${d.n - 1}"><span class="hora">${fmtCorto(d.fecha)}</span><span>${esc((dias[d.n - 1] || {}).titulo || '')}</span>${miniTiempo(k, d.fecha)}</button>`).join('')}</div></div>`;
 }
 
 function viewRuta() {
@@ -1182,6 +1183,43 @@ function precioEur(p) {
   const ns = (String(p).match(/\d[\d.,]*/g) || []).map(x => Number(x.replace(/[.,]/g, ''))).filter(n => n >= 100);
   return ns.length ? ` <span class="muted">(≈ ${ns.map(n => Math.round(n / c)).join('-')} €)</span>` : '';
 }
+// ---------- Tiempo (Open-Meteo, sin clave; solo con conexión, se guarda para offline) ----------
+const K_TIEMPO = 'corea.tiempo';
+let TIEMPO = load(K_TIEMPO, null);
+const icTiempo = c => c == null ? '' : c === 0 ? '☀️' : c <= 2 ? '🌤️' : c === 3 ? '☁️' : c <= 48 ? '🌫️' : c <= 57 ? '🌦️' : c <= 67 ? '🌧️' : c <= 77 ? '🌨️' : c <= 82 ? '🌦️' : c <= 86 ? '🌨️' : '⛈️';
+const descTiempo = c => c == null ? '' : c === 0 ? 'Despejado' : c <= 2 ? 'Poco nuboso' : c === 3 ? 'Nublado' : c <= 48 ? 'Niebla' : c <= 57 ? 'Llovizna' : c <= 67 ? 'Lluvia' : c <= 77 ? 'Nieve' : c <= 82 ? 'Chubascos' : c <= 86 ? 'Chubascos de nieve' : 'Tormenta';
+function coordsCiudad(k) {
+  const h = hotelDe(k); if (h) return h;
+  const c = arr(trip && trip.ciudades).find(c => ck(c.nombre) === k && c.lat != null && c.lon != null);
+  return c ? [Number(c.lat), Number(c.lon)] : COORDS[k] || null;
+}
+async function actualizarTiempo() {
+  if (!trip || !navigator.onLine) return;
+  if (TIEMPO && TIEMPO.ts && Date.now() - TIEMPO.ts < 3 * 3600e3) return;
+  const ks = [...new Set(arr(trip.dias).map(d => ck(d.ciudad)))].filter(k => coordsCiudad(k));
+  const nuevo = { ts: Date.now(), c: {} };
+  await Promise.all(ks.map(async k => {
+    const [la, lo] = coordsCiudad(k);
+    try {
+      const d = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la.toFixed(3)}&longitude=${lo.toFixed(3)}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul&forecast_days=16`, { cache: 'no-store' })).json();
+      const t = d && d.daily; if (!t || !t.time) return;
+      nuevo.c[k] = {}; t.time.forEach((f, i) => { nuevo.c[k][f] = [t.weather_code[i], t.temperature_2m_max[i], t.temperature_2m_min[i], t.precipitation_probability_max[i]]; });
+    } catch { /* sin conexión o servicio caído */ }
+  }));
+  if (!Object.keys(nuevo.c).length) return;
+  TIEMPO = { ts: nuevo.ts, c: { ...((TIEMPO && TIEMPO.c) || {}), ...nuevo.c } };
+  try { save(K_TIEMPO, TIEMPO); } catch {}
+  if (tab === 'hoy' || tab === 'ruta') render();
+}
+const tiempoDe = (k, f) => (TIEMPO && TIEMPO.c && TIEMPO.c[k] && TIEMPO.c[k][f]) || null;
+const haceTiempo = () => { if (!TIEMPO || !TIEMPO.ts) return ''; const m = Math.round((Date.now() - TIEMPO.ts) / 60000); return m < 60 ? `hace ${Math.max(1, m)} min` : m < 48 * 60 ? `hace ${Math.round(m / 60)} h` : `hace ${Math.round(m / 1440)} días`; };
+function lineaTiempo(d) {
+  const t = tiempoDe(ck(d.ciudad), d.fecha); if (!t) return '';
+  const [c, mx, mn, p] = t, viejo = Date.now() - TIEMPO.ts > 24 * 3600e3;
+  return `<div class="tiempo">${icTiempo(c)} <b>${Math.round(mn)}° / ${Math.round(mx)}°</b> · ${descTiempo(c)}${p != null ? ` · 💧 ${p} %` : ''} <span class="muted ${viejo ? 'viejo' : ''}">(${haceTiempo()})</span></div>`;
+}
+const miniTiempo = (k, f) => { const t = tiempoDe(k, f); return t ? `<span class="t-mini">${icTiempo(t[0])} ${Math.round(t[1])}°/${Math.round(t[2])}°</span>` : ''; };
+
 async function actualizarCambio(forzar) {
   const U = u();
   if (!navigator.onLine || (U.cambioManual && !forzar)) return;
@@ -1449,8 +1487,8 @@ $('#file').addEventListener('change', e => {
 
 render();
 cargarFotos().then(() => { if (tab === 'mas') render(); });
-actualizarCambio(false);
-window.addEventListener('online', () => actualizarCambio(false));
+actualizarCambio(false); actualizarTiempo();
+window.addEventListener('online', () => { actualizarCambio(false); actualizarTiempo(); });
 
 // Pide al navegador que no borre los datos guardados si falta espacio.
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});

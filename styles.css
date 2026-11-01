@@ -483,7 +483,7 @@ b.mayus { color: var(--red); }
 .estancia .big { margin-bottom: 2px; }
 .tl-pin { font-size: 1.5rem; border-color: var(--c1, var(--line)); padding: 6px 0; }
 .tl .estancia { margin-top: 0; }
-.dad-dia { display: grid; grid-template-columns: 52px 1fr; gap: 6px; align-items: baseline; width: 100%; text-align: left; background: none !important; box-shadow: none; color: var(--fg); border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 5px 0; min-height: 0; font: inherit; font-size: .92em; font-weight: 400; margin: 0; }
+.dad-dia { display: grid; grid-template-columns: 52px 1fr auto; gap: 6px; align-items: baseline; width: 100%; text-align: left; background: none !important; box-shadow: none; color: var(--fg); border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 5px 0; min-height: 0; font: inherit; font-size: .92em; font-weight: 400; margin: 0; }
 .dad-dia:first-of-type { margin-top: 4px; }
 .dad-dia .hora { margin: 0; font-size: .9em; }
 .dad-dia.on { font-weight: 700; }
@@ -576,3 +576,7 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .hist-h { margin: 4px 0 10px; font-size: 1.2rem; text-align: center; line-height: 1.25; }
 .hist-cap p { font-size: 1.02rem; line-height: 1.6; margin: 0 0 12px; }
 .hist-nav button:first-child, .hist-nav button:nth-child(2) { flex: .6; }
+
+.tiempo { text-align: center; margin: 2px 0 4px; font-size: .9em; }
+.tiempo .viejo { color: var(--red); }
+.t-mini { font-size: .82em; color: var(--muted); white-space: nowrap; }
