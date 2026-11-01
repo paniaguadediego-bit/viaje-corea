@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v31';
+const VERSION = 'v32';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -510,10 +510,7 @@ let ciudadSel = null, historiaAbierta = false;
 function viewCiudades() {
   const uniq = ciudadesUnicas();
   if (!uniq.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
-  if (!ciudadSel || !uniq.some(c => ck(c.nombre) === ciudadSel)) {
-    const a = ck(ciudadActual()); ciudadSel = uniq.some(c => ck(c.nombre) === a) ? a : ck(uniq[0].nombre);
-  }
-  const botones = `<div class="ciudad-btns">${uniq.map(c => { const k = ck(c.nombre); return `<button class="cbtn ${k === ciudadSel ? 'on' : ''}" style="${varsTema(k)}" data-csel="${esc(k)}"><span>${tema(k).ic}</span>${esc(nombreCiudad(k))}</button>`; }).join('')}</div>`;
+  const botones = botonesCiudad();
   const i = uniq.findIndex(c => ck(c.nombre) === ciudadSel), c = uniq[i], k = ciudadSel, t = tema(k);
   const fechas = arr(trip.ciudades).filter(o => ck(o.nombre) === k).map(o => `${fmtCorto(o.desde)} → ${fmtCorto(o.hasta)}`).join(' · ');
   const h = typeof HISTORIA !== 'undefined' && HISTORIA[k];
@@ -623,20 +620,25 @@ function ciudadDeLugar(l) {
     || ciudadesUnicas().find(c => { const h = hotelDe(ck(c.nombre)), p = coordsLugar(l); return h && p && km(h, p) < 25; });
   return c ? ck(c.nombre) : '';
 }
+// Botones de ciudad (los mismos de Ciudades). La ciudad elegida se comparte entre pestañas.
+function botonesCiudad() {
+  const uniq = ciudadesUnicas(); if (!uniq.length) return '';
+  if (!ciudadSel || !uniq.some(c => ck(c.nombre) === ciudadSel)) {
+    const a = ck(ciudadActual()); ciudadSel = uniq.some(c => ck(c.nombre) === a) ? a : ck(uniq[0].nombre);
+  }
+  return `<div class="ciudad-btns">${uniq.map(c => { const k = ck(c.nombre); return `<button class="cbtn ${k === ciudadSel ? 'on' : ''}" style="${varsTema(k)}" data-csel="${esc(k)}"><span>${tema(k).ic}</span>${esc(nombreCiudad(k))}</button>`; }).join('')}</div>`;
+}
 function viewEnsenar() {
+  const botones = botonesCiudad(), k = ciudadSel || '';
   const mios = arr(trip.lugares).map((l, i) => [l, i]).filter(([l]) => l && typeof l === 'object');
-  const grupos = [...ciudadesUnicas().map(c => ck(c.nombre)), ''];
-  const act = ck(ciudadActual());
-  const misLugares = grupos.map(k => {
-    const ls = mios.filter(([l]) => ciudadDeLugar(l) === k); if (!ls.length) return '';
-    return `<details data-key="mis:${esc(k)}" ${abierto('mis:' + k, k === act) ? 'open' : ''}><summary class="card big">${esc(k ? nombreCiudad(k) : 'Otros')} <span class="muted">${ls.length}</span></summary>
-      ${ls.map(([l, i]) => lugarFila(l, 'j:' + i, k)).join('')}</details>`;
-  }).join('');
-  return '<p class="muted">Toca "Enseñar" para mostrarlo a pantalla completa al taxista o en recepción.</p>' +
-    (mios.length ? '<h2>Mis lugares</h2>' + misLugares : '') +
-    '<h2>Sitios conocidos</h2>' +
-    ciudadesCatalogo().map(k => `<details><summary class="card big">${esc(nombreCiudad(k))}</summary>
-      ${sitiosCiudad(k).map((l, i) => [l, i]).sort((a, b) => ((enPlan(a[0], k) || {}).n || 999) - ((enPlan(b[0], k) || {}).n || 999) || a[1] - b[1]).map(([l, i]) => lugarFila(l, `c:${k}:${i}`, k)).join('')}</details>`).join('');
+  const deCiudad = mios.filter(([l]) => ciudadDeLugar(l) === k), otros = mios.filter(([l]) => !ciudadDeLugar(l));
+  const sitios = sitiosCiudad(k).map((l, i) => [l, i]).sort((a, b) => ((enPlan(a[0], k) || {}).n || 999) - ((enPlan(b[0], k) || {}).n || 999) || a[1] - b[1]);
+  return botones + `<div class="ens-ciudad" style="${varsTema(k)}">
+    <p class="muted">Toca "Enseñar" para mostrarlo a pantalla completa al taxista o en recepción.</p>
+    ${deCiudad.length ? `<h2>📌 Mis lugares en ${esc(nombreCiudad(k))}</h2>${deCiudad.map(([l, i]) => lugarFila(l, 'j:' + i, k)).join('')}` : ''}
+    ${sitios.length ? `<h2>🗺️ Sitios conocidos</h2>${sitios.map(([l, i]) => lugarFila(l, `c:${k}:${i}`, k)).join('')}` : ''}
+    ${otros.length ? `<details data-key="mis:otros" ${abierto('mis:otros', false) ? 'open' : ''}><summary class="card big">Otros lugares <span class="muted">${otros.length}</span></summary>${otros.map(([l, i]) => lugarFila(l, 'j:' + i, '')).join('')}</details>` : ''}
+  </div>`;
 }
 
 // Reduce la letra hasta que cada línea quepa en la pantalla (los nombres coreanos largos no se parten).

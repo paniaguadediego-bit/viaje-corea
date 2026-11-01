@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v31
+Caché del service worker: corea-v32
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -71,6 +71,8 @@ Caché del service worker: corea-v31
 - Cambio pedido (v30): en Ciudades se quita "Comer aquí". La sección de la Lonely pasa a bloque propio: cabecera azul con logo "LP", nº de sitios y de ★; cada recomendación es una tarjeta con foto (o icono), tipo, "★ Elección del autor" destacada en dorado, descripción, hangul, distancia, día del plan y ✓ hecho. Se abre desplegada y se puede plegar; muestra 8 (primero lo del plan y las ★) y un botón "Ver los N restantes".
 
 - Cambio pedido (v31): Enseñar pasa a ser el primer apartado de Corea (Enseñar · Frases · Diccionario · Guía) y Corea ocupa su sitio en la barra inferior. En Más quedan Seguro y Verificar.
+
+- Cambio pedido (v32): en Corea → Enseñar, las ciudades son los mismos 5 botones que en Ciudades; debajo, "Mis lugares" y "Sitios conocidos" de la ciudad elegida (lugares sin ciudad en "Otros lugares"). La ciudad elegida se comparte entre Ciudades y Enseñar.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
