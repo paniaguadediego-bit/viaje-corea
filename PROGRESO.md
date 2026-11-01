@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v55
+Caché del service worker: corea-v56
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -102,6 +102,7 @@ Caché del service worker: corea-v55
 - v53: Planes empieza con "🏆 Mundial de LoL 2026" (WORLDS en contenido.js): cuartos 4-7 nov y semis 8-9 nov a las 07:00 KST (Allen, Texas), final 15 nov 04:00 KST (Barclays, Nueva York), con dónde estaréis a esa hora (ciudad de la noche anterior si es de madrugada; avión o tren si coincide) y dónde verlo. Orden de cuartos según escharts (las fuentes no coinciden): VERIFICAR. Semis y final "por decidir": actualizar cuando se sepan los cruces.
 - v54: arreglo de instalación: manifest "id" pasa de "./" a "/viaje-corea/". El id se resuelve contra el origen (paniaguadediego-bit.github.io/), así que "./" coincidía con el de otras apps del usuario en el mismo dominio y Chrome creía que ya estaba instalada ("Añadir a pantalla de inicio" no hacía nada).
 - v55: Chrome seguía diciendo "ya está instalada" sin que hubiera app. Manifiesto igualado al de las otras apps del usuario que sí se instalan (MIO-Check, PPEE-Check): sin id, scope ni orientation, start_url "./index.html" (identidad nueva para Chrome) e iconos sin purpose. [Supuesto] Chrome guardaba un registro de instalación fallida con la identidad anterior.
+- v56: fotos (Wikipedia) para los 59 sitios que no tenían: 47 de Ciudades (WIKI en contenido.js) y los 12 de Planes (campo wiki; foto ancha arriba de cada ficha). Para empresas (T1, Olive Young, Daiso, Lotte, Shinsegae) la foto es la del artículo de la marca (puede ser el logo); spas → artículo Jjimjilbang; lavanderías → Laundromat (foto genérica). "Descargar fotos" de Más incluye ya Planes y LP. [Supuesto] Títulos de Wikipedia no comprobados (la red de pruebas no llega a Wikipedia): si alguno no existe, se queda el icono.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

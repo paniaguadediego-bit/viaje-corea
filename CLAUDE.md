@@ -121,7 +121,7 @@ DIA_LP (lo que amplía la Lonely de cada sitio del itinerario y de los
 que recomienda; sale en Hoy, "Sitios de hoy", y en Ciudades como
 desplegable "📖 Más de la Lonely" en cada sitio) y DIA_INFO (frase general si la Lonely no lo trata),
 FRASES_SIT (frases por
-situación; FRASES es la lista plana), GUIA y PLANES (LoL, cosmética y servicios; aprox: true = ubicación
+situación; FRASES es la lista plana), GUIA y PLANES (LoL, cosmética y servicios; wiki = artículo para la foto; aprox: true = ubicación
 aproximada, la distancia sale con "≈").
 Todo sitio nuevo lleva descripción y coordenadas en data/coords.json
 (para la distancia al hotel).

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v55';
+const VERSION = 'v56';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -611,7 +611,7 @@ function pintarFotos() {
 }
 async function descargarFotos() {
   if (!navigator.onLine) return alert('Conéctate a internet para descargar las fotos.');
-  const ts = [...new Set([...Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat().map(l => l.wiki), ...Object.values(typeof WIKI !== 'undefined' ? WIKI : {})])]; let n = 0;
+  const ts = [...new Set([...Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat().map(l => l.wiki), ...Object.values(typeof WIKI !== 'undefined' ? WIKI : {}), ...(typeof PLANES !== 'undefined' ? PLANES : []).map(p => p.wiki), ...Object.values(LP).flat().map(l => l.wiki)].filter(Boolean))]; let n = 0;
   for (const t of ts) {
     delete FOTOS[t]; const f = await fotoWiki(t);
     if (f && f.src) { try { await fetch(f.src, { mode: 'no-cors' }); n++; } catch {} }
@@ -951,6 +951,7 @@ function viewPlanes() {
     const otros = c ? P.filter(o => o !== p && o.ciudad === k && coordsLugar(o)).map(o => [o, km(c, coordsLugar(o))]).filter(([, d]) => d <= 1.5).sort((a, b) => a[1] - b[1]) : [];
     const plan = c ? sitios.map(l => [l, km(c, coordsLugar(l)), enPlan(l, k)]).filter(([, d, e]) => d <= 1 && e).sort((a, b) => a[2].n - b[2].n || a[1] - b[1]).slice(0, 4) : [];
     return `<div class="card plan-card ${p.cat} ${hecho(p, k) ? 'hecho-card' : ''}">
+      ${wikiDe(p) ? `<div class="foto banda" data-wiki="${esc(wikiDe(p))}"><span>${icPlan(p)}</span></div>` : ''}
       <div class="sd-tit">${btnHecho(p, k)}<b>${icPlan(p)} ${esc(p.es)}</b></div>
       <div class="ko-s">${esc(p.ko)}${distHotel(p, k)}</div>
       <div class="muted">${esc(p.desc)}</div>
@@ -1353,7 +1354,7 @@ function render() {
     default: html = viewMas();
   }
   $('#view').innerHTML = html;
-  if (['ciudades', 'hoy', 'comer'].includes(tab)) pintarFotos();
+  if (['ciudades', 'hoy', 'comer', 'planes'].includes(tab)) pintarFotos();
 }
 
 document.addEventListener('click', e => {
