@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v51
+Caché del service worker: corea-v52
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -98,6 +98,7 @@ Caché del service worker: corea-v51
 - v49: tiempo previsto. Open-Meteo (gratis, sin clave): máx/mín, cielo y probabilidad de lluvia por ciudad del día (coordenadas del hotel o de la ciudad), hasta 16 días vista. Se pide al abrir con conexión (cada 3 h como mucho) y se guarda en localStorage (corea.tiempo) para offline, con "hace X" (en rojo si pasa de 24 h). Sale en Hoy bajo el título del día y en Ruta junto a cada día. Días sin predicción: no se muestra nada. [Supuesto] Probado con datos simulados: la red de pruebas no llega a api.open-meteo.com; en el móvil sí.
 - v50: Planes → Busan → 🧺 Lavandería: Cleantopia Coin Wash Haeundae Jung-dong (≈300 m del hotel, 24 h, ubicación aproximada) y Coin Wash 365 Jwadong (세실로 31, ≈1,4 km). Campo aprox: la distancia sale con "≈". Nota para preguntar en el hotel ("세탁기 있어요?").
 - v51: el conversor ₩/€ pasa a un botón 💱 junto al título de la cabecera; se abre en una ventana (se cierra con ✕, tocando fuera o con Atrás) desde cualquier pestaña. Quitado de Más.
+- v52: al abrir el conversor ya no se pone el cursor en la casilla (no sale el teclado solo).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

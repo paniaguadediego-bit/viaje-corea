@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v51';
+const VERSION = 'v52';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1245,7 +1245,6 @@ function abrirConv() {
   const d = document.createElement('div'); d.id = 'conv-pop';
   d.innerHTML = `<div class="pop-caja"><div class="pop-cab"><b>💱 Conversor ₩ / €</b><button class="sec mini" data-close>✕</button></div><div class="pop-cuerpo">${viewConv()}</div></div>`;
   document.body.appendChild(d); history.pushState({ full: 1 }, '');
-  d.querySelector('[data-conv="KRW"]')?.focus();
   actualizarCambio(false);
 }
 const refrescarConv = () => { const b = document.querySelector('#conv-pop .pop-cuerpo'); if (b) b.innerHTML = viewConv(); };
