@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v33
+Caché del service worker: corea-v34
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -75,6 +75,8 @@ Caché del service worker: corea-v33
 - Cambio pedido (v32): en Corea → Enseñar, las ciudades son los mismos 5 botones que en Ciudades; debajo, "Mis lugares" y "Sitios conocidos" de la ciudad elegida (lugares sin ciudad en "Otros lugares"). La ciudad elegida se comparte entre Ciudades y Enseñar.
 
 - Cambio pedido (v33): Ruta rehecha. Vuelo de ida arriba del todo y vuelo de vuelta al final, con horarios (campos salida_*/llegada_* del viaje), ruta MAD ✈ PEK ✈ ICN y aviso VERIFICAR si faltan nº de vuelo o terminal. Traslados como línea de tiempo: fecha en recuadro, icono del medio (🚆 tren, 🚌 bus, 🚕 taxi, ✈️ aeropuerto), horas del tren grandes, estado y "Paso a paso" plegable (abierto si está pendiente). Negrita automática de lo importante (horas, KTX, bus/metro + número, estaciones y terminales, precios en ₩ y palabras en MAYÚSCULAS en rojo) en los pasos y en el plan de cada día de Hoy.
+
+- Cambio pedido (v34): mapa de Ruta más fiel: contorno de Corea del Sur con ~75 puntos (Taean, bahía de Asan, Homigot, costa recortada del sur), isla de Jeju, Corea del Norte sombreada con la DMZ en rojo discontinuo y nombres de los mares. Sigue siendo un SVG propio y offline (aproximado).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

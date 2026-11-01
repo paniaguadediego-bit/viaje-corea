@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v33';
+const VERSION = 'v34';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -578,10 +578,22 @@ const COORDS = {
   gyeongju: [35.86, 129.22], busan: [35.18, 129.08], jeonju: [35.82, 127.15]
 };
 // Contorno simplificado de Corea del Sur [lon, lat].
-const COSTA = [[126.55,37.75],[127,38],[127.5,38.3],[128,38.3],[128.35,38.6],[128.59,38.2],
-  [128.9,37.75],[129.12,37.5],[129.4,37],[129.4,36.4],[129.57,36.08],[129.45,35.5],[129.15,35.1],
-  [128.6,34.85],[128.4,34.83],[127.7,34.7],[127.3,34.5],[126.7,34.3],[126.5,34.3],[126.35,34.75],
-  [126.4,35],[126.4,35.3],[126.6,35.98],[126.15,36.75],[126.6,37],[126.6,37.45]];
+// Contorno aproximado de Corea del Sur [lon, lat] (de oeste a este por la DMZ y vuelta por la costa).
+const DMZ = [[126.68,37.78],[126.82,37.86],[126.95,37.95],[127.15,38.08],[127.30,38.18],[127.45,38.26],[127.70,38.30],
+  [127.90,38.31],[128.08,38.30],[128.22,38.38],[128.30,38.48],[128.36,38.62]];
+const COSTA = [...DMZ,
+  [128.42,38.50],[128.50,38.36],[128.58,38.20],[128.66,38.06],[128.76,37.92],[128.90,37.78],[129.02,37.66],[129.12,37.52],
+  [129.20,37.40],[129.27,37.27],[129.33,37.10],[129.40,36.95],[129.43,36.78],[129.42,36.62],[129.40,36.45],[129.38,36.30],
+  [129.40,36.12],[129.48,36.05],[129.58,36.08],[129.56,35.97],[129.50,35.82],[129.47,35.68],[129.45,35.55],[129.37,35.43],
+  [129.30,35.32],[129.24,35.22],[129.17,35.16],[129.10,35.10],[129.07,35.05],[128.98,35.07],[128.88,35.07],[128.78,35.03],
+  [128.70,35.00],[128.62,34.90],[128.48,34.84],[128.40,34.86],[128.30,34.92],[128.15,34.91],[128.02,34.88],[127.90,34.93],
+  [127.78,34.85],[127.70,34.72],[127.58,34.78],[127.48,34.84],[127.40,34.70],[127.32,34.58],[127.22,34.66],[127.10,34.62],
+  [126.98,34.55],[126.85,34.45],[126.72,34.36],[126.60,34.30],[126.52,34.32],[126.44,34.42],[126.38,34.55],[126.33,34.70],
+  [126.40,34.85],[126.44,35.00],[126.36,35.14],[126.42,35.30],[126.46,35.45],[126.55,35.60],[126.52,35.72],[126.48,35.82],
+  [126.62,35.95],[126.68,36.00],[126.58,36.12],[126.52,36.28],[126.50,36.42],[126.38,36.52],[126.28,36.62],[126.14,36.73],
+  [126.22,36.85],[126.35,36.93],[126.50,36.98],[126.62,37.00],[126.78,36.92],[126.86,37.00],[126.80,37.08],[126.70,37.18],
+  [126.64,37.30],[126.60,37.45],[126.58,37.58],[126.62,37.70]];
+const JEJU = [126.55, 33.38, 0.36, 0.17]; // centro lon, lat y radios aproximados
 const norm = t => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/g, '');
 const ck = t => norm(String(t || '').replace(/\(.*?\)/g, ''));
 // Ciudad mencionada en un texto ("Starria Hostel (Seúl)" -> "seul"; aeropuerto -> "incheon").
@@ -615,8 +627,20 @@ function viewMapa() {
   });
   tramos = tramos.filter(t => t.a && t.b && String(t.a) !== String(t.b));
   const costa = COSTA.map(([lon, lat]) => XY([lat, lon]).join(',')).join(' ');
-  return `<svg class="mapa" viewBox="0 0 335 495" role="img" aria-label="Mapa de la ruta">
+  const norte = [...DMZ.map(([lon, lat]) => XY([lat, lon]).join(',')), XY([38.75, 128.22]).join(','), XY([38.75, 125.9]).join(','), XY([37.78, 125.9]).join(',')].join(' ');
+  const dmz = DMZ.map(([lon, lat]) => XY([lat, lon]).join(',')).join(' ');
+  const [jx, jy] = XY([JEJU[1], JEJU[0]]);
+  return `<svg class="mapa" viewBox="0 0 335 590" role="img" aria-label="Mapa de la ruta">
+    <polygon class="norte" points="${norte}"/>
+    <text class="mar" x="95" y="34" text-anchor="middle">COREA DEL NORTE</text>
     <polygon class="tierra" points="${costa}"/>
+    <polyline class="dmz" points="${dmz}"/>
+    <text class="mar" x="150" y="76" transform="rotate(-14 150 76)">DMZ</text>
+    <ellipse class="tierra" cx="${jx}" cy="${jy}" rx="${(JEJU[2] * 81).toFixed(1)}" ry="${(JEJU[3] * 100).toFixed(1)}"/>
+    <text class="mar" x="${jx}" y="${(+jy + 4).toFixed(1)}" text-anchor="middle">Jeju</text>
+    <text class="mar" x="22" y="300" transform="rotate(-90 22 300)" text-anchor="middle">MAR AMARILLO</text>
+    <text class="mar" x="322" y="220" transform="rotate(90 322 220)" text-anchor="middle">MAR DEL ESTE</text>
+    <text class="mar" x="235" y="520" text-anchor="middle">ESTRECHO DE COREA</text>
     ${tramos.map(t => { const [x1, y1] = XY(t.a), [x2, y2] = XY(t.b);
       return `<line class="${t.pend ? 'pend' : 'ok'}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`; }).join('')}
     ${pts.map(p => { const [x, y] = XY(p.k); const izq = x > 230;
