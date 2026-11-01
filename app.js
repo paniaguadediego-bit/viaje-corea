@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v35';
+const VERSION = 'v36';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -216,22 +216,39 @@ function comprimir(file) {
 async function anadirFotos(files) {
   for (const f of files) {
     try {
-      const data = await comprimir(f);
+      const esPdf = /pdf$/i.test(f.type) || /\.pdf$/i.test(f.name);
+      const data = esPdf ? await new Promise((ok, ko) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = ko; r.readAsDataURL(f); }) : await comprimir(f);
       const nombre = (prompt('Nombre del documento:', f.name.replace(/\.[^.]+$/, '')) || 'Documento').trim();
       await guardarFoto({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), nombre, data, fecha: todayISO() });
-    } catch { alert('No se pudo leer la imagen: ' + f.name); }
+    } catch { alert('No se pudo leer el archivo: ' + f.name); }
   }
   await cargarFotos(); render();
 }
 function viewFotos() {
-  return `<h2>Fotos de documentos</h2>
-    <p class="muted">Pasaporte, reservas, póliza… Se guardan solo en este móvil y se ven sin conexión.</p>
-    <div class="fotos">${fotos.map(f => `<figure class="card" data-foto="${esc(f.id)}"><img src="${f.data}" alt="">
+  return `<h2>Documentos y billetes</h2>
+    <p class="muted">Billetes, pasaporte, reservas, póliza… Fotos o PDF. Se guardan solo en este móvil y se abren sin conexión.</p>
+    <div class="fotos">${fotos.map(f => `<figure class="card" data-foto="${esc(f.id)}">${esPdfData(f.data) ? '<div class="pdf-ic">📄<small>PDF</small></div>' : `<img src="${f.data}" alt="">`}
       <figcaption>${esc(f.nombre)}</figcaption></figure>`).join('')}</div>
-    <button class="sec" data-act="foto">📷 Añadir foto</button>`;
+    <button class="sec" data-act="foto">📎 Añadir foto o PDF</button>`;
+}
+const esPdfData = d => /^data:application\/pdf/.test(String(d || ''));
+// Abre un PDF guardado con el visor del móvil (funciona sin conexión).
+function abrirPdf(f) {
+  const b64 = f.data.split(',')[1], bin = atob(b64), u8 = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  const url = URL.createObjectURL(new Blob([u8], { type: 'application/pdf' }));
+  const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener';
+  a.download = (f.nombre || 'documento').replace(/[^\w\-. ]+/g, '_') + '.pdf';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
 function showFoto(id) {
   const f = fotos.find(x => x.id === id); if (!f) return;
+  if (esPdfData(f.data)) {
+    return full(`<div class="pdf-ic grande">📄</div><div class="big">${esc(f.nombre)}</div>
+      <button class="mini" data-pdf="${esc(f.id)}">Abrir PDF</button>
+      <div class="es">Se abre con el visor de PDF del móvil, también sin conexión.</div>
+      <button class="danger mini" data-delfoto="${esc(f.id)}">Borrar</button>`);
+  }
   full(`<img class="fotofull" src="${f.data}" alt=""><div class="es">${esc(f.nombre)}</div>
     <button class="danger mini" data-delfoto="${esc(f.id)}">Borrar foto</button>`);
 }
@@ -440,7 +457,28 @@ function trasladoCard(t) {
 }
 
 // Vuelo con horarios (campos salida_* / llegada_* del viaje).
+// Vuelo con tramos (número, horas, terminales, asientos y escalas), del billete.
+function vueloTramos(v, tipo) {
+  const hm = x => { const m = String(x || '').match(/(\d{4}-\d{2}-\d{2})?\s*(\d{1,2}:\d{2})/); return m ? m[2] : ''; };
+  const dd = x => { const m = String(x || '').match(/(\d{4}-\d{2}-\d{2})/); return m ? fmtCorto(m[1]) : ''; };
+  const pasado = String(v.fecha || '') < todayISO() && String(v.fecha || '') && !arr(v.tramos).some(t => String(t.llegada || '').slice(0, 10) >= todayISO());
+  return `<div class="card vuelo ${tipo} ${pasado ? 'pasado' : ''}">
+    <div class="vuelo-tipo">${tipo === 'ida' ? '🛫 Ida' : '🛬 Vuelta'} · ${esc(v.aerolinea || '')}${pasado ? ' · ✓ hecho' : ''}</div>
+    ${arr(v.tramos).map(t => t.escala ? `<div class="escala">⏳ ${esc(t.escala)}</div>` : `<div class="tramo">
+      <div class="tramo-cab"><b class="nvuelo">${esc(t.vuelo || '')}</b><span class="muted">${dd(t.salida)}${t.duracion ? ' · ' + esc(t.duracion) : ''}${t.avion ? ' · ' + esc(t.avion) : ''}</span></div>
+      <div class="tramo-fila">
+        <div class="pto"><b>${esc(t.de || '')}</b><span class="hh">${hm(t.salida)}</span><small>${esc(t.de_nombre || '')}${t.de_terminal ? ' · <b>' + esc(t.de_terminal) + '</b>' : ''}</small></div>
+        <div class="linea">✈</div>
+        <div class="pto"><b>${esc(t.a || '')}</b><span class="hh">${hm(t.llegada)}${dd(t.llegada) && dd(t.llegada) !== dd(t.salida) ? ' <sup>+1</sup>' : ''}</span><small>${esc(t.a_nombre || '')}${t.a_terminal ? ' · <b>' + esc(t.a_terminal) + '</b>' : ''}</small></div>
+      </div>
+      ${t.asientos ? `<div class="asientos">💺 ${Object.entries(t.asientos).map(([q, a]) => `${esc(q)} <b>${esc(a)}</b>`).join(' · ')}</div>` : ''}
+    </div>`).join('')}
+    <div class="muted vuelo-pie">${v.localizador ? `Localizador <b>${esc(v.localizador)}</b>` : ''}${v.equipaje ? ' · 🧳 ' + esc(v.equipaje) : ''} ${estadoBadge(v)}</div>
+    ${v.nota ? `<div class="vuelo-nota">⚠️ ${resaltar(v.nota)}</div>` : ''}
+  </div>`;
+}
 function vueloCard(v, tipo) {
+  if (arr(v.tramos).length) return vueloTramos(v, tipo);
   const hora = x => { const m = String(x || '').match(/(\d{4}-\d{2}-\d{2})?\s*(\d{1,2}:\d{2})/); return m ? (m[1] ? fmtCorto(m[1]) + ' · ' : '') + m[2] : esc(x || ''); };
   const sal = Object.keys(v).filter(k => /^salida/.test(k) && v[k]).map(k => [k.replace(/^salida_?/, '').toUpperCase() || '', hora(v[k])]);
   const lle = Object.keys(v).filter(k => /^llegada/.test(k) && v[k]).map(k => [k.replace(/^llegada_?/, '').toUpperCase() || '', hora(v[k])]);
@@ -467,7 +505,9 @@ const interesDe = c => arr(c.interes).length ? arr(c.interes) : (CATALOGO[ck(c.n
 
 function viewRuta() {
   const vuelos = arr(trip.vuelos).filter(v => v && typeof v === 'object').slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
-  const ida = vuelos.slice(0, vuelos.length > 1 ? vuelos.length - 1 : 1), vuelta = vuelos.length > 1 ? [vuelos[vuelos.length - 1]] : [];
+  const conTipo = vuelos.some(v => v.tipo);
+  const ida = conTipo ? vuelos.filter(v => v.tipo !== 'vuelta') : vuelos.slice(0, vuelos.length > 1 ? vuelos.length - 1 : 1);
+  const vuelta = conTipo ? vuelos.filter(v => v.tipo === 'vuelta') : vuelos.length > 1 ? [vuelos[vuelos.length - 1]] : [];
   let html = ida.map(v => vueloCard(v, 'ida')).join('') + pendingAlert();
   if (arr(trip.ciudades).length) html += '<h2>Mapa</h2>' + viewMapa();
   const tr = arr(trip.traslados).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
@@ -1150,6 +1190,8 @@ document.addEventListener('click', e => {
     if (U.verif[k]) delete U.verif[k]; else U.verif[k] = todayISO();
     saveUser(); render(); return;
   }
+  const pdf = e.target.closest('[data-pdf]');
+  if (pdf) { const f = fotos.find(x => x.id === pdf.dataset.pdf); if (f) abrirPdf(f); return; }
   const fo = e.target.closest('[data-foto],[data-delfoto]');
   if (fo) {
     if (fo.dataset.foto) showFoto(fo.dataset.foto);

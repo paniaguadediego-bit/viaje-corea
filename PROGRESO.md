@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v35
+Caché del service worker: corea-v36
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -79,6 +79,8 @@ Caché del service worker: corea-v35
 - Cambio pedido (v34): mapa de Ruta más fiel: contorno de Corea del Sur con ~75 puntos (Taean, bahía de Asan, Homigot, costa recortada del sur), isla de Jeju, Corea del Norte sombreada con la DMZ en rojo discontinuo y nombres de los mares. Sigue siendo un SVG propio y offline (aproximado).
 
 - Cambio pedido (v35): Checklist vuelve a Más (barra de 7). Más Lonely Planet en toda la app (resumido con palabras propias, marcado LP): introducción de cada ciudad en Ciudades (y en Seúl la propuesta de visita de la guía); glosario de 67 platos con hangul de la guía en Comer (por categorías, a pantalla completa para el camarero); en Corea → Guía, nuevos apartados: Lo básico, Consejos, Qué llevar, En la mesa y Saber estar (lo dudoso o caducado, con VERIFICAR).
+
+- Cambio pedido (v36): billetes de avión. Los datos de los billetes van solo en el trip.json privado del usuario (tramos con nº de vuelo, horas, terminales, asientos, escalas, localizador y equipaje; sin pasaportes, fechas de nacimiento ni teléfonos). Ruta los muestra tramo a tramo (ida arriba, vuelta abajo; los ya volados atenuados) y Hoy los tiene con hora. Más → "Documentos y billetes" acepta PDF además de fotos; el PDF se abre con el visor del móvil, también sin conexión.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

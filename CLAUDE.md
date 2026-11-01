@@ -31,8 +31,9 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    puede fijar a mano), destacados de la ciudad en Hoy, lista
    Verificar (marca "✓ verificado" en el móvil), botón "Naver" (abre Naver Map, requiere conexión),
    resumen "Mañana", tarjeta "Ahora" (lo próximo con hora o cuenta
-   atrás) y hora Corea/Canarias en Hoy, frases por situación en Corea, fotos de
-   documentos en Más (IndexedDB, solo en el móvil). Gastos
+   atrás) y hora Corea/Canarias en Hoy, frases por situación en Corea, fotos y PDF de
+   documentos/billetes en Más (IndexedDB, solo en el móvil; el PDF se
+   abre con el visor del móvil). Gastos
    compartidos: descartado por el usuario.
 6. Dato dudoso = "VERIFICAR". No inventar hangul, teléfonos,
    horarios ni precios. Si un objeto del JSON trae
@@ -56,7 +57,10 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
 ## Esquema de trip.json (claves)
 meta{titulo,salida_espana,vuelta_espana,viajeros,
  presupuesto_referencia,cambio_won_por_euro}
-vuelos[{tramo,fecha,aerolinea,estado,verificar}]
+vuelos[{tipo?(ida|vuelta),tramo,fecha,aerolinea,estado,localizador?,
+ equipaje?,nota?,tramos?[{vuelo,de,de_nombre,de_terminal,a,a_nombre,
+ a_terminal,salida,llegada,duracion,avion,asientos{nombre:asiento}}
+ |{escala}],verificar}]  (datos del billete: privados, nunca al repo)
 alojamientos[{id,nombre,ciudad,fechas,noches,coste_eur,pago,
  direccion_en,direccion_ko,ko,nota,verificar,lat?,lon?}]
  (lat/lon del hotel: privados, solo en trip.json; sirven para
