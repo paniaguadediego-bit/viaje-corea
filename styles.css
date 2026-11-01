@@ -390,3 +390,6 @@ details > summary.card { text-align: center; }
 :root[data-theme="dark"] .lp-item.top { background: linear-gradient(135deg, #3a3010, var(--card) 60%); } :root[data-theme="dark"] .lp-tipo { background: #1d3557; color: #9cc8ff; }
 
 .lp-mas { margin: 2px 0 0; font-weight: 700; color: #0a5aa8; }
+
+.rejilla { grid-template-columns: repeat(2, 1fr); max-width: 320px; }
+.daynav button[data-sub] { font-size: .85rem; padding: 8px 4px; }

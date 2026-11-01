@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v30';
+const VERSION = 'v31';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -37,11 +37,11 @@ window.addEventListener('popstate', () => {
 let dayIdx = null;
 
 const TABS = [
-  ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '🗺️'], ['ciudades', 'Ciudades', '🏯'], ['ensenar', 'Enseñar', '🪧'],
+  ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '🗺️'], ['ciudades', 'Ciudades', '🏯'], ['corea', 'Corea', '🇰🇷'],
   ['comer', 'Comer', '🍜'], ['conv', '₩/€', '💱'], ['checklist', 'Checklist', '✅'], ['mas', 'Más', '☰']
 ];
 // Secciones agrupadas dentro de "Más" (la barra no cabe con 9 pestañas).
-const EN_MAS = [['corea', 'Corea', '🇰🇷'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎']];
+const EN_MAS = [['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎']];
 
 function todayISO() {
   const d = new Date();
@@ -679,7 +679,7 @@ function showFull(key) {
 }
 
 // ---------- Corea (frases, diccionario, guía) ----------
-let coreaSub = 'frases', fraseSit = 'Básicas';
+let coreaSub = 'ensenar', fraseSit = 'Básicas';
 const sinTildes = t => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 const dFila = (e, key) => `<div class="card lugar" data-full="${key}"><div><div>${esc(e[0])}${e[3] ? ' <span class="ver">VERIFICAR</span>' : ''}</div>
   <div class="ko">${esc(e[1])}</div><div class="muted">${esc(e[2])}</div></div></div>`;
@@ -696,10 +696,11 @@ function dResultados(q) {
 }
 
 function viewCorea() {
-  const seg = [['frases', 'Frases'], ['dicc', 'Diccionario'], ['guia', 'Guía']].map(([k, t]) =>
+  const seg = [['ensenar', '🪧 Enseñar'], ['frases', 'Frases'], ['dicc', 'Diccionario'], ['guia', 'Guía']].map(([k, t]) =>
     `<button class="${coreaSub === k ? '' : 'sec'}" data-sub="${k}">${t}</button>`).join('');
   let html = `<div class="row daynav">${seg}</div>`;
-  if (coreaSub === 'frases') {
+  if (coreaSub === 'ensenar') html += viewEnsenar();
+  else if (coreaSub === 'frases') {
     let off = 0; const grupos = FRASES_SIT.map(([t, fs]) => { const g = [t, fs, off]; off += fs.length; return g; });
     const g = grupos.find(x => x[0] === fraseSit) || grupos[0];
     html += `<div class="chips sit">${grupos.map(([t]) => `<button class="chip ${t === g[0] ? 'on' : ''}" data-sit="${esc(t)}">${esc(t)}</button>`).join('')}</div>
@@ -1040,7 +1041,7 @@ function render() {
   else switch (tab) {
     case 'hoy': html = viewHoy(); break;
     case 'ruta': html = viewRuta(); break;
-    case 'ensenar': html = viewEnsenar(); break;
+    case 'ensenar': coreaSub = 'ensenar'; html = viewCorea(); break;
     case 'seguro': html = viewSeguro(); break;
     case 'corea': html = viewCorea(); break;
     case 'ciudades': html = viewCiudades(); break;
