@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v39';
+const VERSION = 'v40';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -528,6 +528,16 @@ const sitiosCiudad = k => {
 const lpTag = l => l.lp ? ` <span class="badge otro">LP${l.top ? ' ★' : ''}</span>` : '';
 const interesDe = c => arr(c.interes).length ? arr(c.interes) : (CATALOGO[ck(c.nombre)] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)).map(l => l.es);
 
+// Estancia en una ciudad (Ruta): fechas, noches, hotel y días del plan.
+function estanciaCard(c) {
+  const k = ck(c.nombre), noches = c.hasta ? Math.round((new Date(c.hasta) - new Date(c.desde)) / 864e5) : null;
+  const h = arr(trip.alojamientos).find(a => ck(a.ciudad) === k && String(a.fechas || '').startsWith(c.desde)) || arr(trip.alojamientos).find(a => ck(a.ciudad) === k);
+  const ns = planIdx().filter(d => d.fecha >= c.desde && (!c.hasta || d.fecha < c.hasta)).map(d => d.n);
+  return `<div class="tl"><div class="tl-fecha tl-pin" style="${varsTema(k)}">${tema(k).ic}</div><div class="card estancia" style="${varsTema(k)}"><div class="big">${esc(c.nombre)}</div>
+    <div class="muted">${fmtCorto(c.desde)}${c.hasta ? ' → ' + fmtCorto(c.hasta) : ''}${noches ? ` · ${noches} noche${noches > 1 ? 's' : ''}` : ''}${ns.length ? ` · Día ${ns[0]}${ns.length > 1 ? '-' + ns[ns.length - 1] : ''}` : ''}</div>
+    ${h ? `<div>🛏️ ${esc(h.nombre)}</div>` : ''}</div></div>`;
+}
+
 function viewRuta() {
   const vuelos = arr(trip.vuelos).filter(v => v && typeof v === 'object').slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   const conTipo = vuelos.some(v => v.tipo);
@@ -535,9 +545,10 @@ function viewRuta() {
   const vuelta = conTipo ? vuelos.filter(v => v.tipo === 'vuelta') : vuelos.length > 1 ? [vuelos[vuelos.length - 1]] : [];
   let html = ida.map(v => vueloCard(v, 'ida')).join('') + pendingAlert();
   if (arr(trip.ciudades).length) html += '<h2>Mapa</h2>' + viewMapa();
-  html += diaADia();
   const tr = arr(trip.traslados).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
-  if (tr.length) html += '<h2>Traslados</h2><div class="timeline">' + tr.map(trasladoCard).join('') + '</div>';
+  const est = arr(trip.ciudades).filter(c => c && c.desde).map(c => [c.desde, 1, estanciaCard(c)]);
+  const ev = [...tr.map(t => [t.fecha || '', 0, trasladoCard(t)]), ...est].sort((a, b) => String(a[0]).localeCompare(String(b[0])) || a[1] - b[1]);
+  if (ev.length) html += '<h2>Dónde estamos y traslados</h2><div class="timeline">' + ev.map(e => e[2]).join('') + '</div>';
   html += vuelta.map(v => vueloCard(v, 'vuelta')).join('');
   return html || '<p class="muted">Sin datos de ruta.</p>';
 }
@@ -638,20 +649,6 @@ function viewCiudades() {
     ${seccionLP(k)}</div>`;
 }
 
-
-// Día a día (Ruta): una línea por día agrupada por ciudad; al tocarla abre ese día en Hoy.
-function diaADia() {
-  const dias = arr(trip.dias).filter(d => d && d.fecha).sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
-  if (!dias.length) return '';
-  let html = '', prev = null;
-  dias.forEach((d, i) => {
-    const k = ck(d.ciudad);
-    if (k !== prev) { if (prev !== null) html += '</div>'; html += `<div class="dad-grupo" style="${varsTema(k)}"><div class="dad-ciudad">${tema(k).ic} ${esc(d.ciudad || '')}</div>`; prev = k; }
-    const n = /^\d+$/.test(String(d.dia ?? '')) ? d.dia : i + 1;
-    html += `<button class="dad-dia ${d.fecha === todayISO() ? 'on' : ''}" data-dia="${i}"><span class="hora">Día ${esc(n)}</span><span class="muted">${esc(fmtCorto(d.fecha))}</span><span>${esc(d.titulo || '')}</span></button>`;
-  });
-  return '<h2>Día a día</h2>' + html + '</div>';
-}
 
 // ---------- mapa esquemático (SVG propio, sin internet) ----------
 // Coordenadas aproximadas de reserva si el JSON no trae lat/lon.
@@ -1281,8 +1278,6 @@ document.addEventListener('click', e => {
   if (pg) { platoGrupo = +pg.dataset.pg; render(); return; }
   const cs = e.target.closest('[data-csel]');
   if (cs) { ciudadSel = cs.dataset.csel; historiaAbierta = false; lpTodos = false; render(); return; }
-  const dd = e.target.closest('[data-dia]');
-  if (dd) { dayIdx = +dd.dataset.dia; ir('hoy'); render(); return; }
   const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub],[data-sit]');
   if (!b) return;
   if (b.dataset.sub) coreaSub = b.dataset.sub;

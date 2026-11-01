@@ -22,11 +22,11 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    (botones arriba): Checklist, Seguro, Verificar; y debajo Maleta/
    Documentos, Fotos y Notas. Gastos: quitado (el usuario usa
    otra app). No añadir
-   nada que no esté aquí. Ruta incluye un mapa esquemático de
+   nada que no esté aquí. Ruta: vuelos, mapa y línea de tiempo con cada estancia (ciudad,
+   noches, hotel) intercalada con los traslados. Incluye un mapa esquemático de
    Corea (SVG propio, offline) con ciudades, traslados y sitios
    (las fichas de ciudad con sitios van en Ciudades: 5 botones, se
-   despliega la ciudad elegida; botón 📜 Historia) y "Día a día" (una
-   línea por día; al tocarla abre ese día en Hoy). Extras
+   despliega la ciudad elegida; botón 📜 Historia). Extras
    aprobados: conversor ₩↔€ con cambio automático del BCE vía
    api.frankfurter (solo con conexión; se guarda para offline; se
    puede fijar a mano), destacados de la ciudad en Hoy, lista
