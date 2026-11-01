@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v46';
+const VERSION = 'v47';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -564,6 +564,15 @@ function viewRuta() {
   return html || '<p class="muted">Sin datos de ruta.</p>';
 }
 
+// Desplegable con lo que amplía la Lonely (DIA_LP) o una frase general (DIA_INFO).
+function masLP(l, ctx) {
+  if (!l || typeof l !== 'object') return '';
+  const h = hKey(l), D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, G = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
+  const lp = D[h.slice(2)] || D[h], txt = lp || G[h.slice(2)];
+  if (!txt || txt === l.desc) return '';
+  return `<details class="mas-lp" data-key="mx:${ctx}:${esc(h)}" ${abierto('mx:' + ctx + ':' + h, false) ? 'open' : ''}><summary>📖 ${lp ? 'Más de la Lonely' : 'Más info'}</summary>
+    <p>${esc(txt).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}${lp ? ' <span class="badge otro">LP 2016</span>' : ''}</p></details>`;
+}
 // Imprescindibles de una ciudad: foto (Wikipedia, se guarda para offline), descripción y ✓ hecho.
 function imprescindibles(k) {
   const ls = (typeof IMPRES !== 'undefined' && IMPRES[k]) || []; if (!ls.length) return '';
@@ -571,6 +580,7 @@ function imprescindibles(k) {
     <div class="foto" data-wiki="${esc(l.wiki)}"><span>📷</span></div>
     <div class="imp-txt"><div class="imp-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b></div>
       <div class="ko-s">${esc(l.ko)}${distHotel(l, k)}</div>${planBadge(l, k)}
+      ${masLP(l, 'imp')}
       <div class="muted">${esc(l.desc)}${l.lp ? ' <span class="badge otro">LP</span>' : ''}</div>
       <div class="credito" data-cred="${esc(l.wiki)}"></div></div></div>`).join('')}</div>`;
 }
@@ -629,6 +639,7 @@ function seccionLP(k) {
         <div class="lp-meta"><span class="lp-tipo">${esc(l.tipo)}</span>${l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(l)}</div>
         <div class="lp-nota">${esc(l.nota)}</div>
         <div class="lp-pie">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, k)}${planBadge(l, k)}</div>
+        ${masLP(l, 'lp')}
       </div></div>`).join('')}
       ${ls.length > 8 ? `<button class="sec lp-mas" data-act="lptodos">${lpTodos ? 'Ver menos' : `Ver los ${ls.length - 8} restantes`}</button>` : ''}</div>` : ''}
   </div>`;
@@ -656,7 +667,7 @@ function viewCiudades() {
       ${INTRO_LP[k].plan ? `<details data-key="lp:${k}" ${abierto("lp:" + k, false) ? "open" : ""}><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
     ${h && historiaAbierta ? `<div class="historia"><b>📜 Historia de ${esc(nombreCiudad(k))}</b>${h.txt.map(p => `<p>${esc(p).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}<div class="muted">Resumen de la Lonely Planet 2016 (LP) y datos generales.</div></div>` : ''}
     ${imprescindibles(k)}
-    ${interesDe(c).length ? `<ul class="hlist">${porPlan(interesDe(c).map(x => (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x), ck(c.nombre)).map(o => typeof o === 'string' ? o : o.es).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}${miniFoto(o)}<span><span class="ics">${icSitio(x)}</span> ${esc(x)}${planBadge(o, ck(c.nombre))}</span></li>`; }).join('')}</ul>` : ''}
+    ${interesDe(c).length ? `<ul class="hlist">${porPlan(interesDe(c).map(x => (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x), ck(c.nombre)).map(o => typeof o === 'string' ? o : o.es).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}${miniFoto(o)}<span><span class="ics">${icSitio(x)}</span> ${esc(x)}${planBadge(o, ck(c.nombre))}${masLP(o, 'cat')}</span></li>`; }).join('')}</ul>` : ''}
     ${seccionLP(k)}</div>`;
 }
 

@@ -500,7 +500,9 @@ button.mini, a.btn.mini { min-height: 32px; padding: 4px 10px; }
 input[type="search"] { padding: 9px; }
 .items li { padding: 2px 0; }
 .imp { grid-template-columns: 80px 1fr; gap: 8px; padding: 4px; }
-.lp-item { grid-template-columns: 60px 1fr; gap: 8px; padding: 6px; }
+.lp-item { grid-template-columns: 64px minmax(0, 1fr); gap: 10px; padding: 6px; }
+.lpf { width: 64px; height: 64px; }
+.lp-txt { min-width: 0; }
 .ciudad-hero { padding: 12px 10px 10px; }
 .ciudad-nom { font-size: 1.4rem; }
 .cbtn { min-height: 50px; padding: 6px 2px; }
@@ -555,3 +557,9 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .plan-card .acciones { display: flex; gap: 6px; justify-content: center; margin-top: 4px; }
 .planes-cerca { margin-top: 6px; padding: 5px 8px; border-radius: 8px; background: var(--tint-b); font-size: .88em; cursor: pointer; }
 .chips.centro { justify-content: center; }
+
+.imp { grid-template-columns: 80px minmax(0, 1fr); }
+.imp-txt { min-width: 0; }
+.mas-lp { margin-top: 4px; }
+.mas-lp summary { color: var(--blue); font-weight: 700; font-size: .85rem; }
+.mas-lp p { margin: 4px 0 0; font-size: .9em; line-height: 1.45; }
