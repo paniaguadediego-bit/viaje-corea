@@ -68,7 +68,8 @@ alojamientos[{id,nombre,ciudad,fechas,noches,coste_eur,pago,
  "📍 a X km del hotel")
 ciudades[{id,nombre,ko,desde,hasta,lat?,lon?,interes[]?}]
 traslados[{id,fecha,de,a,estado,pasos[],frase_ko,
- romanizacion,tren{salida,llegada,comprado},verificar}]
+ romanizacion,tren{salida,llegada,comprado,numero?,clase?,precio?,
+ coche?,asientos?{nombre:asiento},nota?},verificar}]  (billete: privado)
 dias[{fecha,dia,ciudad,titulo,items[{hora?,texto}]}]
 lugares[{id,es,ko,romanizacion,direccion_ko,direccion_en,
  verificar,nota,ciudad?}]  (sin "ciudad", se deduce del texto)

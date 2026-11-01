@@ -546,3 +546,5 @@ h2, .centro, main > p.muted, main > .muted, main > div.muted { text-align: cente
 .guia-txt ul { margin-top: 6px; }
 header #tema { border-radius: 50% !important; background: var(--card) !important; border: 1px solid var(--line); }
 .card > .acciones:last-child { justify-content: center; }
+.tl-billete { margin: 4px 0; padding: 5px 8px; border-radius: 10px; background: var(--tint-b); font-size: .92em; }
+.tl-billete .nvuelo { margin-right: 4px; }

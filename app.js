@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v43';
+const VERSION = 'v44';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -474,6 +474,8 @@ function trasladoCard(t) {
       <div class="tl-top"><span class="tl-ic" title="${nom}">${ic}</span><div class="tl-ruta"><b>${esc(t.de)}</b><span class="tl-flecha">↓</span><b>${esc(t.a)}</b></div></div>
       <div class="tl-meta">${estadoBadge(t)} ${ver(t)}</div>
       ${tren.salida || tren.llegada ? `<div class="tl-horas"><span>${esc(tren.salida || '?')}</span><i>→</i><span>${esc(tren.llegada || '?')}</span>${tren.comprado === false ? '<em class="badge pend">billete sin comprar</em>' : ''}</div>` : ''}
+      ${tren.numero || tren.asientos ? `<div class="tl-billete"><b class="nvuelo">${esc(tren.numero || '')}</b>${tren.clase ? ` <span class="muted">${esc(tren.clase)}</span>` : ''}${tren.precio ? ` <span class="muted">· ${esc(tren.precio)}</span>` : ''}
+        ${Object.keys(tren.asientos || {}).length ? `<div>💺 ${tren.coche ? `Coche <b>${esc(tren.coche)}</b> · ` : ''}${Object.entries(tren.asientos).map(([n, a]) => `${esc(n)} <b>${esc(a)}</b>`).join(' · ')}</div>` : ''}${tren.nota ? `<div class="muted">${esc(tren.nota)}</div>` : ''}</div>` : ''}
       ${arr(t.pasos).length ? (() => { const k = 'p:' + (t.id || t.fecha + t.de), ab = k in pasosAb ? pasosAb[k] : pend;
         return `<div class="tl-pasos"><button class="tl-pasos-btn" data-pasos="${esc(k)}" data-v="${ab ? 0 : 1}">${ab ? '▾' : '▸'} Paso a paso (${arr(t.pasos).length})</button>
         ${ab ? `<ol>${arr(t.pasos).map(p => `<li>${resaltar(p)}</li>`).join('')}</ol>` : ''}</div>`; })() : ''}
