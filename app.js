@@ -514,6 +514,7 @@ function viewRuta() {
   const vuelta = conTipo ? vuelos.filter(v => v.tipo === 'vuelta') : vuelos.length > 1 ? [vuelos[vuelos.length - 1]] : [];
   let html = ida.map(v => vueloCard(v, 'ida')).join('') + pendingAlert();
   if (arr(trip.ciudades).length) html += '<h2>Mapa</h2>' + viewMapa();
+  html += diaADia();
   const tr = arr(trip.traslados).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   if (tr.length) html += '<h2>Traslados</h2><div class="timeline">' + tr.map(trasladoCard).join('') + '</div>';
   html += vuelta.map(v => vueloCard(v, 'vuelta')).join('');
@@ -608,7 +609,6 @@ function viewCiudades() {
       ${t.lema ? `<div class="ciudad-lema">${esc(t.lema)}</div>` : ''}
       <div class="ciudad-fechas">${fechas}</div>
     </div>
-    ${planCiudad(k)}
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
       ${INTRO_LP[k].plan ? `<details><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
     ${h && historiaAbierta ? `<div class="historia"><b>📜 Historia de ${esc(nombreCiudad(k))}</b>${h.txt.map(p => `<p>${esc(p).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}<div class="muted">Resumen de la Lonely Planet 2016 (LP) y datos generales.</div></div>` : ''}
@@ -618,17 +618,18 @@ function viewCiudades() {
 }
 
 
-// Nuestro plan (días del itinerario en esta ciudad); se despliega cada día.
-function planCiudad(k) {
-  const todos = arr(trip.dias).filter(d => d && d.fecha).sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
-  const dias = todos.filter(d => ck(d.ciudad) === k);
+// Día a día (Ruta): una línea por día agrupada por ciudad; al tocarla abre ese día en Hoy.
+function diaADia() {
+  const dias = arr(trip.dias).filter(d => d && d.fecha).sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   if (!dias.length) return '';
-  const hoy = todayISO();
-  return `<div class="plan-ciudad"><b>🗓️ Nuestro plan</b>${dias.map(d => {
-    const n = /^\d+$/.test(String(d.dia ?? '')) ? d.dia : todos.indexOf(d) + 1;
-    return `<details${d.fecha === hoy ? ' open' : ''}><summary><span class="hora">Día ${esc(n)}</span> ${esc(fmtCorto(d.fecha))} · ${esc(d.titulo || '')}</summary>
-      <ul class="items">${arr(d.items).map(i => `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${resaltar(i.texto)}</li>`).join('') || '<li class="muted">Sin plan escrito</li>'}</ul></details>`;
-  }).join('')}</div>`;
+  let html = '', prev = null;
+  dias.forEach((d, i) => {
+    const k = ck(d.ciudad);
+    if (k !== prev) { if (prev !== null) html += '</div>'; html += `<div class="dad-grupo" style="${varsTema(k)}"><div class="dad-ciudad">${tema(k).ic} ${esc(d.ciudad || '')}</div>`; prev = k; }
+    const n = /^\d+$/.test(String(d.dia ?? '')) ? d.dia : i + 1;
+    html += `<button class="dad-dia ${d.fecha === todayISO() ? 'on' : ''}" data-dia="${i}"><span class="hora">Día ${esc(n)}</span><span class="muted">${esc(fmtCorto(d.fecha))}</span><span>${esc(d.titulo || '')}</span></button>`;
+  });
+  return '<h2>Día a día</h2>' + html + '</div>';
 }
 
 // ---------- mapa esquemático (SVG propio, sin internet) ----------
@@ -1259,6 +1260,8 @@ document.addEventListener('click', e => {
   if (pg) { platoGrupo = +pg.dataset.pg; render(); return; }
   const cs = e.target.closest('[data-csel]');
   if (cs) { ciudadSel = cs.dataset.csel; historiaAbierta = false; lpTodos = false; render(); return; }
+  const dd = e.target.closest('[data-dia]');
+  if (dd) { dayIdx = +dd.dataset.dia; ir('hoy'); render(); return; }
   const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub],[data-sit]');
   if (!b) return;
   if (b.dataset.sub) coreaSub = b.dataset.sub;

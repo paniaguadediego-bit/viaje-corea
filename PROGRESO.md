@@ -83,7 +83,7 @@ Caché del service worker: corea-v38
 - Cambio pedido (v36): billetes de avión. Los datos de los billetes van solo en el trip.json privado del usuario (tramos con nº de vuelo, horas, terminales, asientos, escalas, localizador y equipaje; sin pasaportes, fechas de nacimiento ni teléfonos). Ruta los muestra tramo a tramo (ida arriba, vuelta abajo; los ya volados atenuados) y Hoy los tiene con hora. Más → "Documentos y billetes" acepta PDF además de fotos; el PDF se abre con el visor del móvil, también sin conexión.
 
 - Arreglo (v37): "Paso a paso" de Ruta no se abría en el móvil del usuario. Ahora es un botón controlado por la app (recuerda qué está abierto aunque se redibuje la pantalla). La carga de distancias ya no redibuja Ruta ni Hoy.
-- Ciudades (v38): bloque "🗓️ Nuestro plan" bajo la cabecera de cada ciudad con los días del itinerario (trip.dias) de esa ciudad; cada día se despliega con sus actividades. Seúl junta la ida y la vuelta. Si hoy es uno de esos días, sale abierto.
+- Ruta (v38): sección "Día a día" tras el mapa: una línea por día (Día N · fecha · título) agrupada por ciudad con su color; al tocarla se abre ese día en Hoy (Atrás vuelve a Ruta). Se probó antes un bloque con el detalle en Ciudades, pero repetía Hoy y el usuario pidió quitarlo.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

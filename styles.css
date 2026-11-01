@@ -473,8 +473,7 @@ b.mayus { color: var(--red); }
 
 .tl-pasos-btn { width: auto; min-height: 38px; margin: 6px 0 0; padding: 6px 12px; background: var(--tint-b) !important; color: var(--blue); font-weight: 700; font-size: .9rem; box-shadow: none; border-radius: 10px; }
 
-.plan-ciudad { margin: 10px; padding: 10px 12px; border-radius: 12px; background: var(--card); border: 1px solid var(--line, #ddd); }
-.plan-ciudad details { border-top: 1px solid var(--line, #e5e5e5); padding: 6px 0; }
-.plan-ciudad details:first-of-type { margin-top: 6px; }
-.plan-ciudad summary { font-weight: 600; line-height: 1.35; }
-.plan-ciudad .items { margin: 6px 0 2px; }
+.dad-grupo { margin: 8px 0; border-radius: 12px; overflow: hidden; background: var(--card); border-left: 5px solid var(--c1, #0a5aa8); }
+.dad-ciudad { font-weight: 700; padding: 8px 12px 4px; }
+.dad-dia { display: grid; grid-template-columns: auto auto 1fr; gap: 8px; align-items: baseline; width: 100%; text-align: left; background: none; color: var(--fg); border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 8px 12px; font: inherit; margin: 0; }
+.dad-dia.on { background: var(--tint-b, rgba(10,90,168,.08)); font-weight: 700; }

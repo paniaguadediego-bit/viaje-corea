@@ -25,8 +25,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    nada que no esté aquí. Ruta incluye un mapa esquemático de
    Corea (SVG propio, offline) con ciudades, traslados y sitios
    (las fichas de ciudad con sitios van en Ciudades: 5 botones, se
-   despliega la ciudad elegida con "Nuestro plan", los días del
-   itinerario en esa ciudad; botón 📜 Historia). Extras
+   despliega la ciudad elegida; botón 📜 Historia) y "Día a día" (una
+   línea por día; al tocarla abre ese día en Hoy). Extras
    aprobados: conversor ₩↔€ con cambio automático del BCE vía
    api.frankfurter (solo con conexión; se guarda para offline; se
    puede fijar a mano), destacados de la ciudad en Hoy, lista
