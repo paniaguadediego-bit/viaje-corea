@@ -1,5 +1,7 @@
 // Sube CACHE en cada sesión (y VERSION en app.js) para que el móvil coja la versión nueva.
-const CACHE = 'corea-v23';
+const CACHE = 'corea-v24';
+// Fotos de Wikipedia: caché aparte que no se borra al actualizar la app.
+const FOTOS = 'corea-fotos';
 const FILES = [
   './', './index.html', './styles.css', './app.js', './contenido.js', './diccionario.js', './manifest.json',
   './example.trip.json', './data/comer.json', './data/coords.json', './icons/icon.svg', './icons/icon-192.png',
@@ -15,7 +17,7 @@ self.addEventListener('install', e => {
 
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
-    .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+    .then(keys => Promise.all(keys.filter(k => k !== CACHE && k !== FOTOS).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 
@@ -23,7 +25,17 @@ self.addEventListener('activate', e => {
 // Sin conexión o si la red tarda más de 3 s: la copia guardada.
 self.addEventListener('fetch', e => {
   const req = e.request;
-  if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
+  if (req.method !== 'GET') return;
+  const host = new URL(req.url).hostname;
+  // Fotos y resúmenes de Wikipedia: primero lo guardado; si no, red y se guarda.
+  if (/(^|\.)(wikipedia|wikimedia)\.org$/.test(host)) {
+    e.respondWith(caches.open(FOTOS).then(async c => {
+      const g = await c.match(req); if (g) return g;
+      const r = await fetch(req); if (r.ok || r.type === 'opaque') c.put(req, r.clone()); return r;
+    }));
+    return;
+  }
+  if (new URL(req.url).origin !== location.origin) return;
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
     const red = fetch(req, { cache: 'no-cache' }).then(r => {

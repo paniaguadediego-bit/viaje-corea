@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v23
+Caché del service worker: corea-v24
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -56,6 +56,8 @@ Caché del service worker: corea-v23
 
 - Cambio pedido (v23): "hecho/visitado" unificado. Tachar en Checklist marca el sitio en toda la app: tachado con ✓ en Ciudades (botón redondo para marcar desde ahí), ✅ y atenuado en Enseñar, tachado en los destacados de Hoy y "Visitado" en Comer; y al revés. Checklist por ciudad ahora lista sitios (catálogo + Lonely), "Para comer" (Quiero, Visitado e itinerario) y "Mis cosas"; contador hechos/total.
 
+- Cambio pedido (v24): "Imprescindibles" en cada ciudad (18 sitios clave) con descripción breve en español (resumida de la Lonely 2016 cuando la trae, marca LP) y foto representativa de Wikipedia. Las fotos no se pudieron meter en el repo (el entorno no tiene acceso a Wikimedia): la app las pide con conexión al artículo de Wikipedia, las guarda en una caché propia y se ven luego sin conexión; botón en Más para descargarlas todas. Crédito "Foto: Wikipedia" con enlace.
+
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
 - [Supuesto] Tema (Auto/Claro/Oscuro) e Importar/Exportar/Borrar viven en la pestaña Más.
@@ -85,6 +87,7 @@ Caché del service worker: corea-v23
 - [Supuesto] Lista Verificar incluye todos los lugares de Comer (salvo los marcados Cerrado), lo marcado con verificar en el viaje y los sitios dudosos.
 - [Supuesto] "Valoración": no hay puntuaciones públicas sin conexión ni API sin cuenta; se usa una valoración propia (1-5) y un orden "Recomendado" (Quiero, itinerario, ★ Lonely, guía web; Descartado/Cerrado al final; Visitado baja).
 - [Supuesto] El mismo sitio se reconoce por su hangul (o por el nombre si no tiene): p. ej. "Mercado Gwangjang" en Comer y en Ciudades comparten marca. Las marcas antiguas del checklist se respetan.
+- [Supuesto] Si un artículo de Wikipedia no tiene foto (o no existe), se queda el marcador 📷 sin romper nada.
 
 ## Verificar por el usuario
 - Prueba real en tu móvil: abrir con wifi, cerrar, modo avión, abrir y recorrer las 8 pestañas.
@@ -97,3 +100,4 @@ Caché del service worker: corea-v23
 - K-ETA / tarjeta de llegada: comprobar en la web oficial antes de salir.
 - Hacer fotos del pasaporte, reservas y póliza y añadirlas en Más → Fotos de documentos.
 - Comer: comprobar con Naver que los sitios siguen abiertos y marcar los cerrados.
+- Con wifi: Más → "Descargar fotos de los imprescindibles" y comprobar en Ciudades que salen las fotos (también en modo avión).

@@ -278,3 +278,15 @@ nav#tabs button.on span { background: var(--tint-b); border-radius: 10px; paddin
   background: var(--card) !important; color: transparent; border: 1.5px solid var(--line); box-shadow: none; font-size: .9rem; line-height: 1; }
 .hk.on { background: var(--ok) !important; color: #fff; border-color: var(--ok); }
 .sub { margin: 8px 0 2px; font-weight: 600; }
+
+/* Imprescindibles con foto */
+.impres { display: grid; gap: 8px; margin: 8px 0; }
+.imp { display: grid; grid-template-columns: 96px 1fr; gap: 10px; align-items: start; padding: 6px; border-radius: 12px;
+  background: linear-gradient(120deg, var(--tint-b), var(--card) 70%); border: 1px solid var(--line); }
+.foto { width: 96px; height: 96px; border-radius: 10px; overflow: hidden; background: linear-gradient(135deg, var(--tint-b), var(--tint-r));
+  display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 1.4rem; }
+.foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.foto.sinfoto span { opacity: .35; }
+.imp-tit { display: flex; gap: 6px; align-items: center; }
+.ko-s { font-size: .9em; font-weight: 600; }
+.credito { font-size: .7em; color: var(--muted); margin-top: 2px; }

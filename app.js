@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v23';
+const VERSION = 'v24';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -372,13 +372,57 @@ function viewRuta() {
   return html || '<p class="muted">Sin datos de ruta.</p>';
 }
 
+// Imprescindibles de una ciudad: foto (Wikipedia, se guarda para offline), descripción y ✓ hecho.
+function imprescindibles(k) {
+  const ls = (typeof IMPRES !== 'undefined' && IMPRES[k]) || []; if (!ls.length) return '';
+  return `<div class="impres">${ls.map(l => `<div class="imp ${hecho(l, k) ? 'hecho-card' : ''}">
+    <div class="foto" data-wiki="${esc(l.wiki)}"><span>📷</span></div>
+    <div class="imp-txt"><div class="imp-tit">${btnHecho(l, k)}<b>${esc(l.es)}</b></div>
+      <div class="ko-s">${esc(l.ko)}${distHotel(l, k)}</div>
+      <div class="muted">${esc(l.desc)}${l.lp ? ' <span class="badge otro">LP</span>' : ''}</div>
+      <div class="credito" data-cred="${esc(l.wiki)}"></div></div></div>`).join('')}</div>`;
+}
+// Foto principal del artículo de Wikipedia (necesita conexión la primera vez; el service worker la guarda).
+const FOTOS = load('corea.fotos', {});
+async function fotoWiki(t) {
+  if (FOTOS[t] !== undefined) return FOTOS[t];
+  try {
+    const d = await (await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(t))).json();
+    const f = d && (d.thumbnail || d.originalimage) ? { src: (d.thumbnail || d.originalimage).source, url: d.content_urls && d.content_urls.mobile && d.content_urls.mobile.page } : null;
+    FOTOS[t] = f; try { save('corea.fotos', FOTOS); } catch {}
+    return f;
+  } catch { return undefined; } // sin conexión: se reintenta más tarde
+}
+function pintarFotos() {
+  document.querySelectorAll('.foto[data-wiki]:not(.ok)').forEach(async el => {
+    const f = await fotoWiki(el.dataset.wiki);
+    if (!f) { if (f === null) el.classList.add('sinfoto'); return; }
+    const img = new Image(); img.alt = '';
+    img.onload = () => { el.innerHTML = ''; el.appendChild(img); el.classList.add('ok'); };
+    img.onerror = () => el.classList.add('sinfoto');
+    img.src = f.src;
+    const c = document.querySelector(`.credito[data-cred="${CSS.escape(el.dataset.wiki)}"]`);
+    if (c && f.url) c.innerHTML = `Foto: <a href="${esc(f.url)}" target="_blank" rel="noopener">Wikipedia</a>`;
+  });
+}
+async function descargarFotos() {
+  if (!navigator.onLine) return alert('Conéctate a internet para descargar las fotos.');
+  const ts = Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat().map(l => l.wiki); let n = 0;
+  for (const t of ts) {
+    delete FOTOS[t]; const f = await fotoWiki(t);
+    if (f && f.src) { try { await fetch(f.src, { mode: 'no-cors' }); n++; } catch {} }
+  }
+  alert(`Fotos guardadas para usar sin conexión: ${n} de ${ts.length}.`); render();
+}
+
 function viewCiudades() {
   const ciudades = arr(trip.ciudades);
   if (!ciudades.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
   return ciudades.map((c, i) => `<div class="card" id="c-${esc(c.id)}">
     <div class="big">${i + 1}. ${esc(c.nombre)} ${c.ko ? `<span class="muted">${esc(c.ko)}</span>` : ''}</div>
     <div class="muted">${esc(c.desde)} → ${esc(c.hasta)}</div>
-    ${interesDe(c).length ? `<ul class="hlist">${interesDe(c).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}<span>${esc(x)}</span></li>`; }).join('')}</ul>` : ''}
+    ${arr(trip.ciudades).slice(0, i).some(o => ck(o.nombre) === ck(c.nombre)) ? '' : imprescindibles(ck(c.nombre))}
+    ${interesDe(c).length ? `<ul class="hlist">${interesDe(c).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}<span>${esc(x)}</span></li>`; }).join('')}</ul>` : ''}
     ${(LP[ck(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => ck(o.nombre) === ck(c.nombre)) ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[ck(c.nombre)].length})</summary><ul class="hlist">
       ${LP[ck(c.nombre)].map(l => `<li class="${hecho(l, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(l, ck(c.nombre))}<div><b>${esc(l.es)}</b>${l.top ? ' ★' : ''} ${ver(l)}${distHotel(l, ck(c.nombre))}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></div></li>`).join('')}</ul></details>` : ''}
     <div class="acciones"><button class="sec mini" data-comer="${esc(ck(c.nombre))}">🍜 Comer aquí</button></div></div>`).join('');
@@ -868,6 +912,7 @@ function viewMas() {
         ${{ auto: 'Auto', light: 'Claro', dark: 'Oscuro' }[v]}</button>`).join('')}
     </div>
     <h2>Borrar</h2>
+    <button class="sec" data-act="fotos">📷 Descargar fotos de los imprescindibles (para usar sin conexión)</button>
     <button class="sec" data-act="update">🔄 Forzar actualización (no borra tus datos)</button>
     <button class="danger" data-act="wipe">Borrar datos de este móvil</button>
     <p class="muted" id="ver">Versión: ${esc(window.VERSION || '…')}</p>`;
@@ -897,6 +942,7 @@ function render() {
     default: html = viewMas();
   }
   $('#view').innerHTML = html;
+  if (tab === 'ciudades') pintarFotos();
 }
 
 document.addEventListener('click', e => {
@@ -975,6 +1021,7 @@ document.addEventListener('click', e => {
     case 'foto': $('#fotofile').click(); return;
     case 'comer-nuevo': comerForm = true; break;
     case 'cambio-auto': actualizarCambio(true); return;
+    case 'fotos': descargarFotos(); return;
     case 'comer-cancelar': comerForm = false; break;
     case 'example': loadExample(); return;
     case 'wipe':
