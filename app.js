@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v49';
+const VERSION = 'v50';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -108,7 +108,7 @@ const hotelDe = k => { const h = arr(trip && trip.alojamientos).find(a => a && c
 const fmtDist = d => d < 0.95 ? Math.max(100, Math.round(d * 10) * 100) + ' m' : d.toLocaleString('es-ES', { maximumFractionDigits: d < 10 ? 1 : 0 }) + ' km';
 function distHotel(l, k) {
   const h = hotelDe(k), p = coordsLugar(l); if (!h || !p) return '';
-  return ` <span class="dist">📍 ${fmtDist(km(h, p))} del hotel</span>`;
+  return ` <span class="dist">📍 ${l.aprox ? '≈ ' : ''}${fmtDist(km(h, p))} del hotel</span>`;
 }
 
 // ---------- personalidad: color, icono y lema por ciudad; iconos por tipo de sitio ----------
@@ -418,7 +418,7 @@ function destacados(ciudad) {
 function planesCerca(ls) {
   const P = typeof PLANES !== 'undefined' ? PLANES : [], cs = ls.map(coordsLugar).filter(Boolean);
   const cerca = P.map(p => { const c = coordsLugar(p); if (!c || !cs.length) return null; const d = Math.min(...cs.map(x => km(x, c))); return d <= 1 ? [p, d] : null; }).filter(Boolean).sort((a, b) => a[1] - b[1]);
-  return cerca.length ? `<div class="planes-cerca" data-tab="planes">⭐ Cerca: ${cerca.map(([p, d]) => `${p.cat === 'lol' ? '🎮' : '💄'} ${esc(p.es)} <span class="muted">(${fmtDist(d)})</span>`).join(' · ')}</div>` : '';
+  return cerca.length ? `<div class="planes-cerca" data-tab="planes">⭐ Cerca: ${cerca.map(([p, d]) => `${icPlan(p)} ${esc(p.es)} <span class="muted">(${fmtDist(d)})</span>`).join(' · ')}</div>` : '';
 }
 // Sitios cuyo nombre comparte palabra con un barrio: exigen otra palabra en el plan.
 const EXIGE = { '명동성당': 'catedral' };
@@ -921,6 +921,7 @@ function viewCorea() {
 
 // ---------- Planes: League of Legends y cosmética ----------
 let planesCiudad = null;
+const icPlan = p => ({ lol: '🎮', cosme: '💄', servicio: '🧺' })[p.cat] || '⭐';
 function viewPlanes() {
   const P = typeof PLANES !== 'undefined' ? PLANES : [];
   const cs = CIUDADES_COMER.filter(([k]) => P.some(p => p.ciudad === k));
@@ -934,12 +935,12 @@ function viewPlanes() {
     const otros = c ? P.filter(o => o !== p && o.ciudad === k && coordsLugar(o)).map(o => [o, km(c, coordsLugar(o))]).filter(([, d]) => d <= 1.5).sort((a, b) => a[1] - b[1]) : [];
     const plan = c ? sitios.map(l => [l, km(c, coordsLugar(l)), enPlan(l, k)]).filter(([, d, e]) => d <= 1 && e).sort((a, b) => a[2].n - b[2].n || a[1] - b[1]).slice(0, 4) : [];
     return `<div class="card plan-card ${p.cat} ${hecho(p, k) ? 'hecho-card' : ''}">
-      <div class="sd-tit">${btnHecho(p, k)}<b>${p.cat === 'lol' ? '🎮' : '💄'} ${esc(p.es)}</b></div>
+      <div class="sd-tit">${btnHecho(p, k)}<b>${icPlan(p)} ${esc(p.es)}</b></div>
       <div class="ko-s">${esc(p.ko)}${distHotel(p, k)}</div>
       <div class="muted">${esc(p.desc)}</div>
       ${p.direccion_en ? `<div class="muted">📌 ${esc(p.direccion_en)}</div>` : ''}
       ${p.nota ? `<div class="muted">🕒 ${esc(p.nota).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}</div>` : ''}
-      ${otros.length ? `<div class="cerca">Cerca: ${otros.map(([o, d]) => `${o.cat === 'lol' ? '🎮' : '💄'} ${esc(o.es)} <span class="muted">${fmtDist(d)}</span>`).join(' · ')}</div>` : ''}
+      ${otros.length ? `<div class="cerca">Cerca: ${otros.map(([o, d]) => `${icPlan(o)} ${esc(o.es)} <span class="muted">${fmtDist(d)}</span>`).join(' · ')}</div>` : ''}
       ${plan.length ? `<div class="cerca">📅 Cerca de vuestro plan: ${plan.map(([l, d, e]) => `${esc(l.es)} <span class="muted">(día ${e.n}, ${fmtDist(d)})</span>`).join(' · ')}</div>` : ''}
       <div class="acciones">${naver(p)}<button class="mini" data-full="pl:${i}">Enseñar</button></div></div>`;
   };
@@ -947,7 +948,7 @@ function viewPlanes() {
     return ls.length ? `<h2>${t}</h2>` + ls.map(card).join('') : ''; };
   return `<div class="chips centro">${cs.map(([c, n]) => `<button class="chip ${c === k ? 'on' : ''}" data-pc="${c}">${tema(c).ic} ${n}</button>`).join('')}</div>
     <p class="muted">Ordenados por distancia al hotel. Horarios de webs (nov 2026): compruébalos antes de ir.</p>
-    ${grupo('lol', '🎮 League of Legends')}${grupo('cosme', '💄 Cosmética')}`;
+    ${grupo('lol', '🎮 League of Legends')}${grupo('cosme', '💄 Cosmética')}${grupo('servicio', '🧺 Lavandería')}`;
 }
 
 // ---------- Seguro ----------

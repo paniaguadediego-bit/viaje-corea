@@ -679,5 +679,13 @@ const PLANES = [
   { id: 'pl-oy-gwangbok', ciudad: 'busan', cat: 'cosme', es: 'Olive Young Gwangbok', ko: '올리브영 광복본점', romanizacion: 'Olibeuyeong Gwangbok Bonjeom',
     direccion_en: '36 BIFF Gwangjang-ro, Jung-gu (metro Nampo)',
     desc: 'Olive Young grande de Nampo-dong, con devolución de impuestos. Os pilla el 13 nov, entre BIFF Square, Jagalchi y el mercado Gukje.',
-    nota: 'VERIFICAR horario.' }
+    nota: 'VERIFICAR horario.' },
+  { id: 'pl-lav-jungdong', ciudad: 'busan', cat: 'servicio', es: 'Lavandería Cleantopia Coin Wash Haeundae Jung-dong', ko: '크린토피아 코인워시 해운대중동점', romanizacion: 'Keurintopia Koinwosi Haeundae Jungdong-jeom', aprox: true,
+    direccion_en: 'Barrio de Jung-dong (el del hotel y la estación de Haeundae). Buscar en Naver Map por el nombre en hangul.',
+    desc: 'Lavandería de autoservicio de una cadena muy común (lavadoras y secadoras con monedas o tarjeta; detergente en máquina). Lavar y secar: hora y media aprox. Idea para el 12 nov: ponerla y cenar en el mercado de Haeundae.',
+    nota: '24 h según una web de listados: VERIFICAR. Ubicación exacta sin confirmar: la distancia es aproximada. Antes de ir, preguntad en el hotel: "세탁기 있어요?" (¿tienen lavadora?); una reseña dice que tiene.' },
+  { id: 'pl-lav-jwadong', ciudad: 'busan', cat: 'servicio', es: 'Lavandería Coin Wash 365 Jwadong', ko: '크린토피아 코인워시365 좌동대승점', romanizacion: 'Koinwosi 365 Jwadong Daeseung-jeom', aprox: true,
+    direccion_ko: '부산 해운대구 세실로 31', direccion_en: '31 Sesil-ro, Jwa-dong, Haeundae-gu · tel. 051-704-3337',
+    desc: 'Otra lavandería de autoservicio de la misma cadena, en Jwa-dong (barrio residencial al este de Haeundae): alternativa si la de Jung-dong no os encaja.',
+    nota: '365 días, 24 h según su ficha: VERIFICAR. Coordenadas aproximadas.' }
 ];

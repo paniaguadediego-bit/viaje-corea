@@ -580,3 +580,4 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .tiempo { text-align: center; margin: 2px 0 4px; font-size: .9em; }
 .tiempo .viejo { color: var(--red); }
 .t-mini { font-size: .82em; color: var(--muted); white-space: nowrap; }
+.plan-card.servicio { border-left: 4px solid #2a9d8f; }

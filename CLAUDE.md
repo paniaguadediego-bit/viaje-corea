@@ -17,7 +17,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    la raíz): start_url y scope "./", service worker con ruta
    relativa, iconos relativos.
 5. Pestañas (barra inferior): Hoy, Ruta, Ciudades, Corea,
-   Comer, Planes (League of Legends y cosmética: PLANES en contenido.js,
+   Comer, Planes (League of Legends, cosmética y lavandería: PLANES en contenido.js,
    con distancia al hotel y "cerca"), Más. Corea tiene apartados:
    Guía (primero, con iconos por tema), Historia (historia.js: 22
    capítulos de historia y cultura para leer sin conexión, con índice,
@@ -118,7 +118,8 @@ DIA_LP (lo que amplía la Lonely de cada sitio del itinerario y de los
 que recomienda; sale en Hoy, "Sitios de hoy", y en Ciudades como
 desplegable "📖 Más de la Lonely" en cada sitio) y DIA_INFO (frase general si la Lonely no lo trata),
 FRASES_SIT (frases por
-situación; FRASES es la lista plana), GUIA y PLANES (LoL y cosmética).
+situación; FRASES es la lista plana), GUIA y PLANES (LoL, cosmética y servicios; aprox: true = ubicación
+aproximada, la distancia sale con "≈").
 Todo sitio nuevo lleva descripción y coordenadas en data/coords.json
 (para la distancia al hotel).
 
