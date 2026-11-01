@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v42
+Caché del service worker: corea-v43
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -89,6 +89,7 @@ Caché del service worker: corea-v42
 - Ruta (v41): cada estancia lleva además una línea por día (fecha + título del plan); al tocarla abre ese día en Hoy. Así Ruta = dónde dormimos + qué vemos cada día, intercalado con los traslados.
 - Compacto (v41): letra base 15 px y menos márgenes, botones más bajos, fotos de imprescindibles más pequeñas; Avisos de Hoy plegados; Maleta y Checklist en una sola tarjeta con filas en vez de una tarjeta por punto.
 - v42: títulos y notas centrados. Corea abre en Guía (primera pestaña), con rejilla de iconos por tema (🚕 Taxis, 💸 Propinas…; LP marcado) y el texto del tema elegido debajo. Botón de tema (🌓/☀️/🌙) pequeño junto a la versión en la cabecera; quitado de Más. Arreglo: los desplegables con data-key (Verificar, Checklist…) los abre y cierra la app al tocar, así no se cierran si la pantalla se redibuja en el móvil.
+- v43: el mismo arreglo de desplegables (data-key, los controla la app) en Diccionario, "La Lonely propone" de Ciudades y Avisos de Hoy. Ya no queda ningún desplegable sin data-key.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

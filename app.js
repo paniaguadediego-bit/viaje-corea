@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v42';
+const VERSION = 'v43';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -321,7 +321,7 @@ function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   let html = `<div class="muted reloj" id="reloj">${relojes()}</div>` + ahora() + pendingAlert();
   const avisos = arr(trip.avisos);
-  if (avisos.length) html += `<details class="card avisos"><summary><b>⚠️ Avisos (${avisos.length})</b></summary><ul>${avisos.map(a => `<li>${esc(a)}</li>`).join('')}</ul></details>`;
+  if (avisos.length) html += `<details class="card avisos" data-key="avisos" ${abierto("avisos", false) ? "open" : ""}><summary><b>⚠️ Avisos (${avisos.length})</b></summary><ul>${avisos.map(a => `<li>${esc(a)}</li>`).join('')}</ul></details>`;
   if (!dias.length) return html + '<p class="muted">El viaje no tiene días (clave "dias").</p>';
 
   if (dayIdx === null) {
@@ -646,7 +646,7 @@ function viewCiudades() {
       <div class="ciudad-fechas">${fechas}</div>
     </div>
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
-      ${INTRO_LP[k].plan ? `<details><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
+      ${INTRO_LP[k].plan ? `<details data-key="lp:${k}" ${abierto("lp:" + k, false) ? "open" : ""}><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
     ${h && historiaAbierta ? `<div class="historia"><b>📜 Historia de ${esc(nombreCiudad(k))}</b>${h.txt.map(p => `<p>${esc(p).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}<div class="muted">Resumen de la Lonely Planet 2016 (LP) y datos generales.</div></div>` : ''}
     ${imprescindibles(k)}
     ${interesDe(c).length ? `<ul class="hlist">${porPlan(interesDe(c).map(x => (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x), ck(c.nombre)).map(o => typeof o === 'string' ? o : o.es).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}${miniFoto(o)}<span><span class="ics">${icSitio(x)}</span> ${esc(x)}${planBadge(o, ck(c.nombre))}</span></li>`; }).join('')}</ul>` : ''}
@@ -840,7 +840,7 @@ const dFila = (e, key) => `<div class="card lugar" data-full="${key}"><div><div>
 
 function dResultados(q) {
   q = sinTildes(q).trim();
-  if (!q) return DICC.map(([cat, es], ci) => `<details><summary class="card big">${esc(cat)} <span class="muted">${es.length}</span></summary>
+  if (!q) return DICC.map(([cat, es], ci) => `<details data-key="dc:${ci}" ${abierto('dc:' + ci, false) ? 'open' : ''}><summary class="card big">${esc(cat)} <span class="muted">${es.length}</span></summary>
     ${es.map((e, i) => dFila(e, `d:${ci}:${i}`)).join('')}</details>`).join('');
   const res = [];
   DICC.forEach(([, es], ci) => es.forEach((e, i) => {
