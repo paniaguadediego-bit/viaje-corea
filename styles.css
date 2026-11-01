@@ -484,3 +484,42 @@ b.mayus { color: var(--red); }
 .estancia .big { margin-bottom: 2px; }
 .tl-pin { font-size: 1.5rem; border-color: var(--c1, var(--line)); padding: 6px 0; }
 .tl .estancia { margin-top: 0; }
+.dad-dia { display: grid; grid-template-columns: 52px 1fr; gap: 6px; align-items: baseline; width: 100%; text-align: left; background: none !important; box-shadow: none; color: var(--fg); border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 5px 0; min-height: 0; font: inherit; font-size: .92em; font-weight: 400; margin: 0; }
+.dad-dia:first-of-type { margin-top: 4px; }
+.dad-dia .hora { margin: 0; font-size: .9em; }
+.dad-dia.on { font-weight: 700; }
+
+/* Compacto (v41): menos aire en toda la app */
+body { font-size: 15px; }
+main { padding: 0 10px 10px; }
+h2 { margin: 8px 0 3px; font-size: .85rem; }
+.card { padding: 7px 9px; margin: 4px 0; border-radius: 12px; }
+li { margin: 2px 0; }
+button, .btn { min-height: 38px; padding: 6px 10px; margin: 4px 0; font-size: .95rem; }
+button.mini, a.btn.mini { min-height: 32px; padding: 4px 10px; }
+.chip { min-height: 30px; padding: 3px 10px; }
+input[type="search"] { padding: 9px; }
+.items li { padding: 2px 0; }
+.imp { grid-template-columns: 80px 1fr; gap: 8px; padding: 4px; }
+.lp-item { grid-template-columns: 60px 1fr; gap: 8px; padding: 6px; }
+.ciudad-hero { padding: 12px 10px 10px; }
+.ciudad-nom { font-size: 1.4rem; }
+.cbtn { min-height: 50px; padding: 6px 2px; }
+.intro-lp { margin: 8px; padding: 8px 10px; }
+.tl-ic { width: 36px; height: 36px; font-size: 1.35rem; }
+.tl-fecha { margin-top: 6px; }
+.tl-pasos-btn { min-height: 32px; padding: 4px 10px; }
+.sitios-dia .sd { padding: 6px 0; gap: 8px; }
+.daynav { padding: 4px 0; }
+nav#tabs button { min-height: 46px; padding: 4px 0; }
+.imp .foto { width: 80px; height: 80px; }
+select { padding: 6px 8px; min-height: 36px; }
+.comer textarea { min-height: 30px; padding: 5px 8px; }
+.star { font-size: 1.15rem; min-height: 26px; }
+.intro-lp p { font-size: .92em; }
+.ciudad > *:not(.ciudad-hero) { margin-left: 8px; margin-right: 8px; }
+.avisos ul { margin: 4px 0 0; font-size: .92em; }
+.lista-check { padding: 2px 9px; }
+.lista-check .check { margin: 0; padding: 7px 0; border-top: 1px solid var(--line); font-size: .95em; }
+.lista-check .check:first-child { border-top: 0; }
+.check input { width: 22px; height: 22px; }

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v40';
+const VERSION = 'v41';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -319,7 +319,7 @@ function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   let html = `<div class="muted reloj" id="reloj">${relojes()}</div>` + ahora() + pendingAlert();
   const avisos = arr(trip.avisos);
-  if (avisos.length) html += `<div class="card"><b>Avisos</b><ul>${avisos.map(a => `<li>${esc(a)}</li>`).join('')}</ul></div>`;
+  if (avisos.length) html += `<details class="card avisos"><summary><b>⚠️ Avisos (${avisos.length})</b></summary><ul>${avisos.map(a => `<li>${esc(a)}</li>`).join('')}</ul></details>`;
   if (!dias.length) return html + '<p class="muted">El viaje no tiene días (clave "dias").</p>';
 
   if (dayIdx === null) {
@@ -532,10 +532,12 @@ const interesDe = c => arr(c.interes).length ? arr(c.interes) : (CATALOGO[ck(c.n
 function estanciaCard(c) {
   const k = ck(c.nombre), noches = c.hasta ? Math.round((new Date(c.hasta) - new Date(c.desde)) / 864e5) : null;
   const h = arr(trip.alojamientos).find(a => ck(a.ciudad) === k && String(a.fechas || '').startsWith(c.desde)) || arr(trip.alojamientos).find(a => ck(a.ciudad) === k);
-  const ns = planIdx().filter(d => d.fecha >= c.desde && (!c.hasta || d.fecha < c.hasta)).map(d => d.n);
+  const ds = planIdx().filter(d => d.fecha >= c.desde && (!c.hasta || d.fecha < c.hasta)), ns = ds.map(d => d.n);
+  const dias = arr(trip.dias).filter(d => d && d.fecha).sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   return `<div class="tl"><div class="tl-fecha tl-pin" style="${varsTema(k)}">${tema(k).ic}</div><div class="card estancia" style="${varsTema(k)}"><div class="big">${esc(c.nombre)}</div>
     <div class="muted">${fmtCorto(c.desde)}${c.hasta ? ' → ' + fmtCorto(c.hasta) : ''}${noches ? ` · ${noches} noche${noches > 1 ? 's' : ''}` : ''}${ns.length ? ` · Día ${ns[0]}${ns.length > 1 ? '-' + ns[ns.length - 1] : ''}` : ''}</div>
-    ${h ? `<div>🛏️ ${esc(h.nombre)}</div>` : ''}</div></div>`;
+    ${h ? `<div class="muted">🛏️ ${esc(h.nombre)}</div>` : ''}
+    ${ds.map(d => `<button class="dad-dia ${d.fecha === todayISO() ? 'on' : ''}" data-dia="${d.n - 1}"><span class="hora">${fmtCorto(d.fecha)}</span><span>${esc((dias[d.n - 1] || {}).titulo || '')}</span></button>`).join('')}</div></div>`;
 }
 
 function viewRuta() {
@@ -917,10 +919,10 @@ function checks(scope, base) {
   const items = [...base.map(b => ({ ...b, propio: false })), ...propios.map((t, i) => ({ id: 'p' + i, texto: t, propio: true, i }))];
   const hechos = items.filter(it => U.checklist[scope + '|' + it.id]).length;
   return `${items.length ? `<div class="muted">${hechos} de ${items.length} hechos</div>` : ''}
-    ${items.map(it => { const k = scope + '|' + it.id; return `<label class="check card">
+    ${items.length ? '<div class="card lista-check">' : ''}${items.map(it => { const k = scope + '|' + it.id; return `<label class="check">
       <input type="checkbox" data-check="${esc(k)}" ${U.checklist[k] ? 'checked' : ''}>
       <span>${esc(it.texto)}${it.url ? ` · <a href="${esc(it.url)}" target="_blank" rel="noopener">enlace</a>` : ''}</span>
-      ${it.propio ? `<button class="sec mini" data-delitem="${esc(scope)}" data-i="${it.i}">✕</button>` : ''}</label>`; }).join('')}
+      ${it.propio ? `<button class="sec mini" data-delitem="${esc(scope)}" data-i="${it.i}">✕</button>` : ''}</label>`; }).join('')}${items.length ? '</div>' : ''}
     <form class="row" data-additem="${esc(scope)}"><input name="t" placeholder="Añadir…" autocomplete="off"><button class="mini">＋</button></form>`;
 }
 
@@ -973,7 +975,7 @@ function viewChecklist() {
   const cs = ciudadesUnicas();
   if (!cs.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
   const act = ck(ciudadActual());
-  const fila = (l, k, txt) => `<label class="check card"><input type="checkbox" data-hk="${esc(hKey(l))}" ${hecho(l, k) ? 'checked' : ''}><span>${txt}</span></label>`;
+  const fila = (l, k, txt) => `<label class="check"><input type="checkbox" data-hk="${esc(hKey(l))}" ${hecho(l, k) ? 'checked' : ''}><span>${txt}</span></label>`;
   return '<p class="muted">Lo que taches aquí sale tachado en toda la app (Ciudades, Enseñar, Hoy y Comer como "Visitado").</p>' + cs.map(c => {
     const k = ck(c.nombre);
     const sitios = [...(arr(c.interes).length ? arr(c.interes) : []), ...sitiosCiudad(k).filter(l => !/^(Estación|Aeropuerto|Terminal)/.test(l.es))]
@@ -983,8 +985,8 @@ function viewChecklist() {
     const hechos = [...sitios, ...comer].filter(l => hecho(l, k)).length;
     const sitiosO = porPlan(sitios, k), comerO = porPlan(comer, k);
     return `<details data-key="ck:${esc(k)}" ${abierto('ck:' + k, k === act) ? 'open' : ''}><summary class="card big">${esc(c.nombre)} <span class="muted">${hechos}/${sitios.length + comer.length}</span></summary>
-      ${sitiosO.map(l => fila(l, k, (typeof l === 'string' ? esc(l) : esc(l.es) + (l.lp ? ' <span class="muted">(LP)</span>' : '')) + planBadge(l, k))).join('')}
-      ${comer.length ? '<div class="muted sub">🍜 Para comer</div>' + comerO.map(l => fila(l, k, esc(l.nombre) + (estadoDe(String(l.id)).estado === 'quiero' ? ' <span class="muted">⭐</span>' : '') + planBadge(l, k))).join('') : ''}
+      <div class="card lista-check">${sitiosO.map(l => fila(l, k, (typeof l === 'string' ? esc(l) : esc(l.es) + (l.lp ? ' <span class="muted">(LP)</span>' : '')) + planBadge(l, k))).join('')}</div>
+      ${comer.length ? '<div class="muted sub">🍜 Para comer</div><div class="card lista-check">' + comerO.map(l => fila(l, k, esc(l.nombre) + (estadoDe(String(l.id)).estado === 'quiero' ? ' <span class="muted">⭐</span>' : '') + planBadge(l, k))).join('') + '</div>' : ''}
       <div class="muted sub">Mis cosas</div>${checks('c:' + k, [])}</details>`;
   }).join('');
 }
@@ -1278,6 +1280,8 @@ document.addEventListener('click', e => {
   if (pg) { platoGrupo = +pg.dataset.pg; render(); return; }
   const cs = e.target.closest('[data-csel]');
   if (cs) { ciudadSel = cs.dataset.csel; historiaAbierta = false; lpTodos = false; render(); return; }
+  const dd = e.target.closest('[data-dia]');
+  if (dd) { dayIdx = +dd.dataset.dia; ir('hoy'); render(); return; }
   const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub],[data-sit]');
   if (!b) return;
   if (b.dataset.sub) coreaSub = b.dataset.sub;

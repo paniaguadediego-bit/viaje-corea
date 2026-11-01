@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v40
+Caché del service worker: corea-v41
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -86,6 +86,8 @@ Caché del service worker: corea-v40
 - Ruta (v38): sección "Día a día" tras el mapa: una línea por día (Día N · fecha · título) agrupada por ciudad con su color; al tocarla se abre ese día en Hoy (Atrás vuelve a Ruta). Se probó antes un bloque con el detalle en Ciudades, pero repetía Hoy y el usuario pidió quitarlo.
 - Hoy (v39): tarjeta "📖 Sitios de hoy" bajo el día: cada sitio que aparece en el plan de ese día (detección por palabras, misma ciudad) con foto, hangul, ✓ hecho y lo que amplía la Lonely 2016 (DIA_LP en contenido.js, marca LP; horarios y precios de 2016). Los que la Lonely no trata llevan una frase general propia (DIA_INFO, sin LP). Nuevos sitios en CATALOGO: Ikseon-dong, Seochon, Namdaemun, Hongdae, Coex, Starfield Library, Naksan, Bongjeongsa, Buyongdae, Gyochon, Woljeonggyo, Dongbaekseom, Songdo, Cheongsapo, BIFF Square. "yongsan" pasa a la lista de palabras ignoradas (falso positivo de la estación); la Catedral de Myeongdong exige la palabra "catedral". Aviso LP: la danza de máscaras de Hahoe en noviembre era domingos a las 15 h (el plan dice 14:00: VERIFICAR).
 - Ruta (v40): quitado "Día a día" (repetía Hoy). La línea de tiempo pasa a "Dónde estamos y traslados": cada estancia (ciudad, fechas, noches, días del plan y hotel, sacados de ciudades y alojamientos) intercalada por fecha con las tarjetas de traslado. Vuelos y mapa siguen igual.
+- Ruta (v41): cada estancia lleva además una línea por día (fecha + título del plan); al tocarla abre ese día en Hoy. Así Ruta = dónde dormimos + qué vemos cada día, intercalado con los traslados.
+- Compacto (v41): letra base 15 px y menos márgenes, botones más bajos, fotos de imprescindibles más pequeñas; Avisos de Hoy plegados; Maleta y Checklist en una sola tarjeta con filas en vez de una tarjeta por punto.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
