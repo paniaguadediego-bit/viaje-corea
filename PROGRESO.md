@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v50
+Caché del service worker: corea-v51
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -97,6 +97,7 @@ Caché del service worker: corea-v50
 - v48: Guía con 11 temas nuevos (leer hangul en 10 minutos, metro y KTX, clima en noviembre, tiendas 24 h, baños, internet, compras y tax free, salud y farmacias, beber a la coreana, templos, fechas del viaje: Pepero Day, Suneung con fecha VERIFICAR, kimjang). Nuevo apartado Corea → 📜 Historia (historia.js, precacheado): 22 capítulos, unas 7.500 palabras (unos 35 min): mito de Dangun, Tres Reinos, Silla, Goryeo, Joseon, Sejong y el hangul, Yi Sun-sin, fin de Joseon, ocupación, guerra, milagro del Han, democracia, Corea del Norte, personajes, cultura, religión, arte, Hallyu, deporte, curiosidades y la ruta contada por la historia. Índice, "Seguir leyendo", anterior/Leído ▶ y marca de leído (user.leidos, va en la copia exportada).
 - v49: tiempo previsto. Open-Meteo (gratis, sin clave): máx/mín, cielo y probabilidad de lluvia por ciudad del día (coordenadas del hotel o de la ciudad), hasta 16 días vista. Se pide al abrir con conexión (cada 3 h como mucho) y se guarda en localStorage (corea.tiempo) para offline, con "hace X" (en rojo si pasa de 24 h). Sale en Hoy bajo el título del día y en Ruta junto a cada día. Días sin predicción: no se muestra nada. [Supuesto] Probado con datos simulados: la red de pruebas no llega a api.open-meteo.com; en el móvil sí.
 - v50: Planes → Busan → 🧺 Lavandería: Cleantopia Coin Wash Haeundae Jung-dong (≈300 m del hotel, 24 h, ubicación aproximada) y Coin Wash 365 Jwadong (세실로 31, ≈1,4 km). Campo aprox: la distancia sale con "≈". Nota para preguntar en el hotel ("세탁기 있어요?").
+- v51: el conversor ₩/€ pasa a un botón 💱 junto al título de la cabecera; se abre en una ventana (se cierra con ✕, tocando fuera o con Atrás) desde cualquier pestaña. Quitado de Más.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

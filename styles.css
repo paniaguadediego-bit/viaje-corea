@@ -581,3 +581,11 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .tiempo .viejo { color: var(--red); }
 .t-mini { font-size: .82em; color: var(--muted); white-space: nowrap; }
 .plan-card.servicio { border-left: 4px solid #2a9d8f; }
+
+#convbtn { width: 32px; height: 32px; min-height: 32px; padding: 0; margin: 0; flex: none; border-radius: 50% !important; font-size: 1rem; line-height: 1; box-shadow: none; background: var(--card) !important; border: 1px solid var(--line); }
+#conv-pop { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.45); display: flex; align-items: flex-start; justify-content: center; padding: calc(56px + env(safe-area-inset-top)) 10px 10px; overflow: auto; }
+#conv-pop .pop-caja { width: 100%; max-width: 480px; background: var(--bg); color: var(--fg); border-radius: 16px; padding: 10px 10px 4px; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+#conv-pop .pop-cab { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+#conv-pop .pop-cab .mini { min-height: 30px; }
+#title { flex: 0 1 auto; }
+#version { margin-left: auto; }

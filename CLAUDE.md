@@ -23,7 +23,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    capítulos de historia y cultura para leer sin conexión, con índice,
    anterior/siguiente y marca de leído en user.leidos), Enseñar, Frases,
    Diccionario. Dentro de Más
-   (botones arriba): Checklist, Seguro, Verificar, ₩/€ (conversor); y debajo Maleta/
+   (botones arriba): Checklist, Seguro, Verificar; el conversor ₩/€
+   es el botón 💱 junto al título y se abre en una ventana; y debajo Maleta/
    Documentos, Fotos y Notas. Gastos: quitado (el usuario usa
    otra app). No añadir
    nada que no esté aquí. Ruta: vuelos, mapa y línea de tiempo con cada estancia (ciudad,

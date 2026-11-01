@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v50';
+const VERSION = 'v51';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -27,6 +27,7 @@ function ir(t) {
   pila.push(tab); tab = t; history.pushState({ t }, ''); window.scrollTo(0, 0);
 }
 function cerrarFull() {
+  const cp = document.getElementById('conv-pop'); if (cp) { cp.remove(); return true; }
   const f = document.getElementById('full'); if (!f) return false;
   f._lock?.release().catch(() => {}); f.remove(); return true;
 }
@@ -41,7 +42,7 @@ const TABS = [
   ['comer', 'Comer', '🍜'], ['planes', 'Planes', '⭐'], ['mas', 'Más', '☰']
 ];
 // Secciones agrupadas dentro de "Más" (la barra no cabe con 9 pestañas).
-const EN_MAS = [['checklist', 'Checklist', '✅'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'], ['conv', '₩/€', '💱']];
+const EN_MAS = [['checklist', 'Checklist', '✅'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎']];
 
 function todayISO() {
   const d = new Date();
@@ -1232,12 +1233,22 @@ async function actualizarCambio(forzar) {
       const r = d && d.rates && Number(d.rates.KRW);
       if (r > 0) {
         Object.assign(U, { cambio: Math.round(r * 100) / 100, cambioFecha: d.date || todayISO(), cambioTs: Date.now(), cambioManual: false });
-        saveUser(); if (tab === 'conv') render(); return true;
+        saveUser(); refrescarConv(); if (tab === 'conv') render(); return true;
       }
     } catch { /* probar la siguiente */ }
   }
   if (forzar) alert('No se pudo actualizar el cambio (¿sin conexión?).');
 }
+// Conversor en ventana (botón 💱 de la cabecera).
+function abrirConv() {
+  if (document.getElementById('conv-pop')) return;
+  const d = document.createElement('div'); d.id = 'conv-pop';
+  d.innerHTML = `<div class="pop-caja"><div class="pop-cab"><b>💱 Conversor ₩ / €</b><button class="sec mini" data-close>✕</button></div><div class="pop-cuerpo">${viewConv()}</div></div>`;
+  document.body.appendChild(d); history.pushState({ full: 1 }, '');
+  d.querySelector('[data-conv="KRW"]')?.focus();
+  actualizarCambio(false);
+}
+const refrescarConv = () => { const b = document.querySelector('#conv-pop .pop-cuerpo'); if (b) b.innerHTML = viewConv(); };
 function viewConv() {
   const U = u(), c = cambio();
   const info = U.cambioManual ? 'Cambio manual' : U.cambioFecha ? `Cambio oficial del ${esc(U.cambioFecha)} (BCE)` : 'Sin cambio automático todavía';
@@ -1368,6 +1379,8 @@ document.addEventListener('click', e => {
     return;
   }
   if (e.target.closest('#back')) { history.back(); return; }
+  if (e.target.closest('#convbtn')) { abrirConv(); return; }
+  if (e.target.id === 'conv-pop') { history.back(); return; }
   const cm = e.target.closest('[data-cc],[data-ct],[data-ce],[data-co],[data-val],[data-est],[data-delcomer]');
   if (cm) {
     if (cm.dataset.ce) comerEstado = cm.dataset.ce;
@@ -1461,7 +1474,7 @@ document.addEventListener('change', e => {
   else if (t.dataset.st !== undefined) { comerTipo = t.value; render(); }
   else if (t.dataset.hk) { marcarHecho(t.dataset.hk, t.checked); render(); }
   else if (t.dataset.check) { u().checklist[t.dataset.check] = t.checked; if (!t.checked) delete user.checklist[t.dataset.check]; saveUser(); render(); }
-  else if (t.dataset.cambio !== undefined) { Object.assign(u(), { cambio: Number(t.value) || 0, cambioManual: true }); saveUser(); render(); }
+  else if (t.dataset.cambio !== undefined) { Object.assign(u(), { cambio: Number(t.value) || 0, cambioManual: true }); saveUser(); refrescarConv(); render(); }
 });
 document.addEventListener('submit', e => {
   e.preventDefault();
