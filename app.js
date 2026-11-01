@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v28';
+const VERSION = 'v29';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -38,10 +38,10 @@ let dayIdx = null;
 
 const TABS = [
   ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '🗺️'], ['ciudades', 'Ciudades', '🏯'], ['ensenar', 'Enseñar', '🪧'],
-  ['comer', 'Comer', '🍜'], ['conv', '₩/€', '💱'], ['mas', 'Más', '☰']
+  ['comer', 'Comer', '🍜'], ['conv', '₩/€', '💱'], ['checklist', 'Checklist', '✅'], ['mas', 'Más', '☰']
 ];
 // Secciones agrupadas dentro de "Más" (la barra no cabe con 9 pestañas).
-const EN_MAS = [['corea', 'Corea', '🇰🇷'], ['seguro', 'Seguro', '🛡️'], ['checklist', 'Checklist', '✅'], ['verificar', 'Verificar', '🔎']];
+const EN_MAS = [['corea', 'Corea', '🇰🇷'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎']];
 
 function todayISO() {
   const d = new Date();

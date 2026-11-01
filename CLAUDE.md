@@ -17,8 +17,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    la raíz): start_url y scope "./", service worker con ruta
    relativa, iconos relativos.
 5. Pestañas (barra inferior): Hoy, Ruta, Ciudades, Enseñar,
-   Comer, ₩/€ (conversor), Más. Dentro de Más (botones arriba):
-   Corea, Seguro, Checklist, Verificar; y debajo Maleta/
+   Comer, ₩/€ (conversor), Checklist, Más. Dentro de Más (botones
+   arriba): Corea, Seguro, Verificar; y debajo Maleta/
    Documentos, Fotos y Notas. Gastos: quitado (el usuario usa
    otra app). No añadir
    nada que no esté aquí. Ruta incluye un mapa esquemático de

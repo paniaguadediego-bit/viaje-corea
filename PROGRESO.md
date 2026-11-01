@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v28
+Caché del service worker: corea-v29
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -65,6 +65,8 @@ Caché del service worker: corea-v28
 - Cambio pedido (v27): marca "📅 Día N · fecha" en todo lo que aparece en nuestro itinerario (Ciudades, Imprescindibles, Lonely, Enseñar, Checklist y Comer), y orden según el día del plan (lo planeado primero). Detección: palabras completas del nombre en los textos de los días de la MISMA ciudad (sin palabras genéricas), alias para algunos sitios, y para Comer del itinerario la fecha de su nota. Más fotos: miniaturas en las listas de Ciudades (Lonely y sitios), banda en tarjetas de Comer conocidas (mercados…) y tira de 3 fotos en los Destacados de Hoy; el botón de Más descarga todas (unas 75).
 
 - Cambio pedido (v28): Ciudades como 5 botones (con color e icono de cada una); al tocar uno se despliega debajo su ficha (por defecto la ciudad del día; "Seúl (vuelta)" se junta con Seúl y muestra las dos fechas). Botón "📜 Historia" junto al icono con un resumen de la historia de la ciudad (lo que trae la Lonely va marcado LP; el resto son datos generales). El mapa de Ruta abre la ciudad tocada.
+
+- Cambio pedido (v29): Checklist pasa a la barra inferior (8 pestañas; probado que caben sin cortarse desde 360 px de ancho). En Más quedan Corea, Seguro y Verificar.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
