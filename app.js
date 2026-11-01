@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v45';
+const VERSION = 'v46';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -38,10 +38,10 @@ let dayIdx = null;
 
 const TABS = [
   ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '🗺️'], ['ciudades', 'Ciudades', '🏯'], ['corea', 'Corea', '🇰🇷'],
-  ['comer', 'Comer', '🍜'], ['conv', '₩/€', '💱'], ['mas', 'Más', '☰']
+  ['comer', 'Comer', '🍜'], ['planes', 'Planes', '⭐'], ['mas', 'Más', '☰']
 ];
 // Secciones agrupadas dentro de "Más" (la barra no cabe con 9 pestañas).
-const EN_MAS = [['checklist', 'Checklist', '✅'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎']];
+const EN_MAS = [['checklist', 'Checklist', '✅'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'], ['conv', '₩/€', '💱']];
 
 function todayISO() {
   const d = new Date();
@@ -105,10 +105,10 @@ function km([a, b], [c, d]) {
 }
 // Hotel de una ciudad con coordenadas (de trip.json, privado).
 const hotelDe = k => { const h = arr(trip && trip.alojamientos).find(a => a && ck(a.ciudad) === k && a.lat != null && a.lon != null); return h ? [Number(h.lat), Number(h.lon)] : null; };
+const fmtDist = d => d < 0.95 ? Math.max(100, Math.round(d * 10) * 100) + ' m' : d.toLocaleString('es-ES', { maximumFractionDigits: d < 10 ? 1 : 0 }) + ' km';
 function distHotel(l, k) {
   const h = hotelDe(k), p = coordsLugar(l); if (!h || !p) return '';
-  const d = km(h, p);
-  return ` <span class="dist">📍 ${d < 1 ? Math.round(d * 10) * 100 + ' m' : d.toLocaleString('es-ES', { maximumFractionDigits: d < 10 ? 1 : 0 }) + ' km'} del hotel</span>`;
+  return ` <span class="dist">📍 ${fmtDist(km(h, p))} del hotel</span>`;
 }
 
 // ---------- personalidad: color, icono y lema por ciudad; iconos por tipo de sitio ----------
@@ -413,6 +413,12 @@ function destacados(ciudad) {
     <div class="acciones"><button class="sec mini" data-tab="ciudades">Ver la ciudad</button></div></div>`;
 }
 
+// Planes (LoL / cosmética) a menos de 1 km de algún sitio del día.
+function planesCerca(ls) {
+  const P = typeof PLANES !== 'undefined' ? PLANES : [], cs = ls.map(coordsLugar).filter(Boolean);
+  const cerca = P.map(p => { const c = coordsLugar(p); if (!c || !cs.length) return null; const d = Math.min(...cs.map(x => km(x, c))); return d <= 1 ? [p, d] : null; }).filter(Boolean).sort((a, b) => a[1] - b[1]);
+  return cerca.length ? `<div class="planes-cerca" data-tab="planes">⭐ Cerca: ${cerca.map(([p, d]) => `${p.cat === 'lol' ? '🎮' : '💄'} ${esc(p.es)} <span class="muted">(${fmtDist(d)})</span>`).join(' · ')}</div>` : '';
+}
 // Sitios cuyo nombre comparte palabra con un barrio: exigen otra palabra en el plan.
 const EXIGE = { '명동성당': 'catedral' };
 // Sitios que aparecen en el plan del día, con lo que cuenta la Lonely (DIA_LP) o la descripción corta.
@@ -430,7 +436,7 @@ function sitiosDia(d) {
     const h = hKey(l), mas = D[h.slice(2)] || D[h], txt = mas || l.desc || l.nota || G[h.slice(2)] || '';
     return `<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b> <span class="ko-s">${esc(l.ko || '')}</span></div>
       ${txt ? `<div class="muted">${esc(txt).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}${mas || l.lp ? ' <span class="badge otro">LP</span>' : ''}</div>` : ''}</div></div>`;
-  }).join('')}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado.</div></div>`;
+  }).join('')}${planesCerca(ls)}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado.</div></div>`;
 }
 
 // Resumen del día siguiente al que se está viendo.
@@ -817,6 +823,11 @@ function showFull(key) {
     const f = t === 'f' ? FRASES[a] : ((DICC[a] || [])[1] || [])[b]; if (!f) return;
     return full(`<div class="enorme">${esc(f[1])}</div><div class="es">${esc(f[0])} · ${esc(f[2])}</div>`);
   }
+  if (t === 'pl') {
+    const l = (typeof PLANES !== 'undefined' ? PLANES : [])[a]; if (!l) return;
+    return full(`<div class="enorme">${esc(fraseTaxi(l.ko))}</div>${l.direccion_ko ? `<div class="dir">${esc(l.direccion_ko)}</div>` : ''}
+      <div class="es">${esc(l.es)}${l.direccion_en ? '<br>' + esc(l.direccion_en) : ''}</div>`);
+  }
   if (t === 'k') {
     const c = lugaresComer().find(x => String(x.id) === key.slice(2)); if (!c) return;
     return full(`${c.ko ? `<div class="enorme">${esc(c.ko)}</div>` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}
@@ -875,6 +886,37 @@ function viewCorea() {
   return html;
 }
 
+
+// ---------- Planes: League of Legends y cosmética ----------
+let planesCiudad = null;
+function viewPlanes() {
+  const P = typeof PLANES !== 'undefined' ? PLANES : [];
+  const cs = CIUDADES_COMER.filter(([k]) => P.some(p => p.ciudad === k));
+  if (!planesCiudad) { const a = ck(ciudadActual()); planesCiudad = cs.some(([k]) => k === a) ? a : (cs[0] || [])[0]; }
+  const k = planesCiudad;
+  // Sitios del catálogo e itinerario con coordenadas, para "cerca de".
+  const sitios = [...((typeof IMPRES !== 'undefined' && IMPRES[k]) || []), ...(LP[k] || []), ...(CATALOGO[k] || [])]
+    .filter((l, i, a) => coordsLugar(l) && !/^(Estación|Aeropuerto)/.test(l.es) && a.findIndex(x => hKey(x) === hKey(l)) === i);
+  const card = p => {
+    const c = coordsLugar(p), i = P.indexOf(p);
+    const otros = c ? P.filter(o => o !== p && o.ciudad === k && coordsLugar(o)).map(o => [o, km(c, coordsLugar(o))]).filter(([, d]) => d <= 1.5).sort((a, b) => a[1] - b[1]) : [];
+    const plan = c ? sitios.map(l => [l, km(c, coordsLugar(l)), enPlan(l, k)]).filter(([, d, e]) => d <= 1 && e).sort((a, b) => a[2].n - b[2].n || a[1] - b[1]).slice(0, 4) : [];
+    return `<div class="card plan-card ${p.cat} ${hecho(p, k) ? 'hecho-card' : ''}">
+      <div class="sd-tit">${btnHecho(p, k)}<b>${p.cat === 'lol' ? '🎮' : '💄'} ${esc(p.es)}</b></div>
+      <div class="ko-s">${esc(p.ko)}${distHotel(p, k)}</div>
+      <div class="muted">${esc(p.desc)}</div>
+      ${p.direccion_en ? `<div class="muted">📌 ${esc(p.direccion_en)}</div>` : ''}
+      ${p.nota ? `<div class="muted">🕒 ${esc(p.nota).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}</div>` : ''}
+      ${otros.length ? `<div class="cerca">Cerca: ${otros.map(([o, d]) => `${o.cat === 'lol' ? '🎮' : '💄'} ${esc(o.es)} <span class="muted">${fmtDist(d)}</span>`).join(' · ')}</div>` : ''}
+      ${plan.length ? `<div class="cerca">📅 Cerca de vuestro plan: ${plan.map(([l, d, e]) => `${esc(l.es)} <span class="muted">(día ${e.n}, ${fmtDist(d)})</span>`).join(' · ')}</div>` : ''}
+      <div class="acciones">${naver(p)}<button class="mini" data-full="pl:${i}">Enseñar</button></div></div>`;
+  };
+  const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
+    return ls.length ? `<h2>${t}</h2>` + ls.map(card).join('') : ''; };
+  return `<div class="chips centro">${cs.map(([c, n]) => `<button class="chip ${c === k ? 'on' : ''}" data-pc="${c}">${tema(c).ic} ${n}</button>`).join('')}</div>
+    <p class="muted">Ordenados por distancia al hotel. Horarios de webs (nov 2026): compruébalos antes de ir.</p>
+    ${grupo('lol', '🎮 League of Legends')}${grupo('cosme', '💄 Cosmética')}`;
+}
 
 // ---------- Seguro ----------
 function viewSeguro() {
@@ -1209,6 +1251,7 @@ function render() {
     case 'corea': html = viewCorea(); break;
     case 'ciudades': html = viewCiudades(); break;
     case 'conv': html = viewConv(); break;
+    case 'planes': html = viewPlanes(); break;
     case 'verificar': html = viewVerificar(); break;
     case 'checklist': html = viewChecklist(); break;
     case 'comer': html = viewComer(); break;
@@ -1289,6 +1332,8 @@ document.addEventListener('click', e => {
   // Desplegables con data-key: los controla la app (así no se cierran si la pantalla se redibuja).
   const sm = e.target.closest('details[data-key] > summary');
   if (sm) { e.preventDefault(); const dt = sm.parentElement; abiertos[dt.dataset.key] = !dt.open; dt.open = abiertos[dt.dataset.key]; return; }
+  const pc = e.target.closest('[data-pc]');
+  if (pc) { planesCiudad = pc.dataset.pc; render(); return; }
   const gs = e.target.closest('[data-guia]');
   if (gs) { guiaSel = guiaSel === gs.dataset.guia ? null : gs.dataset.guia; render(); return; }
   const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub],[data-sit]');

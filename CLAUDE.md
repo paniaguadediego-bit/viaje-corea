@@ -17,9 +17,10 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    la raíz): start_url y scope "./", service worker con ruta
    relativa, iconos relativos.
 5. Pestañas (barra inferior): Hoy, Ruta, Ciudades, Corea,
-   Comer, ₩/€ (conversor), Más. Corea tiene apartados:
+   Comer, Planes (League of Legends y cosmética: PLANES en contenido.js,
+   con distancia al hotel y "cerca"), Más. Corea tiene apartados:
    Guía (primero, con iconos por tema), Enseñar, Frases, Diccionario. Dentro de Más
-   (botones arriba): Checklist, Seguro, Verificar; y debajo Maleta/
+   (botones arriba): Checklist, Seguro, Verificar, ₩/€ (conversor); y debajo Maleta/
    Documentos, Fotos y Notas. Gastos: quitado (el usuario usa
    otra app). No añadir
    nada que no esté aquí. Ruta: vuelos, mapa y línea de tiempo con cada estancia (ciudad,
@@ -110,7 +111,9 @@ Lonely, en Comer),
 DIA_LP (lo que amplía la Lonely de cada sitio del itinerario; sale en
 Hoy, "Sitios de hoy") y DIA_INFO (frase general si la Lonely no lo trata),
 FRASES_SIT (frases por
-situación; FRASES es la lista plana) y GUIA.
+situación; FRASES es la lista plana), GUIA y PLANES (LoL y cosmética).
+Todo sitio nuevo lleva descripción y coordenadas en data/coords.json
+(para la distancia al hotel).
 
 ## Hoja de ruta (la vital primero: el viaje empieza el 3 nov)
 S1 Estructura PWA, importar/exportar, pantalla de bienvenida
