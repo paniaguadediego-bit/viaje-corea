@@ -332,3 +332,5 @@ details > summary.card { text-align: center; }
 .comer:not(.est-quiero):not(.est-visitado) { background: linear-gradient(120deg, color-mix(in srgb, var(--tc) 7%, var(--card)), var(--card) 55%); }
 .ic-tipo { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; border-radius: 50%;
   background: color-mix(in srgb, var(--tc, var(--blue)) 16%, var(--card)); font-size: 1rem; vertical-align: middle; }
+
+.filtros select { font-weight: 600; height: 44px; }

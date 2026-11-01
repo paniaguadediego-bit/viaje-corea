@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v25';
+const VERSION = 'v26';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -788,8 +788,11 @@ function viewComer() {
   let lista = base.filter(l => comerEstado === 'todos' ? true : comerEstado === 'pendiente' ? !est(l) : est(l) === comerEstado);
   lista = ordenarComer(lista);
   const chip = (attr, v, t, on) => `<button class="chip ${on ? 'on' : ''}" ${attr}="${esc(v)}">${esc(t)}</button>`;
-  return `<div class="chips">${chip('data-cc', 'todas', 'Todas', comerCiudad === 'todas')}${CIUDADES_COMER.map(([k, t]) => chip('data-cc', k, t, comerCiudad === k)).join('')}</div>
-    <div class="chips">${TIPOS.map(t => chip('data-ct', t, t[0].toUpperCase() + t.slice(1), comerTipo === t)).join('')}</div>
+  const opt = (v, t, on) => `<option value="${esc(v)}" ${on ? 'selected' : ''}>${esc(t)}</option>`;
+  return `<div class="par filtros">
+      <select data-sc aria-label="Ciudad">${opt('todas', '🗺️ Todas las ciudades', comerCiudad === 'todas')}${CIUDADES_COMER.map(([k, t]) => opt(k, `${tema(k).ic} ${t}${k === ck(ciudadActual()) ? ' (hoy)' : ''}`, comerCiudad === k)).join('')}</select>
+      <select data-st aria-label="Tipo">${TIPOS.map(t => opt(t, t === 'todos' ? '🍽️ Todo tipo' : `${IC_COMER[t] || ''} ${t[0].toUpperCase() + t.slice(1)}`, comerTipo === t)).join('')}</select>
+    </div>
     <div class="chips">${chip('data-ce', 'todos', 'Todos', comerEstado === 'todos')}${chip('data-ce', 'quiero', `⭐ Quiero (${n('quiero')})`, comerEstado === 'quiero')}${chip('data-ce', 'visitado', `✅ Visitados (${n('visitado')})`, comerEstado === 'visitado')}${chip('data-ce', 'pendiente', 'Sin marcar', comerEstado === 'pendiente')}</div>
     <div class="orden"><span class="muted">${lista.length} lugares · Ordenar:</span>
       ${[['rec', 'Recomendado'], ['dist', 'Distancia'], ['val', 'Mi valoración']].map(([k, t]) => chip('data-co', k, t, comerOrden === k)).join('')}</div>
@@ -1077,7 +1080,9 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   const t = e.target;
-  if (t.dataset.hk) { marcarHecho(t.dataset.hk, t.checked); render(); }
+  if (t.dataset.sc !== undefined) { comerCiudad = t.value; render(); }
+  else if (t.dataset.st !== undefined) { comerTipo = t.value; render(); }
+  else if (t.dataset.hk) { marcarHecho(t.dataset.hk, t.checked); render(); }
   else if (t.dataset.check) { u().checklist[t.dataset.check] = t.checked; if (!t.checked) delete user.checklist[t.dataset.check]; saveUser(); render(); }
   else if (t.dataset.cambio !== undefined) { Object.assign(u(), { cambio: Number(t.value) || 0, cambioManual: true }); saveUser(); render(); }
 });

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v25
+Caché del service worker: corea-v26
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -59,6 +59,8 @@ Caché del service worker: corea-v25
 - Cambio pedido (v24): "Imprescindibles" en cada ciudad (18 sitios clave) con descripción breve en español (resumida de la Lonely 2016 cuando la trae, marca LP) y foto representativa de Wikipedia. Las fotos no se pudieron meter en el repo (el entorno no tiene acceso a Wikimedia): la app las pide con conexión al artículo de Wikipedia, las guarda en una caché propia y se ven luego sin conexión; botón en Más para descargarlas todas. Crédito "Foto: Wikipedia" con enlace.
 
 - Cambio pedido (v25): el conversor ya no abre el teclado al entrar (solo al tocar la casilla). Contenido centrado (columna central, títulos, filtros, conversor, Ahora). Personalidad: cada ciudad con su color, icono, lema y hangul grande de fondo (Seúl 🏙️ azul/rojo, Andong 🎭 madera, Gyeongju 👑 oro Silla, Busan 🌊 mar, Jeonju 🍚 verde hanok); el día de Hoy lleva el color de su ciudad; los sitios llevan icono por tipo (🏯 palacio, 🛕 templo, 🏛️ museo, 🏘️ aldea, 🌳 naturaleza…); en Comer cada tipo tiene color e icono (🍲 restaurante naranja, ☕ café marrón, 🧺 mercado verde, 🥢 plato rojo, 🍶 bar morado).
+
+- Cambio pedido (v26): en Comer, ciudad y tipo pasan a dos desplegables en una fila (con icono; la ciudad del día marcada y con "(hoy)"). Antes del viaje se marca la primera ciudad (Seúl).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
