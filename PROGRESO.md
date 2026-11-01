@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v32
+Caché del service worker: corea-v33
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -73,6 +73,8 @@ Caché del service worker: corea-v32
 - Cambio pedido (v31): Enseñar pasa a ser el primer apartado de Corea (Enseñar · Frases · Diccionario · Guía) y Corea ocupa su sitio en la barra inferior. En Más quedan Seguro y Verificar.
 
 - Cambio pedido (v32): en Corea → Enseñar, las ciudades son los mismos 5 botones que en Ciudades; debajo, "Mis lugares" y "Sitios conocidos" de la ciudad elegida (lugares sin ciudad en "Otros lugares"). La ciudad elegida se comparte entre Ciudades y Enseñar.
+
+- Cambio pedido (v33): Ruta rehecha. Vuelo de ida arriba del todo y vuelo de vuelta al final, con horarios (campos salida_*/llegada_* del viaje), ruta MAD ✈ PEK ✈ ICN y aviso VERIFICAR si faltan nº de vuelo o terminal. Traslados como línea de tiempo: fecha en recuadro, icono del medio (🚆 tren, 🚌 bus, 🚕 taxi, ✈️ aeropuerto), horas del tren grandes, estado y "Paso a paso" plegable (abierto si está pendiente). Negrita automática de lo importante (horas, KTX, bus/metro + número, estaciones y terminales, precios en ₩ y palabras en MAYÚSCULAS en rojo) en los pasos y en el plan de cada día de Hoy.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

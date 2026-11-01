@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v32';
+const VERSION = 'v33';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -53,6 +53,18 @@ function fmtDate(iso) {
   return isNaN(d) ? esc(iso) : d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
 }
 const fmtCorto = iso => { const d = new Date(String(iso) + 'T12:00:00'); return isNaN(d) ? esc(iso || '') : d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }); };
+// Pone en negrita lo importante de un texto: horas, trenes, buses, estaciones, mayúsculas y precios.
+function resaltar(t) {
+  let h = esc(t);
+  h = h.replace(/\b(\d{1,2}[:.]\d{2}(?:\s*[-–→]\s*\d{1,2}[:.]\d{2})?)\b/g, '<b>$1</b>')
+    .replace(/\b(KTX(?:-Eum)?|AREX(?: Express)?|SRT|ITX)\b/g, '<b>$1</b>')
+    .replace(/\b((?:bus|Bus|metro|línea)\s+\d{1,4}(?:-\d)?)\b/g, '<b>$1</b>')
+    .replace(/((?:[\d.]+(?:-[\d.]+)?\s?₩)|(?:₩\s?[\d.]+))/g, '<b>$1</b>')
+    .replace(/\b([A-ZÁÉÍÓÚÑ]{4,}(?:\s+[A-ZÁÉÍÓÚÑ]{2,})*)\b/g, '<b class="mayus">$1</b>')
+    .replace(/((?:[A-Z][\w-]+\s)?(?:Station|Terminal))/g, '<b>$1</b>')
+    .replace(/(estación de [A-ZÁÉÍÓÚ][\w-]+)/g, '<b>$1</b>');
+  return h;
+}
 const isPend = t => /pendiente/i.test(t.estado || '');
 const isOk = t => /comprad/i.test(t.estado || '') || (t.tren && t.tren.comprado === true);
 function estadoBadge(t) {
@@ -312,7 +324,7 @@ function viewHoy() {
     <div class="muted">${tema(ck(d.ciudad)).ic} ${fmtDate(d.fecha)} · ${esc(d.ciudad)}</div>
     <div class="big">${esc(d.titulo)}</div>
     <ul class="items">${arr(d.items).map(i =>
-      `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${esc(i.texto)}</li>`).join('')}</ul>
+      `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${resaltar(i.texto)}</li>`).join('')}</ul>
     ${CIUDADES_COMER.some(c => c[0] === ck(d.ciudad)) ? `<button class="sec mini comer-hoy" data-comer="${esc(ck(d.ciudad))}">🍜 Comer en ${esc(d.ciudad)}</button>` : ''}
   </div>
   ${destacados(d.ciudad)}`;
@@ -402,17 +414,47 @@ function manana(d, dias) {
   return `<h2>Mañana · ${fmtDate(f)}</h2><div class="card manana"><ul class="items">${lineas.map(l => `<li>${l}</li>`).join('')}</ul></div>`;
 }
 
+// Medio de transporte principal de un traslado (para el icono).
+function medio(t) {
+  const x = [t.de, t.a, ...arr(t.pasos)].join(' ').toLowerCase();
+  if (t.tren && (t.tren.salida || t.tren.comprado != null) || /ktx|tren|korail/.test(x)) return ['🚆', 'Tren'];
+  if (t.bus || /\bbus\b|autob|kobus/.test(x)) return ['🚌', 'Bus'];
+  if (/aeropuerto|vuelo/.test(x)) return ['✈️', 'Aeropuerto'];
+  return ['🚕', 'Taxi'];
+}
 function trasladoCard(t) {
-  const tren = t.tren || {};
-  return `<div class="card">
-    <div class="muted">${esc(t.fecha)}</div>
-    <div class="big">${esc(t.de)} → ${esc(t.a)} ${ver(t)}</div>
-    <div>${estadoBadge(t)}</div>
-    ${tren.salida || tren.llegada ? `<div>🚆 Sale ${esc(tren.salida || '?')} · Llega ${esc(tren.llegada || '?')}
-      ${tren.comprado === false ? '<span class="badge pend">billete sin comprar</span>' : ''}</div>` : ''}
-    ${arr(t.pasos).length ? `<ol>${arr(t.pasos).map(p => `<li>${esc(p)}</li>`).join('')}</ol>` : ''}
-    ${t.frase_ko ? `<div class="ko">${esc(t.frase_ko)}</div>` : ''}
-    ${t.romanizacion ? `<div class="muted">${esc(t.romanizacion)}</div>` : ''}
+  const tren = t.tren || {}, [ic, nom] = medio(t), pend = isPend(t);
+  const d = new Date(String(t.fecha) + 'T12:00:00');
+  const dia = isNaN(d) ? esc(t.fecha || '') : `<b>${d.getDate()}</b><small>${d.toLocaleDateString('es-ES', { month: 'short' })}</small><small>${d.toLocaleDateString('es-ES', { weekday: 'short' })}</small>`;
+  return `<div class="tl ${pend ? 'pend' : isOk(t) ? 'ok' : ''}">
+    <div class="tl-fecha">${dia}</div>
+    <div class="tl-card card">
+      <div class="tl-top"><span class="tl-ic" title="${nom}">${ic}</span><div class="tl-ruta"><b>${esc(t.de)}</b><span class="tl-flecha">↓</span><b>${esc(t.a)}</b></div></div>
+      <div class="tl-meta">${estadoBadge(t)} ${ver(t)}</div>
+      ${tren.salida || tren.llegada ? `<div class="tl-horas"><span>${esc(tren.salida || '?')}</span><i>→</i><span>${esc(tren.llegada || '?')}</span>${tren.comprado === false ? '<em class="badge pend">billete sin comprar</em>' : ''}</div>` : ''}
+      ${arr(t.pasos).length ? `<details class="tl-pasos" ${pend ? 'open' : ''}><summary>Paso a paso (${arr(t.pasos).length})</summary><ol>${arr(t.pasos).map(p => `<li>${resaltar(p)}</li>`).join('')}</ol></details>` : ''}
+      ${t.frase_ko ? `<div class="ko">${esc(t.frase_ko)}</div>` : ''}
+      ${t.romanizacion ? `<div class="muted">${esc(t.romanizacion)}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+// Vuelo con horarios (campos salida_* / llegada_* del viaje).
+function vueloCard(v, tipo) {
+  const hora = x => { const m = String(x || '').match(/(\d{4}-\d{2}-\d{2})?\s*(\d{1,2}:\d{2})/); return m ? (m[1] ? fmtCorto(m[1]) + ' · ' : '') + m[2] : esc(x || ''); };
+  const sal = Object.keys(v).filter(k => /^salida/.test(k) && v[k]).map(k => [k.replace(/^salida_?/, '').toUpperCase() || '', hora(v[k])]);
+  const lle = Object.keys(v).filter(k => /^llegada/.test(k) && v[k]).map(k => [k.replace(/^llegada_?/, '').toUpperCase() || '', hora(v[k])]);
+  const paradas = String(v.tramo || '').split(/\s*→\s*/).filter(Boolean);
+  const falta = [v.numero_vuelo === null && 'nº de vuelo', v.terminal_icn === null && 'terminal'].filter(Boolean);
+  return `<div class="card vuelo ${tipo}">
+    <div class="vuelo-tipo">${tipo === 'ida' ? '🛫 Vuelo de ida' : '🛬 Vuelo de vuelta'} ${ver(v)}</div>
+    <div class="vuelo-ruta">${paradas.map((p, i) => `<span class="aer">${esc(p)}</span>${i < paradas.length - 1 ? '<span class="avion">✈</span>' : ''}`).join('')}</div>
+    <div class="vuelo-horas">
+      ${sal.map(([k, h]) => `<div><small>Sale${k ? ' de ' + esc(k) : ''}</small><b>${h}</b></div>`).join('')}
+      ${lle.map(([k, h]) => `<div><small>Llega${k ? ' a ' + esc(k) : ''}</small><b>${h}</b></div>`).join('')}
+    </div>
+    <div class="muted">${(() => { const m = String(v.fecha || '').match(/^(\d{4}-\d{2}-(\d{2}))(?:\/(\d{2}))?$/); return m ? (m[3] ? `${+m[2]}-${+m[3]} ${new Date(m[1] + 'T12:00').toLocaleDateString('es-ES', { month: 'short' })}` : fmtCorto(m[1])) : esc(v.fecha || ''); })()} · ${esc(v.aerolinea || '')}${v.numero_vuelo ? ' · ' + esc(v.numero_vuelo) : ''}${v.terminal_icn ? ' · Terminal ' + esc(v.terminal_icn) : ''} ${estadoBadge(v)}</div>
+    ${falta.length ? `<div class="muted">Falta: ${falta.join(' y ')} <span class="ver">VERIFICAR</span></div>` : ''}
   </div>`;
 }
 
@@ -424,14 +466,13 @@ const lpTag = l => l.lp ? ` <span class="badge otro">LP${l.top ? ' ★' : ''}</s
 const interesDe = c => arr(c.interes).length ? arr(c.interes) : (CATALOGO[ck(c.nombre)] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)).map(l => l.es);
 
 function viewRuta() {
-  let html = pendingAlert();
+  const vuelos = arr(trip.vuelos).filter(v => v && typeof v === 'object').slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
+  const ida = vuelos.slice(0, vuelos.length > 1 ? vuelos.length - 1 : 1), vuelta = vuelos.length > 1 ? [vuelos[vuelos.length - 1]] : [];
+  let html = ida.map(v => vueloCard(v, 'ida')).join('') + pendingAlert();
   if (arr(trip.ciudades).length) html += '<h2>Mapa</h2>' + viewMapa();
-  const tr = arr(trip.traslados);
-  if (tr.length) html += '<h2>Traslados</h2>' + tr.map(trasladoCard).join('');
-  const vuelos = arr(trip.vuelos);
-  if (vuelos.length) html += '<h2>Vuelos</h2>' + vuelos.map(v => `<div class="card">
-    <div class="big">${esc(v.tramo)} ${ver(v)}</div>
-    <div class="muted">${esc(v.fecha)} · ${esc(v.aerolinea)}</div>${estadoBadge(v)}</div>`).join('');
+  const tr = arr(trip.traslados).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
+  if (tr.length) html += '<h2>Traslados</h2><div class="timeline">' + tr.map(trasladoCard).join('') + '</div>';
+  html += vuelta.map(v => vueloCard(v, 'vuelta')).join('');
   return html || '<p class="muted">Sin datos de ruta.</p>';
 }
 
