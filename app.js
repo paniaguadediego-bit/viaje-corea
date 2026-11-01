@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v37';
+const VERSION = 'v38';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -608,6 +608,7 @@ function viewCiudades() {
       ${t.lema ? `<div class="ciudad-lema">${esc(t.lema)}</div>` : ''}
       <div class="ciudad-fechas">${fechas}</div>
     </div>
+    ${planCiudad(k)}
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
       ${INTRO_LP[k].plan ? `<details><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
     ${h && historiaAbierta ? `<div class="historia"><b>📜 Historia de ${esc(nombreCiudad(k))}</b>${h.txt.map(p => `<p>${esc(p).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}<div class="muted">Resumen de la Lonely Planet 2016 (LP) y datos generales.</div></div>` : ''}
@@ -616,6 +617,19 @@ function viewCiudades() {
     ${seccionLP(k)}</div>`;
 }
 
+
+// Nuestro plan (días del itinerario en esta ciudad); se despliega cada día.
+function planCiudad(k) {
+  const todos = arr(trip.dias).filter(d => d && d.fecha).sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
+  const dias = todos.filter(d => ck(d.ciudad) === k);
+  if (!dias.length) return '';
+  const hoy = todayISO();
+  return `<div class="plan-ciudad"><b>🗓️ Nuestro plan</b>${dias.map(d => {
+    const n = /^\d+$/.test(String(d.dia ?? '')) ? d.dia : todos.indexOf(d) + 1;
+    return `<details${d.fecha === hoy ? ' open' : ''}><summary><span class="hora">Día ${esc(n)}</span> ${esc(fmtCorto(d.fecha))} · ${esc(d.titulo || '')}</summary>
+      <ul class="items">${arr(d.items).map(i => `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${resaltar(i.texto)}</li>`).join('') || '<li class="muted">Sin plan escrito</li>'}</ul></details>`;
+  }).join('')}</div>`;
+}
 
 // ---------- mapa esquemático (SVG propio, sin internet) ----------
 // Coordenadas aproximadas de reserva si el JSON no trae lat/lon.
