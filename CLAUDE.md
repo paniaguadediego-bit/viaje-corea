@@ -14,7 +14,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    con gastos, checklist y notas).
 3. HTML, CSS y JS puro. Sin frameworks, backend, cuentas ni CDN.
 4. Rutas RELATIVAS en todo (la app vive en /viaje-corea/, no en
-   la raíz): start_url y scope "./", service worker con ruta
+   la raíz): start_url "./index.html" (sin id ni scope:
+   así se instala en el Xiaomi del usuario), service worker con ruta
    relativa, iconos relativos.
 5. Pestañas (barra inferior): Hoy, Ruta, Ciudades, Corea,
    Comer, Planes (calendario del Mundial de LoL: WORLDS en contenido.js, hora de
