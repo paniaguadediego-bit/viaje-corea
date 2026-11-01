@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v41';
+const VERSION = 'v42';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -172,7 +172,9 @@ const wikiDe = l => l && typeof l === 'object' ? (l.wiki || (l.ko && ((typeof WI
 const miniFoto = l => { const w = wikiDe(l); return w ? `<div class="foto mini" data-wiki="${esc(w)}"><span>📷</span></div>` : ''; };
 
 // ---------- tema ----------
+const TEMAS = { auto: ['🌓', 'Auto'], light: ['☀️', 'Claro'], dark: ['🌙', 'Oscuro'] };
 function applyTheme() {
+  const tb = document.getElementById('tema'); if (tb) { const t0 = TEMAS[load(K_THEME, 'auto')] || TEMAS.auto; tb.textContent = t0[0]; tb.title = 'Tema: ' + t0[1]; }
   const t = load(K_THEME, 'auto');
   if (t === 'auto') document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme', t);
@@ -831,7 +833,7 @@ function showFull(key) {
 }
 
 // ---------- Corea (frases, diccionario, guía) ----------
-let coreaSub = 'ensenar', fraseSit = 'Básicas';
+let coreaSub = 'guia', guiaSel = null, fraseSit = 'Básicas';
 const sinTildes = t => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 const dFila = (e, key) => `<div class="card lugar" data-full="${key}"><div><div>${esc(e[0])}${e[3] ? ' <span class="ver">VERIFICAR</span>' : ''}</div>
   <div class="ko">${esc(e[1])}</div><div class="muted">${esc(e[2])}</div></div></div>`;
@@ -847,8 +849,11 @@ function dResultados(q) {
   return res.length ? res.slice(0, 80).join('') : '<p class="muted">Sin resultados. Prueba con otra palabra.</p>';
 }
 
+const icGuia = t => [[/t-money|transporte/i, '🚇'], [/taxi/i, '🚕'], [/propina/i, '💸'], [/zapato/i, '👟'], [/enchufe/i, '🔌'], [/^apps/i, '📱'], [/pago/i, '💳'],
+  [/^comida/i, '🍜'], [/^etiqueta/i, '🙇'], [/seguridad|emergencia/i, '🚨'], [/entrada/i, '🛂'], [/básico/i, '🇰🇷'], [/consejos/i, '💡'], [/llevar/i, '🎒'], [/mesa/i, '🥢'], [/saber estar/i, '🤝']]
+  .find(([r]) => r.test(t))?.[1] || '📌';
 function viewCorea() {
-  const seg = [['ensenar', '🪧 Enseñar'], ['frases', 'Frases'], ['dicc', 'Diccionario'], ['guia', 'Guía']].map(([k, t]) =>
+  const seg = [['guia', '🧭 Guía'], ['ensenar', '🪧 Enseñar'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.']].map(([k, t]) =>
     `<button class="${coreaSub === k ? '' : 'sec'}" data-sub="${k}">${t}</button>`).join('');
   let html = `<div class="row daynav">${seg}</div>`;
   if (coreaSub === 'ensenar') html += viewEnsenar();
@@ -860,9 +865,12 @@ function viewCorea() {
   }
   else if (coreaSub === 'dicc') html += `<input id="q" type="search" placeholder="Buscar (español, coreano o romanización)" autocomplete="off">
     <div id="dres">${dResultados('')}</div>`;
-  else html += `<div class="card muted">La guía Lonely Planet de 2016 solo vale para cultura. Precios y apps hay que verificarlos.</div>
-    ${GUIA.map(([t, ps]) => `<details><summary class="card big">${esc(t)}</summary><div class="card"><ul>
-      ${ps.map(x => `<li>${esc(x).replace('VERIFICAR', '<span class="ver">VERIFICAR</span>')}</li>`).join('')}</ul></div></details>`).join('')}`;
+  else {
+    const g = GUIA.find(([t]) => t === guiaSel);
+    html += `<div class="guia-rej">${GUIA.map(([t]) => `<button class="guia-t ${t === guiaSel ? 'on' : ''}" data-guia="${esc(t)}"><span>${icGuia(t)}</span>${esc(t.replace(/ \(Lonely Planet\)/, ''))}${/Lonely/.test(t) ? '<small>LP</small>' : ''}</button>`).join('')}</div>
+      ${g ? `<div class="card guia-txt"><b>${icGuia(g[0])} ${esc(g[0])}</b><ul>${g[1].map(x => `<li>${esc(x).replace('VERIFICAR', '<span class="ver">VERIFICAR</span>')}</li>`).join('')}</ul></div>` : '<p class="muted centro">Toca un tema para verlo.</p>'}
+      <p class="muted centro">La Lonely Planet (2016) solo vale para cultura: precios y apps, verificarlos.</p>`;
+  }
   return html;
 }
 
@@ -1175,11 +1183,6 @@ function viewMas() {
     <button class="sec" data-act="export">💾 Exportar copia</button>
     <p class="muted">La copia incluye el viaje, checklist, notas, fotos, lo marcado en Comer y lo verificado. Guárdala fuera del móvil.
       Última copia: <b>${esc(localStorage.getItem('corea.ultimaCopia') || 'nunca')}</b></p>
-    <h2>Tema</h2>
-    <div class="row">
-      ${['auto', 'light', 'dark'].map(v => `<button class="${t === v ? '' : 'sec'}" data-theme="${v}">
-        ${{ auto: 'Auto', light: 'Claro', dark: 'Oscuro' }[v]}</button>`).join('')}
-    </div>
     <h2>Borrar</h2>
     <button class="sec" data-act="fotos">📷 Descargar fotos de los imprescindibles (para usar sin conexión)</button>
     <button class="sec" data-act="update">🔄 Forzar actualización (no borra tus datos)</button>
@@ -1282,6 +1285,12 @@ document.addEventListener('click', e => {
   if (cs) { ciudadSel = cs.dataset.csel; historiaAbierta = false; lpTodos = false; render(); return; }
   const dd = e.target.closest('[data-dia]');
   if (dd) { dayIdx = +dd.dataset.dia; ir('hoy'); render(); return; }
+  if (e.target.closest('#tema')) { const o = ['auto', 'light', 'dark'], t0 = load(K_THEME, 'auto'); save(K_THEME, o[(o.indexOf(t0) + 1) % 3]); applyTheme(); return; }
+  // Desplegables con data-key: los controla la app (así no se cierran si la pantalla se redibuja).
+  const sm = e.target.closest('details[data-key] > summary');
+  if (sm) { e.preventDefault(); const dt = sm.parentElement; abiertos[dt.dataset.key] = !dt.open; dt.open = abiertos[dt.dataset.key]; return; }
+  const gs = e.target.closest('[data-guia]');
+  if (gs) { guiaSel = guiaSel === gs.dataset.guia ? null : gs.dataset.guia; render(); return; }
   const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub],[data-sit]');
   if (!b) return;
   if (b.dataset.sub) coreaSub = b.dataset.sub;

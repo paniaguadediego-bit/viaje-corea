@@ -523,3 +523,26 @@ select { padding: 6px 8px; min-height: 36px; }
 .lista-check .check { margin: 0; padding: 7px 0; border-top: 1px solid var(--line); font-size: .95em; }
 .lista-check .check:first-child { border-top: 0; }
 .check input { width: 22px; height: 22px; }
+
+/* v42: centrado de títulos y notas */
+h2, .centro, main > p.muted, main > .muted, main > div.muted { text-align: center; }
+.card > b:first-child, .card > .big:first-child, details.card > summary { display: block; text-align: center; }
+.card.dia > .muted:first-child, .card.dia > .big { text-align: center; }
+.card.dia .items { margin-top: 6px; }
+.destacados > div, .destacados .acciones { text-align: center; justify-content: center; }
+.sitios-dia > b, .lista-check + form { text-align: center; }
+
+/* Tema en la cabecera */
+#tema { width: 30px; height: 30px; min-height: 30px; padding: 0; margin: 0; flex: none; border-radius: 50%; font-size: .95rem; line-height: 1; box-shadow: none; }
+
+/* Guía con iconos */
+.guia-rej { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 6px 0; }
+.guia-t { margin: 0; padding: 6px 2px; min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  font-size: .68rem; line-height: 1.15; font-weight: 600; background: var(--card) !important; color: var(--fg); border: 1px solid var(--line); box-shadow: none; position: relative; }
+.guia-t span { font-size: 1.45rem; line-height: 1; }
+.guia-t small { position: absolute; top: 2px; right: 4px; font-size: .55rem; color: var(--blue); font-weight: 800; }
+.guia-t.on { background: var(--grad) !important; color: #fff; border-color: transparent; }
+.guia-t.on small { color: #fff; }
+.guia-txt ul { margin-top: 6px; }
+header #tema { border-radius: 50% !important; background: var(--card) !important; border: 1px solid var(--line); }
+.card > .acciones:last-child { justify-content: center; }

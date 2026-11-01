@@ -18,7 +18,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    relativa, iconos relativos.
 5. Pestañas (barra inferior): Hoy, Ruta, Ciudades, Corea,
    Comer, ₩/€ (conversor), Más. Corea tiene apartados:
-   Enseñar (primero), Frases, Diccionario, Guía. Dentro de Más
+   Guía (primero, con iconos por tema), Enseñar, Frases, Diccionario. Dentro de Más
    (botones arriba): Checklist, Seguro, Verificar; y debajo Maleta/
    Documentos, Fotos y Notas. Gastos: quitado (el usuario usa
    otra app). No añadir
