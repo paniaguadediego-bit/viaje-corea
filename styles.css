@@ -589,3 +589,11 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 #conv-pop .pop-cab .mini { min-height: 30px; }
 #title { flex: 0 1 auto; }
 #version { margin-left: auto; }
+
+.worlds { border-left: 4px solid #c89b3c; }
+.w-fila { display: grid; grid-template-columns: 92px 1fr; gap: 6px; padding: 5px 0; border-top: 1px solid var(--line); font-size: .92em; }
+.w-fila .hora { margin: 0; }
+.w-fila.top { background: linear-gradient(90deg, rgba(200,155,60,.18), transparent); }
+.w-fila.hoy { font-weight: 700; }
+.w-fila.pasado { opacity: .5; }
+.worlds > .muted { margin-top: 6px; font-size: .85em; }

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v52
+Caché del service worker: corea-v53
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -99,6 +99,7 @@ Caché del service worker: corea-v52
 - v50: Planes → Busan → 🧺 Lavandería: Cleantopia Coin Wash Haeundae Jung-dong (≈300 m del hotel, 24 h, ubicación aproximada) y Coin Wash 365 Jwadong (세실로 31, ≈1,4 km). Campo aprox: la distancia sale con "≈". Nota para preguntar en el hotel ("세탁기 있어요?").
 - v51: el conversor ₩/€ pasa a un botón 💱 junto al título de la cabecera; se abre en una ventana (se cierra con ✕, tocando fuera o con Atrás) desde cualquier pestaña. Quitado de Más.
 - v52: al abrir el conversor ya no se pone el cursor en la casilla (no sale el teclado solo).
+- v53: Planes empieza con "🏆 Mundial de LoL 2026" (WORLDS en contenido.js): cuartos 4-7 nov y semis 8-9 nov a las 07:00 KST (Allen, Texas), final 15 nov 04:00 KST (Barclays, Nueva York), con dónde estaréis a esa hora (ciudad de la noche anterior si es de madrugada; avión o tren si coincide) y dónde verlo. Orden de cuartos según escharts (las fuentes no coinciden): VERIFICAR. Semis y final "por decidir": actualizar cuando se sepan los cruces.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

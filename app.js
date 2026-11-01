@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v52';
+const VERSION = 'v53';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -922,6 +922,21 @@ function viewCorea() {
 
 // ---------- Planes: League of Legends y cosmética ----------
 let planesCiudad = null;
+// Calendario del Mundial de LoL con la ciudad donde estaréis cada día.
+function worldsCard() {
+  if (typeof WORLDS === 'undefined') return '';
+  const hoy = todayISO(), dias = arr(trip && trip.dias);
+  return `<div class="card worlds"><b>🏆 Mundial de LoL 2026 · hora de Corea</b>
+    ${WORLDS.partidos.map(m => { const pas = m.f < hoy;
+      // De madrugada seguís en la ciudad de la noche anterior.
+      const d = dias.find(x => x.fecha === (parseInt(m.h) < 10 ? sumaDia(m.f, -1) : m.f));
+      const tr = arr(trip && trip.traslados).find(t => t.fecha === m.f), sal = tr && tr.tren && tr.tren.salida;
+      const donde = !d ? '' : ck(d.ciudad) === 'espana' ? 'en el avión' : `en ${esc(d.ciudad.replace(/ \(.*\)/, ''))}`;
+      const extra = donde === 'en el avión' ? donde : sal && sal <= m.h ? `en el tren a ${esc(String(tr.a).replace(/.*\((.*)\)/, '$1'))} (sale ${esc(sal)})` : donde + (tr ? ' · día de traslado' : '');
+      return `<div class="w-fila ${pas ? 'pasado' : ''} ${m.f === hoy ? 'hoy' : ''} ${m.t1 || m.final ? 'top' : ''}"><span class="hora">${fmtCorto(m.f)} ${esc(m.h)}</span><span><b>${esc(m.fase)}</b> · ${esc(m.p)}${extra ? `<small class="muted"> · ${extra}</small>` : ''}</span></div>`; }).join('')}
+    <div class="muted">${esc(WORLDS.nota)} <span class="ver">VERIFICAR</span></div>
+    <div class="muted">Dónde verlo en grupo: T1 Base Camp (Hongdae, Gangnam y Busan, 24 h) y LoL Park en Seúl. Final: el T1 Base Camp de Busan está a unos 300 m del hotel.</div></div>`;
+}
 const icPlan = p => ({ lol: '🎮', cosme: '💄', servicio: '🧺' })[p.cat] || '⭐';
 function viewPlanes() {
   const P = typeof PLANES !== 'undefined' ? PLANES : [];
@@ -949,7 +964,7 @@ function viewPlanes() {
     return ls.length ? `<h2>${t}</h2>` + ls.map(card).join('') : ''; };
   return `<div class="chips centro">${cs.map(([c, n]) => `<button class="chip ${c === k ? 'on' : ''}" data-pc="${c}">${tema(c).ic} ${n}</button>`).join('')}</div>
     <p class="muted">Ordenados por distancia al hotel. Horarios de webs (nov 2026): compruébalos antes de ir.</p>
-    ${grupo('lol', '🎮 League of Legends')}${grupo('cosme', '💄 Cosmética')}${grupo('servicio', '🧺 Lavandería')}`;
+    ${worldsCard()}${grupo('lol', '🎮 League of Legends')}${grupo('cosme', '💄 Cosmética')}${grupo('servicio', '🧺 Lavandería')}`;
 }
 
 // ---------- Seguro ----------

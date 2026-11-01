@@ -689,3 +689,18 @@ const PLANES = [
     desc: 'Otra lavandería de autoservicio de la misma cadena, en Jwa-dong (barrio residencial al este de Haeundae): alternativa si la de Jung-dong no os encaja.',
     nota: '365 días, 24 h según su ficha: VERIFICAR. Coordenadas aproximadas.' }
 ];
+
+// Mundial de League of Legends 2026 (Worlds), en hora de Corea (KST). Datos de webs a 1 nov 2026:
+// el orden de los cuartos varía entre fuentes y las semis dependen de los cuartos: VERIFICAR en lolesports.com.
+const WORLDS = {
+  nota: 'Cuartos y semis en Allen (Texas), a las 16:00 de allí = 07:00 del día siguiente en Corea. Final en el Barclays Center de Nueva York a las 14:00 de allí = 04:00 del 15 en Corea. Al mejor de 5 (pueden durar 3-4 h).',
+  partidos: [
+    { f: '2026-11-04', h: '07:00', fase: 'Cuartos', p: 'Top Esports vs Invictus Gaming' },
+    { f: '2026-11-05', h: '07:00', fase: 'Cuartos', p: 'Gen.G vs LYON' },
+    { f: '2026-11-06', h: '07:00', fase: 'Cuartos', p: 'Dplus KIA vs Bilibili Gaming' },
+    { f: '2026-11-07', h: '07:00', fase: 'Cuartos', p: 'T1 vs Karmine Corp', t1: true },
+    { f: '2026-11-08', h: '07:00', fase: 'Semifinal 1', p: 'Por decidir' },
+    { f: '2026-11-09', h: '07:00', fase: 'Semifinal 2', p: 'Por decidir' },
+    { f: '2026-11-15', h: '04:00', fase: 'Final', p: 'Por decidir', final: true }
+  ]
+};
