@@ -293,3 +293,35 @@ const WIKI = {
 const ALIAS = { '전주한옥마을': ['hanok village'], 'N서울타워': ['n seoul tower', 'namsan'], '동궁과 월지': ['donggung', 'wolji'],
   '대릉원': ['daereungwon', 'cheonmachong'], '안동 하회마을': ['hahoe'], '하회마을': ['hahoe'], '해운대해수욕장': ['playa de haeundae'], '전동성당': ['jeondong'],
   '황리단길': ['hwangnidan'], '국립경주박물관': ['museo nacional de gyeongju'] };
+
+// Historia breve de cada ciudad (resumida de la Lonely Planet 2016 —LP— y completada con datos generales).
+const HISTORIA = {
+  seul: { lp: true, txt: [
+    'En 1392 el general Yi Seong-gye derrocó a la dinastía Goryeo y fundó la dinastía Joseon, la más larga de Corea (1392-1910). (LP)',
+    'En 1394 eligió Hanyang, la actual Seúl, como capital, siguiendo la geomancia (pungsu), y adoptó el neoconfucianismo como doctrina oficial. (LP)',
+    'En 1396 rodeó la ciudad con una gran muralla; aún queda en pie cerca del 70 %, con puertas como Namdaemun y Dongdaemun. (LP)',
+    'Tras la ocupación japonesa (1910-1945) y la destrucción de la guerra de Corea (1950-1953), la ciudad se reconstruyó y creció a toda velocidad hasta ser la gran metrópoli de hoy.'] },
+  andong: { lp: true, txt: [
+    'Andong es el corazón de la cultura confuciana de los yangban, la aristocracia de la época Joseon.',
+    'Aquí vivió y enseñó el sabio Yi Hwang (Toegye); la academia Dosan Seowon se fundó en su honor.',
+    'La aldea Hahoe es el hogar del clan Ryu desde hace siglos y conserva la danza de máscaras, de origen ritual.',
+    'En 1976 la presa de Andong inundó parte del valle: muchas casas tradicionales se trasladaron a la aldea folclórica. (LP)',
+    'Hoy es famosa por su caballa salada, su soju fuerte y sus máscaras de madera. (LP)'] },
+  gyeongju: { lp: true, txt: [
+    'En el año 57 a. C., más o menos cuando Julio César conquistaba la Galia, Gyeongju se convirtió en la capital del reino Silla, y lo fue durante casi mil años. (LP)',
+    'En el siglo VII, con el rey Munmu, Silla conquistó los reinos vecinos de Goguryeo y Baekje y Gyeongju pasó a ser la capital de casi toda la península. (LP)',
+    'Llegó a tener cerca de un millón de habitantes, pero Silla cayó por divisiones internas e invasiones. (LP)',
+    'El reino terminó en el año 935.',
+    'Por eso la llaman "el museo sin muros": tiene más tumbas, templos y ruinas que ningún otro lugar de Corea. Se restauró mucho a partir de los años 70. (LP)'] },
+  busan: { lp: true, txt: [
+    'Segunda ciudad del país y su gran puerto, encajada entre montañas y playas. (LP)',
+    'Durante la guerra de Corea (1950-1953) fue uno de los pocos sitios que no cayó: capital provisional y refugio de cientos de miles de desplazados.',
+    'De esa época vienen barrios como Gamcheon, levantado en la ladera por refugiados, y el mercado Gukje; el Cementerio de la ONU recuerda a los soldados caídos.',
+    'Hoy es una ciudad animada de mercados de pescado, playas y festival de cine internacional (BIFF). (LP)'] },
+  jeonju: { lp: true, txt: [
+    'Jeonju es la cuna de la dinastía Joseon: de aquí procedía el clan Yi del rey fundador. (LP)',
+    'El santuario Gyeonggijeon guarda el retrato del rey Taejo, fundador de la dinastía.',
+    'También es la cuna del bibimbap, el plato coreano más conocido. (LP)',
+    'Su aldea hanok, con más de 800 casas tradicionales, y el papel hanji son su seña de identidad. (LP)',
+    'La catedral de Jeondong se levantó donde fueron ejecutados católicos coreanos en 1781 y 1801. (LP)'] }
+};

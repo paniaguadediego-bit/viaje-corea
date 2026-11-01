@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v27';
+const VERSION = 'v28';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -478,23 +478,33 @@ async function descargarFotos() {
   alert(`Fotos guardadas para usar sin conexión: ${n} de ${ts.length}.`); render();
 }
 
+// Ciudades: 5 botones; al tocar uno se despliega su ficha debajo. Por defecto, la ciudad del día.
+let ciudadSel = null, historiaAbierta = false;
 function viewCiudades() {
-  const ciudades = arr(trip.ciudades);
-  if (!ciudades.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
-  return ciudades.map((c, i) => { const k = ck(c.nombre), t = tema(k); return `<div class="card ciudad" id="c-${esc(c.id)}" style="${varsTema(k)}">
+  const uniq = ciudadesUnicas();
+  if (!uniq.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
+  if (!ciudadSel || !uniq.some(c => ck(c.nombre) === ciudadSel)) {
+    const a = ck(ciudadActual()); ciudadSel = uniq.some(c => ck(c.nombre) === a) ? a : ck(uniq[0].nombre);
+  }
+  const botones = `<div class="ciudad-btns">${uniq.map(c => { const k = ck(c.nombre); return `<button class="cbtn ${k === ciudadSel ? 'on' : ''}" style="${varsTema(k)}" data-csel="${esc(k)}"><span>${tema(k).ic}</span>${esc(nombreCiudad(k))}</button>`; }).join('')}</div>`;
+  const i = uniq.findIndex(c => ck(c.nombre) === ciudadSel), c = uniq[i], k = ciudadSel, t = tema(k);
+  const fechas = arr(trip.ciudades).filter(o => ck(o.nombre) === k).map(o => `${fmtCorto(o.desde)} → ${fmtCorto(o.hasta)}`).join(' · ');
+  const h = typeof HISTORIA !== 'undefined' && HISTORIA[k];
+  return botones + `<div class="card ciudad" id="c-${esc(c.id)}" style="${varsTema(k)}">
     <div class="ciudad-hero">
       <div class="ciudad-ko">${esc(c.ko || '')}</div>
-      <div class="ciudad-ic">${t.ic}</div>
+      <div class="ciudad-top"><span class="ciudad-ic">${t.ic}</span>${h ? `<button class="hist-btn ${historiaAbierta ? 'on' : ''}" data-act="historia">📜 Historia</button>` : ''}</div>
       <div class="ciudad-num">${i + 1}</div>
-      <div class="ciudad-nom">${esc(c.nombre)}</div>
+      <div class="ciudad-nom">${esc(nombreCiudad(k))}</div>
       ${t.lema ? `<div class="ciudad-lema">${esc(t.lema)}</div>` : ''}
-      <div class="ciudad-fechas">${fmtCorto(c.desde)} → ${fmtCorto(c.hasta)}</div>
+      <div class="ciudad-fechas">${fechas}</div>
     </div>
-    ${arr(trip.ciudades).slice(0, i).some(o => ck(o.nombre) === ck(c.nombre)) ? '' : imprescindibles(ck(c.nombre))}
+    ${h && historiaAbierta ? `<div class="historia"><b>📜 Historia de ${esc(nombreCiudad(k))}</b>${h.txt.map(p => `<p>${esc(p).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}<div class="muted">Resumen de la Lonely Planet 2016 (LP) y datos generales.</div></div>` : ''}
+    ${imprescindibles(k)}
     ${interesDe(c).length ? `<ul class="hlist">${porPlan(interesDe(c).map(x => (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x), ck(c.nombre)).map(o => typeof o === 'string' ? o : o.es).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}${miniFoto(o)}<span><span class="ics">${icSitio(x)}</span> ${esc(x)}${planBadge(o, ck(c.nombre))}</span></li>`; }).join('')}</ul>` : ''}
-    ${(LP[ck(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => ck(o.nombre) === ck(c.nombre)) ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[ck(c.nombre)].length})</summary><ul class="hlist">
+    ${(LP[ck(c.nombre)] || []).length ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[ck(c.nombre)].length})</summary><ul class="hlist">
       ${porPlan(LP[ck(c.nombre)], ck(c.nombre)).map(l => `<li class="${hecho(l, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(l, ck(c.nombre))}${miniFoto(l)}<div><span class="ics">${icSitio(l.tipo + ' ' + l.es)}</span> <b>${esc(l.es)}</b>${l.top ? ' ★' : ''} ${ver(l)}${distHotel(l, ck(c.nombre))}${planBadge(l, ck(c.nombre))}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></div></li>`).join('')}</ul></details>` : ''}
-    <div class="acciones centro"><button class="sec mini" data-comer="${esc(ck(c.nombre))}">🍜 Comer aquí</button></div></div>`; }).join('');
+    <div class="acciones centro"><button class="sec mini" data-comer="${esc(k)}">🍜 Comer aquí</button></div></div>`;
 }
 
 
@@ -1046,7 +1056,10 @@ document.addEventListener('click', e => {
   if (x) {
     if (x.dataset.full) showFull(x.dataset.full);
     else if (x.dataset.copy) copiar(x.dataset.copy);
-    else if (x.dataset.ciudad) { ir('ciudades'); render(); document.getElementById('c-' + x.dataset.ciudad)?.scrollIntoView(); }
+    else if (x.dataset.ciudad) {
+      const c = arr(trip.ciudades).find(o => String(o.id) === x.dataset.ciudad); if (c) { ciudadSel = ck(c.nombre); historiaAbierta = false; }
+      ir('ciudades'); render(); window.scrollTo(0, 0);
+    }
     else history.back();
     return;
   }
@@ -1074,6 +1087,8 @@ document.addEventListener('click', e => {
     }
     render(); return;
   }
+  const cs = e.target.closest('[data-csel]');
+  if (cs) { ciudadSel = cs.dataset.csel; historiaAbierta = false; render(); return; }
   const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub],[data-sit]');
   if (!b) return;
   if (b.dataset.sub) coreaSub = b.dataset.sub;
@@ -1095,6 +1110,7 @@ document.addEventListener('click', e => {
     case 'foto': $('#fotofile').click(); return;
     case 'comer-nuevo': comerForm = true; break;
     case 'cambio-auto': actualizarCambio(true); return;
+    case 'historia': historiaAbierta = !historiaAbierta; break;
     case 'fotos': descargarFotos(); return;
     case 'comer-cancelar': comerForm = false; break;
     case 'example': loadExample(); return;

@@ -23,7 +23,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    otra app). No añadir
    nada que no esté aquí. Ruta incluye un mapa esquemático de
    Corea (SVG propio, offline) con ciudades, traslados y sitios
-   (las fichas de ciudad con sitios van en Ciudades). Extras
+   (las fichas de ciudad con sitios van en Ciudades: 5 botones, se
+   despliega la ciudad elegida; botón 📜 Historia). Extras
    aprobados: conversor ₩↔€ con cambio automático del BCE vía
    api.frankfurter (solo con conexión; se guarda para offline; se
    puede fijar a mano), destacados de la ciudad en Hoy, lista
@@ -95,7 +96,8 @@ por ciudad: descripción propia resumida de la Lonely y artículo de
 Wikipedia para la foto; la foto se pide con conexión y el service
 worker la guarda en la caché 'corea-fotos'), WIKI (hangul → artículo de Wikipedia para
 más fotos), ALIAS (nombres alternativos para reconocer sitios en el
-itinerario), FRASES_SIT (frases por
+itinerario), HISTORIA (historia breve por ciudad, LP marcado),
+FRASES_SIT (frases por
 situación; FRASES es la lista plana) y GUIA.
 
 ## Hoja de ruta (la vital primero: el viaje empieza el 3 nov)
