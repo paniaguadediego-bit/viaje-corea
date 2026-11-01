@@ -477,3 +477,9 @@ b.mayus { color: var(--red); }
 .dad-ciudad { font-weight: 700; padding: 8px 12px 4px; }
 .dad-dia { display: grid; grid-template-columns: auto auto 1fr; gap: 8px; align-items: baseline; width: 100%; text-align: left; background: none; color: var(--fg); border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 8px 12px; font: inherit; margin: 0; }
 .dad-dia.on { background: var(--tint-b, rgba(10,90,168,.08)); font-weight: 700; }
+
+.sitios-dia .sd { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--line); }
+.sitios-dia .sd:first-of-type { margin-top: 6px; }
+.sitios-dia .sd-tit { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; margin-bottom: 2px; }
+.sitios-dia .muted { line-height: 1.4; }
+.sitios-dia .mini-nota { font-size: .8rem; margin-top: 6px; }

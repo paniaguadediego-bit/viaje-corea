@@ -106,6 +106,8 @@ itinerario), HISTORIA (historia breve por ciudad, LP marcado),
 INTRO_LP (introducción de cada ciudad según la Lonely y su
 propuesta de visita), PLATOS (glosario de platos con hangul de la
 Lonely, en Comer),
+DIA_LP (lo que amplía la Lonely de cada sitio del itinerario; sale en
+Hoy, "Sitios de hoy") y DIA_INFO (frase general si la Lonely no lo trata),
 FRASES_SIT (frases por
 situación; FRASES es la lista plana) y GUIA.
 

@@ -5,6 +5,13 @@
 // Sitios conocidos por ciudad (alimentan "interés" en Ruta y tarjetas en Enseñar).
 const CATALOGO = {
   seul: [
+    { es: 'Ikseon-dong', ko: '익선동', romanizacion: 'Ikseon-dong' },
+    { es: 'Barrio Seochon', ko: '서촌', romanizacion: 'Seochon' },
+    { es: 'Mercado Namdaemun', ko: '남대문시장', romanizacion: 'Namdaemun Sijang' },
+    { es: 'Hongdae', ko: '홍대', romanizacion: 'Hongdae' },
+    { es: 'Coex', ko: '코엑스', romanizacion: 'Koekseu' },
+    { es: 'Starfield Library', ko: '별마당 도서관', romanizacion: 'Byeolmadang Doseogwan' },
+    { es: 'Parque y muralla de Naksan', ko: '낙산공원', romanizacion: 'Naksan Gongwon' },
     { es: 'Palacio Gyeongbokgung', ko: '경복궁', romanizacion: 'Gyeongbokgung' },
     { es: 'Palacio Changdeokgung', ko: '창덕궁', romanizacion: 'Changdeokgung' },
     { es: 'Barrio Bukchon Hanok', ko: '북촌한옥마을', romanizacion: 'Bukchon Hanok Maeul' },
@@ -17,10 +24,14 @@ const CATALOGO = {
     { es: 'Aeropuerto de Incheon', ko: '인천국제공항', romanizacion: 'Incheon Gukje Gonghang' }
   ],
   andong: [
+    { es: 'Templo Bongjeongsa', ko: '봉정사', romanizacion: 'Bongjeongsa' },
+    { es: 'Acantilado Buyongdae', ko: '부용대', romanizacion: 'Buyongdae' },
     { es: 'Academia Dosan Seowon', ko: '도산서원', romanizacion: 'Dosan Seowon' },
     { es: 'Estación de Andong', ko: '안동역', romanizacion: 'Andong-yeok' }
   ],
   gyeongju: [
+    { es: 'Aldea Gyochon', ko: '교촌마을', romanizacion: 'Gyochon Maeul' },
+    { es: 'Puente Woljeonggyo', ko: '월정교', romanizacion: 'Woljeonggyo' },
     { es: 'Templo Bulguksa', ko: '불국사', romanizacion: 'Bulguksa' },
     { es: 'Gruta Seokguram', ko: '석굴암', romanizacion: 'Seokguram' },
     { es: 'Túmulos Daereungwon', ko: '대릉원', romanizacion: 'Daereungwon' },
@@ -30,6 +41,10 @@ const CATALOGO = {
     { es: 'Estación de Gyeongju (KTX)', ko: '경주역', romanizacion: 'Gyeongju-yeok', verificar: true, nota: 'Antes "Singyeongju"' }
   ],
   busan: [
+    { es: 'Isla Dongbaekseom', ko: '동백섬', romanizacion: 'Dongbaekseom' },
+    { es: 'Playa de Songdo', ko: '송도해수욕장', romanizacion: 'Songdo Haesuyokjang' },
+    { es: 'Cheongsapo', ko: '청사포', romanizacion: 'Cheongsapo' },
+    { es: 'BIFF Square', ko: 'BIFF광장', romanizacion: 'BIFF Gwangjang' },
     { es: 'Playa Haeundae', ko: '해운대해수욕장', romanizacion: 'Haeundae Haesuyokjang' },
     { es: 'Playa Gwangalli', ko: '광안리해수욕장', romanizacion: 'Gwangalli Haesuyokjang' },
     { es: 'Aldea cultural Gamcheon', ko: '감천문화마을', romanizacion: 'Gamcheon Munhwa Maeul' },
@@ -320,7 +335,7 @@ const WIKI = {
   '경기전': 'Gyeonggijeon', '전주향교': 'Jeonju_Hyanggyo', '풍남문': 'Pungnammun', '오목대': 'Omokdae', '모악산도립공원': 'Moaksan'
 };
 // Alias para reconocer sitios en el texto del itinerario cuando el nombre no basta.
-const ALIAS = { '전주한옥마을': ['hanok village'], 'N서울타워': ['n seoul tower', 'namsan'], '동궁과 월지': ['donggung', 'wolji'],
+const ALIAS = { '서울역사박물관': ['museo de historia'], '전주한옥마을': ['hanok village'], 'N서울타워': ['n seoul tower', 'namsan'], '동궁과 월지': ['donggung', 'wolji'],
   '대릉원': ['daereungwon', 'cheonmachong'], '안동 하회마을': ['hahoe'], '하회마을': ['hahoe'], '해운대해수욕장': ['playa de haeundae'], '전동성당': ['jeondong'],
   '황리단길': ['hwangnidan'], '국립경주박물관': ['museo nacional de gyeongju'] };
 
@@ -443,3 +458,67 @@ const PLATOS = [
     ['nokcha', '녹차', 'Té verde'], ['boricha', '보리차', 'Té de cebada'], ['daechucha', '대추차', 'Té de dátiles rojos'],
     ['soju', '소주', 'Licor de arroz (fuerte)'], ['makgeolli', '막걸리', 'Vino de arroz turbio'], ['maekju', '맥주', 'Cerveza']]]
 ];
+
+// Lo que amplía la Lonely Planet 2016 de los sitios del itinerario (resumen propio).
+// Clave = hangul (o nombre si no hay). Sale en Hoy, en "Sitios de hoy".
+// Horarios y precios son de 2016: VERIFICAR.
+const DIA_LP = {
+  '경복궁': 'Ver el cambio de guardia en la puerta Gwanghwamun y reservar al menos medio día: dentro hay museos (el Folclórico Nacional merece una hora) y jardines. En 2016 cerraba los martes.',
+  '창덕궁': 'El palacio más bonito de los cuatro grandes. En 2016 solo se veía con visita guiada (en inglés 10:30 y 14:30). El jardín secreto Huwon va en grupos de 50: reservar o llegar pronto. Truco: la entrada combinada de los 4 palacios (Gyeongbokgung, Changdeokgung, Changgyeonggung y Deoksugung) con Huwon costaba 10.000 ₩ y valía un mes.',
+  '북촌한옥마을': 'Unas 900 hanok entre los dos palacios. Para orientarse antes de perderse por sus cuestas: el Centro de Cultura Tradicional de Bukchon (gratis).',
+  '인사동': 'La Lonely propone comer y comprar aquí después de pasear por Bukchon: artesanía y casas de té.',
+  '익선동': 'Ya en 2016 sus hanok se estaban convirtiendo en cafés-bar con encanto (por ejemplo Ikdong Dabang).',
+  '청계천': 'Se derribó una autopista elevada para recuperar el arroyo: paseos, puentes, cascadas y arte, como la gran concha rosa y azul "Spring" en la plaza Cheonggye.',
+  '명동성당': 'Catedral neogótica de ladrillo de 1898: entrar a ver bóvedas y vidrieras. Fue refugio de estudiantes y sindicalistas durante la dictadura y es símbolo de la democracia.',
+  '광화문광장': 'Gran avenida hacia Gyeongbokgung con las estatuas del almirante Yi Sun-sin y del rey Sejong. Bajo la de Sejong hay una exposición gratuita sobre los dos.',
+  '조계사': 'Su sala de madera Daeungjeon (1938) es la mayor sala budista de Seúl, con tres budas gigantes: Amitabha, el Buda histórico y el Buda de la Medicina. Abierto 24 h.',
+  'N서울타워': '236 m sobre Namsan, la montaña guardiana. Al atardecer la ciudad se convierte en "una galaxia de luces". Candados de enamorados en las barandillas. Subir andando no es difícil (también hay teleférico).',
+  '봉은사': 'Fundado en el año 794, en una ladera con árboles en pleno Gangnam, frente a los rascacielos. Se entra por la Puerta de la Verdad, guardada por los cuatro reyes celestiales.',
+  '남대문시장': 'Junto al mercado está Sungnyemun (Namdaemun), la Gran Puerta del Sur, una de las cuatro puertas originales del siglo XIV; se cruza desde la puerta 1 del mercado. Reconstruida tras un incendio en 2008.',
+  '덕수궁': 'El único palacio que se visita de noche, iluminado (en 2016 hasta las 21 h, cerrado los lunes). Mezcla edificios coreanos y neoclásicos. Cambio de guardia a las 11, 14 y 15:30.',
+  '서울역사박물관': 'Gratis. Cuenta cómo cambió Seúl desde los Joseon; dentro hay una enorme maqueta de la ciudad que se recorre andando y fuera un tranvía de los años 30.',
+  '남산골한옥마을': 'Cinco casas nobles (yangban) de la época Joseon trasladadas al pie de Namsan. Gratis, con visitas guiadas de una hora. En Namsan Gugakdang hay música tradicional casi cada tarde (cerrado los martes).',
+  '이화벽화마을': 'Antigua "aldea de la luna", donde vivían refugiados tras la guerra, hoy llena de murales y esculturas en sus escaleras. Ir pronto. En el Museo del Candado dan un mapa en inglés.',
+  '서대문형무소역사관': 'Cárcel de 1908, símbolo de la represión japonesa (1910-1945), usada por las dictaduras hasta 1987. Se ven las celdas originales; aquí murió la estudiante Ryu Gwan-sun. En 2016 cerraba los lunes y en noviembre a las 17 h.',
+  '광장시장': 'El mayor callejón de comida de Seúl, unos 200 puestos. Especialidad: bindaetteok (tortita de judía mungo), mejor con makgeolli.',
+  '안동하회마을': 'Patrimonio Unesco y lo mejor de la región: unos 230 vecinos mantienen la vida tradicional. Llegar temprano. En la entrada prestan audioguía gratis (piden documento). Respetar la intimidad de las casas. La danza de máscaras Byeolsingut Talnori, en 2016, en noviembre era solo los domingos a las 15 h y gratis (piden donativo): VERIFICAR la hora, el plan dice 14:00.',
+  'p:museodemascarasdehahoe': 'A 2 km de la aldea hacia Andong: máscaras coreanas y de medio mundo (Nigeria, Italia, México). Según la leyenda, un artesano talló la cara de un noble engreído y así nació esta tradición satírica.',
+  '대릉원': 'Túmulos reales de Silla que parecen colinas de hierba. Solo se entra en Cheonmachong (Tumba del Caballo Celeste, siglo V): 13 m de alto, con réplicas de la corona de oro y las joyas. En días fríos cierra al anochecer.',
+  '첨성대': 'El observatorio más antiguo de Extremo Oriente (632-646). Las 12 piedras de la base son los meses, sus 30 hiladas los días del mes y sus 366 piedras, más o menos, los días del año. Gratis.',
+  '동궁과월지': 'Jardín de recreo que celebraba la unificación de la península por Silla. Los edificios ardieron en el 935 y muchas piezas cayeron al estanque; se hallaron al vaciarlo en 1975 y están en el Museo Nacional.',
+  '국립경주박물관': 'Para la Lonely, quizá el mejor museo de historia de Corea: joyas, armas y una corona de oro del siglo V. Fuera, la campana Emille, de las mayores y más sonoras de Asia (dicen que se oye a 3 km). Gratis.',
+  '분황사': 'La pagoda fechada más antigua de Corea (siglo VII, reina Seondeok), de ladrillo, con guardianes y leones de piedra. Desde el museo, unos 20-25 min a pie.',
+  '불국사': 'Cumbre de la arquitectura de Silla, sobre terrazas de piedra entre pinos. Fijarse en los dos puentes, uno de 33 escalones (las 33 etapas hacia la iluminación), y en las pagodas Dabotap y Seokgatap. En 2016, de noviembre a febrero cerraba a las 17 h.',
+  '석굴암': 'Gruta del siglo VIII a 740 m: un Buda rodeado de guardianes mira al Mar del Este (se ve si está despejado). Mágica con niebla. En 2016 el bus 12 salía cada hora del aparcamiento de Bulguksa (20 min); del aparcamiento se sigue a pie.',
+  '해운대해수욕장': 'La playa más famosa del país, de 2 km. La Lonely avisa de que lo de "resort de categoría mundial" es exagerado; en noviembre estará tranquila.',
+  '광안리해수욕장': 'Para la Lonely, la mejor playa de la ciudad. De día los edificios le restan; brilla de noche con las luces del puente Gwangan (Diamond Bridge).',
+  '감천문화마을': 'Barrio de ladera transformado con arte en 2009: casas como piezas de Lego, cafés y galerías. 1-2 h. Comprar el mapa (2.000 ₩ en 2016) y hacer la búsqueda de sellos. Calzado cómodo. Desde el metro, minibús 2 o 2-2, o taxi.',
+  '자갈치시장': 'El mayor mercado de pescado del país. Se compra el pescado en la planta 1 y te lo preparan en la 2 (cobran un pequeño servicio). En 2016 cerraba el 1.º y el 3.er martes de cada mes.',
+  '국제시장': 'Cientos de puestos con de todo, desde cuero hasta tambores coreanos.',
+  '청사포': 'La Lonely recomienda Noran Mahura, junto al faro: marisco a la brasa (jogae gui) para ver el atardecer.',
+  '전주한옥마을': 'Más de 800 hanok, hoy casas de huéspedes, galerías, restaurantes y casas de té. Turístico, pero encantador temprano o al anochecer. Hay talleres de papel hanji o licor con reserva (mínimo 2 personas).',
+  '경기전': 'De 1410, reconstruido en 1614: guarda el retrato del fundador de la dinastía Joseon, Yi Seong-gye, cuya familia era de Jeonju, y el Museo de Retratos Reales. En 2016 había visitas en inglés a las 11 y 14 h.',
+  '전주향교': 'Escuela confuciana de 1603, muy bien conservada: aquí se preparaban los hijos de los nobles para los exámenes del Estado. Gratis; de octubre a febrero cerraba a las 17 h.',
+  '풍남문': 'Lo único que queda de la muralla de Jeonju (1398, muy restaurada); hoy está en medio de una rotonda.',
+  '오목대': 'Pabellón en la colina sobre la aldea, donde Yi Seong-gye celebró una victoria contra piratas japoneses en 1380. Cruzando el puente, Imokdae.',
+  '자만마을': 'Murales de colores en un antiguo barrio de chabolas sobre la aldea hanok. La Lonely recomienda el café-terraza Kkojittappong.',
+  '남부시장': 'Dentro del laberíntico mercado está Hyundai-ok, "el restaurante más querido de Jeonju": kongnamul gukbap (sopa de brotes de soja y arroz), con o sin calamar; pedirla suave si no os gusta el picante. En 2016 abría de 6 a 14 h.'
+};
+
+// Sitios del itinerario que la Lonely 2016 no describe: frase general propia (sin marca LP).
+const DIA_INFO = {
+  '명동': 'Barrio de compras y cosmética; por la tarde se llena de puestos de comida callejera.',
+  '홍대': 'Barrio universitario: arte callejero, tiendas, música en directo y vida nocturna.',
+  '서촌': 'Barrio tranquilo al oeste de Gyeongbokgung: hanok, callejones, cafés y restaurantes pequeños.',
+  '코엑스': 'Gran centro de convenciones y centro comercial subterráneo en Gangnam, junto a Bongeunsa.',
+  '별마당도서관': 'La biblioteca abierta del Coex, con estanterías gigantes de varios pisos. Gratis y muy fotogénica.',
+  '낙산공원': 'Parque sobre Ihwa con un tramo de la antigua muralla de Seúl; buenas vistas al atardecer.',
+  '봉정사': 'Templo de montaña cerca de Andong. Su sala Geungnakjeon es de los edificios de madera más antiguos de Corea.',
+  '부용대': 'Acantilado al otro lado del río frente a Hahoe: desde arriba se ve el meandro que rodea la aldea. Se llega en barca (comprobar si funciona).',
+  '교촌마을': 'Aldea de hanok junto al río, donde vivió la familia Choi, famosa por su riqueza y su generosidad.',
+  '월정교': 'Puente cubierto de madera reconstruido sobre el río; muy bonito iluminado de noche.',
+  '황리단길': 'Calle de moda junto a Daereungwon: cafés, tiendas y restaurantes en casas tradicionales.',
+  '동백섬': 'Pequeña península al final de Haeundae con un paseo costero entre camelias y pinos, y el edificio Nurimaru APEC.',
+  '송도해수욕장': 'La primera playa pública de Corea (1913), con pasarela sobre el mar y teleférico sobre la bahía.',
+  'BIFF광장': 'Plaza del Festival de Cine de Busan, en Nampo-dong, con huellas de actores y puestos de ssiat hotteok (tortita rellena de semillas).'
+};

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v38';
+const VERSION = 'v39';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -138,7 +138,7 @@ const IC_COMER = { restaurante: '🍲', 'café': '☕', mercado: '🧺', plato: 
 const tipoClase = t => 'tipo-' + norm(t || 'otro');
 
 // ---------- ¿Está en nuestro itinerario? (y qué día) ----------
-const STOP = new Set('palacio templo mercado aldea barrio calle parque museo nacional gruta observatorio tumulos playa estanque santuario catedral cafe restaurante hanok village puerta mirador academia escuela torre puente plaza estacion aeropuerto cultural tradicional folclorica comida callejera puestos desayuno platos probar seul seoul andong gyeongju busan jeonju incheon corea hotel seowon square market para con los las del una tumbas reales hall center centro comercial historia moderna arte murales teleferico tour city turistico bus cafes wonjo halmae gukbap milmyeon jjimdak bibimbap samgyeopsal bakery calle viejo rocas'.split(' '));
+const STOP = new Set('palacio templo mercado aldea barrio calle parque museo nacional gruta observatorio tumulos playa estanque santuario catedral cafe restaurante hanok village puerta mirador academia escuela torre puente plaza estacion aeropuerto cultural tradicional folclorica comida callejera puestos desayuno platos probar seul seoul andong gyeongju busan jeonju incheon corea hotel seowon square market para con los las del una tumbas reales hall center centro comercial historia moderna arte murales teleferico tour city turistico bus cafes wonjo halmae gukbap milmyeon jjimdak bibimbap samgyeopsal bakery calle viejo rocas yongsan'.split(' '));
 let _plan = null, _planTrip = null;
 function planIdx() {
   if (_plan && _planTrip === trip) return _plan;
@@ -344,6 +344,7 @@ function viewHoy() {
       `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${resaltar(i.texto)}</li>`).join('')}</ul>
     ${CIUDADES_COMER.some(c => c[0] === ck(d.ciudad)) ? `<button class="sec mini comer-hoy" data-comer="${esc(ck(d.ciudad))}">🍜 Comer en ${esc(d.ciudad)}</button>` : ''}
   </div>
+  ${sitiosDia(d)}
   ${destacados(d.ciudad)}`;
 
   const tr = arr(trip.traslados).filter(t => t.fecha === d.fecha);
@@ -409,6 +410,26 @@ function destacados(ciudad) {
     ${ver_.length ? `<div>👀 ${ver_.map(l => hecho(l, k) ? `<s class="tachado">${esc(l.es)}</s> ✅` : esc(l.es)).join(' · ')}</div>` : ''}
     ${comer_.length ? `<div>🍜 ${comer_.map(l => hecho(l, k) ? `<s class="tachado">${esc(l.nombre)}</s> ✅` : esc(l.nombre)).join(' · ')}</div>` : ''}
     <div class="acciones"><button class="sec mini" data-tab="ciudades">Ver la ciudad</button></div></div>`;
+}
+
+// Sitios cuyo nombre comparte palabra con un barrio: exigen otra palabra en el plan.
+const EXIGE = { '명동성당': 'catedral' };
+// Sitios que aparecen en el plan del día, con lo que cuenta la Lonely (DIA_LP) o la descripción corta.
+function sitiosDia(d) {
+  const k = ck(d.ciudad), p = planIdx().find(x => x.fecha === d.fecha); if (!p) return '';
+  const vistos = new Set(), ls = [];
+  [...((typeof IMPRES !== 'undefined' && IMPRES[k]) || []), ...(LP[k] || []), ...(CATALOGO[k] || [])].forEach(l => {
+    const h = hKey(l); if (vistos.has(h) || /^(Estación|Aeropuerto)/.test(l.es)) return;
+    const tk = tokensDe(l); if (!tk.some(t => p.txt.includes(t)) || (EXIGE[l.ko] && !p.txt.includes(EXIGE[l.ko]))) return;
+    vistos.add(h); ls.push(l);
+  });
+  if (!ls.length) return '';
+  const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}; const G = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
+  return `<div class="card sitios-dia"><b>📖 Sitios de hoy</b>${ls.map(l => {
+    const h = hKey(l), mas = D[h.slice(2)] || D[h], txt = mas || l.desc || l.nota || G[h.slice(2)] || '';
+    return `<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b> <span class="ko-s">${esc(l.ko || '')}</span></div>
+      ${txt ? `<div class="muted">${esc(txt).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}${mas || l.lp ? ' <span class="badge otro">LP</span>' : ''}</div>` : ''}</div></div>`;
+  }).join('')}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado.</div></div>`;
 }
 
 // Resumen del día siguiente al que se está viendo.
