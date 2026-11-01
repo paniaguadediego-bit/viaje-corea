@@ -334,3 +334,13 @@ details > summary.card { text-align: center; }
   background: color-mix(in srgb, var(--tc, var(--blue)) 16%, var(--card)); font-size: 1rem; vertical-align: middle; }
 
 .filtros select { font-weight: 600; height: 44px; }
+
+/* itinerario y más fotos */
+.plan { display: inline-block; font-size: .72rem; font-weight: 700; color: #7a4b00; background: linear-gradient(135deg, #fff3cf, #ffe39a);
+  border: 1px solid #f2c34e; padding: 1px 7px; border-radius: 999px; margin: 2px 0; white-space: nowrap; }
+.foto.mini { width: 44px; height: 44px; border-radius: 8px; flex: none; font-size: .9rem; }
+.foto.banda { width: 100%; height: 120px; border-radius: 10px; margin: 6px 0; font-size: 1.6rem; }
+.tira { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 6px 0; }
+.tira figure { margin: 0; }
+.tira .foto { width: 100%; height: 76px; }
+.tira figcaption { font-size: .7rem; text-align: center; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

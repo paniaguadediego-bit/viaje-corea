@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v26
+Caché del service worker: corea-v27
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -62,6 +62,8 @@ Caché del service worker: corea-v26
 
 - Cambio pedido (v26): en Comer, ciudad y tipo pasan a dos desplegables en una fila (con icono; la ciudad del día marcada y con "(hoy)"). Antes del viaje se marca la primera ciudad (Seúl).
 
+- Cambio pedido (v27): marca "📅 Día N · fecha" en todo lo que aparece en nuestro itinerario (Ciudades, Imprescindibles, Lonely, Enseñar, Checklist y Comer), y orden según el día del plan (lo planeado primero). Detección: palabras completas del nombre en los textos de los días de la MISMA ciudad (sin palabras genéricas), alias para algunos sitios, y para Comer del itinerario la fecha de su nota. Más fotos: miniaturas en las listas de Ciudades (Lonely y sitios), banda en tarjetas de Comer conocidas (mercados…) y tira de 3 fotos en los Destacados de Hoy; el botón de Más descarga todas (unas 75).
+
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
 - [Supuesto] Tema (Auto/Claro/Oscuro) e Importar/Exportar/Borrar viven en la pestaña Más.
@@ -93,6 +95,7 @@ Caché del service worker: corea-v26
 - [Supuesto] El mismo sitio se reconoce por su hangul (o por el nombre si no tiene): p. ej. "Mercado Gwangjang" en Comer y en Ciudades comparten marca. Las marcas antiguas del checklist se respetan.
 - [Supuesto] Si un artículo de Wikipedia no tiene foto (o no existe), se queda el marcador 📷 sin romper nada.
 - [Supuesto] "Justificado en el medio" = bloques y títulos centrados; las listas y textos largos siguen alineados a la izquierda para leerse bien.
+- [Supuesto] La detección del plan es automática: puede fallar con nombres muy distintos (p. ej. "Mercado de electrónica de Yongsan" coincide con el KTX a Yongsan). Si algo no cuadra, se corrige con un alias en contenido.js.
 
 ## Verificar por el usuario
 - Prueba real en tu móvil: abrir con wifi, cerrar, modo avión, abrir y recorrer las 8 pestañas.

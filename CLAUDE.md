@@ -93,7 +93,9 @@ contenido.js guarda contenido fijo y público: CATALOGO (sitios
 conocidos por ciudad con hangul seguro), IMPRES (imprescindibles
 por ciudad: descripción propia resumida de la Lonely y artículo de
 Wikipedia para la foto; la foto se pide con conexión y el service
-worker la guarda en la caché 'corea-fotos'), FRASES_SIT (frases por
+worker la guarda en la caché 'corea-fotos'), WIKI (hangul → artículo de Wikipedia para
+más fotos), ALIAS (nombres alternativos para reconocer sitios en el
+itinerario), FRASES_SIT (frases por
 situación; FRASES es la lista plana) y GUIA.
 
 ## Hoja de ruta (la vital primero: el viaje empieza el 3 nov)

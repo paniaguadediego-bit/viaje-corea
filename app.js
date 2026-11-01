@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v26';
+const VERSION = 'v27';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -124,6 +124,40 @@ function icSitio(t) {
 }
 const IC_COMER = { restaurante: '🍲', 'café': '☕', mercado: '🧺', plato: '🥢', bar: '🍶' };
 const tipoClase = t => 'tipo-' + norm(t || 'otro');
+
+// ---------- ¿Está en nuestro itinerario? (y qué día) ----------
+const STOP = new Set('palacio templo mercado aldea barrio calle parque museo nacional gruta observatorio tumulos playa estanque santuario catedral cafe restaurante hanok village puerta mirador academia escuela torre puente plaza estacion aeropuerto cultural tradicional folclorica comida callejera puestos desayuno platos probar seul seoul andong gyeongju busan jeonju incheon corea hotel seowon square market para con los las del una tumbas reales hall center centro comercial historia moderna arte murales teleferico tour city turistico bus cafes wonjo halmae gukbap milmyeon jjimdak bibimbap samgyeopsal bakery calle viejo rocas'.split(' '));
+let _plan = null, _planTrip = null;
+function planIdx() {
+  if (_plan && _planTrip === trip) return _plan;
+  _planTrip = trip;
+  _plan = arr(trip && trip.dias).slice().filter(d => d && d.fecha).sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)))
+    .map((d, i) => ({ n: i + 1, fecha: d.fecha, k: ck(d.ciudad), txt: ' ' + [d.titulo, ...arr(d.items).map(x => x && x.texto)].join(' ').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/-/g, '').replace(/[^a-z0-9]+/g, ' ') + ' ' }));
+  return _plan;
+}
+function tokensDe(l) {
+  if (!l || typeof l !== 'object') return typeof l === 'string' ? tokensDe({ es: l }) : [];
+  const al = (typeof ALIAS !== 'undefined' && l.ko && ALIAS[l.ko]) || [];
+  const words = [l.es, l.nombre, l.romanizacion].filter(Boolean).join(' ').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/\(.*?\)/g, ' ').replace(/-/g, '').split(/[^a-z0-9]+/).filter(w => w.length >= 4 && !STOP.has(w));
+  return [...al.map(a => ' ' + a + ' '), ...words.map(w => ' ' + w + ' ')];
+}
+// Solo cuenta si aparece en un día de la misma ciudad (k), con palabras completas.
+function enPlan(l, k) {
+  // Comer del itinerario: la nota trae la fecha ("Almuerzo del 08/11").
+  const m = l && l.fuente === 'itinerario' && String(l.nota || '').match(/(\d{1,2})\/(\d{1,2})/);
+  if (m) { const f = `2026-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`, d = planIdx().find(x => x.fecha === f); if (d) return d; }
+  const tk = tokensDe(l); if (!tk.length) return null;
+  k = k || (l && l.ciudad) || '';
+  return planIdx().find(d => (!k || d.k === k) && tk.some(t => d.txt.includes(t))) || null;
+}
+const planBadge = (l, k) => { const p = enPlan(l, k); return p ? ` <span class="plan">📅 Día ${p.n} · ${fmtCorto(p.fecha)}</span>` : ''; };
+// Ordena: primero lo que está en el plan (por día), luego el resto en su orden.
+const porPlan = (ls, k) => ls.map((l, i) => [l, i, (enPlan(l, k) || {}).n || 999]).sort((a, b) => a[2] - b[2] || a[1] - b[1]).map(x => x[0]);
+
+// Foto de Wikipedia para un sitio (si se conoce el artículo).
+const wikiDe = l => l && typeof l === 'object' ? (l.wiki || (l.ko && ((typeof WIKI !== 'undefined' && WIKI[l.ko]) || (Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat().find(m => m.ko === l.ko) || {}).wiki)) || '') : '';
+const miniFoto = l => { const w = wikiDe(l); return w ? `<div class="foto mini" data-wiki="${esc(w)}"><span>📷</span></div>` : ''; };
 
 // ---------- tema ----------
 function applyTheme() {
@@ -299,7 +333,7 @@ function viewHoy() {
 
 // "Ahora": lo próximo que toca hoy (o la cuenta atrás antes del viaje).
 const aMin = h => { const m = String(h || '').match(/(\d{1,2})[:.](\d{2})/); return m ? +m[1] * 60 + +m[2] : null; };
-const enTiempo = min => min < 60 ? `en ${min} min` : `en ${Math.floor(min / 60)} h${min % 60 ? ' ' + (min % 60) + ' min' : ''}`;
+const enTiempo = min => min <= 0 ? 'ahora mismo' : min < 60 ? `en ${min} min` : `en ${Math.floor(min / 60)} h${min % 60 ? ' ' + (min % 60) + ' min' : ''}`;
 function eventosDe(fecha) {
   const d = arr(trip.dias).find(x => x.fecha === fecha), ev = [];
   arr(d && d.items).forEach(i => { const m = aMin(i.hora); if (m != null) ev.push({ m, hora: i.hora, txt: i.texto }); });
@@ -340,7 +374,9 @@ function destacados(ciudad) {
   const comer_ = [...enCiudad.filter(l => estadoDe(String(l.id)).estado === 'quiero'), ...enCiudad.filter(l => l.fuente === 'itinerario'), ...enCiudad.filter(l => /★/.test(l.nota || ''))]
     .filter((l, i, a) => l.nombre && a.findIndex(x => x.nombre === l.nombre) === i).slice(0, 4);
   if (!ver_.length && !comer_.length) return '';
+  const tira = ver_.filter(l => wikiDe(l)).slice(0, 3);
   return `<div class="card destacados"><b>⭐ Destacados en ${esc(ciudad)}</b>
+    ${tira.length ? `<div class="tira">${tira.map(l => `<figure><div class="foto" data-wiki="${esc(wikiDe(l))}"><span>📷</span></div><figcaption>${esc(l.es)}</figcaption></figure>`).join('')}</div>` : ''}
     ${ver_.length ? `<div>👀 ${ver_.map(l => hecho(l, k) ? `<s class="tachado">${esc(l.es)}</s> ✅` : esc(l.es)).join(' · ')}</div>` : ''}
     ${comer_.length ? `<div>🍜 ${comer_.map(l => hecho(l, k) ? `<s class="tachado">${esc(l.nombre)}</s> ✅` : esc(l.nombre)).join(' · ')}</div>` : ''}
     <div class="acciones"><button class="sec mini" data-tab="ciudades">Ver la ciudad</button></div></div>`;
@@ -402,10 +438,10 @@ function viewRuta() {
 // Imprescindibles de una ciudad: foto (Wikipedia, se guarda para offline), descripción y ✓ hecho.
 function imprescindibles(k) {
   const ls = (typeof IMPRES !== 'undefined' && IMPRES[k]) || []; if (!ls.length) return '';
-  return `<div class="impres">${ls.map(l => `<div class="imp ${hecho(l, k) ? 'hecho-card' : ''}">
+  return `<div class="impres">${porPlan(ls, k).map(l => `<div class="imp ${hecho(l, k) ? 'hecho-card' : ''}">
     <div class="foto" data-wiki="${esc(l.wiki)}"><span>📷</span></div>
     <div class="imp-txt"><div class="imp-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b></div>
-      <div class="ko-s">${esc(l.ko)}${distHotel(l, k)}</div>
+      <div class="ko-s">${esc(l.ko)}${distHotel(l, k)}</div>${planBadge(l, k)}
       <div class="muted">${esc(l.desc)}${l.lp ? ' <span class="badge otro">LP</span>' : ''}</div>
       <div class="credito" data-cred="${esc(l.wiki)}"></div></div></div>`).join('')}</div>`;
 }
@@ -428,13 +464,13 @@ function pintarFotos() {
     img.onload = () => { el.innerHTML = ''; el.appendChild(img); el.classList.add('ok'); };
     img.onerror = () => el.classList.add('sinfoto');
     img.src = f.src;
-    const c = document.querySelector(`.credito[data-cred="${CSS.escape(el.dataset.wiki)}"]`);
+    const c = el.classList.contains('mini') || el.classList.contains('banda') ? null : document.querySelector(`.credito[data-cred="${CSS.escape(el.dataset.wiki)}"]`);
     if (c && f.url) c.innerHTML = `Foto: <a href="${esc(f.url)}" target="_blank" rel="noopener">Wikipedia</a>`;
   });
 }
 async function descargarFotos() {
   if (!navigator.onLine) return alert('Conéctate a internet para descargar las fotos.');
-  const ts = Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat().map(l => l.wiki); let n = 0;
+  const ts = [...new Set([...Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat().map(l => l.wiki), ...Object.values(typeof WIKI !== 'undefined' ? WIKI : {})])]; let n = 0;
   for (const t of ts) {
     delete FOTOS[t]; const f = await fotoWiki(t);
     if (f && f.src) { try { await fetch(f.src, { mode: 'no-cors' }); n++; } catch {} }
@@ -455,9 +491,9 @@ function viewCiudades() {
       <div class="ciudad-fechas">${fmtCorto(c.desde)} → ${fmtCorto(c.hasta)}</div>
     </div>
     ${arr(trip.ciudades).slice(0, i).some(o => ck(o.nombre) === ck(c.nombre)) ? '' : imprescindibles(ck(c.nombre))}
-    ${interesDe(c).length ? `<ul class="hlist">${interesDe(c).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}<span><span class="ics">${icSitio(x)}</span> ${esc(x)}</span></li>`; }).join('')}</ul>` : ''}
+    ${interesDe(c).length ? `<ul class="hlist">${porPlan(interesDe(c).map(x => (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x), ck(c.nombre)).map(o => typeof o === 'string' ? o : o.es).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}${miniFoto(o)}<span><span class="ics">${icSitio(x)}</span> ${esc(x)}${planBadge(o, ck(c.nombre))}</span></li>`; }).join('')}</ul>` : ''}
     ${(LP[ck(c.nombre)] || []).length && !arr(trip.ciudades).slice(0, i).some(o => ck(o.nombre) === ck(c.nombre)) ? `<details><summary class="muted">Lonely Planet 2016 recomienda (${LP[ck(c.nombre)].length})</summary><ul class="hlist">
-      ${LP[ck(c.nombre)].map(l => `<li class="${hecho(l, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(l, ck(c.nombre))}<div><span class="ics">${icSitio(l.tipo + ' ' + l.es)}</span> <b>${esc(l.es)}</b>${l.top ? ' ★' : ''} ${ver(l)}${distHotel(l, ck(c.nombre))}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></div></li>`).join('')}</ul></details>` : ''}
+      ${porPlan(LP[ck(c.nombre)], ck(c.nombre)).map(l => `<li class="${hecho(l, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(l, ck(c.nombre))}${miniFoto(l)}<div><span class="ics">${icSitio(l.tipo + ' ' + l.es)}</span> <b>${esc(l.es)}</b>${l.top ? ' ★' : ''} ${ver(l)}${distHotel(l, ck(c.nombre))}${planBadge(l, ck(c.nombre))}<br><span class="muted">${esc(l.tipo)} · ${esc(l.nota)}</span></div></li>`).join('')}</ul></details>` : ''}
     <div class="acciones centro"><button class="sec mini" data-comer="${esc(ck(c.nombre))}">🍜 Comer aquí</button></div></div>`; }).join('');
 }
 
@@ -533,7 +569,7 @@ function fraseTaxi(ko) {
 
 function lugarFila(l, key, k) {
   return `<div class="card lugar ${hecho(l, k) ? 'hecho-card' : ''}">
-    <div><div class="big">${esc(l.es)}${lpTag(l)}${tick(l, k)} ${ver(l)}</div>${k ? distHotel(l, k) : ''}
+    <div><div class="big">${esc(l.es)}${lpTag(l)}${tick(l, k)} ${ver(l)}</div>${planBadge(l, k)}${k ? distHotel(l, k) : ''}
     ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}</div>
     <div class="acciones col">${naver(l)}<button class="mini" data-full="${key}">Enseñar</button></div></div>`;
 }
@@ -565,7 +601,7 @@ function viewEnsenar() {
     (mios.length ? '<h2>Mis lugares</h2>' + misLugares : '') +
     '<h2>Sitios conocidos</h2>' +
     ciudadesCatalogo().map(k => `<details><summary class="card big">${esc(nombreCiudad(k))}</summary>
-      ${sitiosCiudad(k).map((l, i) => lugarFila(l, `c:${k}:${i}`, k)).join('')}</details>`).join('');
+      ${sitiosCiudad(k).map((l, i) => [l, i]).sort((a, b) => ((enPlan(a[0], k) || {}).n || 999) - ((enPlan(b[0], k) || {}).n || 999) || a[1] - b[1]).map(([l, i]) => lugarFila(l, `c:${k}:${i}`, k)).join('')}</details>`).join('');
 }
 
 // Reduce la letra hasta que cada línea quepa en la pantalla (los nombres coreanos largos no se parten).
@@ -759,9 +795,10 @@ function viewChecklist() {
     const comer = lugaresComer().filter(l => l.ciudad === k && (['quiero', 'visitado'].includes(estadoDe(String(l.id)).estado) || l.fuente === 'itinerario'))
       .filter(l => !sitios.some(x => hKey(x) === hKey(l)));
     const hechos = [...sitios, ...comer].filter(l => hecho(l, k)).length;
+    const sitiosO = porPlan(sitios, k), comerO = porPlan(comer, k);
     return `<details data-key="ck:${esc(k)}" ${abierto('ck:' + k, k === act) ? 'open' : ''}><summary class="card big">${esc(c.nombre)} <span class="muted">${hechos}/${sitios.length + comer.length}</span></summary>
-      ${sitios.map(l => fila(l, k, typeof l === 'string' ? esc(l) : esc(l.es) + (l.lp ? ' <span class="muted">(LP)</span>' : ''))).join('')}
-      ${comer.length ? '<div class="muted sub">🍜 Para comer</div>' + comer.map(l => fila(l, k, esc(l.nombre) + (estadoDe(String(l.id)).estado === 'quiero' ? ' <span class="muted">⭐</span>' : ''))).join('') : ''}
+      ${sitiosO.map(l => fila(l, k, (typeof l === 'string' ? esc(l) : esc(l.es) + (l.lp ? ' <span class="muted">(LP)</span>' : '')) + planBadge(l, k))).join('')}
+      ${comer.length ? '<div class="muted sub">🍜 Para comer</div>' + comerO.map(l => fila(l, k, esc(l.nombre) + (estadoDe(String(l.id)).estado === 'quiero' ? ' <span class="muted">⭐</span>' : '') + planBadge(l, k))).join('') : ''}
       <div class="muted sub">Mis cosas</div>${checks('c:' + k, [])}</details>`;
   }).join('');
 }
@@ -812,7 +849,7 @@ function ordenarComer(ls) {
   const r = ls.map((l, i) => [l, i]);
   const f = comerOrden === 'dist' ? ([a], [b]) => distKm(a) - distKm(b)
     : comerOrden === 'val' ? ([a], [b]) => (Number(estadoDe(String(b.id)).val) || 0) - (Number(estadoDe(String(a.id)).val) || 0) || puntos(b) - puntos(a)
-    : ([a], [b]) => puntos(b) - puntos(a);
+    : ([a], [b]) => ((enPlan(a) || {}).n || 999) - ((enPlan(b) || {}).n || 999) || puntos(b) - puntos(a);
   return r.sort((x, y) => f(x, y) || x[1] - y[1]).map(x => x[0]);
 }
 
@@ -822,7 +859,8 @@ function cardComer(l) {
   const cinta = { quiero: '⭐ QUIERO IR', visitado: '✅ VISITADO', descartado: 'DESCARTADO', cerrado: '🚫 CERRADO' }[e.estado];
   return `<div class="card comer ${tipoClase(l.tipo)} est-${esc(e.estado || '')}">
     ${cinta ? `<div class="cinta">${cinta}</div>` : ''}
-    <div class="big"><span class="ic-tipo">${IC_COMER[l.tipo] || '🍽️'}</span> ${esc(l.nombre || 'Sin nombre')}</div>
+    <div class="big"><span class="ic-tipo">${IC_COMER[l.tipo] || '🍽️'}</span> ${esc(l.nombre || 'Sin nombre')}</div>${planBadge(l)}
+    ${wikiDe(l) ? `<div class="foto banda" data-wiki="${esc(wikiDe(l))}"><span>📷</span></div>` : ''}
     ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : ''}
     <div class="muted">${[l.tipo, l.plato].filter(Boolean).map(esc).join(' · ')}${ciudad && comerCiudad === 'todas' ? ' · ' + esc(ciudad) : ''}${distHotel(l, l.ciudad)}</div>
     ${l.precio ? `<div>💰 ${esc(l.precio)}${precioEur(l.precio)}</div>` : ''}${l.horario ? `<div>🕒 ${esc(l.horario)}</div>` : ''}
@@ -978,7 +1016,7 @@ function render() {
     default: html = viewMas();
   }
   $('#view').innerHTML = html;
-  if (tab === 'ciudades') pintarFotos();
+  if (['ciudades', 'hoy', 'comer'].includes(tab)) pintarFotos();
 }
 
 document.addEventListener('click', e => {
