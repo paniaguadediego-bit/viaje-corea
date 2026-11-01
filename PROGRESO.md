@@ -68,7 +68,7 @@ Caché del service worker: corea-v30
 
 - Cambio pedido (v29): Checklist pasa a la barra inferior (8 pestañas; probado que caben sin cortarse desde 360 px de ancho). En Más quedan Corea, Seguro y Verificar.
 
-- Cambio pedido (v30): en Ciudades se quita "Comer aquí". La sección de la Lonely pasa a bloque propio: cabecera azul con logo "LP", nº de sitios y de ★; cada recomendación es una tarjeta con foto (o icono), tipo, "★ Elección del autor" destacada en dorado, descripción, hangul, distancia, día del plan y ✓ hecho. Se abre desplegada y se puede plegar.
+- Cambio pedido (v30): en Ciudades se quita "Comer aquí". La sección de la Lonely pasa a bloque propio: cabecera azul con logo "LP", nº de sitios y de ★; cada recomendación es una tarjeta con foto (o icono), tipo, "★ Elección del autor" destacada en dorado, descripción, hangul, distancia, día del plan y ✓ hecho. Se abre desplegada y se puede plegar; muestra 8 (primero lo del plan y las ★) y un botón "Ver los N restantes".
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
