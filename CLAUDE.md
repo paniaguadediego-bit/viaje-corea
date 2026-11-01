@@ -142,7 +142,8 @@ SX Comer (independiente): data/comer.json precacheado; pestaña
    Comer con filtro por ciudad (por defecto la del día) y tipo;
    tarjeta con hangul, precio, horario, fuente y "VERIFICAR que
    sigue abierto"; Copiar coreano, Enseñar, Naver; estado y nota
-   por lugar; "Añadir lugar"; acceso "Comer en <ciudad>" en Hoy.
+   por lugar; "Añadir lugar". (El botón "Comer en <ciudad>" de Hoy
+   se quitó: Comer ya filtra por la ciudad del día.)
 
 ## Pruebas mínimas por sesión
 Abrir con wifi, cerrar, activar modo avión y reabrir: todo

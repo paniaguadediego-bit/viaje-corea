@@ -170,7 +170,6 @@ header { display: flex; align-items: center; gap: 8px; }
 .comer.est-visitado { border-left: 4px solid var(--ok); }
 .comer.est-quiero { border-left: 4px solid var(--blue); }
 .comer.est-descartado, .comer.est-cerrado { opacity: .55; }
-.comer-hoy { margin-top: 6px; }
 .rejilla { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 8px 0; }
 .rejilla button { margin: 0; padding: 8px 2px; display: flex; flex-direction: column; align-items: center; font-size: .8rem; }
 .rejilla button span { font-size: 1.5rem; }

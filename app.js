@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v44';
+const VERSION = 'v45';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -344,7 +344,6 @@ function viewHoy() {
     <div class="big">${esc(d.titulo)}</div>
     <ul class="items">${arr(d.items).map(i =>
       `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${resaltar(i.texto)}</li>`).join('')}</ul>
-    ${CIUDADES_COMER.some(c => c[0] === ck(d.ciudad)) ? `<button class="sec mini comer-hoy" data-comer="${esc(ck(d.ciudad))}">🍜 Comer en ${esc(d.ciudad)}</button>` : ''}
   </div>
   ${sitiosDia(d)}
   ${destacados(d.ciudad)}`;
@@ -1256,7 +1255,7 @@ document.addEventListener('click', e => {
     return;
   }
   if (e.target.closest('#back')) { history.back(); return; }
-  const cm = e.target.closest('[data-cc],[data-ct],[data-ce],[data-co],[data-val],[data-est],[data-comer],[data-delcomer]');
+  const cm = e.target.closest('[data-cc],[data-ct],[data-ce],[data-co],[data-val],[data-est],[data-delcomer]');
   if (cm) {
     if (cm.dataset.ce) comerEstado = cm.dataset.ce;
     else if (cm.dataset.co) comerOrden = cm.dataset.co;
@@ -1266,7 +1265,6 @@ document.addEventListener('click', e => {
     }
     else if (cm.dataset.cc) comerCiudad = cm.dataset.cc;
     else if (cm.dataset.ct) comerTipo = cm.dataset.ct;
-    else if (cm.dataset.comer) { comerCiudad = CIUDADES_COMER.some(c => c[0] === cm.dataset.comer) ? cm.dataset.comer : 'todas'; ir('comer'); }
     else if (cm.dataset.delcomer) {
       if (!confirm('¿Borrar este lugar propio?')) return;
       u().comerPropios = arr(user.comerPropios).filter(l => String(l.id) !== cm.dataset.delcomer); saveUser();
