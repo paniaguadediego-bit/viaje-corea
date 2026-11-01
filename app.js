@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v34';
+const VERSION = 'v35';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -38,10 +38,10 @@ let dayIdx = null;
 
 const TABS = [
   ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '🗺️'], ['ciudades', 'Ciudades', '🏯'], ['corea', 'Corea', '🇰🇷'],
-  ['comer', 'Comer', '🍜'], ['conv', '₩/€', '💱'], ['checklist', 'Checklist', '✅'], ['mas', 'Más', '☰']
+  ['comer', 'Comer', '🍜'], ['conv', '₩/€', '💱'], ['mas', 'Más', '☰']
 ];
 // Secciones agrupadas dentro de "Más" (la barra no cabe con 9 pestañas).
-const EN_MAS = [['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎']];
+const EN_MAS = [['checklist', 'Checklist', '✅'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎']];
 
 function todayISO() {
   const d = new Date();
@@ -564,6 +564,8 @@ function viewCiudades() {
       ${t.lema ? `<div class="ciudad-lema">${esc(t.lema)}</div>` : ''}
       <div class="ciudad-fechas">${fechas}</div>
     </div>
+    ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
+      ${INTRO_LP[k].plan ? `<details><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
     ${h && historiaAbierta ? `<div class="historia"><b>📜 Historia de ${esc(nombreCiudad(k))}</b>${h.txt.map(p => `<p>${esc(p).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}<div class="muted">Resumen de la Lonely Planet 2016 (LP) y datos generales.</div></div>` : ''}
     ${imprescindibles(k)}
     ${interesDe(c).length ? `<ul class="hlist">${porPlan(interesDe(c).map(x => (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x), ck(c.nombre)).map(o => typeof o === 'string' ? o : o.es).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}${miniFoto(o)}<span><span class="ics">${icSitio(x)}</span> ${esc(x)}${planBadge(o, ck(c.nombre))}</span></li>`; }).join('')}</ul>` : ''}
@@ -725,6 +727,10 @@ function full(html) {
 }
 function showFull(key) {
   const [t, a, b] = key.split(':');
+  if (t === 'p') {
+    const p = ((PLATOS[a] || [])[1] || [])[b]; if (!p) return;
+    return full(`<div class="enorme">${esc(p[1])}</div><div class="es">${esc(p[0])} · ${esc(p[2])}</div><div class="es">Glosario Lonely Planet 2016</div>`);
+  }
   if (t === 'f' || t === 'd') {
     const f = t === 'f' ? FRASES[a] : ((DICC[a] || [])[1] || [])[b]; if (!f) return;
     return full(`<div class="enorme">${esc(f[1])}</div><div class="es">${esc(f[0])} · ${esc(f[2])}</div>`);
@@ -913,6 +919,7 @@ const CIUDADES_COMER = [['seul', 'Seúl'], ['andong', 'Andong'], ['gyeongju', 'G
 const TIPOS = ['todos', 'restaurante', 'café', 'mercado', 'plato', 'bar'];
 const ESTADOS = [['quiero', 'Quiero'], ['visitado', 'Visitado'], ['descartado', 'Descartado'], ['cerrado', 'Cerrado']];
 const FUENTES = { itinerario: 'Itinerario', guia: 'Guía web (no verificado)', lonely: 'Lonely Planet 2016', propio: 'Propio' };
+let verPlatos = false, platoGrupo = 0;
 let comerCiudad = null, comerTipo = 'todos', comerForm = false, comerEstado = 'todos', comerOrden = 'rec';
 const lugaresComer = () => [...DATOS_COMER, ...arr(u().comerPropios)].filter(l => l && typeof l === 'object');
 const estadoDe = id => (u().comer && user.comer[id]) || {};
@@ -929,7 +936,13 @@ function viewComer() {
   lista = ordenarComer(lista);
   const chip = (attr, v, t, on) => `<button class="chip ${on ? 'on' : ''}" ${attr}="${esc(v)}">${esc(t)}</button>`;
   const opt = (v, t, on) => `<option value="${esc(v)}" ${on ? 'selected' : ''}>${esc(t)}</option>`;
-  return `<div class="par filtros">
+  const glosario = typeof PLATOS === 'undefined' ? '' : `<div class="glosario">
+      <button class="sec glos-btn" data-act="platos">📖 Glosario de platos (Lonely Planet) ${verPlatos ? '▾' : '▸'}</button>
+      ${verPlatos ? `<div class="chips">${PLATOS.map(([t], gi) => `<button class="chip ${gi === platoGrupo ? 'on' : ''}" data-pg="${gi}">${esc(t)}</button>`).join('')}</div>
+        <div class="muted">Toca un plato para enseñárselo al camarero.</div>
+        ${(PLATOS[platoGrupo] || PLATOS[0])[1].map((p, i) => `<div class="card plato" data-full="p:${platoGrupo}:${i}"><div><b>${esc(p[0])}</b><div class="muted">${esc(p[2])}</div></div><div class="ko">${esc(p[1])}</div></div>`).join('')}` : ''}
+    </div>`;
+  return glosario + `<div class="par filtros">
       <select data-sc aria-label="Ciudad">${opt('todas', '🗺️ Todas las ciudades', comerCiudad === 'todas')}${CIUDADES_COMER.map(([k, t]) => opt(k, `${tema(k).ic} ${t}${k === ck(ciudadActual()) ? ' (hoy)' : ''}`, comerCiudad === k)).join('')}</select>
       <select data-st aria-label="Tipo">${TIPOS.map(t => opt(t, t === 'todos' ? '🍽️ Todo tipo' : `${IC_COMER[t] || ''} ${t[0].toUpperCase() + t.slice(1)}`, comerTipo === t)).join('')}</select>
     </div>
@@ -1180,6 +1193,8 @@ document.addEventListener('click', e => {
     }
     render(); return;
   }
+  const pg = e.target.closest('[data-pg]');
+  if (pg) { platoGrupo = +pg.dataset.pg; render(); return; }
   const cs = e.target.closest('[data-csel]');
   if (cs) { ciudadSel = cs.dataset.csel; historiaAbierta = false; lpTodos = false; render(); return; }
   const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub],[data-sit]');
@@ -1205,6 +1220,7 @@ document.addEventListener('click', e => {
     case 'cambio-auto': actualizarCambio(true); return;
     case 'historia': historiaAbierta = !historiaAbierta; break;
     case 'lp': lpAbierta = !lpAbierta; break;
+    case 'platos': verPlatos = !verPlatos; break;
     case 'lptodos': lpTodos = !lpTodos; break;
     case 'fotos': descargarFotos(); return;
     case 'comer-cancelar': comerForm = false; break;

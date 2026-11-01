@@ -145,7 +145,37 @@ const GUIA = [
   ]],
   ['Entrada al país', [
     'K-ETA y tarjeta de llegada: comprobar si hacen falta para tu fecha. VERIFICAR en la web oficial.'
-  ]]
+  ]],
+  ['Lo básico (Lonely Planet)', [
+    'Moneda: won (₩). Idioma: coreano. Hora: 9 horas más que el meridiano de Greenwich (8 más que la España peninsular en noviembre).',
+    'Cajeros: busca los que dicen "Global"; aceptan tarjetas extranjeras. Pocos abren 24 h.',
+    'Las tarjetas se aceptan casi en todas partes, salvo en el campo.',
+    'Noviembre es temporada baja: frío y, a final de mes, puede nevar. Buena época para museos.',
+    'Teléfonos: policía 112, ambulancia y bomberos 119, información turística en inglés 1330.',
+    'Visado: la guía dice 90 días de estancia al llegar para la mayoría de europeos. VERIFICAR (K-ETA / e-Arrival).']],
+  ['Consejos de la Lonely Planet', [
+    'La tarjeta T-money sirve para metro, bus y también para pagar muchos taxis.',
+    'En las oficinas de turismo hay visitas guiadas gratuitas con voluntarios que hablan otros idiomas.',
+    'Compras de más de 30.000 ₩ en tiendas "Global Refund" / "Tax Free": se puede recuperar el IVA al salir del país. VERIFICAR el importe actual.',
+    'Las guesthouses en hanok tienen pocas habitaciones: mejor reservar.',
+    'Los fines de semana las rutas de montaña se llenan: mejor entre semana.']],
+  ['Qué llevar (Lonely Planet)', [
+    'Zapatos fáciles de quitar (te descalzarás a menudo).',
+    'Tarjeta de crédito, diccionario o frases (están en esta app).',
+    'Analgésicos, botiquín y protector solar.',
+    'Linterna y candado (para taquillas de hostales).',
+    'Enchufe: en Corea es igual que en España, no hace falta adaptador.']],
+  ['En la mesa (Lonely Planet)', [
+    'Muchas veces se come en el suelo: descálzate en la entrada y siéntate en cojines.',
+    'Los platos principales vienen con arroz, sopa, kimchi y banchan incluidos; no hace falta acabarlos todos.',
+    'La cuchara es para el arroz, la sopa y lo líquido; los palillos para lo demás. No se toca la comida con los dedos, salvo al hacer ssam (envolver en hojas).',
+    'Nunca dejes los palillos ni la cuchara clavados en el arroz: solo se hace con la comida ofrecida a los difuntos.',
+    'Empiezan a comer los mayores. Se sirve la bebida a los demás, nunca a uno mismo, y con las dos manos.',
+    'Para llamar al camarero: "jeogiyo" (저기요) o "yeogiyo" (여기요). No hay propina; los sitios caros pueden añadir un 10 % de servicio.']],
+  ['Saber estar (Lonely Planet)', [
+    'Saludo: una inclinación breve al llegar y al irse.',
+    'Da y recibe cosas (dinero, tarjetas, regalos) con las dos manos.',
+    'Evita discusiones o situaciones que hagan "perder la cara" a alguien; si cambian de tema, síguelo.']]
 ];
 
 // Recomendaciones de la guía Lonely Planet Korea (2016). Nombre y hangul de la guía;
@@ -325,3 +355,91 @@ const HISTORIA = {
     'Su aldea hanok, con más de 800 casas tradicionales, y el papel hanji son su seña de identidad. (LP)',
     'La catedral de Jeondong se levantó donde fueron ejecutados católicos coreanos en 1781 y 1801. (LP)'] }
 };
+
+// ---------- Más contenido de la Lonely Planet 2016 (resumido con palabras propias) ----------
+// Introducción de cada ciudad según la guía, y su propuesta de visita cuando la trae.
+const INTRO_LP = {
+  seul: { txt: 'La capital lo tiene todo: palacios Joseon y barrios de hanok junto a rascacielos, mercados que no cierran y una vida nocturna enorme en Hongdae e Itaewon. Namsan, con la Torre N Seúl, es la colina verde del centro, entre Myeong-dong e Itaewon.',
+    plan: ['Día 1: paseo por Bukchon, compras y comida en Insa-dong, cambio de guardia en Gyeongbokgung (o la última visita guiada de Changdeokgung) y cena en el mercado Gwangjang.',
+      'Día 2: Museo Nacional de Corea o Memorial de la Guerra, sauna en Dragon Hill Spa, teleférico a la Torre N Seúl y cena en Itaewon.',
+      'Con más días: la muralla hasta Bukak-san y el templo Gilsang-sa, Dongdaemun Design Plaza, la prisión de Seodaemun y el santuario de Inwangsan, y de noche, Hongdae.'] },
+  andong: { txt: 'Famosa por su caballa salada, su soju fuerte y sus máscaras de madera, Andong es una base estupenda para ver los sitios históricos de los alrededores. La ciudad es tranquila y muy amable, con buenos sitios para comer.' },
+  gyeongju: { txt: 'La llaman "el museo sin muros": tiene más tumbas, templos, tallas en roca, pagodas y ruinas de palacios que ningún otro sitio de Corea. Bulguksa y Seokguram están a las afueras pero se llega en transporte público; el centro es compacto y se recorre a pie.' },
+  busan: { txt: 'La segunda ciudad del país es un puerto lleno de vida entre montañas y playas, con aguas termales y marisco. Desde los puestos de carpa hasta cafés de diseño y mercados de pescado con todas las especies imaginables: hay de todo. El Festival Internacional de Cine (BIFF) la ha hecho famosa.' },
+  jeonju: { txt: 'Capital provincial, cuna de la dinastía Joseon y del bibimbap. Su aldea hanok, con casas tradicionales convertidas en museos, teterías y talleres de artesanos, es lo mejor; además es un buen nudo de buses y trenes para moverse por la región.' }
+};
+
+// Glosario de platos (hangul de la Lonely Planet; descripción en español).
+const PLATOS = [
+  ['Arroz', [
+    ['bibimbap', '비빔밥', 'Arroz con huevo, carne, verduras y salsa picante para mezclar'],
+    ['dolsot bibimbap', '돌솥비빔밥', 'Bibimbap en cuenco de piedra caliente (con costra crujiente)'],
+    ['sanchae bibimbap', '산채비빔밥', 'Bibimbap con verduras de montaña'],
+    ['gimbap', '김밥', 'Rollo de arroz con aceite de sésamo envuelto en alga'],
+    ['ssambap', '쌈밥', 'Ingredientes variados con arroz para envolver en hojas'],
+    ['boribap', '보리밥', 'Arroz con cebada'],
+    ['juk', '죽', 'Gachas de arroz'],
+    ['jeonbokjuk', '전복죽', 'Gachas de arroz con oreja de mar'],
+    ['bokkeumbap', '볶음밥', 'Arroz frito al estilo chino']]],
+  ['Carne', [
+    ['bulgogi', '불고기', 'Ternera en láminas a la parrilla, para envolver en lechuga'],
+    ['galbi', '갈비', 'Costillas de ternera'],
+    ['dwaeji galbi', '돼지갈비', 'Costillas de cerdo'],
+    ['samgyeopsal', '삼겹살', 'Panceta de cerdo a la parrilla'],
+    ['dakgalbi', '닭갈비', 'Pollo picante salteado con verduras y pasteles de arroz'],
+    ['jjimdak', '찜닭', 'Pollo guisado picante con fideos (el de Andong)'],
+    ['bossam', '보쌈', 'Cerdo cocido con kimchi y hojas para envolver'],
+    ['tteokgalbi', '떡갈비', 'Hamburguesa grande de carne picada'],
+    ['yukhoe', '육회', 'Ternera cruda aliñada'],
+    ['galbijjim', '갈비찜', 'Costillas de ternera estofadas']]],
+  ['Sopas y guisos', [
+    ['samgyetang', '삼계탕', 'Sopa de pollo con ginseng'],
+    ['galbitang', '갈비탕', 'Sopa de costilla de ternera'],
+    ['seolleongtang', '설렁탕', 'Sopa de ternera con arroz'],
+    ['haejangguk', '해장국', 'Sopa de brotes de soja ("sopa para la resaca")'],
+    ['gamjatang', '감자탕', 'Huesos con carne y patata'],
+    ['maeuntang', '매운탕', 'Sopa picante de pescado'],
+    ['haemultang', '해물탕', 'Sopa picante de marisco variado'],
+    ['manduguk', '만두국', 'Sopa con empanadillas de carne'],
+    ['kimchi jjigae', '김치찌개', 'Guiso de kimchi'],
+    ['doenjang jjigae', '된장찌개', 'Guiso de pasta de soja'],
+    ['sundubu', '순두부', 'Tofu sedoso (en guiso picante)'],
+    ['budae jjigae', '부대찌개', '"Guiso del ejército" con salchichas, Spam y verduras']]],
+  ['Fideos', [
+    ['mul naengmyeon', '물냉면', 'Fideos de trigo sarraceno en caldo frío'],
+    ['bibim naengmyeon', '비빔냉면', 'Fideos fríos con verduras, carne y salsa'],
+    ['kalguksu', '칼국수', 'Fideos de trigo en caldo de almejas y verduras'],
+    ['kongguksu', '콩국수', 'Fideos en sopa fría de soja'],
+    ['japchae', '잡채', 'Fideos de cristal salteados con verduras'],
+    ['jajangmyeon', '자장면', 'Fideos con salsa negra de soja fermentada (estilo chino)'],
+    ['ramyeon', '라면', 'Fideos instantáneos en sopa']]],
+  ['Pescado y marisco', [
+    ['modeumhoe', '모듬회', 'Surtido de pescado crudo'],
+    ['saengseongui', '생선구이', 'Pescado a la parrilla'],
+    ['jangeogui', '장어구이', 'Anguila a la parrilla'],
+    ['kkotgejjim', '꽃게찜', 'Cangrejo azul al vapor'],
+    ['nakji', '낙지', 'Pulpo pequeño'],
+    ['ojingeo', '오징어', 'Calamar'],
+    ['saeugui', '새우구이', 'Gambas a la parrilla']]],
+  ['Picoteo y calle', [
+    ['tteokbokki', '떡볶이', 'Pasteles de arroz en salsa picante'],
+    ['hotteok', '호떡', 'Tortita de trigo con relleno dulce'],
+    ['bungeoppang', '붕어빵', 'Gofre con forma de pez relleno de alubia roja'],
+    ['dakkochi', '닭꼬치', 'Brocheta de pollo picante'],
+    ['twigim', '튀김', 'Rebozados de marisco o verdura'],
+    ['sundae', '순대', 'Morcilla coreana'],
+    ['beondegi', '번데기', 'Larvas de gusano de seda cocidas'],
+    ['patbingsu', '팥빙수', 'Hielo raspado con alubia roja y pastel de arroz']]],
+  ['Otros', [
+    ['kimchi', '김치', 'Col fermentada picante (el acompañamiento básico)'],
+    ['kkakdugi', '깍두기', 'Kimchi de rábano en dados'],
+    ['pajeon', '파전', 'Tortita de cebolleta'],
+    ['bindaetteok', '빈대떡', 'Tortita de soja verde'],
+    ['mandu', '만두', 'Empanadillas rellenas'],
+    ['hanjeongsik', '한정식', 'Banquete coreano de muchos platos'],
+    ['jeongsik', '정식', 'Menú con muchos acompañamientos'],
+    ['dotorimuk', '도토리묵', 'Gelatina de bellota']]],
+  ['Bebidas', [
+    ['nokcha', '녹차', 'Té verde'], ['boricha', '보리차', 'Té de cebada'], ['daechucha', '대추차', 'Té de dátiles rojos'],
+    ['soju', '소주', 'Licor de arroz (fuerte)'], ['makgeolli', '막걸리', 'Vino de arroz turbio'], ['maekju', '맥주', 'Cerveza']]]
+];

@@ -17,9 +17,9 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    la raíz): start_url y scope "./", service worker con ruta
    relativa, iconos relativos.
 5. Pestañas (barra inferior): Hoy, Ruta, Ciudades, Corea,
-   Comer, ₩/€ (conversor), Checklist, Más. Corea tiene apartados:
+   Comer, ₩/€ (conversor), Más. Corea tiene apartados:
    Enseñar (primero), Frases, Diccionario, Guía. Dentro de Más
-   (botones arriba): Seguro, Verificar; y debajo Maleta/
+   (botones arriba): Checklist, Seguro, Verificar; y debajo Maleta/
    Documentos, Fotos y Notas. Gastos: quitado (el usuario usa
    otra app). No añadir
    nada que no esté aquí. Ruta incluye un mapa esquemático de
@@ -98,6 +98,9 @@ Wikipedia para la foto; la foto se pide con conexión y el service
 worker la guarda en la caché 'corea-fotos'), WIKI (hangul → artículo de Wikipedia para
 más fotos), ALIAS (nombres alternativos para reconocer sitios en el
 itinerario), HISTORIA (historia breve por ciudad, LP marcado),
+INTRO_LP (introducción de cada ciudad según la Lonely y su
+propuesta de visita), PLATOS (glosario de platos con hangul de la
+Lonely, en Comer),
 FRASES_SIT (frases por
 situación; FRASES es la lista plana) y GUIA.
 
