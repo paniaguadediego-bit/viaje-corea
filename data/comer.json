@@ -679,48 +679,6 @@
 "nota": "Lonely Planet Korea 2016, p. 69"
 },
 {
-"id": "lp-balwoo-gongyang",
-"ciudad": "seul",
-"nombre": "Balwoo Gongyang",
-"ko": "발우공양",
-"tipo": "restaurante",
-"plato": "comida de templo",
-"direccion": "5th fl, Templestay Information Center, 56 Ujeongguk-ro, Jongno-gu",
-"horario": "11.40am-3pm & 6-8.50pm (LP 2016)",
-"precio": "₩₩₩ caro (LP 2016)",
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 70"
-},
-{
-"id": "lp-min-s-club",
-"ciudad": "seul",
-"nombre": "Min’s Club",
-"ko": "민가다헌",
-"tipo": "restaurante",
-"plato": "fusión",
-"direccion": "23-9 Insa-dong 10-gil, Jongno-gu",
-"horario": "noon-2.30pm & 6-9.30pm (LP 2016)",
-"precio": "₩₩₩ caro (LP 2016)",
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 70"
-},
-{
-"id": "lp-hanmiri",
-"ciudad": "seul",
-"nombre": "Hanmiri",
-"ko": "한미리",
-"tipo": "restaurante",
-"plato": "cocina coreana",
-"direccion": "2nd fl, Premier Pl, 8 Cheonggyecheon-ro, Jongno-gu",
-"horario": "noon-3pm & 6-10pm (LP 2016)",
-"precio": "₩₩₩ caro (LP 2016)",
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 70"
-},
-{
 "id": "lp-mokmyeoksanbang",
 "ciudad": "seul",
 "nombre": "Mokmyeoksanbang",
@@ -769,20 +727,6 @@
 "verificar": true
 }
 ]
-},
-{
-"id": "lp-gosang",
-"ciudad": "seul",
-"nombre": "Gosang",
-"ko": "고상",
-"tipo": "restaurante",
-"plato": "cocina coreana",
-"direccion": "67 Suha-dong, Jung-gu",
-"horario": "11.30am-3.30pm & 5.30-10pm (LP 2016)",
-"precio": "₩₩₩ caro (LP 2016)",
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 71"
 },
 {
 "id": "lp-jaha-sonmandoo",
@@ -867,41 +811,6 @@
 "fuente": "lonely",
 "url": null,
 "nota": "Lonely Planet Korea 2016, p. 73"
-},
-{
-"id": "lp-jungsik",
-"ciudad": "seul",
-"nombre": "Jungsik",
-"ko": "정식당",
-"tipo": "restaurante",
-"plato": "coreana de autor",
-"direccion": "11 Seolleung-ro, 158-gil, Gangnam-gu",
-"horario": "noon-3pm & 5.30- 10.30pm (LP 2016)",
-"precio": "₩₩₩ caro (LP 2016)",
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 74 · ★ elección del autor",
-"guias": [
-{
-"g": "michelin",
-"d": "2 estrellas",
-"anio": "2026"
-}
-]
-},
-{
-"id": "lp-samwon-garden",
-"ciudad": "seul",
-"nombre": "Samwon Garden",
-"ko": "삼원가든",
-"tipo": "restaurante",
-"plato": "cocina coreana",
-"direccion": "835 Eonju-ro, Gangnam-gu",
-"horario": "11.30am-10pm (LP 2016)",
-"precio": "₩₩₩ caro (LP 2016)",
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 74"
 },
 {
 "id": "lp-sik-mool",
@@ -1235,20 +1144,6 @@
 "direccion": null,
 "horario": "11am-8.30pm (LP 2016)",
 "precio": "₩₩ medio (LP 2016)",
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 166"
-},
-{
-"id": "lp-raw-fish-center",
-"ciudad": "gyeongju",
-"nombre": "Raw Fish Center",
-"ko": "감포 호궁 회센타",
-"tipo": "restaurante",
-"plato": "pescado y marisco",
-"direccion": null,
-"horario": "7am-midnight (LP 2016)",
-"precio": "₩₩₩ caro (LP 2016)",
 "fuente": "lonely",
 "url": null,
 "nota": "Lonely Planet Korea 2016, p. 166"
