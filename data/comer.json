@@ -1853,5 +1853,45 @@
 "fuente": "Polle",
 "fecha": "2026-11"
 }
+},
+{
+"id": "isaac-myeongdong",
+"ciudad": "seul",
+"nombre": "Isaac Toast (Myeongdong, junto a la catedral)",
+"ko": "이삭토스트 명동성당점",
+"tipo": "restaurante",
+"plato": "sándwich de tostada caliente (huevo, jamón, salsa dulce): desayuno o tentempié",
+"direccion": "17-1 Myeongdong 10-gil, Jung-gu (metro Myeongdong, salida 8, a 3 min)",
+"horario": "7:00 u 8:00-20:00 según la web: VERIFICAR",
+"precio": null,
+"fuente": "guia",
+"url": "https://creatrip.com/en/blog/12753",
+"nota": "Añadido por vosotros. La cadena de tostadas más popular de Corea; muy cerca del hotel, ideal para desayunar.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "activo",
+"nota": "Creatrip revisó horario y precios en mayo de 2026.",
+"fuente": "https://creatrip.com/en/blog/12753"
+}
+},
+{
+"id": "godiva-crepe",
+"ciudad": "seul",
+"nombre": "Godiva Crepe (Shinsegae Gangnam)",
+"ko": "고디바 크레페",
+"tipo": "café",
+"plato": "crepes de chocolate Godiva",
+"direccion": "Planta B1 de los grandes almacenes Shinsegae Gangnam, 176 Sinbanpo-ro, Seocho-gu (Banpo-dong 19-3), metro Express Bus Terminal",
+"horario": "El de los grandes almacenes: VERIFICAR",
+"precio": null,
+"fuente": "guia",
+"url": "https://www.insight.co.kr/news/517757",
+"nota": "Añadido por vosotros. La primera tienda en Corea de las crepes de Godiva. Queda lejos del centro (Gangnam): combinar con un día por esa zona.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Noticia de su apertura en la planta B1 de Shinsegae Gangnam.",
+"fuente": "https://www.insight.co.kr/news/517757"
+}
 }
 ]
