@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v85';
+const VERSION = 'v86';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -975,7 +975,7 @@ function viewCiudades() {
   const i = uniq.findIndex(c => ck(c.nombre) === ciudadSel), c = uniq[i], k = ciudadSel, t = tema(k);
   const fechas = arr(trip.ciudades).filter(o => ck(o.nombre) === k).map(o => `${fmtCorto(o.desde)} → ${fmtCorto(o.hasta)}`).join(' · ');
   const h = typeof HISTORIA !== 'undefined' && HISTORIA[k];
-  return botones + `<div class="card ciudad" id="c-${esc(c.id)}" style="${varsTema(k)}">
+  return buscadorHTML('qcs', qCiu, 'Buscar sitio en todas las ciudades', resCiudades(qCiu)) + botones + `<div class="card ciudad" id="c-${esc(c.id)}" style="${varsTema(k)}">
     <div class="ciudad-hero">
       <div class="ciudad-ko">${esc(c.ko || '')}</div>
       <div class="ciudad-top"><span class="ciudad-ic">${t.ic}</span><span class="ciudad-bts"><button class="hist-btn ${mapaCiudad ? 'on' : ''}" data-act="mapa-ciudad">🗺️ Mapa</button>${h ? `<button class="hist-btn ${historiaAbierta ? 'on' : ''}" data-act="historia">📜 Historia</button>` : ''}</span></div>
@@ -1303,6 +1303,33 @@ function ciudadDeLugar(l) {
   return c ? ck(c.nombre) : '';
 }
 // Botones de ciudad (los mismos de Ciudades). La ciudad elegida se comparte entre pestañas.
+// ---------- Buscadores de Ciudades y Comer (todas las ciudades; sin tildes; también en hangul) ----------
+let qCiu = '', qCom = '';
+const nb = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const buscadorHTML = (id, v, ph, res) => `<div class="buscador"><input id="${id}" type="search" placeholder="🔎 ${esc(ph)}" value="${esc(v)}" autocomplete="off" enterkeyhint="search"><button class="sec mini" data-qclear="${id}" aria-label="Borrar">✕</button></div><div id="r${id}">${res}</div>`;
+// Puntuación: 2 si está en el nombre o el hangul, 1 si solo en la descripción.
+function coincide(q, nombre, extra) { const a = nb(q).trim(); if (!a) return 0; return nb(nombre).includes(a) ? 2 : nb(extra).includes(a) ? 1 : 0; }
+function resCiudades(q) {
+  if (!String(q || '').trim()) return '';
+  const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, rs = [];
+  ciudadesCatalogo().forEach(k => sitiosCiudadObj(k).forEach(l => { const h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
+    const p = coincide(q, [l.es, l.ko, l.romanizacion].join(' '), [l.tipo, txt].join(' ')); if (p) rs.push({ l, k, p, txt, plan: false }); }));
+  (typeof PLANES !== 'undefined' ? PLANES : []).forEach(l => { const p = coincide(q, [l.es, l.ko, l.romanizacion].join(' '), [l.desc, l.direccion_en].join(' ')); if (p) rs.push({ l, k: l.ciudad, p, txt: l.desc || '', plan: true }); });
+  rs.sort((a, b) => b.p - a.p);
+  if (!rs.length) return '<p class="muted centro">Nada con ese nombre. Prueba otra palabra o en hangul.</p>';
+  return `<div class="muted centro">${rs.length} ${rs.length === 1 ? 'resultado' : 'resultados'}${rs.length > 20 ? ' (los 20 primeros)' : ''}</div>` + rs.slice(0, 20).map(({ l, k, txt, plan }) => `<div class="card bres">${miniFoto(l)}<div class="bres-c">
+      <div><b>${plan ? icPlan(l) : icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span></div>
+      <div class="muted">${tema(k).ic} ${esc(nombreCiudad(k))}${plan ? ' · Planes' : ''}${distHotel(l, k)}</div>
+      ${txt ? `<div class="muted">${esc(recorta(txt, 130))}</div>` : ''}
+      ${plan ? '' : agendaBtn(l, k, 'bus')}
+      <div class="acciones">${naver(l)}${plan ? '' : `<button class="sec mini" data-bcity="${esc(k)}">${tema(k).ic} Ver en la ciudad</button>`}</div></div></div>`).join('');
+}
+function resComer(q) {
+  if (!String(q || '').trim()) return '';
+  const rs = lugaresComer().map(l => ({ l, p: coincide(q, [l.nombre, l.ko].join(' '), [l.plato, l.tipo, l.nota, l.direccion].join(' ')) })).filter(x => x.p).sort((a, b) => b.p - a.p);
+  if (!rs.length) return '<p class="muted centro">Nada con ese nombre o plato.</p>';
+  return `<div class="muted centro">${rs.length} ${rs.length === 1 ? 'resultado' : 'resultados'} en todas las ciudades${rs.length > 15 ? ' (los 15 primeros)' : ''}</div>` + rs.slice(0, 15).map(({ l }) => `<div class="bres-ciudad muted">${tema(l.ciudad).ic} ${esc(nombreCiudad(l.ciudad))}</div>${cardComer(l)}`).join('') + '<hr class="bres-fin">';
+}
 function botonesCiudad() {
   const uniq = ciudadesUnicas(); if (!uniq.length) return '';
   if (!ciudadSel || !uniq.some(c => ck(c.nombre) === ciudadSel)) {
@@ -1626,7 +1653,7 @@ function viewComer() {
   const enC = l => comerCiudad === 'todas' || l.ciudad === comerCiudad;
   const tipos = TIPOS.slice(1).map(t => [t, lugaresComer().filter(l => enC(l) && l.tipo === t).length]).filter(([t, nt]) => nt || comerTipo === t);
   const ord = { rec: '⭐ Recomendado', nota: '👥 Mejor valorados', dist: '📍 Cerca del hotel', val: '★ Mi valoración' }, sigOrd = { rec: 'nota', nota: 'dist', dist: 'val', val: 'rec' };
-  return `<div class="cc-row">${[['todas', 'Todas', '🗺️'], ...CIUDADES_COMER.map(([k, t]) => [k, t, tema(k).ic])].map(([k, t, ic]) =>
+  return buscadorHTML('qcm', qCom, 'Buscar sitio para comer (nombre, plato…)', resComer(qCom)) + `<div class="cc-row">${[['todas', 'Todas', '🗺️'], ...CIUDADES_COMER.map(([k, t]) => [k, t, tema(k).ic])].map(([k, t, ic]) =>
       `<button class="cbtn ${comerCiudad === k ? 'on' : ''}" ${k !== 'todas' ? `style="${varsTema(k)}"` : ''} data-cc="${k}"><span>${ic}</span>${esc(t)}</button>`).join('')}</div>
     <div class="chips tipos-c">${chip('data-ct', 'todos', `🍽️ Todo (${lugaresComer().filter(enC).length})`, comerTipo === 'todos')}${tipos.map(([t, nt]) => chip('data-ct', t, `${IC_COMER[t] || ''} ${t[0].toUpperCase() + t.slice(1)} (${nt})`, comerTipo === t)).join('')}</div>
     <div class="chips estados-c">${chip('data-ce', 'todos', 'Todos', comerEstado === 'todos')}${chip('data-ce', 'quiero', `⭐ ${n('quiero')}`, comerEstado === 'quiero')}${chip('data-ce', 'visitado', `✅ ${n('visitado')}`, comerEstado === 'visitado')}${chip('data-ce', 'pendiente', 'Sin marcar', comerEstado === 'pendiente')}</div>
@@ -1954,6 +1981,12 @@ document.addEventListener('click', e => {
     }
     return;
   }
+  const qc = e.target.closest('[data-qclear],[data-bcity]');
+  if (qc) {
+    if (qc.dataset.bcity) { ciudadSel = qc.dataset.bcity; qCiu = ''; historiaAbierta = false; render(); window.scrollTo(0, 0); }
+    else { if (qc.dataset.qclear === 'qcs') qCiu = ''; else qCom = ''; render(); }
+    return;
+  }
   const ca = e.target.closest('[data-cara]');
   if (ca) { const [f, c] = ca.dataset.cara.split('|'), U = u(); U.diario = U.diario || {}; const o = U.diario[f] = U.diario[f] || {}; o.cara = o.cara === c ? '' : c; saveUser(); render(); return; }
   const mq = e.target.closest('[data-mpz],[data-mpfit],[data-mpyo],[data-mpcerrar],[data-mpcapa],[data-mpdia]');
@@ -2082,6 +2115,10 @@ document.addEventListener('click', e => {
 document.addEventListener('input', e => {
   const t = e.target;
   if (t.id === 'q') $('#dres').innerHTML = dResultados(t.value);
+  else if (t.id === 'qcs' || t.id === 'qcm') {
+    if (t.id === 'qcs') qCiu = t.value; else qCom = t.value;
+    $('#r' + t.id).innerHTML = t.id === 'qcs' ? resCiudades(qCiu) : resComer(qCom); pintarFotos();
+  }
   else if (t.dataset.conv) {
     const otro = document.querySelector(`[data-conv="${t.dataset.conv === 'KRW' ? 'EUR' : 'KRW'}"]`), v = Number(t.value), c = cambio();
     otro.value = !t.value || !c ? '' : t.dataset.conv === 'KRW' ? (v / c).toFixed(2) : Math.round(v * c);

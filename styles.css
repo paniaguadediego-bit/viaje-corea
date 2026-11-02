@@ -807,3 +807,21 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .sd-tras, .sd-sig { display: block; width: 100%; text-align: left; margin: 6px 0; padding: 10px 12px; border-radius: 12px; background: var(--tint-b, var(--card)); color: var(--fg); border: 1px solid var(--line); font-weight: 600; min-height: 0; }
 .sd-tras small, .sd-sig small { color: var(--muted); font-weight: 400; }
 .sd-sig { background: var(--blue); color: #fff; text-align: center; border: 0; margin-top: 10px; }
+
+/* v86: buscadores de Ciudades y Comer */
+.buscador { display: flex; gap: 6px; align-items: center; margin: 0 0 8px; }
+.buscador input { flex: 1; min-width: 0; border-radius: 999px; padding: 9px 14px; }
+.buscador .mini { width: auto; }
+.bres { display: flex; gap: 10px; align-items: flex-start; text-align: left; }
+.bres .bres-c { flex: 1; min-width: 0; }
+.bres .acciones { margin-top: 6px; justify-content: flex-start; }
+.bres-ciudad { margin: 8px 2px 2px; font-size: .8em; }
+.bres-fin { border: 0; border-top: 2px dashed var(--line); margin: 12px 0; }
+.buscador input:placeholder-shown + button { display: none; }
+
+/* v86: filas de sitios de Ciudades separadas (cada sitio en su tarjeta) */
+.hlist { display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }
+.hlist li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; text-align: left; }
+.hlist li > span:last-child { flex: 1; min-width: 0; }
+.hlist li .agenda { margin: 4px 0 2px; }
+.hlist li details { margin-top: 2px; }

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v85
+Caché del service worker: corea-v86
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -137,6 +137,7 @@ Caché del service worker: corea-v85
 - v83 (propuesta 6 y petición del usuario): "🧳 Antes de salir" en Hoy → Traslado los días en que se deja un hotel y hay traslado (8, 10, 12, 15, 17 y 19): primer vuelo del día con "3 h antes", tren con hora, coche y asientos (o "⚠️ SIN COMPRAR"), pagar el hotel si se paga allí, pasaportes, cargadores, revisar habitación, llave, T-money y próximo hotel (si es en Corea). Casillas por fecha con checks('antes:fecha') y se pueden añadir cosas. Las pestañas se quedan en 7 (el usuario está bien así). Planes tiene nueva categoría "✨ Curioso" (cat: 'curioso', campo opcional ic para el icono): gatos Roof Cat Me (Myeongdong), ovejas Thanks Nature y perros Bau House (Hongdae), London Bagel Museum y Cafe Onion (Anguk), Ssamziegil (Insadong), Hongdae Free Market (sábados, mar-nov), ropa vintage de Gwangjang, Haeridan-gil (Busan, junto al hotel), pan de 10 wones (Gyeongju) y choco pie de PNB (Jeonju). Fuentes: guías web y una web de reservas (nov 2026); todo con ubicación aproximada (≈) y horarios con VERIFICAR. Hwangnam y Jeonpo ya estaban en Comer. El usuario ya pudo instalar la app en Chrome (problema de instalación resuelto).
 - v84: día 17 (en el trip.json privado, enviado al usuario): llegada a Yongsan, maletas en taquillas (VERIFICAR), Museo Nacional de Corea, Dragon Hill Spa, check-in y noche en Myeongdong con la cafetería de gatos Roof Cat Me. El 18 ya no propone el Museo Nacional "si llueve". En la app: ALIAS '국립중앙박물관' → "museo nacional de corea" (antes "museo" y "nacional" eran palabras vacías y no se reconocía) y "sauna" pasa a palabra vacía (activaba por error Silloam Sauna).
 - v85: el usuario encontró dos sitios y se añaden a data/comer.json (111 lugares): Isaac Toast junto a la catedral de Myeongdong (이삭토스트 명동성당점, 17-1 Myeongdong 10-gil, horario 7 u 8-20 h según Creatrip, mayo 2026) y Godiva Crepe (고디바 크레페) en la planta B1 de Shinsegae Gangnam: la dirección que dio el usuario (Banpo-dong 19-3) es la del centro comercial (176 Sinbanpo-ro). Coordenadas aproximadas en data/coords.json.
+- v86: buscador encima de los botones de ciudad en Ciudades y en Comer. Busca en todas las ciudades, sin tildes y en hangul; primero lo que coincide en nombre o hangul y luego en la descripción. Ciudades: sitios del catálogo, Lonely y Planes, con foto, ciudad, distancia al hotel, 📅 para apuntarlo a un día, Naver y "Ver en la ciudad"; hasta 20. Comer: tarjetas normales con la ciudad encima, por nombre, plato, tipo o nota; hasta 15. Se actualiza al escribir sin perder el teclado; ✕ para borrar. Además, la lista de sitios de cada ciudad (.hlist) pasa a una tarjeta por sitio: el usuario veía que las filas se mezclaban (el "Más info" parecía del sitio siguiente).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

@@ -36,8 +36,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    nada que no esté aquí. Ruta: vuelos, mapa y línea de tiempo con cada estancia (ciudad,
    noches, hotel y una línea por día) intercalada con los traslados. Incluye un mapa esquemático de
    Corea (SVG propio, offline) con ciudades, traslados y sitios
-   (las fichas de ciudad con sitios van en Ciudades: 5 botones, se
-   despliega la ciudad elegida; botón 📜 Historia; cada sitio tiene
+   (las fichas de ciudad con sitios van en Ciudades: buscador arriba (todas las ciudades, sin tildes y en hangul;
+   también en Comer), 5 botones, se despliega la ciudad elegida; botón 📜 Historia; cada sitio tiene
    "📅" para apuntarlo a un día de esa ciudad). Agenda en user.agenda[fecha]
    = {add, del}: Hoy → Sitios es la "Ruta del día": hotel → sitios del
    itinerario en orden fijo (orden del texto) → "Añadidos desde Ciudades"
