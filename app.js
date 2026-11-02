@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v90';
+const VERSION = 'v91';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1496,7 +1496,7 @@ function viewPlanes() {
   };
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
-  return `<div class="chips centro">${cs.map(([c, n]) => `<button class="chip ${c === k ? 'on' : ''}" data-pc="${c}">${tema(c).ic} ${n}</button>`).join('')}</div>
+  return `<div class="ciudad-btns">${cs.map(([c, n]) => `<button class="cbtn ${c === k ? 'on' : ''}" style="${varsTema(c)}" data-pc="${c}"><span>${tema(c).ic}</span>${esc(n)}</button>`).join('')}</div>
     <p class="muted">Ordenados por distancia al hotel. Horarios de webs (nov 2026): compruébalos antes de ir.</p>
     ${worldsCard()}${(() => { const cats = PCATS.filter(([c]) => P.some(p => p.ciudad === k && p.cat === c)); if (!cats.some(([c]) => c === planesCat)) planesCat = (cats[0] || [])[0];
       return `<div class="row daynav pcats">${cats.map(([c, t]) => `<button class="${c === planesCat ? '' : 'sec'}" data-pcat="${c}">${t}</button>`).join('')}</div>` + grupo(planesCat, ''); })()}`;

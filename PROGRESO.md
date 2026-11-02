@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v90
+Caché del service worker: corea-v91
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -142,6 +142,7 @@ Caché del service worker: corea-v90
 - v88: quitado "⏭️ Mañana" de Hoy (el usuario: no aporta más que tocar el día siguiente; función manana() borrada). Planes: todos llevan foto (wiki: Cat_café, Sheep, Dog, Bagel, Hanok, Insadong, Hongik_University, Gwangjang_Market, Haeundae_District, 10_won_bread, Choco_pie…), y campos nuevos precio (💰), opiniones {v,n,fuente} y resenas (👥) con lo encontrado en la web (nov 2026): T1 Base Camp ~3.000 ₩/h, Roof Cat Me 13.500 ₩, Thanks Nature 5.500-7.000 ₩ el café, London Bagel 4.800-9.000 ₩ (Polle 3,5/113), pan de 10 wones 2.500-3.500 ₩, taller de choco pie de PNB 20.000 ₩, lavanderías 4.000-5.000 ₩ por carga (orientativo). Bau House: un directorio la da por cerrada (aviso). Cosmética: Olive Young Gyeongju Hwangnam (Hwangnidan-gil) y Gyeongju Silla (frente a la terminal, 2025), Jeonju Gaeksa (abril 2025) y, en Andong, una entrada sin ubicación que busca "안동 올리브영" en Naver. Lavanderías: Seúl, Andong, Gyeongju y Jeonju sin una concreta fiable en la web → entrada por ciudad que busca "셀프빨래방" cerca en Naver (campo direccion_ko = búsqueda), con consejo de preguntar en el hotel. LoL: no hay tienda oficial permanente aparte de LoL Park y los T1 Base Camp (la tienda temporal del Mundial en Lotte World Mall cerró el 1 de noviembre).
 - v89: el usuario pidió meter Traslado dentro de Sitios para quitar un botón. Hoy queda con Sitios / Hotel / Ciudad / Diario. Los días con traslado, Sitios empieza con "🚆 Primero, el traslado" (Antes de salir + tarjeta del traslado) y sigue la Ruta del día; se quitan el botón "Después: Ruta del día" y el enlace "Antes: … ver traslado". "🧳 Antes de salir" pasa a desplegable (cerrado por defecto) con el recuento "(n de N)" en el título.
 - v90: el usuario quiere cafeterías y bares mucho más cerca de los hoteles. Se añaden 18 a ≤1 km del hotel en data/comer.json (fuente guía con enlace, comprobado "existe", coordenadas aproximadas; hangul solo si está confirmado): Seúl (Coffee Hanyakbang, Cafe Pines, METCHA, Rooftop Floating en L7, Marque d'Amour, callejón Nogari de Euljiro), Busan (Ant House, Edge 993, y Geumsong Deokmi, Duplit y Tago Coffee en Haeridan-gil), Andong (Jigwanseoga, Milliliter Coffee), Gyeongju (Bonjeon Makpo, Keirim Jumak, Jinhanbam) y Jeonju (Yetchon Makgeolli). En Andong no se encontraron bares fiables. Nuevo filtro en Comer "📍 Cerca del hotel" (≤1,2 km). Planes tiene categoría "👕 Ropa", solo con tiendas cerca del hotel: Uniqlo Myeongdong (insignia abierta el 22-5-2026, unos 400 m), SPAO Myeongdong y Uniqlo Andong (abierta en 2018 junto a la antigua estación; VERIFICAR que sigue). No hay outlets ni Uniqlo cerca de los hoteles de Gyeongju, Busan y Jeonju (los outlets están a las afueras), así que no se añaden.
+- v91: los botones de ciudad de Planes usan el mismo diseño que Ciudades (cuadrícula de 5 con icono grande y color de cada ciudad) en vez de etiquetas pequeñas.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
