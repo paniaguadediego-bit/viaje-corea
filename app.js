@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v81';
+const VERSION = 'v82';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1367,9 +1367,14 @@ function dResultados(q) {
   return res.length ? res.slice(0, 80).join('') : '<p class="muted">Sin resultados. Prueba con otra palabra.</p>';
 }
 
-const icGuia = t => [[/t-money|transporte/i, '🚇'], [/taxi/i, '🚕'], [/propina/i, '💸'], [/zapato/i, '👟'], [/enchufe/i, '🔌'], [/^apps/i, '📱'], [/pago/i, '💳'],
+const icGuia = t => [[/dinero/i, '💰'], [/t-money|transporte/i, '🚇'], [/taxi/i, '🚕'], [/propina/i, '💸'], [/zapato/i, '👟'], [/enchufe/i, '🔌'], [/^apps/i, '📱'], [/pago/i, '💳'],
   [/hangul/i, '🔤'], [/metro y ktx/i, '🚄'], [/clima/i, '🍂'], [/24 h/i, '🏪'], [/baños/i, '🚻'], [/internet/i, '📶'], [/tax free/i, '🛍️'], [/farmacia/i, '💊'], [/beber/i, '🍶'], [/^templos/i, '🛕'], [/fechas/i, '📅'], [/^comida/i, '🍜'], [/^etiqueta/i, '🙇'], [/seguridad|emergencia/i, '🚨'], [/entrada/i, '🛂'], [/básico/i, '🇰🇷'], [/consejos/i, '💡'], [/llevar/i, '🎒'], [/mesa/i, '🥢'], [/saber estar/i, '🤝']]
   .find(([r]) => r.test(t))?.[1] || '📌';
+// Hoteles que se pagan allí (de trip.json, solo en el móvil): reservad efectivo por si no aceptan tarjeta.
+function pagoAlli() {
+  const hs = arr(trip && trip.alojamientos).filter(a => /alojamiento|llegada|allí|in situ/i.test(a.pago || '') && ck(a.ciudad) && !/espana/.test(ck(a.ciudad)) && !/Hostal/.test(a.nombre || ''));
+  return hs.length ? `<li><b>Se pagan allí:</b> ${hs.map(a => `${esc(a.nombre)}${a.coste_eur ? ` (${esc(a.coste_eur)} €)` : ''}`).join(', ')}. Lo normal es que acepten tarjeta, pero llevad efectivo de reserva o preguntad antes.</li>` : '';
+}
 // Historia de Corea para leer en el avión: índice, capítulo, anterior/siguiente y marca de leído (en el móvil).
 let histCap = null;
 const minLect = c => Math.max(1, Math.round(c.p.join(' ').split(/\s+/).length / 220));
@@ -1406,7 +1411,7 @@ function viewCorea() {
   else {
     const g = GUIA.find(([t]) => t === guiaSel);
     html += `<div class="guia-rej">${GUIA.map(([t]) => `<button class="guia-t ${t === guiaSel ? 'on' : ''}" data-guia="${esc(t)}"><span>${icGuia(t)}</span>${esc(t.replace(/ \(Lonely Planet\)/, ''))}${/Lonely/.test(t) ? '<small>LP</small>' : ''}</button>`).join('')}</div>
-      ${g ? `<div class="card guia-txt"><b>${icGuia(g[0])} ${esc(g[0])}</b><ul>${g[1].map(x => `<li>${esc(x).replace('VERIFICAR', '<span class="ver">VERIFICAR</span>')}</li>`).join('')}</ul></div>` : '<p class="muted centro">Toca un tema para verlo.</p>'}
+      ${g ? `<div class="card guia-txt"><b>${icGuia(g[0])} ${esc(g[0])}</b><ul>${g[1].map(x => `<li>${esc(x).replace('VERIFICAR', '<span class="ver">VERIFICAR</span>')}</li>`).join('')}${g[0] === 'Dinero y pagos' ? pagoAlli() : ''}</ul></div>` : '<p class="muted centro">Toca un tema para verlo.</p>'}
       <p class="muted centro">La Lonely Planet (2016) solo vale para cultura: precios y apps, verificarlos.</p>`;
   }
   return html;

@@ -134,10 +134,15 @@ const GUIA = [
     'Taxis: Kakao T. Traductor: Papago. Trenes: Korail Talk.',
     'Las apps cambian: VERIFICAR que funcionan con número y tarjeta extranjeros antes de ir.'
   ]],
-  ['Pagos', [
-    'La tarjeta se acepta casi en todas partes, incluso para importes pequeños.',
-    'Lleva algo de efectivo para mercados, puestos callejeros y recargar la T-money.',
-    'Algunas máquinas y apps no aceptan tarjetas extranjeras.'
+  ['Dinero y pagos', [
+    'La tarjeta se acepta casi en todas partes, incluso para importes pequeños: taxis, tiendas 24 h, restaurantes, KTX. Llevad la tarjeta física: el pago con el móvil (Google Pay) apenas funciona en Corea. VERIFICAR.',
+    'Efectivo para: recargar la T-money (en las máquinas del metro suele ser solo en efectivo), mercados y puestos callejeros, y algún restaurante antiguo, entrada o donativo en Andong, Gyeongju y Hahoe.',
+    'Cuánto, orientativo: entre los dos, unos 300.000-400.000 ₩ al empezar. T-money: 20.000-30.000 ₩ cada uno al llegar. Comida en la calle y mercados: 20.000-40.000 ₩ al día. Si falta, se saca más.',
+    'Con Revolut: mejor sacar wones de cajero en Corea que llevar muchos euros. Cajeros "Global ATM" en bancos y tiendas 24 h; pocos abren 24 h, no lo dejéis para la noche. Sacad cantidades grandes de una vez: el cajero coreano puede cobrar su propia comisión (sale en pantalla).',
+    'Revolut: el plan gratuito tiene un límite mensual de retiradas sin comisión y cobra un recargo al cambiar divisa en fin de semana. Mirad vuestro plan en la app. VERIFICAR.',
+    'Al pagar o sacar, si preguntan moneda, elegid SIEMPRE wones (₩), nunca euros: la conversión del cajero o del comercio es peor que la de Revolut.',
+    'Cambio de billetes: las casas de cambio de Myeongdong suelen dar mejor cambio que el aeropuerto. En el aeropuerto, solo lo justo para el primer rato.',
+    'Algunas máquinas y apps no aceptan tarjetas extranjeras: ahí, efectivo o T-money.'
   ]],
   ['Comida', [
     'Los banchan (platitos de acompañamiento) son gratis y se pueden repetir.',
