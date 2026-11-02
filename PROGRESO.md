@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v82
+Caché del service worker: corea-v83
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -134,6 +134,7 @@ Caché del service worker: corea-v82
 - v80: el usuario pidió concretar las líneas de metro en la Ruta del día. Nuevo data/metro.json (precacheado): estaciones, líneas y tramos del metro de Seúl y alrededores sacados de OpenStreetMap (ODbL 1.0, vía el paquete npm korea-mcp, datos de oct 2026; se cita en la app) y, con prefijo "b:", las líneas 1 (Toseong–Seomyeon) y 2 (Seomyeon–Jangsan) de Busan hechas a mano con coordenadas aproximadas y marca VERIFICAR (no se encontró fuente abierta accesible). En cada tramo de más de 1,6 km: hasta 6 estaciones a ≤1,2 km del origen y del destino, camino más rápido (2,2 min por parada, 6 min por transbordo, a pie 4,5 km/h ×1,3) y pasos: a pie hasta la estación, línea con su color, nº de paradas y la próxima estación (para saber el sentido), dónde bajar o cambiar y lo que queda a pie. Si el metro tarda más de 1,6 veces que el taxi, sale "mejor taxi". Sin metro (Andong, Gyeongju, Jeonju y parte de Busan): "taxi (o bus)". Taxi fuera de ciudad (>8 km) calculado a 40 km/h en vez de 22. [Supuesto] Tiempos aproximados; Naver ("🧭 Ruta") da los reales.
 - v81: el usuario no encontraba la ruta del día 4 (llegada). Existía en "📖 Sitios", pero los días con traslado Hoy abre "🚆 Traslado" y la ruta quedaba escondida. Ahora, bajo el traslado, botón azul "📖 Después: Ruta del día (N sitios) ›", y la Ruta del día empieza con "🚆 Antes: Aeropuerto de Incheon → Starria Hostel · ver traslado ›" (el aeropuerto sin "(T1)"; el resto, la ciudad entre paréntesis).
 - v82: el usuario preguntó cuánto efectivo llevar (ambos tienen Revolut) y pidió meterlo en la app. El tema "Pagos" de la Guía pasa a "💰 Dinero y pagos": tarjeta física (Google Pay apenas funciona, VERIFICAR), para qué hace falta efectivo, cantidades orientativas (300.000-400.000 ₩ entre los dos al empezar; T-money 20.000-30.000 ₩ cada uno; 20.000-40.000 ₩/día en calle y mercados), Revolut (sacar de cajero Global ATM en cantidades grandes; límite de retiradas gratis y recargo en fin de semana según plan, VERIFICAR), elegir siempre wones, casas de cambio de Myeongdong mejor que el aeropuerto. Debajo, generado en el móvil desde trip.json (no va al repo): hoteles que se pagan allí con su importe. [Supuesto] Cifras orientativas, no precios comprobados.
+- v83 (propuesta 6 y petición del usuario): "🧳 Antes de salir" en Hoy → Traslado los días en que se deja un hotel y hay traslado (8, 10, 12, 15, 17 y 19): primer vuelo del día con "3 h antes", tren con hora, coche y asientos (o "⚠️ SIN COMPRAR"), pagar el hotel si se paga allí, pasaportes, cargadores, revisar habitación, llave, T-money y próximo hotel (si es en Corea). Casillas por fecha con checks('antes:fecha') y se pueden añadir cosas. Las pestañas se quedan en 7 (el usuario está bien así). Planes tiene nueva categoría "✨ Curioso" (cat: 'curioso', campo opcional ic para el icono): gatos Roof Cat Me (Myeongdong), ovejas Thanks Nature y perros Bau House (Hongdae), London Bagel Museum y Cafe Onion (Anguk), Ssamziegil (Insadong), Hongdae Free Market (sábados, mar-nov), ropa vintage de Gwangjang, Haeridan-gil (Busan, junto al hotel), pan de 10 wones (Gyeongju) y choco pie de PNB (Jeonju). Fuentes: guías web y una web de reservas (nov 2026); todo con ubicación aproximada (≈) y horarios con VERIFICAR. Hwangnam y Jeonpo ya estaban en Comer. El usuario ya pudo instalar la app en Chrome (problema de instalación resuelto).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
@@ -191,7 +192,7 @@ Durante el viaje (4 y 8 hechas en v77):
 4. Diario del día en Hoy (nota, foto, carita).
 5. Compartir marcas con Cristina (pasar visitados, notas, añadidos y valoraciones a su móvil).
 6. "Antes de salir" en días de traslado (pasaporte, cargadores, T-money, pagar hotel, hora del tren).
-Retoques:
+Retoques (6 hecha en v83; 7 descartada: 7 pestañas van bien):
 7. Menos pestañas en la barra (juntar Planes con Ciudades o Comer).
 8. Hoy más limpio una vez empezado el viaje (quitar cuenta atrás y lo que ya no sirve).
 Descartado por Claude: gastos (el usuario usa otra app) y mapas de metro offline (derechos de las imágenes; Naver lo hace mejor).

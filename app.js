@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v82';
+const VERSION = 'v83';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -355,6 +355,27 @@ function diarioResumen() {
   return `<h2>📔 Diario</h2>${fs.map(f => { const dd = arr(trip.dias).find(x => x.fecha === f) || {};
     return `<div class="card diario-r" data-diaf="${f}"><b>${D[f].cara || '📔'} ${fmtDate(f)}</b>${dd.ciudad ? ` <span class="muted">· ${esc(dd.ciudad)}</span>` : ''}${D[f].nota ? `<div>${esc(D[f].nota).replace(/\n/g, '<br>')}</div>` : ''}</div>`; }).join('')}`;
 }
+// "Antes de salir": lista para los días en que se deja un hotel y hay traslado (se marca en el móvil; se pueden añadir cosas).
+function antesSalir(f, tr, al) {
+  if (!al.sale) return '';
+  const it = [], add = (id, texto) => it.push({ id, texto });
+  // Solo el primer vuelo del día (los siguientes son conexiones).
+  arr(trip.vuelos).forEach(v => { const x = arr(v.tramos).find(x => x.vuelo && String(x.salida || '').startsWith(f));
+    if (x) add('v' + x.vuelo, `✈️ Vuelo ${x.vuelo} a las ${String(x.salida).slice(11)}: estar en el aeropuerto unas 3 h antes`); });
+  tr.forEach(t => {
+    const r = t.tren || {};
+    if (isPend(t)) add('pend' + t.id, `⚠️ Billete ${lugarCorto(t.de)} → ${lugarCorto(t.a)} SIN COMPRAR`);
+    else if (r.salida) add('tren' + t.id, `🚆 ${r.numero || 'Tren'} a las ${r.salida}${r.coche ? ` · coche ${r.coche}` : ''}${r.asientos ? ` · asientos ${Object.values(r.asientos).join(' y ')}` : ''}: billete (QR) a mano`);
+  });
+  if (/alojamiento|llegada|allí/i.test(al.sale.pago || '')) add('pago', `🏨 Pagar ${al.sale.nombre}${al.sale.coste_eur ? ` (${al.sale.coste_eur} €)` : ''}`);
+  add('pas', '🛂 Pasaportes encima (no en la maleta facturada)');
+  add('carg', '🔌 Cargadores, batería externa y adaptador');
+  add('rev', '🧺 Revisar armario, baño, enchufes y caja fuerte');
+  add('llave', '🔑 Devolver la llave o tarjeta de la habitación');
+  add('tm', '💳 T-money con saldo');
+  if (al.noche && al.noche !== al.sale && !/espana/.test(ck(al.noche.ciudad))) add('sig', `📍 Próximo hotel: ${al.noche.nombre} (dirección en 🆘 Ayuda para el taxi)`);
+  return `<div class="card antes"><b>🧳 Antes de salir</b>${checks('antes:' + f, it)}</div>`;
+}
 let hoySub = null;
 function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
@@ -391,7 +412,7 @@ function viewHoy() {
   const tr = arr(trip.traslados).filter(t => t.fecha === d.fecha), al = alojDe(d.fecha);
   const secs = [
     ['sitios', '📖 Sitios', sitiosDia(d)],
-    ['traslado', '🚆 Traslado', tr.map(trasladoCard).join('')],
+    ['traslado', '🚆 Traslado', (tr.length ? antesSalir(d.fecha, tr, al) : '') + tr.map(trasladoCard).join('')],
     ['hotel', '🛏️ Hotel', (al.sale && al.sale !== al.noche ? alojCard(al.sale, true) : '') + (al.noche ? alojCard(al.noche, false) : '')],
     ['ciudad', '⭐ Ciudad', destacados(d.ciudad)],
     ['manana', '⏭️ Mañana', manana(d, dias)],
@@ -1420,7 +1441,7 @@ function viewCorea() {
 
 // ---------- Planes: League of Legends y cosmética ----------
 let planesCiudad = null, planesCat = 'lol';
-const PCATS = [['lol', '🎮 LoL'], ['cosme', '💄 Cosmética'], ['servicio', '🧺 Lavandería']];
+const PCATS = [['lol', '🎮 LoL'], ['cosme', '💄 Cosmética'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería']];
 // Calendario del Mundial de LoL con la ciudad donde estaréis cada día.
 function worldsCard() {
   if (typeof WORLDS === 'undefined') return '';
@@ -1436,7 +1457,7 @@ function worldsCard() {
     <div class="muted">${esc(WORLDS.nota)} <span class="ver">VERIFICAR</span></div>
     <div class="muted">Dónde verlo en grupo: T1 Base Camp (Hongdae, Gangnam y Busan, 24 h) y LoL Park en Seúl. Final: el T1 Base Camp de Busan está a unos 300 m del hotel.</div></details>`;
 }
-const icPlan = p => ({ lol: '🎮', cosme: '💄', servicio: '🧺' })[p.cat] || '⭐';
+const icPlan = p => p.ic || ({ lol: '🎮', cosme: '💄', servicio: '🧺', curioso: '✨' })[p.cat] || '⭐';
 function viewPlanes() {
   const P = typeof PLANES !== 'undefined' ? PLANES : [];
   const cs = CIUDADES_COMER.filter(([k]) => P.some(p => p.ciudad === k));
