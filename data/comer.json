@@ -1893,5 +1893,345 @@
 "nota": "Noticia de su apertura en la planta B1 de Shinsegae Gangnam.",
 "fuente": "https://www.insight.co.kr/news/517757"
 }
+},
+{
+"id": "s-coffeehanyakbang",
+"ciudad": "seul",
+"nombre": "Coffee Hanyakbang (Euljiro)",
+"ko": "커피한약방",
+"tipo": "café",
+"plato": "café de filtro tostado en casa, en un local antiguo de madera",
+"direccion": "16-6 Samil-daero 12-gil, Jung-gu (Euljiro 2-ga), en un callejón estrecho",
+"horario": "Según las webs, de 8-10 h a 22 h (fines de semana desde las 11): VERIFICAR",
+"precio": null,
+"fuente": "guia",
+"url": "https://heypop.kr/place/130844/",
+"nota": "Uno de los cafés con más encanto de Seúl: parece una botica antigua. Cuesta encontrarlo en el callejón.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Dirección confirmada en dos webs coreanas.",
+"fuente": "https://heypop.kr/place/130844/"
+}
+},
+{
+"id": "s-cafepines",
+"ciudad": "seul",
+"nombre": "Cafe Pines (Myeongdong)",
+"ko": null,
+"tipo": "café",
+"plato": "café con terraza mirando a la catedral y a la N Seoul Tower",
+"direccion": null,
+"horario": null,
+"precio": "En Myeongdong, los cafés suelen costar 8.000-13.000 ₩ (guía de 2025)",
+"fuente": "guia",
+"url": "https://www.tastekoreanfood.com/ktrend/best-4-cafes-in-seoul-myeongdong-you-must-visit",
+"nota": "Terraza con vistas a la catedral de Myeongdong: buen descanso a 5 min del hotel.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Recomendado en una guía de cafés de Myeongdong. Ubicación aproximada.",
+"fuente": "https://www.tastekoreanfood.com/ktrend/best-4-cafes-in-seoul-myeongdong-you-must-visit"
+}
+},
+{
+"id": "s-metcha",
+"ciudad": "seul",
+"nombre": "METCHA (Myeongdong)",
+"ko": null,
+"tipo": "café",
+"plato": "té matcha molido en piedra (maetdol), cinco plantas",
+"direccion": null,
+"horario": null,
+"precio": null,
+"fuente": "guia",
+"url": "https://www.tastekoreanfood.com/ktrend/best-4-cafes-in-seoul-myeongdong-you-must-visit",
+"nota": "Especialistas en matcha con molino de piedra tradicional.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Recomendado en una guía de cafés de Myeongdong. Ubicación aproximada.",
+"fuente": "https://www.tastekoreanfood.com/ktrend/best-4-cafes-in-seoul-myeongdong-you-must-visit"
+}
+},
+{
+"id": "s-floating",
+"ciudad": "seul",
+"nombre": "Rooftop Floating (L7 Myeongdong, planta 21)",
+"ko": null,
+"tipo": "bar",
+"plato": "bar y bistró en azotea con vistas a Namsan y Myeongdong",
+"direccion": "Planta 21 del hotel L7 Myeongdong, junto al metro Myeongdong",
+"horario": "Según una guía, 17-01 h: VERIFICAR",
+"precio": null,
+"fuente": "guia",
+"url": "https://www.timeout.com/seoul/bars/floating-bar",
+"nota": "La azotea más grande de Seúl, según Time Out. Atardecer con la N Seoul Tower delante.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Time Out Seúl.",
+"fuente": "https://www.timeout.com/seoul/bars/floating-bar"
+}
+},
+{
+"id": "s-marquedamour",
+"ciudad": "seul",
+"nombre": "Marque d'Amour (L'Escape Hotel, planta 26)",
+"ko": null,
+"tipo": "bar",
+"plato": "bar de cócteles de hotel con vistas",
+"direccion": "Planta 26 del L'Escape Hotel, Hoehyeon",
+"horario": "18-24 h según una guía: VERIFICAR",
+"precio": null,
+"fuente": "guia",
+"url": "https://tablejourney.com/south-korea/seoul/upscale/",
+"nota": "Cócteles con vistas, a 5-10 min a pie del hotel.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Listado de bares de 2025. Ubicación aproximada.",
+"fuente": "https://tablejourney.com/south-korea/seoul/upscale/"
+}
+},
+{
+"id": "s-nogari",
+"ciudad": "seul",
+"nombre": "Callejón de la cerveza Nogari (Euljiro 3-ga)",
+"ko": "을지로 노가리골목",
+"tipo": "bar",
+"plato": "cerveza de barril y nogari (abadejo seco a la plancha) en mesas en la calle",
+"direccion": "Junto al metro Euljiro 3-ga",
+"horario": "Por la tarde-noche",
+"precio": "Cerveza grande unos 8.000 ₩ (principios de 2025)",
+"fuente": "guia",
+"url": "https://southkoreahallyu.com/things-to-do-euljiro-seoul/",
+"nota": "Una docena de bares en dos calles, con mesas de plástico en la acera: el ambiente más auténtico de oficinistas de Seúl.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Guías de 2025.",
+"fuente": "https://southkoreahallyu.com/things-to-do-euljiro-seoul/"
+}
+},
+{
+"id": "b-anthouse",
+"ciudad": "busan",
+"nombre": "Ant House (whisky bar, Haeundae)",
+"ko": "앤트하우스",
+"tipo": "bar",
+"plato": "whisky y cócteles",
+"direccion": "3.ª planta, 7-3 Gunam-ro 8beon-gil, Haeundae-gu (junto a la estación de Haeundae)",
+"horario": "20-04 h; cierra los domingos (según un blog: VERIFICAR)",
+"precio": "Whisky unos 10.000-19.999 ₩ la copa (blog)",
+"fuente": "guia",
+"url": "https://www.trvlogue.com/ko/haeundae-whisky-bar-anthouse",
+"nota": "Bar tranquilo para la última copa, a pocos minutos del hotel.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Dirección y horario según un blog coreano.",
+"fuente": "https://www.trvlogue.com/ko/haeundae-whisky-bar-anthouse"
+}
+},
+{
+"id": "b-edge993",
+"ciudad": "busan",
+"nombre": "Edge 993 (café con vistas al mar, Mipo)",
+"ko": null,
+"tipo": "café",
+"plato": "café panorámico de Blueline Park a la playa",
+"direccion": "Al final de la calle de Mipo (Dalmaji-gil)",
+"horario": "Lu-Ju 11-21 h; Vi-Do 11-22 h (según una guía: VERIFICAR)",
+"precio": null,
+"fuente": "guia",
+"url": "https://www.koreatodo.com/haeundae-mipo-best-cafes-restaurants",
+"nota": "Vistas de toda la playa de Haeundae; junto a la salida del tren costero Blueline Park.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Guía de Mipo. Ubicación aproximada.",
+"fuente": "https://www.koreatodo.com/haeundae-mipo-best-cafes-restaurants"
+}
+},
+{
+"id": "b-geumsong",
+"ciudad": "busan",
+"nombre": "Geumsong Deokmi (Haeridan-gil)",
+"ko": null,
+"tipo": "café",
+"plato": "postres de autor presentados como obras de arte",
+"direccion": "Haeridan-gil, a 4 min de la estación de Haeundae (salidas 2-4)",
+"horario": null,
+"precio": null,
+"fuente": "guia",
+"url": "https://seeparacode.blogspot.com/2025/04/haeundae-cafe-street-tour-course.html",
+"nota": "Pastelería-café de diseño en el callejón de Haeridan-gil.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Blog de abril de 2025. Ubicación aproximada.",
+"fuente": "https://seeparacode.blogspot.com/2025/04/haeundae-cafe-street-tour-course.html"
+}
+},
+{
+"id": "b-duplit",
+"ciudad": "busan",
+"nombre": "Duplit (Haeridan-gil)",
+"ko": null,
+"tipo": "café",
+"plato": "café conocido por sus butter bars",
+"direccion": null,
+"horario": null,
+"precio": null,
+"fuente": "guia",
+"url": "https://seeparacode.blogspot.com/2025/04/haeundae-cafe-street-tour-course.html",
+"nota": "Concept café de Haeridan-gil.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Blog de abril de 2025. Ubicación aproximada.",
+"fuente": "https://seeparacode.blogspot.com/2025/04/haeundae-cafe-street-tour-course.html"
+}
+},
+{
+"id": "b-tago",
+"ciudad": "busan",
+"nombre": "Tago Coffee (Haeridan-gil)",
+"ko": null,
+"tipo": "café",
+"plato": "café de especialidad en local minimalista",
+"direccion": null,
+"horario": null,
+"precio": null,
+"fuente": "guia",
+"url": "https://creatrip.com/en/blog/5700",
+"nota": "El café que mejor representa Haeridan-gil, según Creatrip.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Creatrip. Ubicación aproximada.",
+"fuente": "https://creatrip.com/en/blog/5700"
+}
+},
+{
+"id": "a-jigwanseoga",
+"ciudad": "andong",
+"nombre": "Jigwanseoga (café-biblioteca junto al parque Ungbu)",
+"ko": "지관서가",
+"tipo": "café",
+"plato": "café en la planta baja de una biblioteca-librería",
+"direccion": "Junto al parque Ungbu, en el antiguo Centro Cultural de Andong",
+"horario": null,
+"precio": null,
+"fuente": "guia",
+"url": "https://kbmaeil.com/article/20250519500183",
+"nota": "Abrió en mayo de 2025 en pleno centro, a unos minutos del hotel: buen sitio para un café tranquilo.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Prensa local, mayo de 2025.",
+"fuente": "https://kbmaeil.com/article/20250519500183"
+}
+},
+{
+"id": "a-milliliter",
+"ciudad": "andong",
+"nombre": "Milliliter Coffee Roastery",
+"ko": "밀리리터 커피 로스터리",
+"tipo": "café",
+"plato": "café de filtro (pour-over), tostado propio",
+"direccion": "Bokju 1-gil, centro de Andong",
+"horario": null,
+"precio": null,
+"fuente": "guia",
+"url": "https://polle.com/place/5z2849/%EB%B0%80%EB%A6%AC%EB%A6%AC%ED%84%B0%20%EC%BB%A4%ED%94%BC%20%EB%A1%9C%EC%8A%A4%ED%84%B0%EB%A6%AC",
+"nota": "Café de especialidad del centro.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Polle. Ubicación aproximada: VERIFICAR en Naver.",
+"fuente": "https://polle.com/place/5z2849/%EB%B0%80%EB%A6%AC%EB%A6%AC%ED%84%B0%20%EC%BB%A4%ED%94%BC%20%EB%A1%9C%EC%8A%A4%ED%84%B0%EB%A6%AC"
+}
+},
+{
+"id": "g-bonjeonmakpo",
+"ciudad": "gyeongju",
+"nombre": "Bonjeon Makpo (bar de makgeolli)",
+"ko": "본전막포",
+"tipo": "bar",
+"plato": "makgeolli de muchas clases, yukjeon (filetitos de ternera rebozados en huevo) y calamar picante",
+"direccion": "Centro de Gyeongju (fuera de Hwangnidan-gil)",
+"horario": null,
+"precio": "Barato, según las reseñas",
+"fuente": "guia",
+"url": "https://polle.com/place/1DOWX1/%EB%B3%B8%EC%A0%84%EB%A7%89%ED%8F%AC",
+"nota": "Bar de makgeolli de barrio, barato y con buena comida. Ubicación aproximada: buscadlo en Naver.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Polle y guía de Gyeongju.",
+"fuente": "https://polle.com/place/1DOWX1/%EB%B3%B8%EC%A0%84%EB%A7%89%ED%8F%AC"
+}
+},
+{
+"id": "g-keirimjumak",
+"ciudad": "gyeongju",
+"nombre": "Keirim Jumak (taberna en hanok, Hwangnidan-gil)",
+"ko": null,
+"tipo": "bar",
+"plato": "licores tradicionales coreanos y platos para compartir",
+"direccion": "Hwangnidan-gil",
+"horario": null,
+"precio": null,
+"fuente": "guia",
+"url": "https://autoreserve.com/de/kr/cheomseongdae-observatory/dining-bar",
+"nota": "Taberna en una casa tradicional: makgeolli y licores de la zona en ambiente hanok.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Listado de 2025. Ubicación aproximada.",
+"fuente": "https://autoreserve.com/de/kr/cheomseongdae-observatory/dining-bar"
+}
+},
+{
+"id": "g-jinhanbam",
+"ciudad": "gyeongju",
+"nombre": "Jinhanbam (bar de cócteles, Hwangnidan-gil)",
+"ko": null,
+"tipo": "bar",
+"plato": "cócteles",
+"direccion": "Hwangnidan-gil",
+"horario": null,
+"precio": null,
+"fuente": "guia",
+"url": "https://koreatravelpost.com/?p=5002",
+"nota": "El bar de cócteles más citado de Hwangnidan-gil. Suele haber espera: apuntaos y dad una vuelta.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Guía de 2025. Ubicación aproximada.",
+"fuente": "https://koreatravelpost.com/?p=5002"
+}
+},
+{
+"id": "j-yetchon",
+"ciudad": "jeonju",
+"nombre": "Yetchon Makgeolli (aldea hanok)",
+"ko": "옛촌막걸리",
+"tipo": "bar",
+"plato": "tetera de makgeolli con platos que van llegando a la mesa",
+"direccion": "Aldea hanok de Jeonju",
+"horario": null,
+"precio": null,
+"fuente": "guia",
+"url": "https://www.lonelyplanet.com/south-korea/jeollabuk-do/jeonju/travel-tips-and-articles/48-hours-in-jeonju-koreas-foodie-capital",
+"nota": "Para la Lonely, quizá la casa de makgeolli más famosa de Jeonju: pides la tetera y van llegando platos. Suele haber cola. Ubicación aproximada.",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Lonely Planet (artículo de Jeonju).",
+"fuente": "https://www.lonelyplanet.com/south-korea/jeollabuk-do/jeonju/travel-tips-and-articles/48-hours-in-jeonju-koreas-foodie-capital"
+}
 }
 ]

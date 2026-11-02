@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v89';
+const VERSION = 'v90';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1452,7 +1452,7 @@ function viewCorea() {
 
 // ---------- Planes: League of Legends y cosmética ----------
 let planesCiudad = null, planesCat = 'lol';
-const PCATS = [['lol', '🎮 LoL'], ['cosme', '💄 Cosmética'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería']];
+const PCATS = [['lol', '🎮 LoL'], ['cosme', '💄 Cosmética'], ['ropa', '👕 Ropa'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería']];
 // Calendario del Mundial de LoL con la ciudad donde estaréis cada día.
 function worldsCard() {
   if (typeof WORLDS === 'undefined') return '';
@@ -1468,7 +1468,7 @@ function worldsCard() {
     <div class="muted">${esc(WORLDS.nota)} <span class="ver">VERIFICAR</span></div>
     <div class="muted">Dónde verlo en grupo: T1 Base Camp (Hongdae, Gangnam y Busan, 24 h) y LoL Park en Seúl. Final: el T1 Base Camp de Busan está a unos 300 m del hotel.</div></details>`;
 }
-const icPlan = p => p.ic || ({ lol: '🎮', cosme: '💄', servicio: '🧺', curioso: '✨' })[p.cat] || '⭐';
+const icPlan = p => p.ic || ({ lol: '🎮', cosme: '💄', servicio: '🧺', curioso: '✨', ropa: '👕' })[p.cat] || '⭐';
 function viewPlanes() {
   const P = typeof PLANES !== 'undefined' ? PLANES : [];
   const cs = CIUDADES_COMER.filter(([k]) => P.some(p => p.ciudad === k));
@@ -1626,7 +1626,7 @@ function viewComer() {
   const base = lugaresComer().filter(l => (comerCiudad === 'todas' || l.ciudad === comerCiudad) && (comerTipo === 'todos' || l.tipo === comerTipo));
   const est = l => estadoDe(String(l.id)).estado || '';
   const n = v => base.filter(l => est(l) === v).length;
-  let lista = base.filter(l => comerEstado === 'todos' ? true : comerEstado === 'pendiente' ? !est(l) : est(l) === comerEstado);
+  let lista = base.filter(l => comerEstado === 'todos' ? true : comerEstado === 'cerca' ? distKm(l) <= 1.2 : comerEstado === 'pendiente' ? !est(l) : est(l) === comerEstado);
   lista = ordenarComer(lista);
   const chip = (attr, v, t, on) => `<button class="chip ${on ? 'on' : ''}" ${attr}="${esc(v)}">${esc(t)}</button>`;
   const opt = (v, t, on) => `<option value="${esc(v)}" ${on ? 'selected' : ''}>${esc(t)}</option>`;
@@ -1642,7 +1642,7 @@ function viewComer() {
   return buscadorHTML('qcm', qCom, 'Buscar sitio para comer (nombre, plato…)', resComer(qCom)) + `<div class="cc-row">${[['todas', 'Todas', '🗺️'], ...CIUDADES_COMER.map(([k, t]) => [k, t, tema(k).ic])].map(([k, t, ic]) =>
       `<button class="cbtn ${comerCiudad === k ? 'on' : ''}" ${k !== 'todas' ? `style="${varsTema(k)}"` : ''} data-cc="${k}"><span>${ic}</span>${esc(t)}</button>`).join('')}</div>
     <div class="chips tipos-c">${chip('data-ct', 'todos', `🍽️ Todo (${lugaresComer().filter(enC).length})`, comerTipo === 'todos')}${tipos.map(([t, nt]) => chip('data-ct', t, `${IC_COMER[t] || ''} ${t[0].toUpperCase() + t.slice(1)} (${nt})`, comerTipo === t)).join('')}</div>
-    <div class="chips estados-c">${chip('data-ce', 'todos', 'Todos', comerEstado === 'todos')}${chip('data-ce', 'quiero', `⭐ ${n('quiero')}`, comerEstado === 'quiero')}${chip('data-ce', 'visitado', `✅ ${n('visitado')}`, comerEstado === 'visitado')}${chip('data-ce', 'pendiente', 'Sin marcar', comerEstado === 'pendiente')}</div>
+    <div class="chips estados-c">${chip('data-ce', 'todos', 'Todos', comerEstado === 'todos')}${chip('data-ce', 'cerca', `📍 Cerca del hotel (${base.filter(l => distKm(l) <= 1.2).length})`, comerEstado === 'cerca')}${chip('data-ce', 'quiero', `⭐ ${n('quiero')}`, comerEstado === 'quiero')}${chip('data-ce', 'visitado', `✅ ${n('visitado')}`, comerEstado === 'visitado')}${chip('data-ce', 'pendiente', 'Sin marcar', comerEstado === 'pendiente')}</div>
     ${glosario}
     <div class="c2-cuenta"><span class="muted">${lista.length} lugares</span><button class="chip orden-btn" data-co="${sigOrd[comerOrden] || 'rec'}">↕ ${ord[comerOrden] || ord.rec}</button></div>
     ${lista.map(cardComer).join('') || '<p class="muted">No hay lugares con este filtro.</p>'}

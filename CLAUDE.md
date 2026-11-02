@@ -19,7 +19,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    relativa, iconos relativos.
 5. Pestañas (barra inferior): Hoy, Ruta, Ciudades, Corea,
    Comer, Planes (calendario del Mundial de LoL plegado: WORLDS en contenido.js, hora de
-   Corea y dónde estaréis; botones LoL / Cosmética / Curioso (cafés de animales, postres famosos, tiendas raras) / Lavandería que muestran sus sitios debajo: PLANES en contenido.js,
+   Corea y dónde estaréis; botones LoL / Cosmética / Ropa (solo cerca del hotel) / Curioso (cafés de animales, postres famosos, tiendas raras) / Lavandería que muestran sus sitios debajo: PLANES en contenido.js,
    con distancia al hotel, "cerca", foto, 💰 precio aproximado y 👥 reseñas; lavandería y Olive Young en cada ciudad), Más. Corea tiene apartados:
    Guía (primero, con iconos por tema), Historia (historia.js: 22
    capítulos de historia y cultura para leer sin conexión, con índice,
@@ -196,7 +196,7 @@ SX Comer (independiente): data/comer.json precacheado; pestaña
    tarjeta con hangul, precio, horario, fuente y "VERIFICAR que
    sigue abierto"; Copiar coreano, Enseñar, Naver; estado y nota
    por lugar; "Añadir lugar". Diseño compacto (v69): botones de ciudad
-   como Ciudades, chips de tipo con recuento, chips de estado, orden con
+   como Ciudades, chips de tipo con recuento, chips de estado (con "📍 Cerca del hotel" ≤1,2 km), orden con
    un botón; tarjeta con foto o icono, nombre, hangul, distancia y una
    línea de datos; botones ⭐ ✅ 👎 🚫, Enseñar y Naver; el resto en
    "Más detalles". (El botón "Comer en <ciudad>" de Hoy
