@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v61';
+const VERSION = 'v62';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -448,7 +448,7 @@ function autoDia(d) {
   // El orden sale de las actividades (no del título, que resume el día).
   const it = ' ' + arr(d.items).map(x => x && x.texto).join(' ').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/-/g, '').replace(/[^a-z0-9]+/g, ' ') + ' ';
   return sitiosCiudadObj(k).map(l => {
-    const tk = tokensDe(l), pos = Math.min(...tk.map(t => { const i = it.indexOf(t); return i < 0 ? (p.txt.includes(t) ? 1e8 : 1e9) : i; }));
+    const tk = l.buscar ? l.buscar.map(x => ' ' + x + ' ') : tokensDe(l), pos = Math.min(...tk.map(t => { const i = it.indexOf(t); return i < 0 ? (p.txt.includes(t) ? 1e8 : 1e9) : i; }));
     return pos < 1e9 && !(EXIGE[l.ko] && !p.txt.includes(EXIGE[l.ko])) ? [l, pos] : null;
   }).filter(Boolean).sort((a, b) => a[1] - b[1]).map(x => x[0]);
 }

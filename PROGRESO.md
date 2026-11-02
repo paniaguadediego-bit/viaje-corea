@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v61
+Caché del service worker: corea-v62
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -108,6 +108,7 @@ Caché del service worker: corea-v61
 - v59: Hoy rediseñado para navegar mejor: tira deslizable de días (fecha, día de la semana e icono de ciudad; se toca para saltar; hoy con borde), tarjeta del día y debajo botones como los de Corea (📖 Sitios, 🚆 Traslado, 🛏️ Hotel, ⭐ Ciudad, ⏭️ Mañana; solo los que tienen contenido; por defecto Traslado si lo hay). Arreglo: el hotel salía duplicado (se filtraba por ciudad); ahora se calcula por fechas: el de esa noche y, si se deja ese día, "Hoy dejáis este alojamiento". Aviso rojo de compras en una sola línea ("Por comprar: 15 nov Busan → Jeonju…", lleva a Ruta). "Falta 1 día".
 - v60: agenda por día. En Ciudades cada sitio (imprescindibles, LP e interés) tiene "📅" con los días de esa ciudad (·itin. = ya está en el itinerario): tocar apunta o quita el sitio de ese día. En Hoy → Sitios salen los del itinerario en el orden en que aparecen en las actividades (no en el título) más los apuntados; se reordenan manteniendo pulsado 0,4 s o arrastrando ≡ (vibra al coger), ✕ quita de ese día y "↺ Volver al itinerario" deshace. Se guarda en user.agenda (va en la copia exportada).
 - v61: desplegables: la app ya no se redibuja sola (al llegar datos, tiempo o fotos) mientras un desplegable o una casilla de texto está en uso; espera a que se suelte (renderLuego). En Comer, "Todo tipo" muestra el número de sitios de cada tipo, oculta los tipos vacíos y vuelve a "Todo tipo" si al cambiar de ciudad el elegido queda vacío. Distintivo azul "LP" (★ = elección del autor) en todo lo recomendado por la Lonely: Hoy → Sitios, Ciudades (imprescindibles y recomendados), Comer (fuente lonely), Checklist y Enseñar.
+- v62: revisado el orden de visita de cada día con las coordenadas (saltos en km). Cambiado en el trip.json privado (mismos sitios y horas fijas): 5/11 Changdeokgung → Bukchon (al lado) → Insadong → Ikseon-dong, y el Samoyed café pasa al 6/11 (ya estáis en Hongdae): de 8,4 a 2,2 km; 8/11 Buyongdae antes del museo de máscaras (de camino a Andong); 10/11 Bunhwangsa antes del anochecer y Donggung/Wolji al final, iluminado; 12/11 Dongbaekseom justo tras la playa y Gwangalli de noche (de 6,9 a 4 km); 13/11 Songdo justo después de Gamcheon; 18/11 Museo de Historia antes de Deoksugung. Se mantienen 7/11 (ida y vuelta a Gangnam inevitable: desayuno Namdaemun, atardecer en Namsan y Jogyesa de noche) y 9/11 (los buses salen del centro de Andong). Campo buscar en contenido.js para fijar con qué palabras se sitúa un sitio en el texto.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
