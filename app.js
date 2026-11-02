@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v60';
+const VERSION = 'v61';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -94,7 +94,7 @@ function naver(l) {
 
 // ---------- distancias al hotel (línea recta, sin conexión) ----------
 let COORDS_LUGARES = {};
-fetch('data/coords.json').then(r => r.json()).then(d => { COORDS_LUGARES = d || {}; if (['ciudades', 'comer', 'corea', 'mas'].includes(tab)) render(); }).catch(() => {});
+fetch('data/coords.json').then(r => r.json()).then(d => { COORDS_LUGARES = d || {}; if (['ciudades', 'comer', 'corea', 'mas'].includes(tab)) renderLuego(); }).catch(() => {});
 const coordsLugar = l => {
   if (!l) return null;
   if (l.lat != null && l.lon != null) return [Number(l.lat), Number(l.lon)];
@@ -491,7 +491,7 @@ function sitiosDia(d) {
     <div class="muted mini-nota">Mantén pulsado un sitio (o arrastra ≡) para cambiar el orden. Añade más desde Ciudades con 📅.</div>
     <div class="sd-lista">${ls.map(l => {
     const h = hKey(l), mas = D[h.slice(2)] || D[h], txt = mas || l.desc || l.nota || G[h.slice(2)] || '';
-    return `<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}" data-k="${esc(h)}"><span class="sd-handle" aria-label="Mover">≡</span>${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b> <span class="ko-s">${esc(l.ko || '')}</span><button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button></div>
+    return `<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}" data-k="${esc(h)}"><span class="sd-handle" aria-label="Mover">≡</span>${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span><button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button></div>
       ${txt ? `<div class="muted">${esc(txt).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}${mas || l.lp ? ' <span class="badge otro">LP</span>' : ''}</div>` : ''}</div></div>`;
   }).join('')}</div>${A.orden || A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}${planesCerca(ls)}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado.</div></div>`;
 }
@@ -591,7 +591,10 @@ const sitiosCiudad = k => {
   const base = CATALOGO[k] || [], ko = new Set(base.map(l => l.ko));
   return [...base, ...(LP[k] || []).filter(l => !l.ko || !ko.has(l.ko))];
 };
-const lpTag = l => l.lp ? ` <span class="badge otro">LP${l.top ? ' ★' : ''}</span>` : '';
+// Distintivo de recomendación de Lonely Planet (★ = elección del autor).
+const esLP = l => l && typeof l === 'object' && (l.lp || l.fuente === 'lonely');
+const lpPill = l => esLP(l) ? ` <span class="lp-pill" title="Recomendado por Lonely Planet 2016">LP${l.top || /★/.test(l.nota || '') ? ' ★' : ''}</span>` : '';
+const lpTag = lpPill;
 const interesDe = c => arr(c.interes).length ? arr(c.interes) : (CATALOGO[ck(c.nombre)] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)).map(l => l.es);
 
 // Estancia en una ciudad (Ruta): fechas, noches, hotel y días del plan.
@@ -635,10 +638,10 @@ function imprescindibles(k) {
   const ls = (typeof IMPRES !== 'undefined' && IMPRES[k]) || []; if (!ls.length) return '';
   return `<div class="impres">${porPlan(ls, k).map(l => `<div class="imp ${hecho(l, k) ? 'hecho-card' : ''}">
     <div class="foto" data-wiki="${esc(l.wiki)}"><span>📷</span></div>
-    <div class="imp-txt"><div class="imp-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b></div>
+    <div class="imp-txt"><div class="imp-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)}</div>
       <div class="ko-s">${esc(l.ko)}${distHotel(l, k)}</div>${agendaBtn(l, k, 'imp')}
       ${masLP(l, 'imp')}
-      <div class="muted">${esc(l.desc)}${l.lp ? ' <span class="badge otro">LP</span>' : ''}</div>
+      <div class="muted">${esc(l.desc)}</div>
       <div class="credito" data-cred="${esc(l.wiki)}"></div></div></div>`).join('')}</div>`;
 }
 // Foto principal del artículo de Wikipedia (necesita conexión la primera vez; el service worker la guarda).
@@ -692,7 +695,7 @@ function seccionLP(k) {
     })().map(l => `<div class="lp-item ${hecho(l, k) ? 'hecho-card' : ''} ${l.top ? 'top' : ''}">
       ${wikiDe(l) ? `<div class="foto lpf" data-wiki="${esc(wikiDe(l))}"><span>${icSitio(l.tipo + ' ' + l.es)}</span></div>` : `<div class="foto lpf vacia"><span>${icSitio(l.tipo + ' ' + l.es)}</span></div>`}
       <div class="lp-txt">
-        <div class="lp-nom">${btnHecho(l, k)}<b>${esc(l.es)}</b></div>
+        <div class="lp-nom">${btnHecho(l, k)}<b>${esc(l.es)}</b>${lpPill(l)}</div>
         <div class="lp-meta"><span class="lp-tipo">${esc(l.tipo)}</span>${l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(l)}</div>
         <div class="lp-nota">${esc(l.nota)}</div>
         <div class="lp-pie">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, k)}</div>${agendaBtn(l, k, 'lp')}
@@ -1143,7 +1146,7 @@ function viewChecklist() {
     const hechos = [...sitios, ...comer].filter(l => hecho(l, k)).length;
     const sitiosO = porPlan(sitios, k), comerO = porPlan(comer, k);
     return `<details data-key="ck:${esc(k)}" ${abierto('ck:' + k, k === act) ? 'open' : ''}><summary class="card big">${esc(c.nombre)} <span class="muted">${hechos}/${sitios.length + comer.length}</span></summary>
-      <div class="card lista-check">${sitiosO.map(l => fila(l, k, (typeof l === 'string' ? esc(l) : esc(l.es) + (l.lp ? ' <span class="muted">(LP)</span>' : '')) + planBadge(l, k))).join('')}</div>
+      <div class="card lista-check">${sitiosO.map(l => fila(l, k, (typeof l === 'string' ? esc(l) : esc(l.es) + lpPill(l)) + planBadge(l, k))).join('')}</div>
       ${comer.length ? '<div class="muted sub">🍜 Para comer</div><div class="card lista-check">' + comerO.map(l => fila(l, k, esc(l.nombre) + (estadoDe(String(l.id)).estado === 'quiero' ? ' <span class="muted">⭐</span>' : '') + planBadge(l, k))).join('') + '</div>' : ''}
       <div class="muted sub">Mis cosas</div>${checks('c:' + k, [])}</details>`;
   }).join('');
@@ -1151,7 +1154,7 @@ function viewChecklist() {
 
 // ---------- Comer (data/comer.json + lugares propios) ----------
 let DATOS_COMER = [];
-fetch('data/comer.json').then(r => r.json()).then(d => { DATOS_COMER = arr(d); if (['comer', 'hoy', 'verificar', 'mas'].includes(tab)) render(); }).catch(() => {});
+fetch('data/comer.json').then(r => r.json()).then(d => { DATOS_COMER = arr(d); if (['comer', 'hoy', 'verificar', 'mas'].includes(tab)) renderLuego(); }).catch(() => {});
 const CIUDADES_COMER = [['seul', 'Seúl'], ['andong', 'Andong'], ['gyeongju', 'Gyeongju'], ['busan', 'Busan'], ['jeonju', 'Jeonju']];
 const TIPOS = ['todos', 'restaurante', 'café', 'mercado', 'plato', 'bar'];
 const ESTADOS = [['quiero', 'Quiero'], ['visitado', 'Visitado'], ['descartado', 'Descartado'], ['cerrado', 'Cerrado']];
@@ -1181,7 +1184,8 @@ function viewComer() {
     </div>`;
   return glosario + `<div class="par filtros">
       <select data-sc aria-label="Ciudad">${opt('todas', '🗺️ Todas las ciudades', comerCiudad === 'todas')}${CIUDADES_COMER.map(([k, t]) => opt(k, `${tema(k).ic} ${t}${k === ck(ciudadActual()) ? ' (hoy)' : ''}`, comerCiudad === k)).join('')}</select>
-      <select data-st aria-label="Tipo">${TIPOS.map(t => opt(t, t === 'todos' ? '🍽️ Todo tipo' : `${IC_COMER[t] || ''} ${t[0].toUpperCase() + t.slice(1)}`, comerTipo === t)).join('')}</select>
+      <select data-st aria-label="Tipo">${TIPOS.map(t => { const nt = lugaresComer().filter(l => (comerCiudad === 'todas' || l.ciudad === comerCiudad) && (t === 'todos' || l.tipo === t)).length;
+        return t !== 'todos' && !nt && comerTipo !== t ? '' : opt(t, (t === 'todos' ? '🍽️ Todo tipo' : `${IC_COMER[t] || ''} ${t[0].toUpperCase() + t.slice(1)}`) + ` (${nt})`, comerTipo === t); }).join('')}</select>
     </div>
     <div class="chips">${chip('data-ce', 'todos', 'Todos', comerEstado === 'todos')}${chip('data-ce', 'quiero', `⭐ Quiero (${n('quiero')})`, comerEstado === 'quiero')}${chip('data-ce', 'visitado', `✅ Visitados (${n('visitado')})`, comerEstado === 'visitado')}${chip('data-ce', 'pendiente', 'Sin marcar', comerEstado === 'pendiente')}</div>
     <div class="orden"><span class="muted">${lista.length} lugares · Ordenar:</span>
@@ -1212,7 +1216,7 @@ function cardComer(l) {
   const cinta = { quiero: '⭐ QUIERO IR', visitado: '✅ VISITADO', descartado: 'DESCARTADO', cerrado: '🚫 CERRADO' }[e.estado];
   return `<div class="card comer ${tipoClase(l.tipo)} est-${esc(e.estado || '')}">
     ${cinta ? `<div class="cinta">${cinta}</div>` : ''}
-    <div class="big"><span class="ic-tipo">${IC_COMER[l.tipo] || '🍽️'}</span> ${esc(l.nombre || 'Sin nombre')}</div>${planBadge(l)}
+    <div class="big"><span class="ic-tipo">${IC_COMER[l.tipo] || '🍽️'}</span> ${esc(l.nombre || 'Sin nombre')}${lpPill(l)}</div>${planBadge(l)}
     ${wikiDe(l) ? `<div class="foto banda" data-wiki="${esc(wikiDe(l))}"><span>📷</span></div>` : ''}
     ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : ''}
     <div class="muted">${[l.tipo, l.plato].filter(Boolean).map(esc).join(' · ')}${ciudad && comerCiudad === 'todas' ? ' · ' + esc(ciudad) : ''}${distHotel(l, l.ciudad)}</div>
@@ -1284,7 +1288,7 @@ async function actualizarTiempo() {
   if (!Object.keys(nuevo.c).length) return;
   TIEMPO = { ts: nuevo.ts, c: { ...((TIEMPO && TIEMPO.c) || {}), ...nuevo.c } };
   try { save(K_TIEMPO, TIEMPO); } catch {}
-  if (tab === 'hoy' || tab === 'ruta') render();
+  if (tab === 'hoy' || tab === 'ruta') renderLuego();
 }
 const tiempoDe = (k, f) => (TIEMPO && TIEMPO.c && TIEMPO.c[k] && TIEMPO.c[k][f]) || null;
 const haceTiempo = () => { if (!TIEMPO || !TIEMPO.ts) return ''; const m = Math.round((Date.now() - TIEMPO.ts) / 60000); return m < 60 ? `hace ${Math.max(1, m)} min` : m < 48 * 60 ? `hace ${Math.round(m / 60)} h` : `hace ${Math.round(m / 1440)} días`; };
@@ -1306,7 +1310,7 @@ async function actualizarCambio(forzar) {
       const r = d && d.rates && Number(d.rates.KRW);
       if (r > 0) {
         Object.assign(U, { cambio: Math.round(r * 100) / 100, cambioFecha: d.date || todayISO(), cambioTs: Date.now(), cambioManual: false });
-        saveUser(); refrescarConv(); if (tab === 'conv') render(); return true;
+        saveUser(); refrescarConv(); if (tab === 'conv') renderLuego(); return true;
       }
     } catch { /* probar la siguiente */ }
   }
@@ -1394,6 +1398,15 @@ function viewMas() {
     <p class="muted" id="ver">Versión: ${esc(window.VERSION || '…')}</p>`;
   return rej + c;
 }
+
+// Redibujado por tareas en segundo plano (datos, tiempo, fotos): se espera si estás usando un desplegable o escribiendo.
+let renderPendiente = false;
+function renderLuego() {
+  const ae = document.activeElement;
+  if (ae && /^(SELECT|INPUT|TEXTAREA)$/.test(ae.tagName) && ae.closest('#view, #conv-pop')) { renderPendiente = true; return; }
+  render();
+}
+document.addEventListener('focusout', () => { if (renderPendiente) { renderPendiente = false; setTimeout(render, 50); } });
 
 // ---------- render ----------
 function render() {
@@ -1578,7 +1591,7 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => {
   const t = e.target;
-  if (t.dataset.sc !== undefined) { comerCiudad = t.value; render(); }
+  if (t.dataset.sc !== undefined) { comerCiudad = t.value; if (comerTipo !== 'todos' && !lugaresComer().some(l => (comerCiudad === 'todas' || l.ciudad === comerCiudad) && l.tipo === comerTipo)) comerTipo = 'todos'; render(); }
   else if (t.dataset.st !== undefined) { comerTipo = t.value; render(); }
   else if (t.dataset.hk) { marcarHecho(t.dataset.hk, t.checked); render(); }
   else if (t.dataset.check) { u().checklist[t.dataset.check] = t.checked; if (!t.checked) delete user.checklist[t.dataset.check]; saveUser(); render(); }
@@ -1636,7 +1649,7 @@ document.addEventListener('pointerup', sueltaArrastre);
 document.addEventListener('pointercancel', () => { if (pulsa) { clearTimeout(pulsa.t); pulsa = null; } if (arr_) sueltaArrastre(); });
 
 render();
-cargarFotos().then(() => { if (tab === 'mas') render(); });
+cargarFotos().then(() => { if (tab === 'mas') renderLuego(); });
 actualizarCambio(false); actualizarTiempo();
 window.addEventListener('online', () => { actualizarCambio(false); actualizarTiempo(); });
 

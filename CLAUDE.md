@@ -130,6 +130,8 @@ desplegable "📖 Más de la Lonely" en cada sitio) y DIA_INFO (frase general si
 FRASES_SIT (frases por
 situación; FRASES es la lista plana), GUIA y PLANES (LoL, cosmética y servicios; wiki = artículo para la foto; aprox: true = ubicación
 aproximada, la distancia sale con "≈").
+Lo recomendado por la Lonely (lp: true o fuente lonely) lleva el distintivo
+azul "LP" (★ = elección del autor) allí donde aparezca.
 Todo sitio nuevo lleva descripción y coordenadas en data/coords.json
 (para la distancia al hotel).
 

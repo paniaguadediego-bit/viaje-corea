@@ -628,3 +628,6 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .agbtn.on { background: #fff4c2 !important; color: #6b5200; border: 1px solid #f2b705; }
 .agdias { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
 .agdias .chip { min-height: 28px; font-size: .78rem; padding: 2px 8px; }
+
+.lp-pill { display: inline-block; vertical-align: middle; margin-left: 4px; padding: 1px 6px; border-radius: 6px; font-size: .62rem; font-weight: 800; letter-spacing: .03em;
+  color: #fff; background: #1d6fb8; line-height: 1.4; white-space: nowrap; }
