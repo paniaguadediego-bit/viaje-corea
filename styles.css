@@ -784,3 +784,16 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .diario textarea { width: 100%; }
 .diario-r { cursor: pointer; }
 .diario-r div { margin-top: 4px; }
+
+/* v79: banner del mapa encima de la Ruta del día */
+.mp-banner { position: relative; display: block; width: 100%; padding: 0; margin: 0 0 10px; border: 0; border-radius: 14px; overflow: hidden; background: #e8e4dc; min-height: 0; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
+.mp-banner .mapa.mini { height: 170px; min-height: 0; margin: 0; border: 0; border-radius: 0; pointer-events: none; }
+.mapa.mini .mp-vista { touch-action: auto; cursor: pointer; }
+.mapa.mini .mp-lab { display: none; }
+.mapa.mini .mp-pt { width: 22px; height: 22px; font-size: 12px; }
+.mapa.mini .mp-pt b { font-size: 11px; }
+.mp-banner-tx { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 18px 10px 8px; background: linear-gradient(transparent, rgba(0,0,0,.72)); color: #fff; text-align: center; }
+.mp-banner-tx b { font-size: 1rem; }
+.mp-banner-tx small { font-size: .78rem; opacity: .95; }
+.mp-dia-cab { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+.mp-dia-cab .mini { width: auto; }

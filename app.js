@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v78';
+const VERSION = 'v79';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -563,8 +563,7 @@ function sitiosDia(d) {
     const alFinal = km(puntos[puntos.length - 1].c, c);
     return best && best.dv < alFinal - 0.2 ? `<div class="encaje">💡 Os pilla de paso entre ${esc(best.a)} y ${esc(best.b)} (desvío ~${fmtDist(best.dv)}).</div>` : ''; };
   const hc = hot ? [Number(hot.lat), Number(hot.lon)] : null, conMapa = [...auto, ...extras].some(l => coordsLugar(l));
-  return `<div class="card sitios-dia" data-fecha="${d.fecha}"><div class="sd-cab"><b>📖 Ruta del día</b>${conMapa ? `<button class="sec mini ${mapaDia.has(d.fecha) ? 'on' : ''}" data-mpdia="${d.fecha}">🗺️ ${mapaDia.has(d.fecha) ? 'Ocultar mapa' : 'Mapa'}</button>` : ''}</div>
-    ${mapaDia.has(d.fecha) ? mapaDiaHTML(d, hc, [...auto, ...extras]) : ''}
+  return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}<b>📖 Ruta del día</b>
     <div class="muted mini-nota">En el orden del itinerario${hot ? ', saliendo del hotel' : ''}. Distancias en línea recta y tiempos aproximados; "🧭 Ruta" abre Naver Map (con conexión).</div>
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>` : ''}
     ${auto.map(l => fila(l, false)).join('')}
@@ -928,10 +927,11 @@ const mapaDia = new Set();
 const recorta = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
 
 // Registra un mapa (puntos y línea) y devuelve su HTML; se dibuja después de render().
-function mapaHTML(id, pts, { linea = null, fit = null, hotel = null, capas = '' } = {}) {
+function mapaHTML(id, pts, { linea = null, fit = null, hotel = null, capas = '', mini = false } = {}) {
   const prev = MP[id];
   MP[id] = { ...(prev || {}), pts, linea, hotel, fit: fit || pts.map(p => p.c) };
   if (!pts.length) return '<div class="muted">No hay sitios con ubicación para el mapa.</div>';
+  if (mini) return `<div class="mapa mini" data-mapa="${esc(id)}"><div class="mp-vista"><div class="mp-capa"></div></div></div>`;
   return `${capas}<div class="mapa" data-mapa="${esc(id)}">
     <div class="mp-vista"><div class="mp-capa"></div></div>
     <div class="mp-bot"><button data-mpz="1" aria-label="Acercar">+</button><button data-mpz="-1" aria-label="Alejar">−</button><button data-mpfit aria-label="Ver todo">⤢</button><button data-mpyo aria-label="Dónde estoy">📍</button></div>
@@ -943,16 +943,19 @@ function mpEncajar(m, W, H) {
   const la = cs.map(c => c[0]), lo = cs.map(c => c[1]);
   const [a, b, c, d] = [Math.min(...la), Math.max(...la), Math.min(...lo), Math.max(...lo)];
   m.c = [(a + b) / 2, (c + d) / 2]; m.z = 16;
-  while (m.z > MPZ[0] && (mpX(d, m.z) - mpX(c, m.z) > W - 60 || mpY(a, m.z) - mpY(b, m.z) > H - 70)) m.z--;
+  const mg = H < 200 ? 14 : 60;
+  while (m.z > MPZ[0] && (mpX(d, m.z) - mpX(c, m.z) > W - mg || mpY(a, m.z) - mpY(b, m.z) > H - mg - 10)) m.z--;
 }
 function pintarMapas() {
   document.querySelectorAll('.mapa[data-mapa]').forEach(el => {
     const m = MP[el.dataset.mapa]; if (!m || !m.pts.length) return;
     const W = el.clientWidth, H = el.clientHeight; if (!W) return;
     // Al abrir: todo el itinerario a la vista; si queda muy alejado (ciudad grande), centrado en el hotel.
-    if (m.z == null) { mpEncajar(m, W, H); if (m.z < 14 && m.hotel) { m.z = 14; m.c = m.hotel; } }
+    // En el banner, el recorrido va arriba y deja libre la franja del texto.
+    if (m.z == null && el.classList.contains('mini')) { mpEncajar(m, W, H - 52); m.c = [mpLat(mpY(m.c[0], m.z) + 26, m.z), m.c[1]]; }
+    if (m.z == null) { mpEncajar(m, W, H); if (m.z < 14 && m.hotel && el.dataset.mapa.startsWith('c:')) { m.z = 14; m.c = m.hotel; } }
     mpDibujar(el, m);
-    if (!el._mp) { el._mp = 1; mpGestos(el, m); }
+    if (!el._mp && !el.classList.contains('mini')) { el._mp = 1; mpGestos(el, m); }
   });
 }
 function mpDibujar(el, m) {
@@ -977,7 +980,7 @@ function mpDibujar(el, m) {
   if (m.yo) { const [x, y] = P(m.yo); h += `<span class="mp-yo" style="left:${x}px;top:${y}px"></span>`; }
   const capa = el.querySelector('.mp-capa'); capa.style.transform = ''; capa.innerHTML = h;
   const inf = el.querySelector('.mp-info'), p = m.pts[m.sel];
-  inf.innerHTML = p ? mpFicha(p, m) : ''; inf.classList.toggle('on', !!p);
+  if (inf) { inf.innerHTML = p ? mpFicha(p, m) : ''; inf.classList.toggle('on', !!p); }
 }
 function mpFicha(p, m) {
   return `<div class="mp-f"><div class="mp-f-t"><b>${p.ic} ${esc(p.es)}</b>${p.l ? lpPill(p.l) : ''}<button class="sec mini" data-mpcerrar>✕</button></div>
@@ -1085,13 +1088,22 @@ async function descargarMapas(prog) {
   return [ok, ts.length];
 }
 // Ruta del día: hotel y sitios numerados en orden de visita, unidos por una línea.
-function mapaDiaHTML(d, hot, orden) {
+// Banner encima de la Ruta del día: vista previa del recorrido; al tocarlo se abre el mapa grande.
+function bannerMapaDia(d, hot, orden) {
+  const abierto = mapaDia.has(d.fecha);
+  if (abierto) return `<div class="mp-dia-cab"><b>🗺️ Recorrido en el mapa</b><button class="sec mini" data-mpdia="${d.fecha}">✕ Cerrar</button></div>${mapaDiaHTML(d, hot, orden)}`;
+  const cs = [...(hot ? [hot] : []), ...orden.map(coordsLugar).filter(Boolean)], n = orden.filter(coordsLugar).length;
+  const total = cs.reduce((s, c, i) => s + (i ? km(cs[i - 1], c) : 0), 0);
+  return `<button class="mp-banner" data-mpdia="${d.fecha}">${mapaDiaHTML(d, hot, orden, true)}
+    <span class="mp-banner-tx"><b>🗺️ Ver el recorrido en el mapa</b><small>${n} ${n === 1 ? 'parada' : 'paradas'}${hot ? ' desde el hotel' : ''}${total ? ` · ${fmtDist(total)} en línea recta` : ''}</small></span></button>`;
+}
+function mapaDiaHTML(d, hot, orden, mini = false) {
   const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, k = ck(d.ciudad);
   const pts = [];
   if (hot) pts.push({ capa: 'hotel', c: hot, es: 'Hotel', ic: '🛏️', sub: 'Salida' });
   let n = 0; orden.forEach(l => { const c = coordsLugar(l); if (!c) return; const h = hKey(l);
     pts.push({ capa: 'itin', c, l, es: l.es, ko: l.ko, num: ++n, ic: icSitio(l.es), sub: `Parada ${n}`, txt: D[h.slice(2)] || D[h] || l.desc || l.nota || '', hecho: hecho(l, k) }); });
-  return mapaHTML('d:' + d.fecha, pts, { linea: pts.map(p => p.c), hotel: hot });
+  return mapaHTML((mini ? 'dm:' : 'd:') + d.fecha, pts, { linea: pts.map(p => p.c), hotel: hot, mini });
 }
 
 // ---------- mapa esquemático (SVG propio, sin internet) ----------
