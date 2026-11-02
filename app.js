@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v73';
+const VERSION = 'v74';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -95,7 +95,7 @@ function sumaDia(iso, n) {
 // Botón para abrir un sitio en Naver Map (necesita conexión).
 function naver(l) {
   const q = (l && (l.direccion_ko || l.ko || l.direccion_en || l.es || l.nombre)) || '';
-  return q ? `<a class="btn sec mini" href="https://map.naver.com/p/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">🗺️ Naver</a>` : '';
+  return q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🗺️ Naver</a>` : '';
 }
 
 // ---------- distancias al hotel (línea recta, sin conexión) ----------
@@ -1279,7 +1279,7 @@ function cardComer(l) {
     <div class="c2-acc">
       ${ESTADOS.map(([k, t]) => `<button class="c2-est ${e.estado === k ? 'on' : ''} e-${k}" data-est="${esc(id)}" data-v="${k}" title="${t}">${{ quiero: '⭐', visitado: '✅', descartado: '👎', cerrado: '🚫' }[k]}<small>${t}</small></button>`).join('')}
       <button class="mini" data-full="k:${esc(id)}">Enseñar</button>
-      ${q ? `<a class="btn sec mini" href="https://map.naver.com/p/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">🗺️</a>` : ''}
+      ${q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🗺️</a>` : ''}
     </div>
     <details class="c2-mas" data-key="cm:${esc(id)}" ${abierto('cm:' + id, false) ? 'open' : ''}><summary>Más detalles${e.nota ? ' · 📝' : ''}${Number(e.val) ? ' · ' + '★'.repeat(Number(e.val)) : ''}</summary>
       ${l.direccion ? `<div class="muted">📍 ${esc(l.direccion)}</div>` : ''}
@@ -1289,7 +1289,7 @@ function cardComer(l) {
       <div>${verificado('k:' + id) ? '<span class="badge ok">✓ verificado</span>' : '<span class="ver">VERIFICAR que sigue abierto</span>'}
         <button class="sec mini verif" data-verif="k:${esc(id)}">${verificado('k:' + id) ? 'Deshacer' : '✓ Verificado'}</button></div>
       <div class="op-caja"><b>👥 Notas de usuarios</b>${(o => o ? `<div class="muted">Guardada: ★${esc(o.v)}${o.n ? ' · ' + esc(fmtN(o.n)) + ' reseñas' : ''} · ${esc(o.fuente || '')} · ${esc(o.fecha || '')}</div>` : '<div class="muted">Sin nota guardada.</div>')(opinionDe(l))}
-        <div class="acciones op-links"><a class="btn sec mini" href="https://map.naver.com/p/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">Naver</a><a class="btn sec mini" href="https://map.kakao.com/link/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">Kakao</a><a class="btn sec mini" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((l.ko || l.nombre || '') + ' ' + ciudad)}" target="_blank" rel="noopener">Google</a></div>
+        <div class="acciones op-links"><a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">Naver</a><a class="btn sec mini" href="https://m.map.kakao.com/actions/searchView?q=${encodeURIComponent(q)}" data-app="kakao" data-q="${esc(q)}" target="_blank" rel="noopener">Kakao</a><a class="btn sec mini" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((l.ko || l.nombre || '') + ' ' + ciudad)}" target="_blank" rel="noopener">Google</a></div>
         <div class="op-form">Apuntar: ★ <input data-opv="${esc(id)}" type="number" step="0.1" min="0" max="5" inputmode="decimal" value="${esc((estadoDe(id).op || {}).v || '')}" placeholder="4.3">
           reseñas <input data-opn="${esc(id)}" type="number" min="0" inputmode="numeric" value="${esc((estadoDe(id).op || {}).n || '')}" placeholder="1200">
           <select data-opf="${esc(id)}">${['Naver', 'Kakao', 'Google'].map(f => `<option ${((estadoDe(id).op || {}).f || 'Naver') === f ? 'selected' : ''}>${f}</option>`).join('')}</select></div></div>
@@ -1432,7 +1432,7 @@ function viewVerificar() {
     <div class="muted">Abre cada uno en Naver (con conexión), comprueba que existe y sigue abierto, y pulsa "✓". Si ha cerrado, márcalo como "Cerrado" en Comer.</div></div>
     ${g.map(([t, ls]) => { const p = ls.filter(x => !verificado(x.key)).length; return `<details data-key="vf:${esc(t)}" ${abierto('vf:' + t, false) ? 'open' : ''}><summary class="card big">${esc(t)} <span class="muted">${p ? p + ' pendientes' : '✓ todo'}</span></summary>
       ${ls.map(x => `<div class="card lugar ${verificado(x.key) ? 'hecho' : ''}"><div><div>${esc(x.titulo)}</div><div class="muted">${esc(x.sub || '')}</div></div>
-        <div class="acciones">${x.q ? `<a class="btn sec mini" href="https://map.naver.com/p/search/${encodeURIComponent(x.q)}" target="_blank" rel="noopener">🗺️</a>` : ''}
+        <div class="acciones">${x.q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(x.q)}" data-app="naver" data-q="${esc(x.q)}" target="_blank" rel="noopener">🗺️</a>` : ''}
         <button class="mini ${verificado(x.key) ? 'sec' : ''}" data-verif="${esc(x.key)}">${verificado(x.key) ? 'Deshacer' : '✓'}</button></div></div>`).join('')}</details>`; }).join('')}`;
 }
 
@@ -1506,6 +1506,17 @@ function render() {
   if (ch) { const t = ch.parentElement, obj = ch.offsetLeft - t.clientWidth / 2 + ch.offsetWidth / 2; t.style.scrollBehavior = 'auto'; t.scrollLeft = tiraX != null ? tiraX : obj; if (tiraX != null) requestAnimationFrame(() => { t.style.scrollBehavior = 'smooth'; t.scrollLeft = obj; }); }
 }
 
+// Naver Map / Kakao Map: intenta abrir la app; si en 1,5 s no se ha ido la página, abre la web móvil.
+document.addEventListener('click', e => {
+  const ap = e.target.closest('a[data-app]'); if (!ap) return;
+  e.preventDefault();
+  const q = encodeURIComponent(ap.dataset.q || ''), web = ap.href;
+  const app = ap.dataset.app === 'kakao' ? `kakaomap://search?q=${q}` : `nmap://search?query=${q}&appname=viajecorea`;
+  let fue = false; const vis = () => { if (document.hidden) fue = true; };
+  document.addEventListener('visibilitychange', vis);
+  location.href = app;
+  setTimeout(() => { document.removeEventListener('visibilitychange', vis); if (!fue && !document.hidden) window.open(web, '_blank'); }, 1500);
+}, true);
 document.addEventListener('click', e => {
   // Casillas: las marca la app (así no se pierde el toque si la pantalla se redibuja en el móvil).
   const lab = e.target.closest('label.check');

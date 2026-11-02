@@ -51,7 +51,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    hasta 16 días; solo con conexión, se guarda para offline y muestra
    "hace X h") en la tarjeta del día de Hoy y en cada día de Ruta,
    destacados de la ciudad en Hoy, lista
-   Verificar (marca "✓ verificado" en el móvil), botón "Naver" (abre Naver Map, requiere conexión),
+   Verificar (marca "✓ verificado" en el móvil), botón "Naver" (abre la app de Naver Map con nmap://search; si no se
+   abre en 1,5 s, la web móvil m.map.naver.com; igual con Kakao Map; requiere conexión),
    Hoy con tira deslizable de días, tarjeta del día con banner (foto del
    primer sitio, fecha, título y tiempo), etiquetas con los sitios del día
    y nombres propios en negrita, y botones Sitios / Traslado / Hotel /
