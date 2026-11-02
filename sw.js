@@ -1,7 +1,9 @@
 // Sube CACHE en cada sesión (y VERSION en app.js) para que el móvil coja la versión nueva.
-const CACHE = 'corea-v75';
+const CACHE = 'corea-v76';
 // Fotos de Wikipedia: caché aparte que no se borra al actualizar la app.
 const FOTOS = 'corea-fotos';
+// Calles del mapa (OpenStreetMap): solo las zonas que se han visto; tampoco se borra al actualizar.
+const MAPA = 'corea-mapa';
 const FILES = [
   './', './index.html', './styles.css', './app.js', './contenido.js', './diccionario.js', './historia.js', './manifest.json',
   './example.trip.json', './data/comer.json', './data/coords.json', './icons/icon.svg', './icons/icon-192.png',
@@ -17,7 +19,7 @@ self.addEventListener('install', e => {
 
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
-    .then(keys => Promise.all(keys.filter(k => k !== CACHE && k !== FOTOS).map(k => caches.delete(k))))
+    .then(keys => Promise.all(keys.filter(k => k !== CACHE && k !== FOTOS && k !== MAPA).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 
@@ -32,6 +34,15 @@ self.addEventListener('fetch', e => {
     e.respondWith(caches.open(FOTOS).then(async c => {
       const g = await c.match(req); if (g) return g;
       const r = await fetch(req); if (r.ok || r.type === 'opaque') c.put(req, r.clone()); return r;
+    }));
+    return;
+  }
+  if (host === 'tile.openstreetmap.org') {
+    e.respondWith(caches.open(MAPA).then(async c => {
+      const g = await c.match(req.url); if (g) return g;
+      // Se pide con CORS (ocupa menos en el móvil); si no, como venga.
+      let r; try { r = await fetch(req.url, { mode: 'cors', credentials: 'omit' }); } catch { r = await fetch(req); }
+      if (r.ok || r.type === 'opaque') c.put(req.url, r.clone()); return r;
     }));
     return;
   }

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v75
+Caché del service worker: corea-v76
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -127,6 +127,7 @@ Caché del service worker: corea-v75
 - (sin versión nueva, solo trip.json privado): HaeRium = 해리움 호텔 (con 해), con dirección coreana 해운대해변로197번길 10-9, según webs coreanas de reservas (Yanolja, Trip.com). VERIFICAR en Naver.
 - (sin versión nueva, solo trip.json privado): Mini Hotel 141 = 141미니호텔 (sin espacio), 경주시 원효로 141 (황오동), según webs coreanas (Yanolja, Trip.com, VisitKorea). Check-in 16:00. VERIFICAR en Naver.
 - v75 (propuestas 1 y 2; la 3, calendario .ics, descartada por el usuario): "🧳 Preparar para viajar" en Más → Datos y app (sustituye a "Descargar fotos") y como botón en la cuenta atrás de Hoy. Con wifi comprueba que los archivos de la app están en la caché offline (lista leída de sw.js; añade los que falten), fuerza el tiempo, baja el cambio (si no es manual), descarga fotos de 6 en 6 (y la foto grande de cada banner de día) y avisa si no hay copia exportada. Resumen ✓/◐/⚠️ guardado en corea.prep. "🆘 Ayuda" (botón rojo arriba en Hoy, a pantalla completa): hotel de esta noche (de madrugada, el de la noche anterior; antes del viaje, el primer hotel) con "<hotel>로 가 주세요" o, sin hangul, la dirección coreana en grande con "이 주소로 가 주세요"; Naver y copiar; botones de llamada 112, 119, 1330 (02-1330 con móvil extranjero); teléfono y póliza del seguro (de trip.json, solo en el móvil); Embajada de España en Seúl: oficina +82 2-794-3581 y urgencia consular +82 10-3793-5706 según la web de la Embajada, con VERIFICAR porque la lista del Ministerio da +82 10-793-5706.
+- v76: mapa interactivo propio (sin librerías). En Ciudades, botón "🗺️ Mapa" junto a Historia: puntos de colores por capa (🔴 itinerario con el día del mes, 🔵 más sitios LP/guía, 🟠 Comer sin descartados ni cerrados, 🟣 Planes, ⬛ hotel), chips para encender/apagar capas. En Hoy → Sitios, "🗺️ Mapa" en la Ruta del día: hotel y sitios numerados en orden de visita unidos por una línea. Arrastrar, pellizcar, +/−, ⤢ ver todo, 📍 dónde estoy (GPS, funciona sin datos). Tocar un punto: ficha con hangul, descripción, distancia y tiempo desde el hotel, 🧭 Ruta y Naver. Fondo: calles de OpenStreetMap con conexión (proyección Web Mercator, teselas 256 px, zoom 11-18, modo oscuro invertido); el service worker guarda en 'corea-mapa' solo las teselas ya vistas (la política de OSM no permite descargas masivas), así que sin conexión se ven los puntos sobre fondo liso y las calles de las zonas que se hayan mirado antes. [Supuesto] Al abrir el mapa de ciudad se encuadra el itinerario; si queda por debajo de zoom 14, se centra en el hotel a zoom 14 (⤢ muestra todo). No se pudo probar con teselas reales (OSM bloqueado desde el entorno de pruebas): se probó con teselas simuladas.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v75';
+const VERSION = 'v76';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -543,7 +543,9 @@ function sitiosDia(d) {
     let best = null; for (let i = 1; i < puntos.length; i++) { const dv = km(puntos[i - 1].c, c) + km(c, puntos[i].c) - km(puntos[i - 1].c, puntos[i].c); if (!best || dv < best.dv) best = { dv, a: puntos[i - 1].es, b: puntos[i].es }; }
     const alFinal = km(puntos[puntos.length - 1].c, c);
     return best && best.dv < alFinal - 0.2 ? `<div class="encaje">💡 Os pilla de paso entre ${esc(best.a)} y ${esc(best.b)} (desvío ~${fmtDist(best.dv)}).</div>` : ''; };
-  return `<div class="card sitios-dia" data-fecha="${d.fecha}"><b>📖 Ruta del día</b>
+  const hc = hot ? [Number(hot.lat), Number(hot.lon)] : null, conMapa = [...auto, ...extras].some(l => coordsLugar(l));
+  return `<div class="card sitios-dia" data-fecha="${d.fecha}"><div class="sd-cab"><b>📖 Ruta del día</b>${conMapa ? `<button class="sec mini ${mapaDia.has(d.fecha) ? 'on' : ''}" data-mpdia="${d.fecha}">🗺️ ${mapaDia.has(d.fecha) ? 'Ocultar mapa' : 'Mapa'}</button>` : ''}</div>
+    ${mapaDia.has(d.fecha) ? mapaDiaHTML(d, hc, [...auto, ...extras]) : ''}
     <div class="muted mini-nota">En el orden del itinerario${hot ? ', saliendo del hotel' : ''}. Distancias en línea recta y tiempos aproximados; "🧭 Ruta" abre Naver Map (con conexión).</div>
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>` : ''}
     ${auto.map(l => fila(l, false)).join('')}
@@ -873,12 +875,13 @@ function viewCiudades() {
   return botones + `<div class="card ciudad" id="c-${esc(c.id)}" style="${varsTema(k)}">
     <div class="ciudad-hero">
       <div class="ciudad-ko">${esc(c.ko || '')}</div>
-      <div class="ciudad-top"><span class="ciudad-ic">${t.ic}</span>${h ? `<button class="hist-btn ${historiaAbierta ? 'on' : ''}" data-act="historia">📜 Historia</button>` : ''}</div>
+      <div class="ciudad-top"><span class="ciudad-ic">${t.ic}</span><span class="ciudad-bts"><button class="hist-btn ${mapaCiudad ? 'on' : ''}" data-act="mapa-ciudad">🗺️ Mapa</button>${h ? `<button class="hist-btn ${historiaAbierta ? 'on' : ''}" data-act="historia">📜 Historia</button>` : ''}</span></div>
       <div class="ciudad-num">${i + 1}</div>
       <div class="ciudad-nom">${esc(nombreCiudad(k))}</div>
       ${t.lema ? `<div class="ciudad-lema">${esc(t.lema)}</div>` : ''}
       <div class="ciudad-fechas">${fechas}</div>
     </div>
+    ${mapaCiudad ? mapaCiudadHTML(k) : ''}
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
       ${INTRO_LP[k].plan ? `<details data-key="lp:${k}" ${abierto("lp:" + k, false) ? "open" : ""}><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
     ${h && historiaAbierta ? `<div class="historia"><b>📜 Historia de ${esc(nombreCiudad(k))}</b>${h.txt.map(p => `<p>${esc(p).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}<div class="muted">Resumen de la Lonely Planet 2016 (LP) y datos generales.</div></div>` : ''}
@@ -887,6 +890,150 @@ function viewCiudades() {
     ${seccionLP(k)}</div>`;
 }
 
+
+// ---------- Mapa interactivo de ciudad y de la ruta del día ----------
+// Los puntos son nuestros y funcionan sin conexión. Con conexión, detrás se ven las calles de OpenStreetMap;
+// el service worker guarda las zonas que ya has visto para el modo avión.
+const MP = {}; // estado por mapa: { z, c: [lat, lon], pts, linea, fit }
+const MPT = 256, MPZ = [11, 18];
+const mpX = (lon, z) => (lon + 180) / 360 * MPT * 2 ** z;
+const mpY = (lat, z) => { const s = Math.sin(lat * Math.PI / 180); return (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * MPT * 2 ** z; };
+const mpLon = (x, z) => x / (MPT * 2 ** z) * 360 - 180;
+const mpLat = (y, z) => 180 / Math.PI * Math.atan(Math.sinh(Math.PI - 2 * Math.PI * y / (MPT * 2 ** z)));
+const MP_CAPAS = [['itin', 'Itinerario', '#cd2e3a'], ['sitios', 'Más sitios', '#0047a0'], ['comer', 'Comer', '#d97706'], ['planes', 'Planes', '#7c3aed']];
+let mpCapas = new Set(['itin', 'sitios', 'comer', 'planes']), mapaCiudad = false;
+const mapaDia = new Set();
+const recorta = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
+
+// Registra un mapa (puntos y línea) y devuelve su HTML; se dibuja después de render().
+function mapaHTML(id, pts, { linea = null, fit = null, hotel = null, capas = '' } = {}) {
+  const prev = MP[id];
+  MP[id] = { ...(prev || {}), pts, linea, hotel, fit: fit || pts.map(p => p.c) };
+  if (!pts.length) return '<div class="muted">No hay sitios con ubicación para el mapa.</div>';
+  return `${capas}<div class="mapa" data-mapa="${esc(id)}">
+    <div class="mp-vista"><div class="mp-capa"></div></div>
+    <div class="mp-bot"><button data-mpz="1" aria-label="Acercar">+</button><button data-mpz="-1" aria-label="Alejar">−</button><button data-mpfit aria-label="Ver todo">⤢</button><button data-mpyo aria-label="Dónde estoy">📍</button></div>
+    <div class="mp-attr">© OpenStreetMap</div>
+    <div class="mp-info"></div></div>`;
+}
+function mpEncajar(m, W, H) {
+  const cs = m.fit.length ? m.fit : m.pts.map(p => p.c);
+  const la = cs.map(c => c[0]), lo = cs.map(c => c[1]);
+  const [a, b, c, d] = [Math.min(...la), Math.max(...la), Math.min(...lo), Math.max(...lo)];
+  m.c = [(a + b) / 2, (c + d) / 2]; m.z = 16;
+  while (m.z > MPZ[0] && (mpX(d, m.z) - mpX(c, m.z) > W - 60 || mpY(a, m.z) - mpY(b, m.z) > H - 70)) m.z--;
+}
+function pintarMapas() {
+  document.querySelectorAll('.mapa[data-mapa]').forEach(el => {
+    const m = MP[el.dataset.mapa]; if (!m || !m.pts.length) return;
+    const W = el.clientWidth, H = el.clientHeight; if (!W) return;
+    // Al abrir: todo el itinerario a la vista; si queda muy alejado (ciudad grande), centrado en el hotel.
+    if (m.z == null) { mpEncajar(m, W, H); if (m.z < 14 && m.hotel) { m.z = 14; m.c = m.hotel; } }
+    mpDibujar(el, m);
+    if (!el._mp) { el._mp = 1; mpGestos(el, m); }
+  });
+}
+function mpDibujar(el, m) {
+  const W = el.clientWidth, H = el.clientHeight, z = m.z, n = 2 ** z;
+  const ox = mpX(m.c[1], z) - W / 2, oy = mpY(m.c[0], z) - H / 2;
+  const P = c => [mpX(c[1], z) - ox, mpY(c[0], z) - oy];
+  let h = '';
+  // Teselas con margen de una para que al arrastrar no se vea vacío.
+  for (let tx = Math.floor(ox / MPT) - 1; tx <= Math.floor((ox + W) / MPT) + 1; tx++)
+    for (let ty = Math.floor(oy / MPT) - 1; ty <= Math.floor((oy + H) / MPT) + 1; ty++) {
+      if (ty < 0 || ty >= n) continue;
+      h += `<img class="mp-t" alt="" draggable="false" src="https://tile.openstreetmap.org/${z}/${((tx % n) + n) % n}/${ty}.png" style="left:${tx * MPT - ox}px;top:${ty * MPT - oy}px" onerror="this.remove()">`;
+    }
+  if (m.linea && m.linea.length > 1) h += `<svg class="mp-linea" width="${W}" height="${H}"><polyline points="${m.linea.map(c => P(c).map(v => v.toFixed(1)).join(',')).join(' ')}"/></svg>`;
+  const etiq = z >= 15;
+  // Primero los de detrás (Comer, Planes, más sitios), encima itinerario y hotel.
+  const orden = { comer: 0, planes: 1, sitios: 2, itin: 3, hotel: 4 };
+  m.pts.map((p, i) => [p, i]).sort((a, b) => orden[a[0].capa] - orden[b[0].capa]).forEach(([p, i]) => {
+    const [x, y] = P(p.c); if (x < -40 || y < -40 || x > W + 40 || y > H + 40) return;
+    h += `<button class="mp-pt c-${p.capa} ${p.hecho ? 'hecho' : ''} ${m.sel === i ? 'sel' : ''}" data-mpp="${i}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${p.num != null ? `<b>${esc(p.num)}</b>` : p.ic}${etiq || p.capa === 'hotel' || m.sel === i ? `<span class="mp-lab">${esc(recorta(p.es, 22))}</span>` : ''}</button>`;
+  });
+  if (m.yo) { const [x, y] = P(m.yo); h += `<span class="mp-yo" style="left:${x}px;top:${y}px"></span>`; }
+  const capa = el.querySelector('.mp-capa'); capa.style.transform = ''; capa.innerHTML = h;
+  const inf = el.querySelector('.mp-info'), p = m.pts[m.sel];
+  inf.innerHTML = p ? mpFicha(p, m) : ''; inf.classList.toggle('on', !!p);
+}
+function mpFicha(p, m) {
+  return `<div class="mp-f"><div class="mp-f-t"><b>${p.ic} ${esc(p.es)}</b>${p.l ? lpPill(p.l) : ''}<button class="sec mini" data-mpcerrar>✕</button></div>
+    ${p.ko ? `<div class="ko-s">${esc(p.ko)}</div>` : ''}
+    <div class="muted">${esc(p.sub || '')}${p.txt ? ` · ${esc(recorta(p.txt, 150))}` : ''}</div>
+    ${m.hotel && p.capa !== 'hotel' ? tramo(m.hotel, p.c, 'Hotel', p.ko || p.es).replace('<span>', '<span>Desde el hotel: ') : ''}
+    <div class="acciones">${naver(p.l || p)}</div></div>`;
+}
+function mpGestos(el, m) {
+  const v = el.querySelector('.mp-vista'), capa = () => el.querySelector('.mp-capa');
+  const ps = new Map(); let ini = null, movido = false, pinch = null;
+  const mover = (dx, dy, s = 1) => { capa().style.transform = `translate(${dx}px,${dy}px) scale(${s})`; };
+  v.addEventListener('pointerdown', e => {
+    v.setPointerCapture(e.pointerId); ps.set(e.pointerId, [e.clientX, e.clientY]);
+    if (ps.size === 1) { ini = [e.clientX, e.clientY]; movido = false; pinch = null; }
+    if (ps.size === 2) { const [a, b] = [...ps.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), s: 1 }; movido = true; }
+  });
+  v.addEventListener('pointermove', e => {
+    if (!ps.has(e.pointerId)) return; ps.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pinch && ps.size === 2) { const [a, b] = [...ps.values()]; pinch.s = Math.hypot(a[0] - b[0], a[1] - b[1]) / pinch.d; capa().style.transformOrigin = `${el.clientWidth / 2}px ${el.clientHeight / 2}px`; mover(0, 0, pinch.s); return; }
+    if (!ini || pinch) return;
+    const dx = e.clientX - ini[0], dy = e.clientY - ini[1];
+    if (Math.hypot(dx, dy) > 6) movido = true;
+    if (movido) mover(dx, dy);
+  });
+  const fin = e => {
+    if (!ps.has(e.pointerId)) return; ps.delete(e.pointerId);
+    if (pinch) { if (!ps.size) { const dz = Math.round(Math.log2(pinch.s)); mpZoom(el, m, dz); pinch = null; ini = null; } return; }
+    if (!ini) return;
+    const dx = e.clientX - ini[0], dy = e.clientY - ini[1]; ini = null;
+    if (movido) { m.c = [mpLat(mpY(m.c[0], m.z) - dy, m.z), mpLon(mpX(m.c[1], m.z) - dx, m.z)]; mpDibujar(el, m); return; }
+    const t = document.elementFromPoint(e.clientX, e.clientY), b = t && t.closest('.mp-pt');
+    m.sel = b ? Number(b.dataset.mpp) : null; mpDibujar(el, m);
+  };
+  v.addEventListener('pointerup', fin); v.addEventListener('pointercancel', fin);
+  v.addEventListener('dblclick', () => mpZoom(el, m, 1));
+}
+function mpZoom(el, m, dz) { m.z = Math.min(MPZ[1], Math.max(MPZ[0], m.z + dz)); mpDibujar(el, m); }
+function mpYo(el, m) {
+  if (!navigator.geolocation) return alert('Este móvil no da la ubicación.');
+  navigator.geolocation.getCurrentPosition(pos => {
+    m.yo = [pos.coords.latitude, pos.coords.longitude];
+    const lejos = Math.min(...m.pts.map(p => km(p.c, m.yo)));
+    if (lejos > 30) { mpDibujar(el, m); return alert(`Estás a ${fmtDist(lejos)} de esta zona.`); }
+    m.c = m.yo; if (m.z < 15) m.z = 15; mpDibujar(el, m);
+  }, () => alert('No se pudo saber dónde estás (activa la ubicación).'), { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+}
+
+// Puntos de una ciudad: itinerario (con el día), más sitios, Comer y Planes.
+function mapaCiudadHTML(k) {
+  const hot = hotelDe(k), D = typeof DIA_LP !== 'undefined' ? DIA_LP : {};
+  const dias = arr(trip.dias).filter(d => d.fecha && ck(d.ciudad) === k), enDia = new Map();
+  dias.forEach(d => listaDia(d).forEach(l => { const h = hKey(l); if (!enDia.has(h)) enDia.set(h, d.fecha); }));
+  const todos = [], cuenta = {};
+  const add = (capa, l, extra) => { const c = coordsLugar(l); if (!c) return; cuenta[capa] = (cuenta[capa] || 0) + 1; if (mpCapas.has(capa)) todos.push({ capa, c, l, es: l.es || l.nombre, ko: l.ko, ...extra }); };
+  sitiosCiudadObj(k).forEach(l => {
+    const h = hKey(l), f = enDia.get(h), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
+    if (f) add('itin', l, { num: new Date(f + 'T12:00').getDate(), ic: icSitio(l.es), sub: `Día ${fmtCorto(f)}`, txt, lp: l.lp || l.top, hecho: hecho(l, k) });
+    else add('sitios', l, { ic: icSitio((l.tipo || '') + ' ' + l.es), sub: l.tipo || 'Sitio', txt, lp: !!(LP[k] || []).find(x => hKey(x) === h), hecho: hecho(l, k) });
+  });
+  lugaresComer().filter(c => c.ciudad === k && !['descartado', 'cerrado'].includes(estadoDe(String(c.id)).estado)).forEach(c =>
+    add('comer', c, { es: c.nombre, ic: IC_COMER[c.tipo] || '🍴', sub: [c.tipo, c.plato, c.precio].filter(Boolean).join(' · '), txt: c.nota, lp: c.fuente === 'lonely', hecho: estadoDe(String(c.id)).estado === 'visitado' }));
+  (typeof PLANES !== 'undefined' ? PLANES : []).filter(p => p.ciudad === k).forEach(p => add('planes', p, { ic: icPlan(p), sub: p.direccion_en || '', txt: p.desc }));
+  if (hot) todos.push({ capa: 'hotel', c: hot, es: (arr(trip.alojamientos).find(a => ck(a.ciudad) === k) || {}).nombre || 'Hotel', ic: '🛏️', sub: 'Vuestro hotel' });
+  const capas = `<div class="mp-capas">${MP_CAPAS.filter(([c]) => cuenta[c]).map(([c, t, col]) => `<button class="chip ${mpCapas.has(c) ? 'on' : ''}" data-mpcapa="${c}" style="--mc:${col}"><i></i>${t} <small>${cuenta[c]}</small></button>`).join('')}</div>`;
+  const nucleo = todos.filter(p => p.capa === 'itin' || p.capa === 'hotel').map(p => p.c);
+  return `<div class="mp-caja">${mapaHTML('c:' + k, todos, { hotel: hot, capas, fit: nucleo.length > 1 ? nucleo : null })}
+    <div class="muted mini-nota">Número = día del mes en que lo tenéis. Toca un punto para ver qué es y abrirlo en Naver. Calles: con conexión (lo visto se guarda para el modo avión).</div></div>`;
+}
+// Ruta del día: hotel y sitios numerados en orden de visita, unidos por una línea.
+function mapaDiaHTML(d, hot, orden) {
+  const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, k = ck(d.ciudad);
+  const pts = [];
+  if (hot) pts.push({ capa: 'hotel', c: hot, es: 'Hotel', ic: '🛏️', sub: 'Salida' });
+  let n = 0; orden.forEach(l => { const c = coordsLugar(l); if (!c) return; const h = hKey(l);
+    pts.push({ capa: 'itin', c, l, es: l.es, ko: l.ko, num: ++n, ic: icSitio(l.es), sub: `Parada ${n}`, txt: D[h.slice(2)] || D[h] || l.desc || l.nota || '', hecho: hecho(l, k) }); });
+  return mapaHTML('d:' + d.fecha, pts, { linea: pts.map(p => p.c), hotel: hot });
+}
 
 // ---------- mapa esquemático (SVG propio, sin internet) ----------
 // Coordenadas aproximadas de reserva si el JSON no trae lat/lon.
@@ -1599,6 +1746,7 @@ function render() {
   const tiraAnt = document.getElementById('tira'); tiraX = tiraAnt ? tiraAnt.scrollLeft : null;
   $('#view').innerHTML = html;
   if (['ciudades', 'hoy', 'comer', 'planes'].includes(tab)) pintarFotos();
+  if (['ciudades', 'hoy'].includes(tab)) pintarMapas();
   const ch = tab === 'hoy' && document.querySelector('#tira .dchip.on');
   if (ch) { const t = ch.parentElement, obj = ch.offsetLeft - t.clientWidth / 2 + ch.offsetWidth / 2; t.style.scrollBehavior = 'auto'; t.scrollLeft = tiraX != null ? tiraX : obj; if (tiraX != null) requestAnimationFrame(() => { t.style.scrollBehavior = 'smooth'; t.scrollLeft = obj; }); }
 }
@@ -1646,6 +1794,17 @@ document.addEventListener('click', e => {
     else if (confirm('¿Borrar esta foto?')) {
       borrarFoto(fo.dataset.delfoto).then(cargarFotos).then(() => { history.back(); render(); });
     }
+    return;
+  }
+  const mq = e.target.closest('[data-mpz],[data-mpfit],[data-mpyo],[data-mpcerrar],[data-mpcapa],[data-mpdia]');
+  if (mq) {
+    if (mq.dataset.mpcapa) { const c = mq.dataset.mpcapa; if (mpCapas.has(c)) mpCapas.delete(c); else mpCapas.add(c); render(); return; }
+    if (mq.dataset.mpdia) { const f = mq.dataset.mpdia; if (mapaDia.has(f)) mapaDia.delete(f); else mapaDia.add(f); render(); return; }
+    const el = mq.closest('.mapa'), m = el && MP[el.dataset.mapa]; if (!m) return;
+    if (mq.dataset.mpz) mpZoom(el, m, Number(mq.dataset.mpz));
+    else if (mq.hasAttribute('data-mpfit')) { mpEncajar(m, el.clientWidth, el.clientHeight); mpDibujar(el, m); }
+    else if (mq.hasAttribute('data-mpyo')) mpYo(el, m);
+    else { m.sel = null; mpDibujar(el, m); }
     return;
   }
   const x = e.target.closest('[data-full],[data-close],[data-copy],[data-ciudad]');
@@ -1741,6 +1900,7 @@ document.addEventListener('click', e => {
     case 'comer-nuevo': comerForm = true; break;
     case 'cambio-auto': actualizarCambio(true); return;
     case 'historia': historiaAbierta = !historiaAbierta; break;
+    case 'mapa-ciudad': mapaCiudad = !mapaCiudad; break;
     case 'lp': lpAbierta = !lpAbierta; break;
     case 'platos': verPlatos = !verPlatos; break;
     case 'lptodos': lpTodos = !lpTodos; break;
