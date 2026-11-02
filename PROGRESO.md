@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v74
+Caché del service worker: corea-v75
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -126,6 +126,7 @@ Caché del service worker: corea-v74
 - (sin versión nueva, solo trip.json privado): comprobado en Naver Map por el usuario. 고려호텔 existe en Andong (confirmado). 한지꿀잠 sale en Naver como "HanjiHoneySleep" en Jeonju (hay también una "Second House": VERIFICAR cuál). 헤리움 호텔 no existe en Naver, así que se quita el hangul del HaeRium (la app muestra "falta hangul" y la dirección). 141 미니호텔 sigue sin confirmar.
 - (sin versión nueva, solo trip.json privado): HaeRium = 해리움 호텔 (con 해), con dirección coreana 해운대해변로197번길 10-9, según webs coreanas de reservas (Yanolja, Trip.com). VERIFICAR en Naver.
 - (sin versión nueva, solo trip.json privado): Mini Hotel 141 = 141미니호텔 (sin espacio), 경주시 원효로 141 (황오동), según webs coreanas (Yanolja, Trip.com, VisitKorea). Check-in 16:00. VERIFICAR en Naver.
+- v75 (propuestas 1 y 2; la 3, calendario .ics, descartada por el usuario): "🧳 Preparar para viajar" en Más → Datos y app (sustituye a "Descargar fotos") y como botón en la cuenta atrás de Hoy. Con wifi comprueba que los archivos de la app están en la caché offline (lista leída de sw.js; añade los que falten), fuerza el tiempo, baja el cambio (si no es manual), descarga fotos de 6 en 6 (y la foto grande de cada banner de día) y avisa si no hay copia exportada. Resumen ✓/◐/⚠️ guardado en corea.prep. "🆘 Ayuda" (botón rojo arriba en Hoy, a pantalla completa): hotel de esta noche (de madrugada, el de la noche anterior; antes del viaje, el primer hotel) con "<hotel>로 가 주세요" o, sin hangul, la dirección coreana en grande con "이 주소로 가 주세요"; Naver y copiar; botones de llamada 112, 119, 1330 (02-1330 con móvil extranjero); teléfono y póliza del seguro (de trip.json, solo en el móvil); Embajada de España en Seúl: oficina +82 2-794-3581 y urgencia consular +82 10-3793-5706 según la web de la Embajada, con VERIFICAR porque la lista del Ministerio da +82 10-793-5706.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
@@ -175,7 +176,7 @@ Caché del service worker: corea-v74
 
 ## Propuestas pendientes (preguntar al usuario tras el compact)
 Propuestas por Claude el 2/11/2026; el usuario pidió apuntarlas y que se le pregunten después.
-Recomendadas antes de salir (1, 2 y 3):
+Recomendadas antes de salir (1, 2 y 3). Hechas en v75: 1 y 2. La 3 descartada por el usuario:
 1. Botón "Preparar para viajar": con wifi descarga fotos, tiempo y cambio y comprueba la caché offline; muestra un resumen (✓ N fotos · ✓ tiempo hasta X · ✓ cambio).
 2. Tarjeta "🆘 Ayuda" a un toque desde Hoy: hotel de esa noche en hangul grande con dirección, 112 / 119 / 1330, teléfono del seguro y Embajada de España en Seúl (VERIFICAR teléfono).
 3. Exportar a calendario (.ics): vuelos, trenes, check-ins y reservas (Sky Capsule), con alarmas del móvil que funcionan sin la app y sin conexión. Necesita el trip.json.

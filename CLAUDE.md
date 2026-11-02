@@ -27,7 +27,10 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    Diccionario. Más es una rejilla de iconos
    como la Guía (se toca y sale debajo): Maleta, Seguro,
    Verificar, Documentos (fotos/PDF), Notas y Datos y app (importar,
-   exportar, fotos, actualizar, borrar). El conversor ₩/€
+   exportar, "Preparar para viajar" (con wifi: app offline, fotos, tiempo,
+   cambio y aviso de copia), actualizar, borrar). En Hoy, botón rojo "🆘 Ayuda"
+   a pantalla completa: hotel de esta noche en hangul grande, 112/119/1330,
+   seguro y Embajada de España (urgencia consular VERIFICAR). El conversor ₩/€
    es el botón 💱 junto al título y se abre en una ventana. Gastos: quitado (el usuario usa
    otra app). No añadir
    nada que no esté aquí. Ruta: vuelos, mapa y línea de tiempo con cada estancia (ciudad,

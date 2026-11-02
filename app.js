@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v74';
+const VERSION = 'v75';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -340,7 +340,7 @@ const alojCard = (a, sale) => `<div class="card aloj">
 let hoySub = null;
 function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
-  let html = `<div class="muted reloj" id="reloj">${relojes()}</div>` + ahora() + pendingAlert();
+  let html = `<div class="hoy-top"><button class="sos" data-act="ayuda">🆘 Ayuda</button><div class="muted reloj" id="reloj">${relojes()}</div></div>` + ahora() + pendingAlert();
   const avisos = arr(trip.avisos);
   if (avisos.length) html += `<details class="card avisos" data-key="avisos" ${abierto("avisos", false) ? "open" : ""}><summary><b>⚠️ Avisos (${avisos.length})</b></summary><ul>${avisos.map(a => `<li>${esc(a)}</li>`).join('')}</ul></details>`;
   if (!dias.length) return html + '<p class="muted">El viaje no tiene días (clave "dias").</p>';
@@ -398,7 +398,7 @@ function ahora() {
   const hoy = todayISO(), n = new Date(), nowM = n.getHours() * 60 + n.getMinutes();
   if (hoy < dias[0]) {
     const falta = Math.round((new Date(dias[0] + 'T12:00') - new Date(hoy + 'T12:00')) / 864e5);
-    return `<div class="card ahora"><b>✈️ ${falta === 1 ? 'Falta' : 'Faltan'} ${falta} ${falta === 1 ? 'día' : 'días'} para el viaje</b><div class="muted">Sale el ${fmtDate(dias[0])}. Revisa Más → Maleta y documentos.</div></div>`;
+    return `<div class="card ahora"><b>✈️ ${falta === 1 ? 'Falta' : 'Faltan'} ${falta} ${falta === 1 ? 'día' : 'días'} para el viaje</b><div class="muted">Sale el ${fmtDate(dias[0])}. Revisa Más → Maleta y documentos.</div><button class="mini prep-ir" data-act="preparar-ir">🧳 Preparar para viajar</button></div>`;
   }
   if (hoy > dias[dias.length - 1]) return '';
   const [d, ev] = eventosDe(hoy);
@@ -726,14 +726,111 @@ function pintarFotos() {
     if (c && f.url) c.innerHTML = `Foto: <a href="${esc(f.url)}" target="_blank" rel="noopener">Wikipedia</a>`;
   });
 }
-async function descargarFotos() {
-  if (!navigator.onLine) return alert('Conéctate a internet para descargar las fotos.');
-  const ts = [...new Set([...Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat().map(l => l.wiki), ...Object.values(typeof WIKI !== 'undefined' ? WIKI : {}), ...(typeof PLANES !== 'undefined' ? PLANES : []).map(p => p.wiki), ...Object.values(LP).flat().map(l => l.wiki)].filter(Boolean))]; let n = 0;
-  for (const t of ts) {
+// Descarga las fotos (y la versión grande de los banners de cada día) para usarlas sin conexión.
+async function descargarFotos(prog) {
+  const ts = [...new Set([...Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat().map(l => l.wiki), ...Object.values(typeof WIKI !== 'undefined' ? WIKI : {}), ...(typeof PLANES !== 'undefined' ? PLANES : []).map(p => p.wiki), ...Object.values(LP).flat().map(l => l.wiki)].filter(Boolean))];
+  const banners = new Set(arr(trip && trip.dias).map(d => listaDia(d).map(wikiDe).find(Boolean)).filter(Boolean));
+  let n = 0, hechas = 0, i = 0;
+  const uno = async t => {
     delete FOTOS[t]; const f = await fotoWiki(t);
-    if (f && f.src) { try { await fetch(f.src, { mode: 'no-cors' }); n++; } catch {} }
-  }
-  alert(`Fotos guardadas para usar sin conexión: ${n} de ${ts.length}.`); render();
+    if (f && f.src) {
+      try { await fetch(f.src, { mode: 'no-cors' }); n++; } catch {}
+      if (banners.has(t) && /\/\d+px-/.test(f.src)) { try { await fetch(f.src.replace(/\/\d+px-/, '/800px-'), { mode: 'no-cors' }); } catch {} }
+    }
+    hechas++; if (prog) prog(hechas, ts.length);
+  };
+  await Promise.all(Array.from({ length: 6 }, async () => { while (i < ts.length) await uno(ts[i++]); }));
+  return [n, ts.length];
+}
+
+// ---------- Preparar para viajar: con wifi deja todo listo para usar sin conexión ----------
+let prep = null;
+const PREP_PASOS = [['app', '📱 App sin conexión'], ['fotos', '📷 Fotos'], ['tiempo', '🌤️ Tiempo'], ['cambio', '💱 Cambio ₩/€'], ['copia', '💾 Copia de seguridad']];
+function prepCard() {
+  const r = prep || load('corea.prep', null), activo = prep && !prep.fin;
+  return `<div class="card prep" id="prep"><div class="big">🧳 Preparar para viajar</div>
+    <div class="muted">Con wifi, antes de salir: guarda la app, las fotos, el tiempo y el cambio para usarlos sin conexión.</div>
+    ${r ? `<ul class="prep-l">${PREP_PASOS.map(([k, t]) => `<li><span>${t}</span><span>${r[k] || ''}</span></li>`).join('')}</ul>
+    ${r.fin ? `<div class="muted">${r.fecha ? `Hecho el ${esc(r.fecha)}. ` : ''}Prueba ahora en modo avión: cierra la app y vuelve a abrirla.</div>` : ''}` : ''}
+    <button data-act="preparar" ${activo ? 'disabled' : ''}>${activo ? '⏳ Preparando…' : r ? '🔄 Volver a preparar' : '⬇️ Preparar ahora'}</button></div>`;
+}
+async function prepararViaje() {
+  if (prep && !prep.fin) return;
+  if (!navigator.onLine) return alert('Conéctate a una wifi para preparar el viaje.');
+  prep = { app: '⏳', fotos: '⏳', tiempo: '⏳', cambio: '⏳', copia: '⏳', fin: false };
+  const pinta = () => { const e = document.getElementById('prep'); if (e) e.outerHTML = prepCard(); };
+  pinta();
+  // 1. Archivos de la app en la caché del service worker (la lista sale de sw.js).
+  try {
+    const ks = window.caches ? await caches.keys() : [], k = ks.find(x => x === 'corea-' + VERSION) || ks.find(x => /^corea-v/.test(x));
+    if (!k) prep.app = '⚠️ Este navegador no la guarda: ábrela desde el icono instalado';
+    else {
+      const c = await caches.open(k), sw = await (await fetch('sw.js', { cache: 'no-store' })).text();
+      const fs = [...new Set([...sw.matchAll(/'(\.\/[^']*)'/g)].map(m => m[1]))];
+      let ok = 0;
+      for (const f of fs) {
+        if (await c.match(f, { ignoreSearch: true })) { ok++; continue; }
+        try { await c.add(new Request(f, { cache: 'reload' })); ok++; } catch {}
+      }
+      prep.app = ok === fs.length ? `✓ ${ok} archivos` : `⚠️ ${ok} de ${fs.length}: repite con mejor conexión`;
+    }
+  } catch { prep.app = '⚠️ No se pudo comprobar'; }
+  pinta();
+  // 2. Tiempo (se fuerza aunque sea reciente) y 3. cambio, mientras bajan las fotos.
+  const tiempo = (async () => {
+    if (TIEMPO) TIEMPO.ts = 0;
+    await actualizarTiempo();
+    const ds = arr(trip.dias), con = ds.filter(d => tiempoDe(ck(d.ciudad), d.fecha)), ult = con.map(d => d.fecha).sort().pop();
+    prep.tiempo = con.length ? `${con.length === ds.length ? '✓' : '◐'} ${con.length} de ${ds.length} días (hasta el ${fmtCorto(ult)})` : '⚠️ Sin previsión (llega hasta 16 días antes)';
+    pinta();
+  })();
+  const camb = (async () => {
+    const U = u();
+    if (U.cambioManual) prep.cambio = `✓ Manual: 1 € = ${won(cambio())}`;
+    else prep.cambio = (await actualizarCambio('silencio')) ? `✓ 1 € = ${won(cambio())} (${esc(U.cambioFecha)})` : cambio() ? `◐ Guardado: 1 € = ${won(cambio())}` : '⚠️ No se pudo bajar';
+    pinta();
+  })();
+  const [n, t] = await descargarFotos((h, tot) => { prep.fotos = `⏳ ${h} de ${tot}`; pinta(); });
+  prep.fotos = n >= t * 0.9 ? `✓ ${n} de ${t}` : `◐ ${n} de ${t} (algunos sitios no tienen foto)`;
+  await Promise.all([tiempo, camb]);
+  const c = localStorage.getItem('corea.ultimaCopia');
+  prep.copia = c ? `✓ Última: ${esc(c)}` : '⚠️ Haz "Exportar copia" (arriba)';
+  prep.fin = true; prep.fecha = new Date().toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  try { save('corea.prep', prep); } catch {}
+  pinta(); pintarFotos();
+}
+
+// ---------- 🆘 Ayuda: hotel de esta noche y teléfonos, en grande ----------
+// Embajada: web de la Embajada (exteriores.gob.es/Embajadas/seul). La lista del Ministerio da otro móvil de urgencia: VERIFICAR.
+const EMBAJADA = { tel: '+82 2-794-3581', urg: '+82 10-3793-5706', dir: '17 Hannam-daero 36-gil, Yongsan-gu, Seúl' };
+const telLink = (n, txt, cls = '') => `<a class="btn ay-tel ${cls}" href="tel:${n.replace(/[^\d+]/g, '')}">${txt}</a>`;
+function abrirAyuda() {
+  const ds = arr(trip.dias).map(d => d.fecha).filter(Boolean).sort(), n = new Date();
+  let f = todayISO(); if (n.getHours() < 6) f = sumaDia(f, -1); // de madrugada, aún es "la noche de ayer"
+  const enViaje = ds.length && f >= ds[0] && f <= ds[ds.length - 1];
+  if (!enViaje) { const sel = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)))[dayIdx || 0]; f = (sel && sel.fecha) || ds[0] || f; }
+  // Antes del viaje o en noche de vuelo: el siguiente hotel del viaje.
+  let a = alojDe(f).noche;
+  if (!a && !enViaje) for (let i = 1; i < 4 && !a; i++) { const g = sumaDia(f, i); a = alojDe(g).noche; if (a) f = g; }
+  const s = trip.seguro || {}, as = s.asistencia || {};
+  // Sin nombre en hangul: la dirección en grande con "lléveme a esta dirección".
+  const hotel = a ? `${a.ko ? `<div class="enorme">${esc(fraseTaxi(a.ko))}</div>${a.direccion_ko ? `<div class="dir">${esc(a.direccion_ko)}</div>` : ''}`
+      : a.direccion_ko ? `<div class="enorme">${esc(a.direccion_ko)}</div><div class="dir">이 주소로 가 주세요</div>` : '<div class="falta">falta hangul del hotel</div>'}
+      <div class="es"><b>${esc(a.nombre)}</b>${a.direccion_en ? '<br>' + esc(a.direccion_en) : ''} ${ver(a)}</div>
+      <div class="row ay-row">${naver(a)}${a.direccion_ko || a.ko ? `<button class="sec mini" data-copy="${esc(a.direccion_ko || a.ko)}">📋 Copiar</button>` : ''}</div>`
+    : '<div class="es">Esta noche no hay alojamiento en el viaje (vuelo o traslado).</div>';
+  full(`<div class="ayuda">
+    <div class="ay-sec">🏨 ${enViaje ? 'Hotel de esta noche' : 'Hotel del ' + fmtCorto(f)}</div>${hotel}
+    <div class="ay-sec">🚨 Urgencias en Corea (gratis)</div>
+    <div class="ay-tels">${telLink('112', '🚓 112 · Policía')}${telLink('119', '🚑 119 · Ambulancia y bomberos')}</div>
+    <div class="ay-tels">${telLink('1330', 'ℹ️ 1330 · Turismo (24 h, en inglés)')}</div>
+    <div class="es">1330 con móvil extranjero: 02-1330 (prefijo de Seúl + 1330).</div>
+    ${as.telefono ? `<div class="ay-sec">🛡️ Seguro${s.producto ? ' · ' + esc(s.producto) : ''}</div>
+      <div class="ay-tels">${telLink(String(as.telefono), '📞 ' + esc(as.telefono))}</div>${s.poliza ? `<div class="es">Póliza: <b>${esc(s.poliza)}</b></div>` : ''}${as.nota ? `<div class="es">${esc(as.nota)}</div>` : ''}` : ''}
+    <div class="ay-sec">🇪🇸 Embajada de España en Seúl</div>
+    <div class="ay-tels">${telLink(EMBAJADA.urg, '🆘 Urgencia consular ' + EMBAJADA.urg)}${telLink(EMBAJADA.tel, '🏛️ Oficina ' + EMBAJADA.tel, 'sec')}</div>
+    <div class="es">${EMBAJADA.dir}<br>Urgencia consular solo para emergencias graves (detención, accidente, pérdida del pasaporte). <span class="ver">VERIFICAR</span> el móvil de urgencia: la lista del Ministerio da otro número.</div>
+  </div>`);
 }
 
 // Sección de la Lonely Planet: cabecera propia y una tarjeta por recomendación.
@@ -1380,7 +1477,7 @@ async function actualizarCambio(forzar) {
       }
     } catch { /* probar la siguiente */ }
   }
-  if (forzar) alert('No se pudo actualizar el cambio (¿sin conexión?).');
+  if (forzar === true) alert('No se pudo actualizar el cambio (¿sin conexión?).');
 }
 // Conversor en ventana (botón 💱 de la cabecera).
 function abrirConv() {
@@ -1457,7 +1554,7 @@ function viewMas() {
     <p class="muted">La copia incluye el viaje, checklist, notas, fotos, lo marcado en Comer y lo verificado. Guárdala fuera del móvil.
       Última copia: <b>${esc(localStorage.getItem('corea.ultimaCopia') || 'nunca')}</b></p>
     <h2>App</h2>
-    <button class="sec" data-act="fotos">📷 Descargar fotos (para usar sin conexión)</button>
+    ${prepCard()}
     <button class="sec" data-act="update">🔄 Forzar actualización (no borra tus datos)</button>
     <button class="danger" data-act="wipe">Borrar datos de este móvil</button>
     <p class="muted" id="ver">Versión: ${esc(window.VERSION || '…')}</p>`;
@@ -1647,7 +1744,9 @@ document.addEventListener('click', e => {
     case 'lp': lpAbierta = !lpAbierta; break;
     case 'platos': verPlatos = !verPlatos; break;
     case 'lptodos': lpTodos = !lpTodos; break;
-    case 'fotos': descargarFotos(); return;
+    case 'preparar': prepararViaje(); return;
+    case 'preparar-ir': masSub = 'datos'; ir('mas'); render(); window.scrollTo(0, 0); prepararViaje(); return;
+    case 'ayuda': abrirAyuda(); return;
     case 'comer-cancelar': comerForm = false; break;
     case 'example': loadExample(); return;
     case 'wipe':

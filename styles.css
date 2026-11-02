@@ -712,3 +712,24 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .c2-guia.michelin { background: #fde3e3; color: #a3121a; }
 .c2-guia.bluer { background: #e3edfd; color: #0b4aa8; }
 .c2-guia .ver { font-size: .6rem; }
+
+/* v75: 🆘 Ayuda y Preparar para viajar */
+.hoy-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.hoy-top .reloj { margin: 0; }
+.sos { width: auto; min-height: 30px; padding: 4px 12px; font-size: .85em; font-weight: 700; background: var(--red); color: #fff; border-radius: 999px; }
+.ahora .prep-ir { width: auto; margin: 8px auto 0; display: block; }
+.prep .prep-l { list-style: none; padding: 0; margin: 8px 0; }
+.prep .prep-l li { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--line, rgba(127,127,127,.2)); font-size: .92em; }
+.prep .prep-l li span:last-child { text-align: right; }
+.prep button { margin-top: 6px; }
+#full:has(.ayuda) { justify-content: flex-start; overflow-y: auto; }
+#full .ayuda { width: 100%; max-width: 520px; margin: 0 auto; padding: 44px 4px 24px; text-align: center; }
+#full .ayuda .enorme { font-size: min(11vw, 3.2rem); }
+#full .ayuda .dir { font-size: min(6.5vw, 1.6rem); }
+#full .ay-sec { margin: 22px 0 6px; font-weight: 800; font-size: 1.05rem; color: #333; border-top: 1px solid #ddd; padding-top: 12px; }
+#full .ay-sec:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+#full .ay-tels { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 4px 0; }
+#full .ay-tel { flex: 1 1 45%; min-height: 48px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; text-decoration: none; border-radius: 12px; }
+#full .ay-row { justify-content: center; margin-top: 10px; gap: 8px; }
+#full .ay-row .btn, #full .ay-row button { width: auto; }
+#full .ayuda .es { margin-top: 6px; }
