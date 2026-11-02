@@ -767,33 +767,6 @@
 }
 },
 {
-"id": "lp-jaha-sonmandoo",
-"ciudad": "seul",
-"nombre": "Jaha Sonmandoo",
-"ko": "자하손만두",
-"tipo": "restaurante",
-"plato": "mandu caseros",
-"direccion": "12 Baekseondong-gil, Jongno-gu",
-"horario": "11am-9.30pm (LP 2016)",
-"precio": "₩ barato (LP 2016)",
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 71 · ★ elección del autor",
-"guias": [
-{
-"g": "michelin",
-"d": "Bib Gourmand",
-"anio": "2026"
-}
-],
-"opiniones": {
-"v": 3.9,
-"n": 128,
-"fuente": "Siksin",
-"fecha": "2026-11"
-}
-},
-{
 "id": "lp-deongjang-yesool",
 "ciudad": "seul",
 "nombre": "Deongjang Yesool",
@@ -975,20 +948,6 @@
 "nota": "Lonely Planet Korea 2016, p. 76"
 },
 {
-"id": "lp-suyeon-sanbang",
-"ciudad": "seul",
-"nombre": "Suyeon Sanbang",
-"ko": "수연산방",
-"tipo": "café",
-"plato": "casa de té",
-"direccion": "8 Seongbuk-ru 26-gil, Seongbuk-gu",
-"horario": "11.30am-10pm (LP 2016)",
-"precio": null,
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 78 · ★ elección del autor"
-},
-{
 "id": "lp-dallyeora-gaemi-1",
 "ciudad": "seul",
 "nombre": "Dallyeora Gaemi 1",
@@ -1017,48 +976,6 @@
 "nota": "Lonely Planet Korea 2016, p. 78"
 },
 {
-"id": "lp-four-seasons",
-"ciudad": "seul",
-"nombre": "Four Seasons",
-"ko": "사계",
-"tipo": "bar",
-"plato": "bar",
-"direccion": "Basement, 7 Bogwang-ro 59-gil",
-"horario": "6pm-1am Mon-Thu, to 2am Fri, 2pm-2am Sat, to midniight Sun (LP 2016)",
-"precio": null,
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 78"
-},
-{
-"id": "lp-neurin-maeul",
-"ciudad": "seul",
-"nombre": "Neurin Maeul",
-"ko": "느린마을",
-"tipo": "bar",
-"plato": "bar",
-"direccion": "7 Seocho\u0002daero 73-gil, Seocho-gu",
-"horario": "11am-11pm (LP 2016)",
-"precio": null,
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 78"
-},
-{
-"id": "lp-mudaeruk",
-"ciudad": "seul",
-"nombre": "Mudaeruk",
-"ko": "무대륙",
-"tipo": "bar",
-"plato": "música en directo",
-"direccion": null,
-"horario": null,
-"precio": null,
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 80 · ★ elección del autor"
-},
-{
 "id": "lp-caf-bbang",
 "ciudad": "seul",
 "nombre": "Café BBang",
@@ -1085,20 +1002,6 @@
 "fuente": "lonely",
 "url": null,
 "nota": "Lonely Planet Korea 2016, p. 88 · ★ elección del autor"
-},
-{
-"id": "lp-seoul-folk-flea-market",
-"ciudad": "seul",
-"nombre": "Rastro popular de Seúl",
-"ko": "서울풍물시장",
-"tipo": "mercado",
-"plato": "rastro",
-"direccion": "19-3 Cheonho-daero 4-gil, Dong\u0002daemun-gu",
-"horario": "10am-7pm, closed 2nd & 4th Tue of month (LP 2016)",
-"precio": null,
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 88"
 },
 {
 "id": "lp-daebak-jip",
@@ -1379,34 +1282,6 @@
 "nota": "Lonely Planet Korea 2016 · ★ elección del autor"
 },
 {
-"id": "lp-the-comonplace",
-"ciudad": "busan",
-"nombre": "The Comonplace",
-"ko": "문화골목 다반",
-"tipo": "bar",
-"plato": "bar de vinos",
-"direccion": null,
-"horario": "5pm-1am (LP 2016)",
-"precio": null,
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 193 · ★ elección del autor"
-},
-{
-"id": "lp-maru",
-"ciudad": "busan",
-"nombre": "Maru",
-"ko": "마루",
-"tipo": "café",
-"plato": "casa de té",
-"direccion": "Saesak-ro 17-1, Jin-gu",
-"horario": "10am-10pm (LP 2016)",
-"precio": null,
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 193 · ★ elección del autor"
-},
-{
 "id": "lp-emo",
 "ciudad": "busan",
 "nombre": "Emo",
@@ -1419,20 +1294,6 @@
 "fuente": "lonely",
 "url": null,
 "nota": "Lonely Planet Korea 2016, p. 193"
-},
-{
-"id": "lp-bujeon-market",
-"ciudad": "busan",
-"nombre": "Mercado Bujeon",
-"ko": "부전시장",
-"tipo": "mercado",
-"plato": "mercado",
-"direccion": null,
-"horario": "4am-8pm (LP 2016)",
-"precio": null,
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 194"
 },
 {
 "id": "lp-gukje-market",
@@ -1485,26 +1346,6 @@
 "v": 3.9,
 "n": 97,
 "fuente": "Polle",
-"fecha": "2026-11"
-}
-},
-{
-"id": "lp-yetchon-makgeolli",
-"ciudad": "jeonju",
-"nombre": "Yetchon Makgeolli",
-"ko": "옛촌막걸리",
-"tipo": "restaurante",
-"plato": "makgeolli con platillos",
-"direccion": "8 Jungsanjungang-ro, Wansan-gu",
-"horario": "4pm-2am (LP 2016)",
-"precio": "₩₩ medio (LP 2016)",
-"fuente": "lonely",
-"url": null,
-"nota": "Lonely Planet Korea 2016, p. 268 · ★ elección del autor",
-"opiniones": {
-"v": 4.0,
-"n": 13,
-"fuente": "Polle (local principal; el de la aldea hanok tiene 3,3)",
 "fecha": "2026-11"
 }
 },
@@ -1747,40 +1588,6 @@
 }
 },
 {
-"id": "w-subyeon",
-"ciudad": "busan",
-"nombre": "Subyeon Choego Dwaeji Gukbap",
-"ko": "수변최고돼지국밥",
-"tipo": "restaurante",
-"plato": "dwaeji gukbap",
-"direccion": null,
-"horario": null,
-"precio": null,
-"fuente": "guia",
-"url": "https://thesoulofseoul.net/dwaejigukbap-busan/",
-"nota": "Principal en Suyeong-gu, 24 h.",
-"opiniones": {
-"v": 4.1,
-"n": 186,
-"fuente": "Polle",
-"fecha": "2026-11"
-}
-},
-{
-"id": "w-seomyeon",
-"ciudad": "busan",
-"nombre": "Calle del gukbap de Seomyeon",
-"ko": "서면시장",
-"tipo": "mercado",
-"plato": "dwaeji gukbap",
-"direccion": null,
-"horario": null,
-"precio": null,
-"fuente": "guia",
-"url": "https://thesoulofseoul.net/dwaejigukbap-busan/",
-"nota": "Junto a la estación de Seomyeon."
-},
-{
 "id": "w-halmae",
 "ciudad": "busan",
 "nombre": "Halmae Gaya Milmyeon",
@@ -1799,40 +1606,6 @@
 "fuente": "Polle",
 "fecha": "2026-11"
 }
-},
-{
-"id": "w-choryang",
-"ciudad": "busan",
-"nombre": "Choryang Milmyeon",
-"ko": "초량밀면",
-"tipo": "restaurante",
-"plato": "milmyeon",
-"direccion": null,
-"horario": null,
-"precio": null,
-"fuente": "guia",
-"url": "https://www.lonelyplanet.com/articles/busan-unique-eats-koreas-seaside-city",
-"nota": "Cerca de la estación de Busan.",
-"opiniones": {
-"v": 3.7,
-"n": 85,
-"fuente": "Web de viajes",
-"fecha": "2026-11"
-}
-},
-{
-"id": "w-jeonpo",
-"ciudad": "busan",
-"nombre": "Calle de cafés de Jeonpo",
-"ko": "전포카페거리",
-"tipo": "café",
-"plato": "unos 30 cafés independientes",
-"direccion": null,
-"horario": null,
-"precio": null,
-"fuente": "guia",
-"url": "https://www.busannavi.net/eng/?p=180",
-"nota": "A 10 min a pie de Seomyeon."
 },
 {
 "id": "w-sambaekjip",

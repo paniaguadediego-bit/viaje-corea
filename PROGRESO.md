@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v92
+Caché del service worker: corea-v93
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -144,6 +144,7 @@ Caché del service worker: corea-v92
 - v90: el usuario quiere cafeterías y bares mucho más cerca de los hoteles. Se añaden 18 a ≤1 km del hotel en data/comer.json (fuente guía con enlace, comprobado "existe", coordenadas aproximadas; hangul solo si está confirmado): Seúl (Coffee Hanyakbang, Cafe Pines, METCHA, Rooftop Floating en L7, Marque d'Amour, callejón Nogari de Euljiro), Busan (Ant House, Edge 993, y Geumsong Deokmi, Duplit y Tago Coffee en Haeridan-gil), Andong (Jigwanseoga, Milliliter Coffee), Gyeongju (Bonjeon Makpo, Keirim Jumak, Jinhanbam) y Jeonju (Yetchon Makgeolli). En Andong no se encontraron bares fiables. Nuevo filtro en Comer "📍 Cerca del hotel" (≤1,2 km). Planes tiene categoría "👕 Ropa", solo con tiendas cerca del hotel: Uniqlo Myeongdong (insignia abierta el 22-5-2026, unos 400 m), SPAO Myeongdong y Uniqlo Andong (abierta en 2018 junto a la antigua estación; VERIFICAR que sigue). No hay outlets ni Uniqlo cerca de los hoteles de Gyeongju, Busan y Jeonju (los outlets están a las afueras), así que no se añaden.
 - v91: los botones de ciudad de Planes usan el mismo diseño que Ciudades (cuadrícula de 5 con icono grande y color de cada ciudad) en vez de etiquetas pequeñas.
 - v92: al tocar un tipo en Comer, la fila de chips volvía al principio ("Todo") porque se redibuja. render() guarda y restaura el desplazamiento horizontal de las filas .chips, .hoysubs y .pcats mientras no se cambie de pestaña (como ya hacía la tira de días).
+- v93: el usuario pidió quitar de Comer lo que esté a más de 3 km del hotel salvo que quede muy cerca de un sitio del itinerario. Criterio: >3 km del hotel y a >500 m del sitio del itinerario más cercano de esa ciudad (autoDia) → fuera; se mantienen los de fuente itinerario. Quitados 14 (128 → 114): Jaha Sonmandoo, Suyeon Sanbang, Four Seasons, Neurin Maeul, Mudaeruk, Rastro popular de Seúl, The Comonplace, Maru, mercado Bujeon, el Yetchon Makgeolli original (queda el de la aldea hanok), Subyeon Dwaeji Gukbap, calle del gukbap de Seomyeon, Choryang Milmyeon y calle de cafés de Jeonpo. [Supuesto] Se mantiene Godiva Crepe (6,3 km) porque lo añadió el usuario, y los 18 sitios sin coordenadas (no se puede medir).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
