@@ -25,7 +25,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    capítulos de historia y cultura para leer sin conexión, con índice,
    anterior/siguiente y marca de leído en user.leidos), Enseñar, Frases,
    Diccionario. Más es una rejilla de iconos
-   como la Guía (se toca y sale debajo): Maleta, Checklist, Seguro,
+   como la Guía (se toca y sale debajo): Maleta, Seguro,
    Verificar, Documentos (fotos/PDF), Notas y Datos y app (importar,
    exportar, fotos, actualizar, borrar). El conversor ₩/€
    es el botón 💱 junto al título y se abre en una ventana. Gastos: quitado (el usuario usa
@@ -111,7 +111,8 @@ usuario).
 Estado (Quiero/Visitado/Descartado/Cerrado), notas y lugares
 propios se guardan en el móvil (user.comer, user.comerPropios).
 "Hecho/visitado" es UNA marca por sitio (user.hecho, clave = hangul
-o nombre): Checklist, Ciudades, Enseñar, Hoy y Comer la comparten.
+o nombre): Ciudades, Enseñar, Hoy y Comer la comparten (el Checklist
+por ciudad se quitó en v65).
 Campos opcionales: la app NO debe romperse si falta alguno.
 Crea example.trip.json FICTICIO que cumpla este esquema.
 data/coords.json: coordenadas aproximadas PÚBLICAS de sitios y

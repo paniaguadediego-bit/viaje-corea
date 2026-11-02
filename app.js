@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v64';
+const VERSION = 'v65';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -42,7 +42,7 @@ const TABS = [
   ['comer', 'Comer', '🍜'], ['planes', 'Planes', '⭐'], ['mas', 'Más', '☰']
 ];
 // Secciones agrupadas dentro de "Más" (la barra no cabe con 9 pestañas).
-const EN_MAS = [['checklist', 'Checklist', '✅'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎']];
+const EN_MAS = [['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎']];
 
 function todayISO() {
   const d = new Date();
@@ -1138,7 +1138,7 @@ const abierto = (k, def) => (k in abiertos ? abiertos[k] : def);
 document.addEventListener('toggle', e => { const k = e.target.dataset && e.target.dataset.key; if (k) abiertos[k] = e.target.open; }, true);
 
 // ---------- "Hecho / visitado": una sola marca por sitio para toda la app ----------
-// Clave por hangul (si lo hay) o por nombre: así el mismo sitio en Ciudades, Enseñar, Comer y Checklist comparte marca.
+// Clave por hangul (si lo hay) o por nombre: así el mismo sitio en Ciudades, Enseñar, Hoy y Comer comparte marca.
 const hKey = l => 'p:' + (typeof l === 'string' ? norm(l) : (l && l.ko ? String(l.ko).replace(/\s+/g, '') : norm(l && (l.es || l.nombre))));
 function hecho(l, k) {
   const U = u(), key = hKey(l);
@@ -1165,26 +1165,6 @@ function marcarHecho(key, v) {
 const tick = (l, k) => hecho(l, k) ? ' <span class="badge ok">✅</span>' : '';
 const btnHecho = (l, k) => `<button class="hk ${hecho(l, k) ? 'on' : ''}" data-hk="${esc(hKey(l))}" data-v="${hecho(l, k) ? 0 : 1}" aria-label="Hecho">✓</button>`;
 
-// ---------- Checklist por ciudad ----------
-function viewChecklist() {
-  const cs = ciudadesUnicas();
-  if (!cs.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
-  const act = ck(ciudadActual());
-  const fila = (l, k, txt) => `<label class="check"><input type="checkbox" data-hk="${esc(hKey(l))}" ${hecho(l, k) ? 'checked' : ''}><span>${txt}</span></label>`;
-  return '<p class="muted">Lo que taches aquí sale tachado en toda la app (Ciudades, Enseñar, Hoy y Comer como "Visitado").</p>' + cs.map(c => {
-    const k = ck(c.nombre);
-    const sitios = [...(arr(c.interes).length ? arr(c.interes) : []), ...sitiosCiudad(k).filter(l => !/^(Estación|Aeropuerto|Terminal)/.test(l.es))]
-      .filter((l, i, a) => a.findIndex(x => hKey(x) === hKey(l)) === i);
-    const comer = lugaresComer().filter(l => l.ciudad === k && (['quiero', 'visitado'].includes(estadoDe(String(l.id)).estado) || l.fuente === 'itinerario'))
-      .filter(l => !sitios.some(x => hKey(x) === hKey(l)));
-    const hechos = [...sitios, ...comer].filter(l => hecho(l, k)).length;
-    const sitiosO = porPlan(sitios, k), comerO = porPlan(comer, k);
-    return `<details data-key="ck:${esc(k)}" ${abierto('ck:' + k, k === act) ? 'open' : ''}><summary class="card big">${esc(c.nombre)} <span class="muted">${hechos}/${sitios.length + comer.length}</span></summary>
-      <div class="card lista-check">${sitiosO.map(l => fila(l, k, (typeof l === 'string' ? esc(l) : esc(l.es) + lpPill(l)) + planBadge(l, k))).join('')}</div>
-      ${comer.length ? '<div class="muted sub">🍜 Para comer</div><div class="card lista-check">' + comerO.map(l => fila(l, k, esc(l.nombre) + (estadoDe(String(l.id)).estado === 'quiero' ? ' <span class="muted">⭐</span>' : '') + planBadge(l, k))).join('') + '</div>' : ''}
-      <div class="muted sub">Mis cosas</div>${checks('c:' + k, [])}</details>`;
-  }).join('');
-}
 
 // ---------- Comer (data/comer.json + lugares propios) ----------
 let DATOS_COMER = [];
@@ -1406,7 +1386,7 @@ function viewVerificar() {
 
 // Más con rejilla de iconos, como la Guía de Corea: se toca un tema y sale debajo.
 let masSub = 'maleta';
-const MAS_SUB = [['maleta', 'Maleta', '🧳'], ['checklist', 'Checklist', '✅'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'],
+const MAS_SUB = [['maleta', 'Maleta', '🧳'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'],
   ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['datos', 'Datos y app', '⚙️']];
 function viewMas() {
   const pend = trip ? pendientesVerificar().reduce((a, [, ls]) => a + ls.filter(x => !verificado(x.key)).length, 0) : 0;
@@ -1415,7 +1395,6 @@ function viewMas() {
   const rej = `<div class="guia-rej">${subs.map(([k, t, ic]) => `<button class="guia-t ${k === masSub ? 'on' : ''}" data-ms="${k}"><span>${ic}</span>${t}${k === 'verificar' && pend ? `<small>${pend}</small>` : ''}</button>`).join('')}</div>`;
   let c = '';
   if (masSub === 'maleta') { const docs = arr(trip.checklist_documentos).map((d, i) => ({ id: d.id || 'd' + i, texto: d.texto, url: d.url })); c = `<h2>🧳 Maleta y documentos</h2>${checks('docs', docs)}`; }
-  else if (masSub === 'checklist') c = viewChecklist();
   else if (masSub === 'seguro') c = viewSeguro();
   else if (masSub === 'verificar') c = viewVerificar();
   else if (masSub === 'docs') c = viewFotos();
@@ -1450,7 +1429,8 @@ function render() {
   $('#tabs').innerHTML = TABS.map(([id, label, ic]) =>
     `<button data-tab="${id}" class="${tab === id || (id === 'mas' && EN_MAS.some(m => m[0] === tab)) ? 'on' : ''}"><span>${ic}</span>${label}</button>`).join('');
 
-  if (['checklist', 'seguro', 'verificar'].includes(tab)) { masSub = tab; tab = 'mas'; }
+  if (tab === 'checklist') { masSub = 'maleta'; tab = 'mas'; }
+  if (['seguro', 'verificar'].includes(tab)) { masSub = tab; tab = 'mas'; }
   let html;
   if (!trip && tab !== 'mas' && tab !== 'conv') html = viewWelcome();
   else switch (tab) {
@@ -1463,7 +1443,6 @@ function render() {
     case 'conv': html = viewConv(); break;
     case 'planes': html = viewPlanes(); break;
     case 'verificar': html = viewVerificar(); break;
-    case 'checklist': html = viewChecklist(); break;
     case 'comer': html = viewComer(); break;
     default: html = viewMas();
   }
