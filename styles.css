@@ -659,3 +659,9 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .dia-chips { display: flex; gap: 6px; overflow-x: auto; padding: 8px 10px 4px; scrollbar-width: none; }
 .dia-chips::-webkit-scrollbar { display: none; }
 .dchip2 { flex: none; width: auto; min-height: 30px; margin: 0; padding: 3px 10px; border-radius: 999px; font-size: .78rem; font-weight: 600; background: var(--tint-b) !important; color: var(--blue); border: 0; box-shadow: none; white-space: nowrap; }
+
+/* v68: banner más legible */
+.dia-ov { background: linear-gradient(180deg, rgba(0,0,0,.30) 0%, rgba(0,0,0,.50) 45%, rgba(0,0,0,.78) 100%); padding-top: 22px; }
+.dia-sup { display: inline-block; background: rgba(0,0,0,.55); border-radius: 999px; padding: 2px 10px; font-size: .78rem; font-weight: 600; opacity: 1; }
+.dia-tit { font-size: 1.35rem; text-shadow: 0 2px 8px rgba(0,0,0,.9), 0 0 2px rgba(0,0,0,.9); margin: 6px 0 8px; }
+.dia-tiempo { background: rgba(0,0,0,.5); backdrop-filter: none; }

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v67';
+const VERSION = 'v68';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -718,8 +718,10 @@ function pintarFotos() {
     if (!f) { if (f === null) el.classList.add('sinfoto'); return; }
     const img = new Image(); img.alt = '';
     img.onload = () => { el.innerHTML = ''; el.appendChild(img); el.classList.add('ok'); };
-    img.onerror = () => el.classList.add('sinfoto');
-    img.src = f.src;
+    // En banners se pide una versión más grande; si falla (p. ej. sin conexión), la miniatura guardada.
+    const grande = (el.classList.contains('dia-foto') || el.classList.contains('banda')) && /\/\d+px-/.test(f.src) ? f.src.replace(/\/\d+px-/, '/800px-') : null;
+    img.onerror = () => { if (grande && img.src !== f.src) img.src = f.src; else el.classList.add('sinfoto'); };
+    img.src = grande || f.src;
     const c = el.classList.contains('mini') || el.classList.contains('banda') ? null : document.querySelector(`.credito[data-cred="${CSS.escape(el.dataset.wiki)}"]`);
     if (c && f.url) c.innerHTML = `Foto: <a href="${esc(f.url)}" target="_blank" rel="noopener">Wikipedia</a>`;
   });
