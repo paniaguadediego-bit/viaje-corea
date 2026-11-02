@@ -616,3 +616,15 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .hoysubs button { font-size: .74rem; padding: 6px 2px; min-height: 36px; letter-spacing: -.02em; }
 .aloj .badge { margin: 2px 0; }
 .alert.compacta { padding: 6px 10px; font-size: .85em; text-align: center; cursor: pointer; }
+
+.sd-lista .sd { position: relative; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.sd-handle { flex: none; width: 22px; align-self: center; text-align: center; color: var(--muted); font-size: 1.2rem; touch-action: none; cursor: grab; }
+.sd-cuerpo { flex: 1; min-width: 0; }
+.sd-x { width: 26px; height: 26px; min-height: 26px !important; padding: 0; margin: 0 0 0 auto; flex: none; border-radius: 50%; background: none !important; color: var(--muted); border: 1px solid var(--line); box-shadow: none; font-size: .75rem; }
+.sd.arrastrando { background: var(--tint-b); border-radius: 10px; box-shadow: 0 6px 18px rgba(0,0,0,.18); z-index: 2; }
+.sd-reset { margin: 6px auto 0; display: block; }
+.agenda { margin-top: 4px; }
+.agbtn { width: auto; min-height: 28px !important; padding: 2px 10px; margin: 0; font-size: .78rem; border-radius: 999px; background: var(--card) !important; color: var(--blue); border: 1px dashed var(--line); box-shadow: none; font-weight: 600; }
+.agbtn.on { background: #fff4c2 !important; color: #6b5200; border: 1px solid #f2b705; }
+.agdias { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.agdias .chip { min-height: 28px; font-size: .78rem; padding: 2px 8px; }

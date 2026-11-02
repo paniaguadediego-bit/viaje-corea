@@ -34,7 +34,11 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    noches, hotel y una línea por día) intercalada con los traslados. Incluye un mapa esquemático de
    Corea (SVG propio, offline) con ciudades, traslados y sitios
    (las fichas de ciudad con sitios van en Ciudades: 5 botones, se
-   despliega la ciudad elegida; botón 📜 Historia). Extras
+   despliega la ciudad elegida; botón 📜 Historia; cada sitio tiene
+   "📅" para apuntarlo a un día de esa ciudad). Agenda en user.agenda[fecha]
+   = {add, del, orden}: Hoy → Sitios muestra los del itinerario (en el
+   orden del texto) + los apuntados; se reordenan manteniendo pulsado o
+   arrastrando ≡, se quitan con ✕ y "↺ Volver al itinerario". Extras
    aprobados: conversor ₩↔€ con cambio automático del BCE vía
    api.frankfurter (solo con conexión; se guarda para offline; se
    puede fijar a mano), tiempo previsto por día (Open-Meteo, sin clave,

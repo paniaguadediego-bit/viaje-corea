@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v59';
+const VERSION = 'v60';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -433,21 +433,67 @@ function planesCerca(ls) {
 // Sitios cuyo nombre comparte palabra con un barrio: exigen otra palabra en el plan.
 const EXIGE = { '명동성당': 'catedral' };
 // Sitios que aparecen en el plan del día, con lo que cuenta la Lonely (DIA_LP) o la descripción corta.
+// ---------- Agenda: qué ver cada día (itinerario + lo que apuntáis en Ciudades), con orden propio ----------
+// user.agenda[fecha] = { add: [claves], del: [claves], orden: [claves] | null }. Clave = hKey del sitio.
+const agendaDe = f => { const U = u(); U.agenda = U.agenda || {}; return U.agenda[f] || (U.agenda[f] = { add: [], del: [], orden: null }); };
+const agendaVer = f => ((u().agenda || {})[f]) || { add: [], del: [], orden: null };
+function sitiosCiudadObj(k) {
+  const vistos = new Set();
+  return [...((typeof IMPRES !== 'undefined' && IMPRES[k]) || []), ...(LP[k] || []), ...(CATALOGO[k] || [])]
+    .filter(l => { const h = hKey(l); if (vistos.has(h) || /^(Estación|Aeropuerto)/.test(l.es)) return false; vistos.add(h); return true; });
+}
+// Sitios que el itinerario de ese día menciona, en el orden en que aparecen en el texto.
+function autoDia(d) {
+  const k = ck(d.ciudad), p = planIdx().find(x => x.fecha === d.fecha); if (!p) return [];
+  // El orden sale de las actividades (no del título, que resume el día).
+  const it = ' ' + arr(d.items).map(x => x && x.texto).join(' ').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/-/g, '').replace(/[^a-z0-9]+/g, ' ') + ' ';
+  return sitiosCiudadObj(k).map(l => {
+    const tk = tokensDe(l), pos = Math.min(...tk.map(t => { const i = it.indexOf(t); return i < 0 ? (p.txt.includes(t) ? 1e8 : 1e9) : i; }));
+    return pos < 1e9 && !(EXIGE[l.ko] && !p.txt.includes(EXIGE[l.ko])) ? [l, pos] : null;
+  }).filter(Boolean).sort((a, b) => a[1] - b[1]).map(x => x[0]);
+}
+function listaDia(d) {
+  const k = ck(d.ciudad), A = agendaVer(d.fecha), todos = sitiosCiudadObj(k);
+  const auto = autoDia(d).filter(l => !A.del.includes(hKey(l)));
+  const extra = A.add.map(h => todos.find(l => hKey(l) === h)).filter(l => l && !auto.includes(l));
+  let ls = [...auto, ...extra];
+  if (A.orden) ls.sort((a, b) => { const ia = A.orden.indexOf(hKey(a)), ib = A.orden.indexOf(hKey(b)); return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib); });
+  return ls;
+}
+// Días en que un sitio está en la agenda (itinerario sin quitar + añadidos).
+function diasDeSitio(l, k) {
+  const h = hKey(l);
+  return arr(trip && trip.dias).filter(d => d.fecha && ck(d.ciudad) === k).filter(d => listaDia(d).some(x => hKey(x) === h)).map(d => d.fecha);
+}
+let agendaAbre = null;
+function agendaBtn(l, k, ctx = '') {
+  if (!l || typeof l !== 'object' || !trip) return '';
+  const h = hKey(l), fs = diasDeSitio(l, k), dias = arr(trip.dias).filter(d => d.fecha && ck(d.ciudad) === k);
+  if (!dias.length) return '';
+  const auto = f => autoDia(dias.find(d => d.fecha === f)).some(x => hKey(x) === h);
+  return `<div class="agenda"><button class="agbtn ${fs.length ? 'on' : ''}" data-agpick="${esc(ctx + '|' + h)}">📅 ${fs.length ? fs.map(fmtCorto).join(', ') : 'Añadir a un día'}</button>
+    ${agendaAbre === ctx + '|' + h ? `<div class="agdias">${dias.map(d => `<button class="chip ${fs.includes(d.fecha) ? 'on' : ''}" data-agtog="${esc(h)}|${d.fecha}">${fmtCorto(d.fecha)}${auto(d.fecha) ? ' ·itin.' : ''}</button>`).join('')}</div>` : ''}</div>`;
+}
+function agendaToggle(h, f) {
+  const d = arr(trip.dias).find(x => x.fecha === f); if (!d) return;
+  const A = agendaDe(f), esAuto = autoDia(d).some(x => hKey(x) === h);
+  const quita = (ls, x) => { const i = ls.indexOf(x); if (i >= 0) ls.splice(i, 1); };
+  if (esAuto) { if (A.del.includes(h)) quita(A.del, h); else A.del.push(h); }
+  else { if (A.add.includes(h)) quita(A.add, h); else A.add.push(h); }
+  saveUser();
+}
+
 function sitiosDia(d) {
-  const k = ck(d.ciudad), p = planIdx().find(x => x.fecha === d.fecha); if (!p) return '';
-  const vistos = new Set(), ls = [];
-  [...((typeof IMPRES !== 'undefined' && IMPRES[k]) || []), ...(LP[k] || []), ...(CATALOGO[k] || [])].forEach(l => {
-    const h = hKey(l); if (vistos.has(h) || /^(Estación|Aeropuerto)/.test(l.es)) return;
-    const tk = tokensDe(l); if (!tk.some(t => p.txt.includes(t)) || (EXIGE[l.ko] && !p.txt.includes(EXIGE[l.ko]))) return;
-    vistos.add(h); ls.push(l);
-  });
+  const k = ck(d.ciudad), ls = listaDia(d), A = agendaVer(d.fecha);
   if (!ls.length) return '';
   const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}; const G = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
-  return `<div class="card sitios-dia"><b>📖 Sitios de hoy</b>${ls.map(l => {
+  return `<div class="card sitios-dia" data-fecha="${d.fecha}"><b>📖 Sitios de hoy</b>
+    <div class="muted mini-nota">Mantén pulsado un sitio (o arrastra ≡) para cambiar el orden. Añade más desde Ciudades con 📅.</div>
+    <div class="sd-lista">${ls.map(l => {
     const h = hKey(l), mas = D[h.slice(2)] || D[h], txt = mas || l.desc || l.nota || G[h.slice(2)] || '';
-    return `<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b> <span class="ko-s">${esc(l.ko || '')}</span></div>
+    return `<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}" data-k="${esc(h)}"><span class="sd-handle" aria-label="Mover">≡</span>${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b> <span class="ko-s">${esc(l.ko || '')}</span><button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button></div>
       ${txt ? `<div class="muted">${esc(txt).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}${mas || l.lp ? ' <span class="badge otro">LP</span>' : ''}</div>` : ''}</div></div>`;
-  }).join('')}${planesCerca(ls)}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado.</div></div>`;
+  }).join('')}</div>${A.orden || A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}${planesCerca(ls)}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado.</div></div>`;
 }
 
 // Resumen del día siguiente al que se está viendo.
@@ -590,7 +636,7 @@ function imprescindibles(k) {
   return `<div class="impres">${porPlan(ls, k).map(l => `<div class="imp ${hecho(l, k) ? 'hecho-card' : ''}">
     <div class="foto" data-wiki="${esc(l.wiki)}"><span>📷</span></div>
     <div class="imp-txt"><div class="imp-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b></div>
-      <div class="ko-s">${esc(l.ko)}${distHotel(l, k)}</div>${planBadge(l, k)}
+      <div class="ko-s">${esc(l.ko)}${distHotel(l, k)}</div>${agendaBtn(l, k, 'imp')}
       ${masLP(l, 'imp')}
       <div class="muted">${esc(l.desc)}${l.lp ? ' <span class="badge otro">LP</span>' : ''}</div>
       <div class="credito" data-cred="${esc(l.wiki)}"></div></div></div>`).join('')}</div>`;
@@ -649,7 +695,7 @@ function seccionLP(k) {
         <div class="lp-nom">${btnHecho(l, k)}<b>${esc(l.es)}</b></div>
         <div class="lp-meta"><span class="lp-tipo">${esc(l.tipo)}</span>${l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(l)}</div>
         <div class="lp-nota">${esc(l.nota)}</div>
-        <div class="lp-pie">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, k)}${planBadge(l, k)}</div>
+        <div class="lp-pie">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, k)}</div>${agendaBtn(l, k, 'lp')}
         ${masLP(l, 'lp')}
       </div></div>`).join('')}
       ${ls.length > 8 ? `<button class="sec lp-mas" data-act="lptodos">${lpTodos ? 'Ver menos' : `Ver los ${ls.length - 8} restantes`}</button>` : ''}</div>` : ''}
@@ -678,7 +724,7 @@ function viewCiudades() {
       ${INTRO_LP[k].plan ? `<details data-key="lp:${k}" ${abierto("lp:" + k, false) ? "open" : ""}><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
     ${h && historiaAbierta ? `<div class="historia"><b>📜 Historia de ${esc(nombreCiudad(k))}</b>${h.txt.map(p => `<p>${esc(p).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}<div class="muted">Resumen de la Lonely Planet 2016 (LP) y datos generales.</div></div>` : ''}
     ${imprescindibles(k)}
-    ${interesDe(c).length ? `<ul class="hlist">${porPlan(interesDe(c).map(x => (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x), ck(c.nombre)).map(o => typeof o === 'string' ? o : o.es).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}${miniFoto(o)}<span><span class="ics">${icSitio(x)}</span> ${esc(x)}${planBadge(o, ck(c.nombre))}${masLP(o, 'cat')}</span></li>`; }).join('')}</ul>` : ''}
+    ${interesDe(c).length ? `<ul class="hlist">${porPlan(interesDe(c).map(x => (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x), ck(c.nombre)).map(o => typeof o === 'string' ? o : o.es).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}${miniFoto(o)}<span><span class="ics">${icSitio(x)}</span> ${esc(x)}${agendaBtn(o, ck(c.nombre), 'cat')}${masLP(o, 'cat')}</span></li>`; }).join('')}</ul>` : ''}
     ${seccionLP(k)}</div>`;
 }
 
@@ -1464,6 +1510,14 @@ document.addEventListener('click', e => {
   const hc = e.target.closest('[data-hc]');
   if (hc) { if (hc.dataset.leido !== undefined) { const U = u(); U.leidos = U.leidos || {}; U.leidos[hc.dataset.leido] = 1; saveUser(); }
     histCap = hc.dataset.hc === 'ind' ? null : +hc.dataset.hc; render(); window.scrollTo(0, 0); return; }
+  const ap = e.target.closest('[data-agpick]');
+  if (ap) { agendaAbre = agendaAbre === ap.dataset.agpick ? null : ap.dataset.agpick; render(); return; }
+  const at = e.target.closest('[data-agtog]');
+  if (at) { const [h, f] = at.dataset.agtog.split('|'); agendaToggle(h, f); render(); return; }
+  const ax = e.target.closest('[data-agdel]');
+  if (ax) { const f = ax.closest('[data-fecha]').dataset.fecha; agendaToggle(ax.dataset.agdel, f); render(); return; }
+  const ar = e.target.closest('[data-agreset]');
+  if (ar) { const U = u(); if (U.agenda && U.agenda[ar.dataset.agreset]) { U.agenda[ar.dataset.agreset].orden = null; U.agenda[ar.dataset.agreset].del = []; saveUser(); } render(); return; }
   const ds = e.target.closest('[data-dsel]');
   if (ds) { dayIdx = +ds.dataset.dsel; render(); return; }
   const hs = e.target.closest('[data-hs]');
@@ -1552,6 +1606,34 @@ $('#file').addEventListener('change', e => {
   if (e.target.files[0]) importFile(e.target.files[0]);
   e.target.value = '';
 });
+
+// ---------- Arrastrar para ordenar los sitios del día (≡ al momento; mantener pulsado 0,4 s en el resto) ----------
+let arr_ = null, pulsa = null;
+function empiezaArrastre(it, y) { arr_ = { it, lista: it.parentElement }; it.classList.add('arrastrando'); try { navigator.vibrate && navigator.vibrate(15); } catch {} }
+document.addEventListener('pointerdown', e => {
+  const it = e.target.closest('.sd'); if (!it || !it.closest('.sd-lista')) return;
+  if (e.target.closest('.sd-handle')) { e.preventDefault(); empiezaArrastre(it, e.clientY); return; }
+  if (e.target.closest('button, a, input')) return;
+  pulsa = { it, x: e.clientX, y: e.clientY, t: setTimeout(() => { empiezaArrastre(it, e.clientY); pulsa = null; }, 400) };
+});
+document.addEventListener('pointermove', e => {
+  if (pulsa && (Math.abs(e.clientX - pulsa.x) > 8 || Math.abs(e.clientY - pulsa.y) > 8)) { clearTimeout(pulsa.t); pulsa = null; }
+  if (!arr_) return;
+  const otros = [...arr_.lista.querySelectorAll('.sd')].filter(x => x !== arr_.it);
+  const sig = otros.find(x => { const r = x.getBoundingClientRect(); return e.clientY < r.top + r.height / 2; });
+  arr_.lista.insertBefore(arr_.it, sig || null);
+});
+document.addEventListener('touchmove', e => { if (arr_) e.preventDefault(); }, { passive: false });
+document.addEventListener('contextmenu', e => { if (arr_ || e.target.closest('.sd-lista')) e.preventDefault(); });
+function sueltaArrastre() {
+  if (pulsa) { clearTimeout(pulsa.t); pulsa = null; }
+  if (!arr_) return;
+  const f = arr_.lista.closest('[data-fecha]').dataset.fecha;
+  agendaDe(f).orden = [...arr_.lista.querySelectorAll('.sd')].map(x => x.dataset.k); saveUser();
+  arr_.it.classList.remove('arrastrando'); arr_ = null; render();
+}
+document.addEventListener('pointerup', sueltaArrastre);
+document.addEventListener('pointercancel', () => { if (pulsa) { clearTimeout(pulsa.t); pulsa = null; } if (arr_) sueltaArrastre(); });
 
 render();
 cargarFotos().then(() => { if (tab === 'mas') render(); });
