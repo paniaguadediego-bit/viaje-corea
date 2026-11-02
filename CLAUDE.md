@@ -20,7 +20,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
 5. Pestañas (barra inferior): Hoy, Ruta, Ciudades, Corea,
    Comer, Planes (calendario del Mundial de LoL plegado: WORLDS en contenido.js, hora de
    Corea y dónde estaréis; botones LoL / Cosmética / Curioso (cafés de animales, postres famosos, tiendas raras) / Lavandería que muestran sus sitios debajo: PLANES en contenido.js,
-   con distancia al hotel y "cerca"), Más. Corea tiene apartados:
+   con distancia al hotel, "cerca", foto, 💰 precio aproximado y 👥 reseñas; lavandería y Olive Young en cada ciudad), Más. Corea tiene apartados:
    Guía (primero, con iconos por tema), Historia (historia.js: 22
    capítulos de historia y cultura para leer sin conexión, con índice,
    anterior/siguiente y marca de leído en user.leidos), Enseñar, Frases,
@@ -65,9 +65,9 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    Hoy con tira deslizable de días, tarjeta del día con banner (foto del
    primer sitio, fecha, título y tiempo), etiquetas con los sitios del día
    y nombres propios en negrita, y botones Sitios / Traslado / Hotel /
-   Ciudad / Mañana bajo la tarjeta del día (hotel por fechas, no por ciudad),
+   Ciudad / Diario bajo la tarjeta del día (Mañana quitado en v88) (hotel por fechas, no por ciudad),
    "🧳 Antes de salir" en Traslado los días que se deja hotel (vuelo, tren, pagar hotel, pasaportes…; casillas por fecha),
-   resumen "Mañana", "📔 Diario" (carita y nota por día en user.diario; resumen en Más → Notas;
+   "📔 Diario" (carita y nota por día en user.diario; resumen en Más → Notas;
    en viaje, días pasados atenuados, avisos solo en días con traslado y sin avisos de compras pasadas), tarjeta "Ahora" (lo próximo con hora o cuenta
    atrás) y hora Corea/Canarias en Hoy, frases por situación en Corea, fotos y PDF de
    documentos/billetes en Más (IndexedDB, solo en el móvil; el PDF se

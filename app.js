@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v87';
+const VERSION = 'v88';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -415,7 +415,6 @@ function viewHoy() {
     ['traslado', '🚆 Traslado', (tr.length ? antesSalir(d.fecha, tr, al) : '') + tr.map(trasladoCard).join('')],
     ['hotel', '🛏️ Hotel', (al.sale && al.sale !== al.noche ? alojCard(al.sale, true) : '') + (al.noche ? alojCard(al.noche, false) : '')],
     ['ciudad', '⭐ Ciudad', destacados(d.ciudad)],
-    ['manana', '⏭️ Mañana', manana(d, dias)],
     ['diario', `${diarioDe(d.fecha).cara || '📔'} Diario`, diarioCard(d)]
   ].filter(s => s[2]);
   if (!secs.length) return html;
@@ -653,26 +652,6 @@ function sitiosDia(d) {
     ${A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}
     ${sugerenciasCerca(d, todos)}
     ${planesCerca(todos)}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado. Metro: tiempos aproximados; estaciones y líneas de Seúl © OpenStreetMap (ODbL).</div></div>`;
-}
-
-// Resumen del día siguiente al que se está viendo.
-function manana(d, dias) {
-  const f = sumaDia(d.fecha, 1); if (!f) return '';
-  const sig = dias.find(x => x.fecha === f);
-  const tr = arr(trip.traslados).filter(t => t.fecha === f);
-  const lineas = [];
-  if (sig && sig.ciudad && d.ciudad && ck(sig.ciudad) !== ck(d.ciudad))
-    lineas.push(`🧳 Cambias de ciudad: ${esc(d.ciudad)} → ${esc(sig.ciudad)}. Deja el alojamiento y revisa la hora de salida.`);
-  tr.forEach(t => {
-    const sal = t.tren && t.tren.salida ? ` · sale ${esc(t.tren.salida)}` : '';
-    lineas.push(`${isPend(t) ? '⚠️' : '🚆'} ${esc(t.de)} → ${esc(t.a)}${sal} ${estadoBadge(t)}`);
-  });
-  if (sig) {
-    if (sig.titulo) lineas.push(`📌 ${esc(sig.titulo)}`);
-    arr(sig.items).filter(i => i.hora).slice(0, 3).forEach(i => lineas.push(`<span class="hora">${esc(i.hora)}</span>${esc(i.texto)}`));
-  }
-  if (!lineas.length) return '';
-  return `<h2>Mañana · ${fmtDate(f)}</h2><div class="card manana"><ul class="items">${lineas.map(l => `<li>${l}</li>`).join('')}</ul></div>`;
 }
 
 // Medio de transporte principal de un traslado (para el icono).
@@ -1511,6 +1490,8 @@ function viewPlanes() {
       <div class="muted">${esc(p.desc)}</div>
       ${p.direccion_en ? `<div class="muted">📌 ${esc(p.direccion_en)}</div>` : ''}
       ${p.nota ? `<div class="muted">🕒 ${esc(p.nota).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}</div>` : ''}
+      ${p.precio ? `<div class="pl-precio">💰 ${esc(p.precio)}</div>` : ''}
+      ${p.opiniones || p.resenas ? `<div class="pl-resenas">${p.opiniones ? `<b>⭐ ${esc(String(p.opiniones.v).replace('.', ','))}</b> <span class="muted">(${esc(p.opiniones.n)} reseñas, ${esc(p.opiniones.fuente)})</span> ` : ''}${p.resenas ? `👥 ${esc(p.resenas)}` : ''}</div>` : ''}
       ${otros.length ? `<div class="cerca">Cerca: ${otros.map(([o, d]) => `${icPlan(o)} ${esc(o.es)} <span class="muted">${fmtDist(d)}</span>`).join(' · ')}</div>` : ''}
       ${plan.length ? `<div class="cerca">📅 Cerca de vuestro plan: ${plan.map(([l, d, e]) => `${esc(l.es)} <span class="muted">(día ${e.n}, ${fmtDist(d)})</span>`).join(' · ')}</div>` : ''}
       <div class="acciones">${naver(p)}<button class="mini" data-full="pl:${i}">Enseñar</button></div></div>`;
