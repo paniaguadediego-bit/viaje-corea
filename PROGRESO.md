@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v93
+Caché del service worker: corea-v94
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -145,6 +145,7 @@ Caché del service worker: corea-v93
 - v91: los botones de ciudad de Planes usan el mismo diseño que Ciudades (cuadrícula de 5 con icono grande y color de cada ciudad) en vez de etiquetas pequeñas.
 - v92: al tocar un tipo en Comer, la fila de chips volvía al principio ("Todo") porque se redibuja. render() guarda y restaura el desplazamiento horizontal de las filas .chips, .hoysubs y .pcats mientras no se cambie de pestaña (como ya hacía la tira de días).
 - v93: el usuario pidió quitar de Comer lo que esté a más de 3 km del hotel salvo que quede muy cerca de un sitio del itinerario. Criterio: >3 km del hotel y a >500 m del sitio del itinerario más cercano de esa ciudad (autoDia) → fuera; se mantienen los de fuente itinerario. Quitados 14 (128 → 114): Jaha Sonmandoo, Suyeon Sanbang, Four Seasons, Neurin Maeul, Mudaeruk, Rastro popular de Seúl, The Comonplace, Maru, mercado Bujeon, el Yetchon Makgeolli original (queda el de la aldea hanok), Subyeon Dwaeji Gukbap, calle del gukbap de Seomyeon, Choryang Milmyeon y calle de cafés de Jeonpo. [Supuesto] Se mantiene Godiva Crepe (6,3 km) porque lo añadió el usuario, y los 18 sitios sin coordenadas (no se puede medir).
+- v94: ubicación de los 18 sitios de Comer sin coordenadas, sacada de la Lonely 2016 (salida de metro o cuadro del mapa; ±300-400 m, se indica "ubicación aproximada" en la dirección). Después se aplica la regla de v93 (>3 km del hotel y >500 m del itinerario → fuera): salen Sigol Yeohaeng (Samneung, 6 km) y los cinco de Seomyeon en Busan (Yetnal Jjajang, Gyeongju Gukbap, Podo Cheong, True Octopus, Emo; unos 9 km). También Yeongjin Dwaeji Gukbap (Saha-gu, lejísimos) y Hyangjeokwon (no aparece en ninguna web; fuente dudosa). Se quedan con coordenadas: Daebak Jip, Kisoya y Pyongyang Naengmyeon (centro de Gyeongju), Loving Hut, Jaerim Galbi y Lavender (centro de Andong), Sulbing y Boribap & Cheonggukjang (Haeundae) y Dolgorae (junto al mercado Gukje). Sigue sin coordenadas "Platos de Busan a probar" (nota del itinerario, no es un local). 114 → 106 lugares.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
