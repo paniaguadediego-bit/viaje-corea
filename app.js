@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v77';
+const VERSION = 'v78';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -766,11 +766,11 @@ async function descargarFotos(prog) {
 
 // ---------- Preparar para viajar: con wifi deja todo listo para usar sin conexión ----------
 let prep = null;
-const PREP_PASOS = [['app', '📱 App sin conexión'], ['fotos', '📷 Fotos'], ['tiempo', '🌤️ Tiempo'], ['cambio', '💱 Cambio ₩/€'], ['copia', '💾 Copia de seguridad']];
+const PREP_PASOS = [['app', '📱 App sin conexión'], ['fotos', '📷 Fotos'], ['mapas', '🗺️ Mapas de las ciudades'], ['tiempo', '🌤️ Tiempo'], ['cambio', '💱 Cambio ₩/€'], ['copia', '💾 Copia de seguridad']];
 function prepCard() {
   const r = prep || load('corea.prep', null), activo = prep && !prep.fin;
   return `<div class="card prep" id="prep"><div class="big">🧳 Preparar para viajar</div>
-    <div class="muted">Con wifi, antes de salir: guarda la app, las fotos, el tiempo y el cambio para usarlos sin conexión.</div>
+    <div class="muted">Con wifi, antes de salir: guarda la app, las fotos, los mapas, el tiempo y el cambio para usarlos sin conexión (unos minutos).</div>
     ${r ? `<ul class="prep-l">${PREP_PASOS.map(([k, t]) => `<li><span>${t}</span><span>${r[k] || ''}</span></li>`).join('')}</ul>
     ${r.fin ? `<div class="muted">${r.fecha ? `Hecho el ${esc(r.fecha)}. ` : ''}Prueba ahora en modo avión: cierra la app y vuelve a abrirla.</div>` : ''}` : ''}
     <button data-act="preparar" ${activo ? 'disabled' : ''}>${activo ? '⏳ Preparando…' : r ? '🔄 Volver a preparar' : '⬇️ Preparar ahora'}</button></div>`;
@@ -778,7 +778,7 @@ function prepCard() {
 async function prepararViaje() {
   if (prep && !prep.fin) return;
   if (!navigator.onLine) return alert('Conéctate a una wifi para preparar el viaje.');
-  prep = { app: '⏳', fotos: '⏳', tiempo: '⏳', cambio: '⏳', copia: '⏳', fin: false };
+  prep = { app: '⏳', fotos: '⏳', mapas: '⏳', tiempo: '⏳', cambio: '⏳', copia: '⏳', fin: false };
   const pinta = () => { const e = document.getElementById('prep'); if (e) e.outerHTML = prepCard(); };
   pinta();
   // 1. Archivos de la app en la caché del service worker (la lista sale de sw.js).
@@ -813,6 +813,9 @@ async function prepararViaje() {
   })();
   const [n, t] = await descargarFotos((h, tot) => { prep.fotos = `⏳ ${h} de ${tot}`; pinta(); });
   prep.fotos = n >= t * 0.9 ? `✓ ${n} de ${t}` : `◐ ${n} de ${t} (algunos sitios no tienen foto)`;
+  pinta();
+  const [mo, mt] = await descargarMapas((h, tot) => { prep.mapas = `⏳ ${h} de ${tot}`; pinta(); });
+  prep.mapas = mo >= mt * 0.98 ? `✓ ${mo} trozos` : `◐ ${mo} de ${mt}: repite con mejor conexión`;
   await Promise.all([tiempo, camb]);
   const c = localStorage.getItem('corea.ultimaCopia');
   prep.copia = c ? `✓ Última: ${esc(c)}` : '⚠️ Haz "Exportar copia" (arriba)';
@@ -1024,12 +1027,13 @@ function mpYo(el, m) {
 }
 
 // Puntos de una ciudad: itinerario (con el día), más sitios, Comer y Planes.
-function mapaCiudadHTML(k) {
+// Todos los puntos de una ciudad (todas las capas).
+function puntosCiudad(k) {
   const hot = hotelDe(k), D = typeof DIA_LP !== 'undefined' ? DIA_LP : {};
   const dias = arr(trip.dias).filter(d => d.fecha && ck(d.ciudad) === k), enDia = new Map();
   dias.forEach(d => listaDia(d).forEach(l => { const h = hKey(l); if (!enDia.has(h)) enDia.set(h, d.fecha); }));
   const todos = [], cuenta = {};
-  const add = (capa, l, extra) => { const c = coordsLugar(l); if (!c) return; cuenta[capa] = (cuenta[capa] || 0) + 1; if (mpCapas.has(capa)) todos.push({ capa, c, l, es: l.es || l.nombre, ko: l.ko, ...extra }); };
+  const add = (capa, l, extra) => { const c = coordsLugar(l); if (!c) return; cuenta[capa] = (cuenta[capa] || 0) + 1; todos.push({ capa, c, l, es: l.es || l.nombre, ko: l.ko, ...extra }); };
   sitiosCiudadObj(k).forEach(l => {
     const h = hKey(l), f = enDia.get(h), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
     if (f) add('itin', l, { num: new Date(f + 'T12:00').getDate(), ic: icSitio(l.es), sub: `Día ${fmtCorto(f)}`, txt, lp: l.lp || l.top, hecho: hecho(l, k) });
@@ -1039,10 +1043,46 @@ function mapaCiudadHTML(k) {
     add('comer', c, { es: c.nombre, ic: IC_COMER[c.tipo] || '🍴', sub: [c.tipo, c.plato, c.precio].filter(Boolean).join(' · '), txt: c.nota, lp: c.fuente === 'lonely', hecho: estadoDe(String(c.id)).estado === 'visitado' }));
   (typeof PLANES !== 'undefined' ? PLANES : []).filter(p => p.ciudad === k).forEach(p => add('planes', p, { ic: icPlan(p), sub: p.direccion_en || '', txt: p.desc }));
   if (hot) todos.push({ capa: 'hotel', c: hot, es: (arr(trip.alojamientos).find(a => ck(a.ciudad) === k) || {}).nombre || 'Hotel', ic: '🛏️', sub: 'Vuestro hotel' });
+  return { hot, todos, cuenta };
+}
+function mapaCiudadHTML(k) {
+  const { hot, cuenta } = puntosCiudad(k), todos = puntosCiudad(k).todos.filter(p => p.capa === 'hotel' || mpCapas.has(p.capa));
   const capas = `<div class="mp-capas">${MP_CAPAS.filter(([c]) => cuenta[c]).map(([c, t, col]) => `<button class="chip ${mpCapas.has(c) ? 'on' : ''}" data-mpcapa="${c}" style="--mc:${col}"><i></i>${t} <small>${cuenta[c]}</small></button>`).join('')}</div>`;
   const nucleo = todos.filter(p => p.capa === 'itin' || p.capa === 'hotel').map(p => p.c);
   return `<div class="mp-caja">${mapaHTML('c:' + k, todos, { hotel: hot, capas, fit: nucleo.length > 1 ? nucleo : null })}
-    <div class="muted mini-nota">Número = día del mes en que lo tenéis. Toca un punto para ver qué es y abrirlo en Naver. Calles: con conexión (lo visto se guarda para el modo avión).</div></div>`;
+    <div class="muted mini-nota">Número = día del mes en que lo tenéis. Toca un punto para ver qué es y abrirlo en Naver. Calles: con conexión; para tenerlas sin conexión, Más → Datos y app → Preparar para viajar.</div></div>`;
+}
+// Teselas para usar el mapa sin conexión: cada ciudad a zoom 12-13, el itinerario a 14 y detalle (15-16)
+// alrededor de vuestros sitios. Nunca más de zoom 16 (la política de OpenStreetMap prohíbe guardar zonas grandes a 17 o más).
+function teselasViaje() {
+  const T = new Set();
+  const caja = (cs, z) => { if (!cs.length) return; const xs = cs.map(c => mpX(c[1], z) / MPT), ys = cs.map(c => mpY(c[0], z) / MPT);
+    for (let x = Math.floor(Math.min(...xs)); x <= Math.floor(Math.max(...xs)); x++) for (let y = Math.floor(Math.min(...ys)); y <= Math.floor(Math.max(...ys)); y++) T.add(`${z}/${x}/${y}`); };
+  const cerca = (c, z, m) => { const r = m / (156543.03 * Math.cos(c[0] * Math.PI / 180) / 2 ** z); const x = mpX(c[1], z), y = mpY(c[0], z);
+    for (let tx = Math.floor((x - r) / MPT); tx <= Math.floor((x + r) / MPT); tx++) for (let ty = Math.floor((y - r) / MPT); ty <= Math.floor((y + r) / MPT); ty++) T.add(`${z}/${tx}/${ty}`); };
+  [...new Set(arr(trip.dias).map(d => ck(d.ciudad)))].forEach(k => {
+    const { todos } = puntosCiudad(k); if (!todos.length) return;
+    const nuc = todos.filter(p => p.capa === 'itin' || p.capa === 'hotel');
+    caja(nuc.map(p => p.c), 12); caja(nuc.map(p => p.c), 13);
+    todos.forEach(p => { const imp = p.capa === 'itin' || p.capa === 'hotel'; cerca(p.c, 12, 0); cerca(p.c, 14, imp ? 1500 : 600); cerca(p.c, 15, imp ? 800 : 300); cerca(p.c, 16, imp ? 450 : 120); });
+  });
+  return [...T];
+}
+async function descargarMapas(prog) {
+  if (!window.caches) return [0, 0];
+  const ts = teselasViaje(), c = await caches.open('corea-mapa'); let ok = 0, i = 0, hechas = 0;
+  const una = async t => {
+    const url = `https://tile.openstreetmap.org/${t}.png`;
+    try {
+      if (await c.match(url)) ok++;
+      else { let r; try { r = await fetch(url, { mode: 'cors', credentials: 'omit' }); } catch { r = await fetch(url, { mode: 'no-cors' }); }
+        if (r.ok || r.type === 'opaque') { await c.put(url, r); ok++; } }
+    } catch { /* sin conexión */ }
+    hechas++; if (prog) prog(hechas, ts.length);
+  };
+  // De 2 en 2 para no cargar el servidor de OpenStreetMap.
+  await Promise.all([0, 1].map(async () => { while (i < ts.length) await una(ts[i++]); }));
+  return [ok, ts.length];
 }
 // Ruta del día: hotel y sitios numerados en orden de visita, unidos por una línea.
 function mapaDiaHTML(d, hot, orden) {

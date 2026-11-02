@@ -27,7 +27,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    Diccionario. Más es una rejilla de iconos
    como la Guía (se toca y sale debajo): Maleta, Seguro,
    Verificar, Documentos (fotos/PDF), Notas y Datos y app (importar,
-   exportar, "Preparar para viajar" (con wifi: app offline, fotos, tiempo,
+   exportar, "Preparar para viajar" (con wifi: app offline, fotos, mapas, tiempo,
    cambio y aviso de copia), actualizar, borrar). En Hoy, botón rojo "🆘 Ayuda"
    a pantalla completa: hotel de esta noche en hangul grande, 112/119/1330,
    seguro y Embajada de España (urgencia consular VERIFICAR). El conversor ₩/€
@@ -48,7 +48,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    la app de Naver Map (nmap://route). Botón "🗺️ Mapa" en la Ruta del día (hotel y sitios numerados unidos por línea) y en cada
    ciudad de Ciudades (capas itinerario, más sitios, Comer, Planes y hotel; tocar = ficha con
    Naver). Mapa propio sin librerías: puntos offline; calles de OpenStreetMap solo con conexión
-   (el service worker guarda las teselas vistas en 'corea-mapa'; nada de descarga masiva).
+   (el service worker guarda las teselas vistas en 'corea-mapa'; "Preparar para viajar" baja
+   ~1.000 teselas de zoom 12-16 alrededor de los sitios del viaje; nunca zoom 17+ ni ciudades enteras).
    Debajo, "💡 Cerca y no lo tenéis":
    hasta 4 sitios recomendados que no están en ningún día y quedan a
    ≤900 m de la ruta, con "+" para añadirlos a ese día. Extras
