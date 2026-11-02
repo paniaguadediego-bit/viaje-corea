@@ -38,7 +38,9 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    "📅" para apuntarlo a un día de esa ciudad). Agenda en user.agenda[fecha]
    = {add, del}: Hoy → Sitios es la "Ruta del día": hotel → sitios del
    itinerario en orden fijo (orden del texto) → "Añadidos desde Ciudades"
-   al final (se quitan con ✕). Entre cada dos puntos, distancia, tiempo
+   al final (se quitan con ✕), ordenados por el camino más corto desde el
+   último sitio y con aviso "💡 Os pilla de paso entre A y B (desvío)"
+   si encajan mejor dentro del itinerario. Entre cada dos puntos, distancia, tiempo
    aproximado (a pie ≤1,6 km; si no, metro o taxi) y "🧭 Ruta" que abre
    la app de Naver Map (nmap://route). Debajo, "💡 Cerca y no lo tenéis":
    hasta 4 sitios recomendados que no están en ningún día y quedan a

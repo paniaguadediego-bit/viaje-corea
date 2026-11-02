@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v65';
+const VERSION = 'v66';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -516,10 +516,25 @@ function sitiosDia(d) {
     const h = hKey(l), mas = D[h.slice(2)] || D[h], txt = mas || l.desc || l.nota || G[h.slice(2)] || '', c = coordsLugar(l);
     const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es) : '';
     if (c) { prev = c; prevN = l.ko || l.es; }
-    return `${t}<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</div>
+    return `${t}${extra ? encaje(l) : ''}<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</div>
       ${txt ? `<div class="muted">${esc(txt).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}</div>` : ''}</div></div>`;
   };
-  const extras = todos.filter(l => !auto.includes(l));
+  // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
+  let extras = todos.filter(l => !auto.includes(l));
+  const ultimo = [...auto].reverse().map(coordsLugar).find(Boolean) || (hot ? [Number(hot.lat), Number(hot.lon)] : null);
+  const conC = extras.filter(l => coordsLugar(l)), sinC = extras.filter(l => !coordsLugar(l));
+  if (ultimo && conC.length > 1) {
+    const largo = o => o.reduce((s, l, i) => s + km(i ? coordsLugar(o[i - 1]) : ultimo, coordsLugar(l)), 0);
+    if (conC.length <= 7) { const perm = x => x.length <= 1 ? [x] : x.flatMap((e, i) => perm([...x.slice(0, i), ...x.slice(i + 1)]).map(r => [e, ...r]));
+      extras = [...perm(conC).reduce((m, o) => largo(o) < largo(m) ? o : m), ...sinC]; }
+    else { const r = [], q = [...conC]; let pto = ultimo; while (q.length) { q.sort((x, y) => km(pto, coordsLugar(x)) - km(pto, coordsLugar(y))); const n = q.shift(); r.push(n); pto = coordsLugar(n); } extras = [...r, ...sinC]; }
+  }
+  // Dónde encajaría cada añadido dentro del itinerario (menor desvío), solo como aviso.
+  const puntos = [...(hot ? [{ es: 'el hotel', c: [Number(hot.lat), Number(hot.lon)] }] : []), ...auto.filter(l => coordsLugar(l)).map(l => ({ es: l.es, c: coordsLugar(l) }))];
+  const encaje = l => { const c = coordsLugar(l); if (!c || puntos.length < 2) return '';
+    let best = null; for (let i = 1; i < puntos.length; i++) { const dv = km(puntos[i - 1].c, c) + km(c, puntos[i].c) - km(puntos[i - 1].c, puntos[i].c); if (!best || dv < best.dv) best = { dv, a: puntos[i - 1].es, b: puntos[i].es }; }
+    const alFinal = km(puntos[puntos.length - 1].c, c);
+    return best && best.dv < alFinal - 0.2 ? `<div class="encaje">💡 Os pilla de paso entre ${esc(best.a)} y ${esc(best.b)} (desvío ~${fmtDist(best.dv)}).</div>` : ''; };
   return `<div class="card sitios-dia" data-fecha="${d.fecha}"><b>📖 Ruta del día</b>
     <div class="muted mini-nota">En el orden del itinerario${hot ? ', saliendo del hotel' : ''}. Distancias en línea recta y tiempos aproximados; "🧭 Ruta" abre Naver Map (con conexión).</div>
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>` : ''}
