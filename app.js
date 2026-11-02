@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v69';
+const VERSION = 'v70';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1223,7 +1223,7 @@ function viewComer() {
     </div>`;
   const enC = l => comerCiudad === 'todas' || l.ciudad === comerCiudad;
   const tipos = TIPOS.slice(1).map(t => [t, lugaresComer().filter(l => enC(l) && l.tipo === t).length]).filter(([t, nt]) => nt || comerTipo === t);
-  const ord = { rec: '⭐ Recomendado', dist: '📍 Cerca del hotel', val: '★ Mi valoración' }, sigOrd = { rec: 'dist', dist: 'val', val: 'rec' };
+  const ord = { rec: '⭐ Recomendado', nota: '👥 Mejor valorados', dist: '📍 Cerca del hotel', val: '★ Mi valoración' }, sigOrd = { rec: 'nota', nota: 'dist', dist: 'val', val: 'rec' };
   return `<div class="cc-row">${[['todas', 'Todas', '🗺️'], ...CIUDADES_COMER.map(([k, t]) => [k, t, tema(k).ic])].map(([k, t, ic]) =>
       `<button class="cbtn ${comerCiudad === k ? 'on' : ''}" ${k !== 'todas' ? `style="${varsTema(k)}"` : ''} data-cc="${k}"><span>${ic}</span>${esc(t)}</button>`).join('')}</div>
     <div class="chips tipos-c">${chip('data-ct', 'todos', `🍽️ Todo (${lugaresComer().filter(enC).length})`, comerTipo === 'todos')}${tipos.map(([t, nt]) => chip('data-ct', t, `${IC_COMER[t] || ''} ${t[0].toUpperCase() + t.slice(1)} (${nt})`, comerTipo === t)).join('')}</div>
@@ -1242,9 +1242,18 @@ function puntos(l) {
     + (l.fuente === 'guia' ? 20 : l.fuente === 'lonely' ? 10 : 0) + (Number(e.val) || 0) * 5 - (e.estado === 'visitado' ? 40 : 0);
 }
 function distKm(l) { const h = hotelDe(l.ciudad), p = coordsLugar(l); return h && p ? km(h, p) : Infinity; }
+// Al salir de las casillas de nota se redibuja (no mientras se pasa de una a otra).
+let opPend = false;
+document.addEventListener('focusout', e => { if (opPend && !(e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.op-form'))) { opPend = false; setTimeout(render, 50); } });
+// Nota de usuarios: la que apuntáis vosotros (user.comer[id].op) o la guardada en comer.json (opiniones).
+const opinionDe = l => { const o = estadoDe(String(l.id)).op; return o && Number(o.v) ? o : l.opiniones && Number(l.opiniones.v) ? l.opiniones : null; };
+// Valoración ajustada por número de reseñas (pocas reseñas pesan menos).
+const notaAjustada = l => { const o = opinionDe(l); if (!o) return 0; const n = Number(o.n) || 5; return (Number(o.v) * n + 3.8 * 30) / (n + 30); };
+const fmtN = n => n == null || n === '' ? '' : Number(n) >= 1000 ? (Number(n) / 1000).toLocaleString('es-ES', { maximumFractionDigits: 1 }) + ' mil' : String(n);
 function ordenarComer(ls) {
   const r = ls.map((l, i) => [l, i]);
   const f = comerOrden === 'dist' ? ([a], [b]) => distKm(a) - distKm(b)
+    : comerOrden === 'nota' ? ([a], [b]) => notaAjustada(b) - notaAjustada(a) || puntos(b) - puntos(a)
     : comerOrden === 'val' ? ([a], [b]) => (Number(estadoDe(String(b.id)).val) || 0) - (Number(estadoDe(String(a.id)).val) || 0) || puntos(b) - puntos(a)
     : ([a], [b]) => ((enPlan(a) || {}).n || 999) - ((enPlan(b) || {}).n || 999) || puntos(b) - puntos(a);
   return r.sort((x, y) => f(x, y) || x[1] - y[1]).map(x => x[0]);
@@ -1262,7 +1271,7 @@ function cardComer(l) {
         <div class="c2-nom"><b>${esc(l.nombre || 'Sin nombre')}</b>${lpPill(l)}</div>
         <div class="c2-sub">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, l.ciudad)}</div>
         ${meta.length ? `<div class="c2-meta">${meta.map(esc).join(' · ')}</div>` : ''}
-        ${planBadge(l)}${comp ? `<span class="c2-comp">${comp}</span>` : ''}
+        ${(o => o ? `<span class="c2-op" title="${esc(o.fuente || '')}${o.fecha ? ', ' + esc(o.fecha) : ''}">👥 ★${Number(o.v).toLocaleString('es-ES')}${o.n ? ` · ${fmtN(o.n)} reseñas` : ''}${o.fuente ? ` · ${esc(String(o.fuente).split(' (')[0])}` : ''}</span>` : '')(opinionDe(l))}${planBadge(l)}${comp ? `<span class="c2-comp">${comp}</span>` : ''}
       </div>
     </div>
     <div class="c2-acc">
@@ -1277,6 +1286,11 @@ function cardComer(l) {
       ${l.comprobado && l.comprobado.nota ? `<div class="muted">🔎 ${esc(l.comprobado.nota)}${l.comprobado.fecha ? ' (' + esc(l.comprobado.fecha) + ')' : ''}</div>` : ''}
       <div>${verificado('k:' + id) ? '<span class="badge ok">✓ verificado</span>' : '<span class="ver">VERIFICAR que sigue abierto</span>'}
         <button class="sec mini verif" data-verif="k:${esc(id)}">${verificado('k:' + id) ? 'Deshacer' : '✓ Verificado'}</button></div>
+      <div class="op-caja"><b>👥 Notas de usuarios</b>${(o => o ? `<div class="muted">Guardada: ★${esc(o.v)}${o.n ? ' · ' + esc(fmtN(o.n)) + ' reseñas' : ''} · ${esc(o.fuente || '')} · ${esc(o.fecha || '')}</div>` : '<div class="muted">Sin nota guardada.</div>')(opinionDe(l))}
+        <div class="acciones op-links"><a class="btn sec mini" href="https://map.naver.com/p/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">Naver</a><a class="btn sec mini" href="https://map.kakao.com/link/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">Kakao</a><a class="btn sec mini" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((l.ko || l.nombre || '') + ' ' + ciudad)}" target="_blank" rel="noopener">Google</a></div>
+        <div class="op-form">Apuntar: ★ <input data-opv="${esc(id)}" type="number" step="0.1" min="0" max="5" inputmode="decimal" value="${esc((estadoDe(id).op || {}).v || '')}" placeholder="4.3">
+          reseñas <input data-opn="${esc(id)}" type="number" min="0" inputmode="numeric" value="${esc((estadoDe(id).op || {}).n || '')}" placeholder="1200">
+          <select data-opf="${esc(id)}">${['Naver', 'Kakao', 'Google'].map(f => `<option ${((estadoDe(id).op || {}).f || 'Naver') === f ? 'selected' : ''}>${f}</option>`).join('')}</select></div></div>
       <div class="estrellas">Mi valoración: ${[1, 2, 3, 4, 5].map(v => `<button class="star ${(Number(e.val) || 0) >= v ? 'on' : ''}" data-val="${esc(id)}" data-n="${v}" aria-label="${v} estrellas">★</button>`).join('')}</div>
       <textarea data-cnota="${esc(id)}" rows="1" placeholder="Nota propia…">${esc(e.nota || '')}</textarea>
       <div class="acciones">${l.ko ? `<button class="sec mini" data-copy="${esc(l.ko)}">📋 Copiar coreano</button>` : ''}${l.fuente === 'propio' ? `<button class="sec mini" data-delcomer="${esc(id)}">✕ Borrar</button>` : ''}</div>
@@ -1644,6 +1658,11 @@ document.addEventListener('change', e => {
   else if (t.dataset.st !== undefined) { comerTipo = t.value; render(); }
   else if (t.dataset.hk) { marcarHecho(t.dataset.hk, t.checked); render(); }
   else if (t.dataset.check) { u().checklist[t.dataset.check] = t.checked; if (!t.checked) delete user.checklist[t.dataset.check]; saveUser(); render(); }
+  else if (t.dataset.opv || t.dataset.opn || t.dataset.opf) {
+    const id = t.dataset.opv || t.dataset.opn || t.dataset.opf, U = u(); U.comer = U.comer || {}; const e = U.comer[id] = U.comer[id] || {}, o = e.op = e.op || {};
+    if (t.dataset.opv) o.v = Math.min(5, Math.max(0, Number(String(t.value).replace(',', '.')) || 0)); else if (t.dataset.opn) o.n = Number(t.value) || 0; else o.f = t.value;
+    o.fuente = (o.f || 'Naver') + ' (apuntada por vosotros)'; o.fecha = todayISO(); if (!o.v && !o.n) delete e.op; saveUser(); opPend = true;
+  }
   else if (t.dataset.cambio !== undefined) { Object.assign(u(), { cambio: Number(t.value) || 0, cambioManual: true }); saveUser(); refrescarConv(); render(); }
 });
 document.addEventListener('submit', e => {

@@ -1,5 +1,5 @@
 // Sube CACHE en cada sesión (y VERSION en app.js) para que el móvil coja la versión nueva.
-const CACHE = 'corea-v69';
+const CACHE = 'corea-v70';
 // Fotos de Wikipedia: caché aparte que no se borra al actualizar la app.
 const FOTOS = 'corea-fotos';
 const FILES = [

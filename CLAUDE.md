@@ -111,7 +111,11 @@ ser null. "lonely" = Lonely Planet Korea 2016 (página en nota);
 "guia" lleva el enlace en url. Opcional comprobado{fecha,estado
 (activo|existe|dudoso|no encontrado),nota,fuente}: revisión web
 hecha por Claude (se muestra en la tarjeta; no sustituye al ✓ del
-usuario).
+usuario). Opcional opiniones{v,n,fuente,fecha}: nota media de usuarios
+(sobre 5), nº de reseñas y web de donde sale (Google vía agregadores,
+Trip.com, Polle…). El usuario puede apuntar la suya (user.comer[id].op),
+que manda sobre la guardada; orden "👥 Mejor valorados" ajustado por nº
+de reseñas; enlaces para consultarla en Naver, Kakao y Google.
 Estado (Quiero/Visitado/Descartado/Cerrado), notas y lugares
 propios se guardan en el móvil (user.comer, user.comerPropios).
 "Hecho/visitado" es UNA marca por sitio (user.hecho, clave = hangul

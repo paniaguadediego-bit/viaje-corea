@@ -17,6 +17,12 @@
 "estado": "activo",
 "nota": "En la guía Michelin Seúl (Bib Gourmand).",
 "fuente": "https://guide.michelin.com/sg/zh_CN/seoul-capital-area/kr-seoul/restaurant/myeongdong-kyoja"
+},
+"opiniones": {
+"v": 4.2,
+"n": 14200,
+"fuente": "Google (vía agregadores)",
+"fecha": "2026-11"
 }
 },
 {
@@ -31,7 +37,13 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://thesoulofseoul.net/what-to-eat-myeongdong-restaurants-street-food/",
-"nota": null
+"nota": null,
+"opiniones": {
+"v": 4.6,
+"n": 2247,
+"fuente": "Google (vía agregadores; puede ser otra sucursal)",
+"fecha": "2026-11"
+}
 },
 {
 "id": "odarijip",
@@ -45,7 +57,13 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://uk.trip.com/toplist/tripbest/recommend/seoul/100900013728",
-"nota": null
+"nota": null,
+"opiniones": {
+"v": 4.7,
+"n": 327,
+"fuente": "Trip.com",
+"fecha": "2026-11"
+}
 },
 {
 "id": "namdaemun",
@@ -127,6 +145,12 @@
 "estado": "activo",
 "nota": "Visitante en oct. 2025: colas de hasta 1 h y el pan de queso crema se agota pronto. Horario según guías 08:30-22:00.",
 "fuente": "https://www.ktriptips.com/eng/food/1803542"
+},
+"opiniones": {
+"v": 4.0,
+"n": 46,
+"fuente": "Polle",
+"fecha": "2026-11"
 }
 },
 {
@@ -161,6 +185,12 @@
 "estado": "dudoso",
 "nota": "Solo aparece en un directorio sin fecha; sin reseñas recientes. Mirar en Naver antes de ir.",
 "fuente": "https://thatch.co/places/350139/dongri"
+},
+"opiniones": {
+"v": 3.7,
+"n": null,
+"fuente": "Polle",
+"fecha": "2026-11"
 }
 },
 {
@@ -201,6 +231,12 @@
 "estado": "existe",
 "nota": "Aparece en listados actuales (especialidad de kongguksu/soja); sin reseñas recientes con fecha.",
 "fuente": "https://www.trip.com/restaurant/south-korea/gyeongju/detail/gyeongju-wonjo-kongguk-19479084"
+},
+"opiniones": {
+"v": 4.2,
+"n": 77,
+"fuente": "Polle",
+"fecha": "2026-11"
 }
 },
 {
@@ -221,6 +257,12 @@
 "estado": "activo",
 "nota": "Bien valorado: 4,3 sobre 5 (633 reseñas). Menú de 7 entrantes, 17 platos y 2 postres; famoso por el caqui helado.",
 "fuente": "https://wanderlog.com/place/details/1464746/hongsi-hanjeongsik"
+},
+"opiniones": {
+"v": 3.5,
+"n": 3,
+"fuente": "Polle",
+"fecha": "2026-11"
 }
 },
 {
@@ -413,6 +455,12 @@
 "estado": "existe",
 "nota": "Ficha turística de 2025: abre desde 1988, un solo plato. 07:00-21:00 (última comanda 20:30).",
 "fuente": "https://www.ktriptips.com/eng/food/3505721"
+},
+"opiniones": {
+"v": 4.0,
+"n": 86,
+"fuente": "Polle",
+"fecha": "2026-11"
 }
 },
 {
@@ -461,6 +509,12 @@
 "estado": "existe",
 "nota": "Ficha turística actual; distinción Blue Ribbon 2023. Horario aprox. 10:30-20:00 (las fuentes varían).",
 "fuente": "https://www.ktriptips.com/eng/food/3104474"
+},
+"opiniones": {
+"v": 3.7,
+"n": 18,
+"fuente": "Polle",
+"fecha": "2026-11"
 }
 },
 {
@@ -1461,7 +1515,13 @@
 "precio": null,
 "fuente": "guia",
 "url": null,
-"nota": "Dongdaemun. Sin fuente concreta: recomendación general, verificar."
+"nota": "Dongdaemun. Sin fuente concreta: recomendación general, verificar.",
+"opiniones": {
+"v": 4.0,
+"n": 126,
+"fuente": "Polle",
+"fecha": "2026-11"
+}
 },
 {
 "id": "w-ikseondong",
@@ -1489,7 +1549,13 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://awaytothecity.com/ikseon-dong-seoul/",
-"nota": "En Ikseon-dong. Muy popular."
+"nota": "En Ikseon-dong. Muy popular.",
+"opiniones": {
+"v": 3.6,
+"n": 31,
+"fuente": "Polle",
+"fecha": "2026-11"
+}
 },
 {
 "id": "w-jjimdak-calle",
@@ -1531,7 +1597,13 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://www.wassupkorea.com/food/yujin-jjimdak-a-surprisingly-delicious-blue-ribbon-restaurant/",
-"nota": "Distinción Blue Ribbon."
+"nota": "Distinción Blue Ribbon.",
+"opiniones": {
+"v": 4.0,
+"n": 13,
+"fuente": "Polle",
+"fecha": "2026-11"
+}
 },
 {
 "id": "w-hyundai",
@@ -1629,7 +1701,13 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://thesoulofseoul.net/dwaejigukbap-busan/",
-"nota": "Principal en Suyeong-gu, 24 h."
+"nota": "Principal en Suyeong-gu, 24 h.",
+"opiniones": {
+"v": 4.1,
+"n": 186,
+"fuente": "Polle",
+"fecha": "2026-11"
+}
 },
 {
 "id": "w-seomyeon",
@@ -1657,7 +1735,13 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://www.lonelyplanet.com/articles/busan-unique-eats-koreas-seaside-city",
-"nota": null
+"nota": null,
+"opiniones": {
+"v": 3.6,
+"n": 19,
+"fuente": "Polle",
+"fecha": "2026-11"
+}
 },
 {
 "id": "w-choryang",
@@ -1671,7 +1755,13 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://www.lonelyplanet.com/articles/busan-unique-eats-koreas-seaside-city",
-"nota": "Cerca de la estación de Busan."
+"nota": "Cerca de la estación de Busan.",
+"opiniones": {
+"v": 3.7,
+"n": 85,
+"fuente": "Web de viajes",
+"fecha": "2026-11"
+}
 },
 {
 "id": "w-jeonpo",
@@ -1699,6 +1789,12 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://ie.hotels.com/go/south-korea/kr-best-local-restaurants-jeonju",
-"nota": "Típico para desayunar."
+"nota": "Típico para desayunar.",
+"opiniones": {
+"v": 4.0,
+"n": 51,
+"fuente": "Polle",
+"fecha": "2026-11"
+}
 }
 ]
