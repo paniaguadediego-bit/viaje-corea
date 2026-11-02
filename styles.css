@@ -802,3 +802,8 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .metro-pasos { margin: 2px 0 8px 8px; padding: 6px 8px 6px 26px; font-size: .85em; border-left: 3px dashed var(--line); background: var(--card); border-radius: 0 10px 10px 0; }
 .metro-pasos li { margin: 3px 0; }
 .lin { display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 10px; color: #fff; font-weight: 800; font-size: .85em; text-align: center; line-height: 1.5; }
+
+/* v81: enlace entre Traslado y Ruta del día */
+.sd-tras, .sd-sig { display: block; width: 100%; text-align: left; margin: 6px 0; padding: 10px 12px; border-radius: 12px; background: var(--tint-b, var(--card)); color: var(--fg); border: 1px solid var(--line); font-weight: 600; min-height: 0; }
+.sd-tras small, .sd-sig small { color: var(--muted); font-weight: 400; }
+.sd-sig { background: var(--blue); color: #fff; text-align: center; border: 0; margin-top: 10px; }

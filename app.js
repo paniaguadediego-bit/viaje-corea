@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v80';
+const VERSION = 'v81';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -319,6 +319,8 @@ function viewWelcome() {
 
 // "Hanok Hanji Ggulkam (Jeonju)" -> "Jeonju"
 const ciudadCorta = t => { const m = String(t || '').match(/\(([^)]+)\)/); return m ? m[1] : String(t || ''); };
+// En traslados: el aeropuerto por su nombre (sin "(T1)"); lo demás, la ciudad entre paréntesis.
+const lugarCorto = t => /aeropuerto/i.test(t) ? String(t).replace(/\s*\(.*?\)/g, '') : ciudadCorta(t);
 function pendingAlert() {
   const hoy = todayISO(), p = arr(trip.traslados).filter(t => isPend(t) && !(t.fecha && t.fecha < hoy)); // los ya pasados no avisan
   if (!p.length) return '';
@@ -397,7 +399,9 @@ function viewHoy() {
   ].filter(s => s[2]);
   if (!secs.length) return html;
   const sel = secs.find(s => s[0] === hoySub) || (tr.length ? secs.find(s => s[0] === 'traslado') : null) || secs[0];
-  return html + `<div class="row daynav hoysubs">${secs.map(([k, t]) => `<button class="${k === sel[0] ? '' : 'sec'}" data-hs="${k}">${t}</button>`).join('')}</div>${sel[2]}`;
+  // Día con traslado: debajo, paso directo a la ruta de sitios de ese día.
+  const nS = listaDia(d).length, sigue = sel[0] === 'traslado' && nS ? `<button class="sd-sig" data-hs="sitios">📖 Después: Ruta del día (${nS} ${nS === 1 ? 'sitio' : 'sitios'}) ›</button>` : '';
+  return html + `<div class="row daynav hoysubs">${secs.map(([k, t]) => `<button class="${k === sel[0] ? '' : 'sec'}" data-hs="${k}">${t}</button>`).join('')}</div>${sel[2]}${sigue}`;
 }
 
 // "Ahora": lo próximo que toca hoy (o la cuenta atrás antes del viaje).
@@ -621,6 +625,7 @@ function sitiosDia(d) {
   const hc = hot ? [Number(hot.lat), Number(hot.lon)] : null, conMapa = [...auto, ...extras].some(l => coordsLugar(l));
   return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}<b>📖 Ruta del día</b>
     <div class="muted mini-nota">En el orden del itinerario${hot ? ', saliendo del hotel' : ''}. Distancias en línea recta y tiempos aproximados; "🧭 Ruta" abre Naver Map (con conexión).</div>
+    ${arr(trip.traslados).filter(t => t.fecha === d.fecha).map(t => `<button class="sd-tras" data-hs="traslado">🚆 Antes: ${esc(lugarCorto(t.de))} → ${esc(lugarCorto(t.a))} <small>ver traslado ›</small></button>`).join('')}
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>` : ''}
     ${auto.map(l => fila(l, false)).join('')}
     ${extras.length ? `<div class="sd-anadidos">➕ Añadidos desde Ciudades</div>${extras.map(l => fila(l, true)).join('')}` : ''}
