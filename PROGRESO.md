@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v72
+Caché del service worker: corea-v73
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -119,6 +119,7 @@ Caché del service worker: corea-v72
 - v70: notas de usuarios en Comer. Campo opiniones{v,n,fuente,fecha} en comer.json para 16 sitios, buscadas por la web el 2/11/2026 (Naver y Kakao no son accesibles desde aquí; fuentes: Google vía agregadores, Trip.com, Polle). En la tarjeta, "👥 ★4,2 · 14,2 mil reseñas · Google". Nuevo orden "👥 Mejor valorados" (media ajustada por nº de reseñas: (v·n + 3,8·30)/(n+30)). En "Más detalles", enlaces a Naver, Kakao y Google para ver la nota del momento y casillas para apuntarla (★, reseñas, fuente), guardada en el móvil y que manda sobre la guardada. Los demás sitios no tienen nota pública fuera de Naver o Kakao, o son calles y mercados. [Supuesto] La nota de Wangbijib puede ser de otra sucursal (aviso en la fuente).
 - v71: distintivos de guías de prestigio en Comer (campo guias en comer.json): 🔴 Michelin 2 estrellas 2026 (Jungsik), Bib Gourmand 2026 (Jaha Sonmandoo, Woo Rae Oak), Bib Gourmand con VERIFICAR (Myeongdong Kyoja, sin año; Hadongkwan, 2023, placa 2018-2026); 🎗️ Blue Ribbon (Mammoth Bakery 2023; Yujin Jjimdak, VERIFICAR). Las webs de Michelin, Blue Ribbon y prensa coreana no son accesibles desde aquí: datos sacados del buscador. No se encontró distinción para Balwoo Gongyang, Tosokchon ni Jinokhwa. Suman en el orden "Recomendado". Arreglo en Hoy: al cambiar de día la tira ya no vuelve al día 1 y luego se desliza; se queda donde estaba y solo centra el día con un pequeño movimiento.
 - v72: quitados de Comer los 7 restaurantes caros (₩₩₩ según la Lonely 2016), a petición del usuario: Jungsik, Balwoo Gongyang, Min's Club, Hanmiri, Gosang, Samwon Garden (Seúl) y Raw Fish Center (Gyeongju). Quedan 109 sitios.
+- v73: 15 notas de usuarios más (ya son 31): Tosokchon ★4,6 (1.130 en Trip.com), Woo Rae Oak 4,4, Baekje Samgyetang 4,3, Hyundai-ok 4,3, Yeongjin 4,2, Sukyeong 4,2, Koong 4,0, Hadongkwan 4,0, Yetchon 4,0, Jaha Sonmandoo 3,9, Veteran 3,9, Mokmyeoksanbang 3,5 (515), Hyundai Jjimdak 3,4, Gyodong Ssambap 3,3 y Junggang Jjimdak 3,1. Koong: Bib Gourmand en su ficha de Michelin (sin año, VERIFICAR). Sukyeong Sikdang y Gyodong Ssambap salen como cerrados (폐점) en Polle: marcados como dudoso. El resto (sitios pequeños de la Lonely 2016) no tiene notas fuera de Naver o Kakao: se apuntan desde la app.
 - (sin versión nueva, solo trip.json privado): Goryeo Hotel (Andong) ya tiene hangul, 고려호텔, que pasó el usuario desde Google; la tarjeta de Enseñar muestra "고려호텔로 가 주세요".
 - (sin versión nueva, solo trip.json privado): hangul de los otros tres hoteles según la IA de Google, todos con VERIFICAR: 141 미니호텔, 헤리움 호텔 (puede ser 해리움) y 한옥 한지꿀잠. Hay que confirmarlos en Naver Map o en la reserva.
 - (sin versión nueva, solo trip.json privado): comprobado en Naver Map por el usuario. 고려호텔 existe en Andong (confirmado). 한지꿀잠 sale en Naver como "HanjiHoneySleep" en Jeonju (hay también una "Second House": VERIFICAR cuál). 헤리움 호텔 no existe en Naver, así que se quita el hangul del HaeRium (la app muestra "falta hangul" y la dirección). 141 미니호텔 sigue sin confirmar.

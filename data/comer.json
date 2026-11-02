@@ -614,7 +614,21 @@
 "precio": "₩ barato (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 69"
+"nota": "Lonely Planet Korea 2016, p. 69",
+"opiniones": {
+"v": 4.0,
+"n": 102,
+"fuente": "Siksin",
+"fecha": "2026-11"
+},
+"guias": [
+{
+"g": "michelin",
+"d": "Bib Gourmand",
+"anio": null,
+"verificar": true
+}
+]
 },
 {
 "id": "lp-osegyehyang",
@@ -648,6 +662,12 @@
 "estado": "activo",
 "nota": "Reseña de un visitante en mayo de 2026.",
 "fuente": "https://myannoyingopinions.com/2026/07/18/tosokchon-samgyetang-seoul-may-2026/"
+},
+"opiniones": {
+"v": 4.6,
+"n": 1130,
+"fuente": "Trip.com",
+"fecha": "2026-11"
 }
 },
 {
@@ -690,7 +710,13 @@
 "precio": "₩ barato (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 70"
+"nota": "Lonely Planet Korea 2016, p. 70",
+"opiniones": {
+"v": 3.5,
+"n": 515,
+"fuente": "Spinach",
+"fecha": "2026-11"
+}
 },
 {
 "id": "lp-baekje-samgyetang",
@@ -704,7 +730,13 @@
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 70"
+"nota": "Lonely Planet Korea 2016, p. 70",
+"opiniones": {
+"v": 4.3,
+"n": 6,
+"fuente": "Creatrip",
+"fecha": "2026-11"
+}
 },
 {
 "id": "lp-hadongkwan",
@@ -726,7 +758,13 @@
 "anio": "2023",
 "verificar": true
 }
-]
+],
+"opiniones": {
+"v": 4.0,
+"n": 167,
+"fuente": "Korea-now",
+"fecha": "2026-11"
+}
 },
 {
 "id": "lp-jaha-sonmandoo",
@@ -747,7 +785,13 @@
 "d": "Bib Gourmand",
 "anio": "2026"
 }
-]
+],
+"opiniones": {
+"v": 3.9,
+"n": 128,
+"fuente": "Siksin",
+"fecha": "2026-11"
+}
 },
 {
 "id": "lp-deongjang-yesool",
@@ -796,7 +840,13 @@
 "d": "Bib Gourmand",
 "anio": "2026"
 }
-]
+],
+"opiniones": {
+"v": 4.4,
+"n": null,
+"fuente": "TableJourney",
+"fecha": "2026-11"
+}
 },
 {
 "id": "lp-samarkand",
@@ -1146,7 +1196,19 @@
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 166"
+"nota": "Lonely Planet Korea 2016, p. 166",
+"opiniones": {
+"v": 4.2,
+"n": 8,
+"fuente": "Polle",
+"fecha": "2026-11"
+},
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "dudoso",
+"nota": "Polle lo marca como cerrado (폐점): comprobar en Naver antes de ir.",
+"fuente": "Polle"
+}
 },
 {
 "id": "lp-loving-hut",
@@ -1398,7 +1460,13 @@
 "precio": "₩ barato (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 267"
+"nota": "Lonely Planet Korea 2016, p. 267",
+"opiniones": {
+"v": 4.3,
+"n": 63,
+"fuente": "Polle (sucursal del mercado Nambu)",
+"fecha": "2026-11"
+}
 },
 {
 "id": "lp-veteran",
@@ -1412,7 +1480,13 @@
 "precio": "₩ barato (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 267"
+"nota": "Lonely Planet Korea 2016, p. 267",
+"opiniones": {
+"v": 3.9,
+"n": 97,
+"fuente": "Polle",
+"fecha": "2026-11"
+}
 },
 {
 "id": "lp-yetchon-makgeolli",
@@ -1426,7 +1500,13 @@
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 268 · ★ elección del autor"
+"nota": "Lonely Planet Korea 2016, p. 268 · ★ elección del autor",
+"opiniones": {
+"v": 4.0,
+"n": 13,
+"fuente": "Polle (local principal; el de la aldea hanok tiene 3,3)",
+"fecha": "2026-11"
+}
 },
 {
 "id": "lp-gyodong-dawan",
@@ -1522,7 +1602,13 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://koreaexperience.com/blog/andong-jjimdak-best-restaurants-in-the-hometown",
-"nota": "Salió en TV."
+"nota": "Salió en TV.",
+"opiniones": {
+"v": 3.1,
+"n": 15,
+"fuente": "Polle",
+"fecha": "2026-11"
+}
 },
 {
 "id": "w-yujin",
@@ -1564,7 +1650,13 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://www.trvlogue.com/en/andong-jjimdak-alley",
-"nota": "Fines de semana: hasta 45 min de espera."
+"nota": "Fines de semana: hasta 45 min de espera.",
+"opiniones": {
+"v": 3.4,
+"n": 3,
+"fuente": "Polle",
+"fecha": "2026-11"
+}
 },
 {
 "id": "w-ssambap-calle",
@@ -1592,7 +1684,19 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://www.hotels.com/go/south-korea/kr-best-gyeongju-local-food",
-"nota": "En la aldea Gyochon."
+"nota": "En la aldea Gyochon.",
+"opiniones": {
+"v": 3.3,
+"n": 4,
+"fuente": "Polle",
+"fecha": "2026-11"
+},
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "dudoso",
+"nota": "Polle lo marca como cerrado (폐점): comprobar en Naver antes de ir.",
+"fuente": "Polle"
+}
 },
 {
 "id": "w-hwangnam",
@@ -1634,7 +1738,13 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://thesoulofseoul.net/dwaejigukbap-busan/",
-"nota": "Local principal en Saha-gu."
+"nota": "Local principal en Saha-gu.",
+"opiniones": {
+"v": 4.2,
+"n": 63,
+"fuente": "Polle (local principal)",
+"fecha": "2026-11"
+}
 },
 {
 "id": "w-subyeon",
