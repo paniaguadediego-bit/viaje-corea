@@ -44,7 +44,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    al final (se quitan con ✕), ordenados por el camino más corto desde el
    último sitio y con aviso "💡 Os pilla de paso entre A y B (desvío)"
    si encajan mejor dentro del itinerario. Entre cada dos puntos, distancia, tiempo
-   aproximado (a pie ≤1,6 km; si no, metro o taxi) y "🧭 Ruta" que abre
+   aproximado (a pie ≤1,6 km; si no, líneas de metro concretas con data/metro.json:
+   Seúl © OpenStreetMap ODbL, Busan L1/L2 a mano con VERIFICAR; o taxi) y "🧭 Ruta" que abre
    la app de Naver Map (nmap://route). Banner con vista previa del mapa encima de la Ruta del día (hotel y sitios numerados unidos por línea; al tocarlo, mapa grande) y botón "🗺️ Mapa" en cada
    ciudad de Ciudades (capas itinerario, más sitios, Comer, Planes y hotel; tocar = ficha con
    Naver). Mapa propio sin librerías: puntos offline; calles de OpenStreetMap solo con conexión

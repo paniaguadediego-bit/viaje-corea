@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v79';
+const VERSION = 'v80';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -508,13 +508,69 @@ function agendaToggle(h, f) {
   saveUser();
 }
 
+// ---------- Metro: qué líneas coger (Seúl: datos de OpenStreetMap; Busan: hecho a mano, VERIFICAR) ----------
+let METRO = null;
+fetch('data/metro.json').then(r => r.json()).then(d => {
+  const est = {}; d.est.forEach(([id, en, ls, la, lo]) => { est[id] = { id, ko: id.replace(/^b:/, ''), en, ls, c: la != null ? [la, lo] : null }; });
+  const ady = {}; d.tramos.forEach(([a, b, l]) => { (ady[a + '|' + l] = ady[a + '|' + l] || []).push(b); (ady[b + '|' + l] = ady[b + '|' + l] || []).push(a); });
+  Object.values(est).forEach(e => { e.en = e.en.replace(/(\d)\([a-z]+\)/g, '$1'); });
+  METRO = { est, ady, lin: d.lineas, conC: Object.values(est).filter(e => e.c) };
+  if (['hoy', 'ciudades'].includes(tab)) renderLuego();
+}).catch(() => {});
+const MIN_PARADA = 2.2, MIN_CAMBIO = 6, minPie = k => k * 1.3 / 4.5 * 60;
+const rutasMetro = {};
+// Mejor combinación: estación cercana al origen (≤1,2 km a pie) → líneas y transbordos → estación cercana al destino.
+function rutaMetro(o, dst) {
+  if (!METRO) return null;
+  const key = o.join() + '>' + dst.join(); if (key in rutasMetro) return rutasMetro[key];
+  const cerca = c => METRO.conC.map(e => [e, km(c, e.c)]).filter(x => x[1] <= 1.2).sort((a, b) => a[1] - b[1]).slice(0, 6);
+  const ini = cerca(o), fin = cerca(dst);
+  if (!ini.length || !fin.length) return (rutasMetro[key] = null);
+  const dist = {}, prev = {}, pend = new Set(), fuera = new Set();
+  ini.forEach(([e, k]) => e.ls.forEach(l => { const s = e.id + '|' + l; dist[s] = minPie(k); prev[s] = null; pend.add(s); }));
+  while (pend.size) {
+    let s = null; for (const x of pend) if (s === null || dist[x] < dist[s]) s = x;
+    pend.delete(s); fuera.add(s); if (dist[s] > 120) break;
+    const i = s.lastIndexOf('|'), id = s.slice(0, i), l = s.slice(i + 1);
+    const vec = [...(METRO.ady[s] || []).map(n => [n + '|' + l, MIN_PARADA]), ...METRO.est[id].ls.filter(x => x !== l).map(x => [id + '|' + x, MIN_CAMBIO])];
+    for (const [n, c] of vec) { if (fuera.has(n)) continue; const t = dist[s] + c; if (dist[n] == null || t < dist[n]) { dist[n] = t; prev[n] = s; pend.add(n); } }
+  }
+  let mejor = null;
+  fin.forEach(([e, k]) => e.ls.forEach(l => { const s = e.id + '|' + l; if (dist[s] != null && (!mejor || dist[s] + minPie(k) < mejor.t)) mejor = { s, t: dist[s] + minPie(k), k }; }));
+  if (!mejor) return (rutasMetro[key] = null);
+  const camino = []; for (let s = mejor.s; s; s = prev[s]) camino.unshift(s);
+  const tramos = []; let actual = null;
+  for (let j = 0; j < camino.length; j++) {
+    const i = camino[j].lastIndexOf('|'), id = camino[j].slice(0, i), l = camino[j].slice(i + 1);
+    if (!actual || actual.l !== l) { actual = { l, de: id, a: id, paradas: 0, sig: null }; tramos.push(actual); }
+    else { actual.paradas++; actual.a = id; if (!actual.sig) actual.sig = id; }
+  }
+  const usados = tramos.filter(t => t.paradas > 0);
+  if (!usados.length) return (rutasMetro[key] = null);
+  const pie0 = km(o, METRO.est[usados[0].de].c);
+  return (rutasMetro[key] = { tramos: usados, min: Math.round(mejor.t), pie0, pie1: mejor.k, busan: usados.some(t => t.de.startsWith('b:')) });
+}
+const nomEst = id => { const e = METRO.est[id]; return `<b>${esc(e.en)}</b> <span class="ko-s">${esc(e.ko)}</span>`; };
+function chipLinea(l) {
+  const [n, col] = METRO.lin[l] || [l, '#888'], t = /^\d+$/.test(n) ? n : n.replace(/^Busan /, 'B');
+  return `<span class="lin" style="background:${col}">${esc(t)}</span>`;
+}
+function pasosMetro(r) {
+  const ps = [`🚶 ${fmtDist(r.pie0)} a pie hasta ${nomEst(r.tramos[0].de)}`];
+  r.tramos.forEach((t, i) => ps.push(`${i ? '🔁 Cambio a ' : ''}${chipLinea(t.l)} ${t.paradas} ${t.paradas === 1 ? 'parada' : 'paradas'}${t.sig ? ` (próxima: ${esc(METRO.est[t.sig].en)})` : ''} → baja en ${nomEst(t.a)}`));
+  ps.push(`🚶 ${fmtDist(r.pie1)} a pie hasta el sitio`);
+  return `<ol class="metro-pasos">${ps.map(p => `<li>${p}</li>`).join('')}</ol>${r.busan ? '<div class="muted mini-nota">Busan: líneas apuntadas a mano, <span class="ver">VERIFICAR</span> en Naver.</div>' : ''}`;
+}
+
 // Cómo ir de un punto a otro: distancia en línea recta, tiempo aproximado y ruta en la app de Naver Map.
 function tramo(o, dst, nO, nD) {
   if (!o || !dst) return '';
-  const k = km(o, dst), pie = k <= 1.6, min = pie ? Math.max(2, Math.round(k * 1.3 / 4.5 * 60)) : Math.round(k * 1.3 / 22 * 60 + 8);
+  const k = km(o, dst), pie = k <= 1.6, min = pie ? Math.max(2, Math.round(k * 1.3 / 4.5 * 60)) : Math.round(k * 1.3 / (k > 8 ? 40 : 22) * 60 + 8); // fuera de ciudad el taxi va más rápido
   const modo = pie ? 'walk' : 'public';
   const url = `nmap://route/${modo}?slat=${o[0]}&slng=${o[1]}&sname=${encodeURIComponent(nO)}&dlat=${dst[0]}&dlng=${dst[1]}&dname=${encodeURIComponent(nD)}&appname=viajecorea`;
-  return `<div class="tramo-ir"><span>${pie ? '🚶' : '🚇🚕'} ${fmtDist(k)} · ${pie ? `~${min} min a pie` : `metro o taxi, ~${min} min`}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>`;
+  const r = pie ? null : rutaMetro(o, dst);
+  const txt = pie ? `~${min} min a pie` : r ? (r.min > min * 1.6 ? `🚕 mejor taxi, ~${min} min · 🚇 metro ~${r.min} min` : `🚇 ~${r.min} min en metro · 🚕 ~${min} min en taxi`) : `🚕 taxi ~${min} min (o bus)`;
+  return `<div class="tramo-ir"><span>${pie ? '🚶 ' : ''}${fmtDist(k)} · ${txt}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>${r ? pasosMetro(r) : ''}`;
 }
 // Sitios recomendados que no están en ningún día del plan y quedan a ≤900 m de la ruta de ese día.
 function sugerenciasCerca(d, ruta) {
@@ -570,7 +626,7 @@ function sitiosDia(d) {
     ${extras.length ? `<div class="sd-anadidos">➕ Añadidos desde Ciudades</div>${extras.map(l => fila(l, true)).join('')}` : ''}
     ${A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}
     ${sugerenciasCerca(d, todos)}
-    ${planesCerca(todos)}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado.</div></div>`;
+    ${planesCerca(todos)}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado. Metro: tiempos aproximados; estaciones y líneas de Seúl © OpenStreetMap (ODbL).</div></div>`;
 }
 
 // Resumen del día siguiente al que se está viendo.
