@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v86
+Caché del service worker: corea-v87
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -138,6 +138,7 @@ Caché del service worker: corea-v86
 - v84: día 17 (en el trip.json privado, enviado al usuario): llegada a Yongsan, maletas en taquillas (VERIFICAR), Museo Nacional de Corea, Dragon Hill Spa, check-in y noche en Myeongdong con la cafetería de gatos Roof Cat Me. El 18 ya no propone el Museo Nacional "si llueve". En la app: ALIAS '국립중앙박물관' → "museo nacional de corea" (antes "museo" y "nacional" eran palabras vacías y no se reconocía) y "sauna" pasa a palabra vacía (activaba por error Silloam Sauna).
 - v85: el usuario encontró dos sitios y se añaden a data/comer.json (111 lugares): Isaac Toast junto a la catedral de Myeongdong (이삭토스트 명동성당점, 17-1 Myeongdong 10-gil, horario 7 u 8-20 h según Creatrip, mayo 2026) y Godiva Crepe (고디바 크레페) en la planta B1 de Shinsegae Gangnam: la dirección que dio el usuario (Banpo-dong 19-3) es la del centro comercial (176 Sinbanpo-ro). Coordenadas aproximadas en data/coords.json.
 - v86: buscador encima de los botones de ciudad en Ciudades y en Comer. Busca en todas las ciudades, sin tildes y en hangul; primero lo que coincide en nombre o hangul y luego en la descripción. Ciudades: sitios del catálogo, Lonely y Planes, con foto, ciudad, distancia al hotel, 📅 para apuntarlo a un día, Naver y "Ver en la ciudad"; hasta 20. Comer: tarjetas normales con la ciudad encima, por nombre, plato, tipo o nota; hasta 15. Se actualiza al escribir sin perder el teclado; ✕ para borrar. Además, la lista de sitios de cada ciudad (.hlist) pasa a una tarjeta por sitio: el usuario veía que las filas se mezclaban (el "Más info" parecía del sitio siguiente).
+- v87: el usuario pidió ampliar la información de los lugares más emblemáticos "como un guía cultural". Nuevo cultura.js (precacheado) con GUIA_CULT: 30 fichas (unas 4.400 palabras), clave = hangul sin espacios. Cada ficha: gancho, historia y simbolismo, "👀 Fíjate" y "💡 Consejo". Seúl (Gyeongbokgung, Changdeokgung, Jongmyo, Bukchon, Deoksugung, catedral de Myeongdong, N Seoul Tower, Seodaemun, Cheonggyecheon, Gwangjang, Museo Nacional, Jogyesa), Andong (Hahoe, Dosan, Byeongsan, Bongjeongsa, Woryeonggyo), Gyeongju (Bulguksa, Seokguram, Daereungwon, Cheomseongdae, Donggung y Wolji, museo), Busan (Gamcheon, Haedong Yonggungsa, Jagalchi) y Jeonju (aldea hanok, Gyeonggijeon, Jeondong, Omokdae). Sale como desplegable "🎎 Con ojos de guía" en Ciudades (junto a "Más de la Lonely"), en la Ruta del día de Hoy y en el buscador. Escrito por Claude a partir de la Lonely y de hechos culturales bien establecidos; sin horarios ni precios (el festival de faroles, con VERIFICAR).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

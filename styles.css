@@ -825,3 +825,10 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .hlist li > span:last-child { flex: 1; min-width: 0; }
 .hlist li .agenda { margin: 4px 0 2px; }
 .hlist li details { margin-top: 2px; }
+
+/* v87: Con ojos de guía */
+.guia-cult { margin: 6px 0; border-left: 3px solid var(--c1, var(--blue)); background: var(--card); border-radius: 0 10px 10px 0; padding: 4px 10px; text-align: left; }
+.guia-cult summary { font-weight: 700; color: var(--c1, var(--blue)); cursor: pointer; padding: 4px 0; }
+.guia-cult p { margin: 6px 0; line-height: 1.5; font-size: .93em; }
+.guia-cult .gc-gancho { font-style: italic; font-weight: 600; }
+.guia-cult .gc-mira, .guia-cult .gc-tip { background: var(--bg); border-radius: 8px; padding: 6px 8px; }

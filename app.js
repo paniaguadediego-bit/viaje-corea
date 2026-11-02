@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v86';
+const VERSION = 'v87';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -625,7 +625,7 @@ function sitiosDia(d) {
     const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es) : '';
     if (c) { prev = c; prevN = l.ko || l.es; }
     return `${t}${extra ? encaje(l) : ''}<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</div>
-      ${txt ? `<div class="muted">${esc(txt).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}</div>` : ''}</div></div>`;
+      ${txt ? `<div class="muted">${esc(txt).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}</div>` : ''}${guiaCult(l, 'dia')}</div></div>`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
   let extras = todos.filter(l => !auto.includes(l));
@@ -784,12 +784,19 @@ function viewRuta() {
 }
 
 // Desplegable con lo que amplía la Lonely (DIA_LP) o una frase general (DIA_INFO).
+// "Con ojos de guía": ficha cultural ampliada de los lugares emblemáticos (cultura.js).
+function guiaCult(l, ctx) {
+  const ps = l && typeof l === 'object' && typeof GUIA_CULT !== 'undefined' && GUIA_CULT[hKey(l).slice(2)]; if (!ps) return '';
+  const h = hKey(l), k = 'gc:' + ctx + ':' + h;
+  return `<details class="guia-cult" data-key="${esc(k)}" ${abierto(k, false) ? 'open' : ''}><summary>🎎 Con ojos de guía</summary>
+    <p class="gc-gancho">${esc(ps[0])}</p>${ps.slice(1).map(p => `<p class="${/^👀/.test(p) ? 'gc-mira' : /^💡/.test(p) ? 'gc-tip' : ''}">${esc(p).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}</p>`).join('')}</details>`;
+}
 function masLP(l, ctx) {
   if (!l || typeof l !== 'object') return '';
   const h = hKey(l), D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, G = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
   const lp = D[h.slice(2)] || D[h], txt = lp || G[h.slice(2)];
-  if (!txt || txt === l.desc) return '';
-  return `<details class="mas-lp" data-key="mx:${ctx}:${esc(h)}" ${abierto('mx:' + ctx + ':' + h, false) ? 'open' : ''}><summary>📖 ${lp ? 'Más de la Lonely' : 'Más info'}</summary>
+  if (!txt || txt === l.desc) return guiaCult(l, ctx);
+  return guiaCult(l, ctx) + `<details class="mas-lp" data-key="mx:${ctx}:${esc(h)}" ${abierto('mx:' + ctx + ':' + h, false) ? 'open' : ''}><summary>📖 ${lp ? 'Más de la Lonely' : 'Más info'}</summary>
     <p>${esc(txt).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}${lp ? ' <span class="badge otro">LP 2016</span>' : ''}</p></details>`;
 }
 // Imprescindibles de una ciudad: foto (Wikipedia, se guarda para offline), descripción y ✓ hecho.
@@ -1321,7 +1328,7 @@ function resCiudades(q) {
       <div><b>${plan ? icPlan(l) : icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span></div>
       <div class="muted">${tema(k).ic} ${esc(nombreCiudad(k))}${plan ? ' · Planes' : ''}${distHotel(l, k)}</div>
       ${txt ? `<div class="muted">${esc(recorta(txt, 130))}</div>` : ''}
-      ${plan ? '' : agendaBtn(l, k, 'bus')}
+      ${plan ? '' : guiaCult(l, 'bus') + agendaBtn(l, k, 'bus')}
       <div class="acciones">${naver(l)}${plan ? '' : `<button class="sec mini" data-bcity="${esc(k)}">${tema(k).ic} Ver en la ciudad</button>`}</div></div></div>`).join('');
 }
 function resComer(q) {
