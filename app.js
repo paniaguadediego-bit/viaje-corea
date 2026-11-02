@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v97';
+const VERSION = 'v98';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -55,7 +55,7 @@ function fmtDate(iso) {
 }
 const fmtCorto = iso => { const d = new Date(String(iso) + 'T12:00:00'); return isNaN(d) ? esc(iso || '') : d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }); };
 // Pone en negrita lo importante de un texto: horas, trenes, buses, estaciones, mayúsculas y precios.
-function resaltar(t) {
+function resaltar(t, prosa = false) {
   let h = esc(t);
   h = h.replace(/\b(\d{1,2}[:.]\d{2}(?:\s*[-–→]\s*\d{1,2}[:.]\d{2})?)\b/g, '<b>$1</b>')
     .replace(/\b(KTX(?:-Eum)?|AREX(?: Express)?|SRT|ITX)\b/g, '<b>$1</b>')
@@ -63,15 +63,19 @@ function resaltar(t) {
     .replace(/((?:[\d.]+(?:-[\d.]+)?\s?₩)|(?:₩\s?[\d.]+))/g, '<b>$1</b>')
     .replace(/\b([A-ZÁÉÍÓÚÑ]{4,}(?:\s+[A-ZÁÉÍÓÚÑ]{2,})*)\b/g, '<b class="mayus">$1</b>')
     .replace(/((?:[A-Z][\w-]+\s)?(?:Station|Terminal))/g, '<b>$1</b>')
-    .replace(/(estación de [A-ZÁÉÍÓÚ][\w-]+)/g, '<b>$1</b>');
+    .replace(/(estación de [A-ZÁÉÍÓÚ][\w-]+)/g, '<b>$1</b>')
+    .replace(/(?<![\w>])(\d+(?:[.,]\d+)?(?:-\d+(?:[.,]\d+)?)?\s?(?:km|m|min|h|€)(?![\wáéíóú]))/g, '<b>$1</b>')
+    .replace(/<b class="mayus">VERIFICAR<\/b>|VERIFICAR/g, '<span class="ver">VERIFICAR</span>');
   // Nombres propios: grupos de palabras con mayúscula (fuera de las negritas ya puestas), salvo palabras comunes de inicio de frase.
-  return h.split(/(<b[^>]*>.*?<\/b>|<[^>]+>)/).map((s, i) => i % 2 ? s : s.replace(/(?:[A-ZÁÉÍÓÚÑ][a-záéíóúñ'’-]+(?:\s(?=[A-ZÁÉÍÓÚÑ]))?)+/g, m => {
+  return h.split(/(<b[^>]*>.*?<\/b>|<span[^>]*>.*?<\/span>|<[^>]+>)/).map((s, i) => i % 2 ? s : s.replace(/(?:[A-ZÁÉÍÓÚÑ][a-záéíóúñ][a-záéíóúñ'’-]*(?:\s(?=[A-ZÁÉÍÓÚÑ][a-záéíóúñ]))?)+/g, (m, off, all) => {
     const ws = m.trim().split(/\s+/); while (ws.length && NO_PROPIO.has(ws[0])) ws.shift();
+    // En texto corrido, una palabra suelta con mayúscula al principio de frase no es nombre propio.
+    if (prosa && ws.length === 1 && m.trim() === ws[0] && /(^|[.!?:;«"(]\s*|\n\s*)$/.test(all.slice(0, off))) return m;
     if (!ws.length) return m; const prop = ws.join(' '), i0 = m.indexOf(prop);
     return m.slice(0, i0) + '<b>' + prop + '</b>' + m.slice(i0 + prop.length);
   })).join('');
 }
-const NO_PROPIO = new Set('El La Los Las Un Una En Con De Del Y O A Al Para Por Sin Si Se Su Sus Es Ver Ir Bajar Subir Cena Cenar Almuerzo Comer Comida Desayuno Merienda Paseo Pasear Llegada Llegar Salida Vuelo Visitas Visita Metro Bus Taxi Tren Alquiler Mañana Tarde Noche Retomar Atardecer Volver Vuelta Propuesta Ajustar Acostarse Comprobar Consejo Ojo Estar Pendiente Check-in Noche Hora Horario Entrada Gratis Cerrado Abre Plan Opción Objetivo Coger Madrugar Silencio Priorizar Tomar Si Asientos Asiento Cambio Primera Económica Danza Centro Coche Pasa Empezar Alternativa Cafés Café Mercado Playa Aldea Museo Barrio Prisión Historia Escuela Templo Palacio Santuario Acantilado Puente Puerta Mirador Calle Parque Observatorio Túmulos Isla Nacional'.split(' '));
+const NO_PROPIO = new Set('Fíjate Consejo Estado Gratis Según Tras Durante Desde Aquí Muy Hoy Cuenta El La Los Las Un Una En Con De Del Y O A Al Para Por Sin Si Se Su Sus Es Ver Ir Bajar Subir Cena Cenar Almuerzo Comer Comida Desayuno Merienda Paseo Pasear Llegada Llegar Salida Vuelo Visitas Visita Metro Bus Taxi Tren Alquiler Mañana Tarde Noche Retomar Atardecer Volver Vuelta Propuesta Ajustar Acostarse Comprobar Consejo Ojo Estar Pendiente Check-in Noche Hora Horario Entrada Gratis Cerrado Abre Plan Opción Objetivo Coger Madrugar Silencio Priorizar Tomar Si Asientos Asiento Cambio Primera Económica Danza Centro Coche Pasa Empezar Alternativa Cafés Café Mercado Playa Aldea Museo Barrio Prisión Historia Escuela Templo Palacio Santuario Acantilado Puente Puerta Mirador Calle Parque Observatorio Túmulos Isla Nacional'.split(' '));
 const isPend = t => /pendiente/i.test(t.estado || '');
 const isOk = t => /comprad/i.test(t.estado || '') || (t.tren && t.tren.comprado === true);
 function estadoBadge(t) {
@@ -625,7 +629,7 @@ function sitiosDia(d) {
     const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es) : '';
     if (c) { prev = c; prevN = l.ko || l.es; }
     return `${t}${extra ? encaje(l) : ''}<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</div>
-      ${txt ? `<div class="muted">${esc(txt).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}</div>` : ''}${guiaCult(l, 'dia')}</div></div>`;
+      ${txt ? `<div class="muted">${resaltar(txt, true)}</div>` : ''}${guiaCult(l, 'dia')}</div></div>`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
   let extras = todos.filter(l => !auto.includes(l));
@@ -768,7 +772,7 @@ function guiaCult(l, ctx) {
   const ps = l && typeof l === 'object' && typeof GUIA_CULT !== 'undefined' && GUIA_CULT[hKey(l).slice(2)]; if (!ps) return '';
   const h = hKey(l), k = 'gc:' + ctx + ':' + h;
   return `<details class="guia-cult" data-key="${esc(k)}" ${abierto(k, false) ? 'open' : ''}><summary>🎎 Con ojos de guía</summary>
-    <p class="gc-gancho">${esc(ps[0])}</p>${ps.slice(1).map(p => `<p class="${/^👀/.test(p) ? 'gc-mira' : /^💡/.test(p) ? 'gc-tip' : ''}">${esc(p).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}</p>`).join('')}</details>`;
+    <p class="gc-gancho">${esc(ps[0])}</p>${ps.slice(1).map(p => `<p class="${/^👀/.test(p) ? 'gc-mira' : /^💡/.test(p) ? 'gc-tip' : ''}">${resaltar(p, true)}</p>`).join('')}</details>`;
 }
 function masLP(l, ctx) {
   if (!l || typeof l !== 'object') return '';
@@ -776,7 +780,7 @@ function masLP(l, ctx) {
   const lp = D[h.slice(2)] || D[h], txt = lp || G[h.slice(2)];
   if (!txt || txt === l.desc) return guiaCult(l, ctx);
   return guiaCult(l, ctx) + `<details class="mas-lp" data-key="mx:${ctx}:${esc(h)}" ${abierto('mx:' + ctx + ':' + h, false) ? 'open' : ''}><summary>📖 ${lp ? 'Más de la Lonely' : 'Más info'}</summary>
-    <p>${esc(txt).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}${lp ? ' <span class="badge otro">LP 2016</span>' : ''}</p></details>`;
+    <p>${resaltar(txt, true)}${lp ? ' <span class="badge otro">LP 2016</span>' : ''}</p></details>`;
 }
 // Imprescindibles de una ciudad: foto (Wikipedia, se guarda para offline), descripción y ✓ hecho.
 function imprescindibles(k) {
@@ -786,7 +790,7 @@ function imprescindibles(k) {
     <div class="imp-txt"><div class="imp-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)}</div>
       <div class="ko-s">${esc(l.ko)}${distHotel(l, k)}</div>${agendaBtn(l, k, 'imp')}
       ${masLP(l, 'imp')}
-      <div class="muted">${esc(l.desc)}</div>
+      <div class="muted">${resaltar(l.desc, true)}</div>
       <div class="credito" data-cred="${esc(l.wiki)}"></div></div></div>`).join('')}</div>`;
 }
 // Foto principal del artículo de Wikipedia (necesita conexión la primera vez; el service worker la guarda).
@@ -944,7 +948,7 @@ function seccionLP(k) {
       <div class="lp-txt">
         <div class="lp-nom">${btnHecho(l, k)}<b>${esc(l.es)}</b>${lpPill(l)}</div>
         <div class="lp-meta"><span class="lp-tipo">${esc(l.tipo)}</span>${l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(l)}</div>
-        <div class="lp-nota">${esc(l.nota)}</div>
+        <div class="lp-nota">${resaltar(l.nota, true)}</div>
         <div class="lp-pie">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, k)}</div>${agendaBtn(l, k, 'lp')}
         ${masLP(l, 'lp')}
       </div></div>`).join('')}
@@ -1306,7 +1310,7 @@ function resCiudades(q) {
   return `<div class="muted centro">${rs.length} ${rs.length === 1 ? 'resultado' : 'resultados'}${rs.length > 20 ? ' (los 20 primeros)' : ''}</div>` + rs.slice(0, 20).map(({ l, k, txt, plan }) => `<div class="card bres">${miniFoto(l)}<div class="bres-c">
       <div><b>${plan ? icPlan(l) : icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span></div>
       <div class="muted">${tema(k).ic} ${esc(nombreCiudad(k))}${plan ? ' · Planes' : ''}${distHotel(l, k)}</div>
-      ${txt ? `<div class="muted">${esc(recorta(txt, 130))}</div>` : ''}
+      ${txt ? `<div class="muted">${resaltar(recorta(txt, 130), true)}</div>` : ''}
       ${plan ? '' : guiaCult(l, 'bus') + agendaBtn(l, k, 'bus')}
       <div class="acciones">${naver(l)}${plan ? '' : `<button class="sec mini" data-bcity="${esc(k)}">${tema(k).ic} Ver en la ciudad</button>`}</div></div></div>`).join('');
 }
@@ -1445,7 +1449,7 @@ function viewCorea() {
   else {
     const g = GUIA.find(([t]) => t === guiaSel);
     html += `<div class="guia-rej">${GUIA.map(([t]) => `<button class="guia-t ${t === guiaSel ? 'on' : ''}" data-guia="${esc(t)}"><span>${icGuia(t)}</span>${esc(t.replace(/ \(Lonely Planet\)/, ''))}${/Lonely/.test(t) ? '<small>LP</small>' : ''}</button>`).join('')}</div>
-      ${g ? `<div class="card guia-txt"><b>${icGuia(g[0])} ${esc(g[0])}</b><ul>${g[1].map(x => `<li>${esc(x).replace('VERIFICAR', '<span class="ver">VERIFICAR</span>')}</li>`).join('')}${g[0] === 'Dinero y pagos' ? pagoAlli() : ''}</ul></div>` : '<p class="muted centro">Toca un tema para verlo.</p>'}
+      ${g ? `<div class="card guia-txt"><b>${icGuia(g[0])} ${esc(g[0])}</b><ul>${g[1].map(x => `<li>${resaltar(x, true)}</li>`).join('')}${g[0] === 'Dinero y pagos' ? pagoAlli() : ''}</ul></div>` : '<p class="muted centro">Toca un tema para verlo.</p>'}
       <p class="muted centro">La Lonely Planet (2016) solo vale para cultura: precios y apps, verificarlos.</p>`;
   }
   return html;
@@ -1487,13 +1491,14 @@ function viewPlanes() {
       ${wikiDe(p) ? `<div class="foto banda" data-wiki="${esc(wikiDe(p))}"><span>${icPlan(p)}</span></div>` : ''}
       <div class="sd-tit">${btnHecho(p, k)}<b>${icPlan(p)} ${esc(p.es)}</b></div>
       <div class="ko-s">${esc(p.ko)}${distHotel(p, k)}</div>
-      <div class="muted">${esc(p.desc)}</div>
+      <div class="muted">${resaltar(p.desc, true)}</div>
       ${p.direccion_en ? `<div class="muted">📌 ${esc(p.direccion_en)}</div>` : ''}
-      ${p.nota ? `<div class="muted">🕒 ${esc(p.nota).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}</div>` : ''}
-      ${p.precio ? `<div class="pl-precio">💰 ${esc(p.precio)}</div>` : ''}
+      ${p.nota ? `<div class="muted">🕒 ${resaltar(p.nota, true)}</div>` : ''}
+      ${p.precio ? `<div class="pl-precio">💰 ${resaltar(p.precio, true)}</div>` : ''}
       ${p.opiniones || p.resenas ? `<div class="pl-resenas">${p.opiniones ? `<b>⭐ ${esc(String(p.opiniones.v).replace('.', ','))}</b> <span class="muted">(${esc(p.opiniones.n)} reseñas, ${esc(p.opiniones.fuente)})</span> ` : ''}${p.resenas ? `👥 ${esc(p.resenas)}` : ''}</div>` : ''}
-      ${otros.length ? `<div class="cerca">Cerca: ${otros.map(([o, d]) => `${icPlan(o)} ${esc(o.es)} <span class="muted">${fmtDist(d)}</span>`).join(' · ')}</div>` : ''}
-      ${plan.length ? `<div class="cerca">📅 Cerca de vuestro plan: ${plan.map(([l, d, e]) => `${esc(l.es)} <span class="muted">(día ${e.n}, ${fmtDist(d)})</span>`).join(' · ')}</div>` : ''}
+      ${otros.length || plan.length ? `<details class="pl-cerca" data-key="plc:${esc(p.id)}" ${abierto('plc:' + p.id, false) ? 'open' : ''}><summary>📍 Cerca${otros.length ? `: ${otros.length} ${otros.length === 1 ? 'plan' : 'planes'}` : ''}${plan.length ? ` · 📅 ${plan.length} de vuestro plan` : ''}</summary>
+        ${otros.length ? `<div class="cerca">${otros.map(([o, d]) => `${icPlan(o)} ${esc(o.es)} <span class="muted">${fmtDist(d)}</span>`).join(' · ')}</div>` : ''}
+        ${plan.length ? `<div class="cerca">📅 ${plan.map(([l, d, e]) => `${esc(l.es)} <span class="muted">(día ${e.n}, ${fmtDist(d)})</span>`).join(' · ')}</div>` : ''}</details>` : ''}
       <div class="acciones">${naver(p)}<button class="mini" data-full="pl:${i}">Enseñar</button></div></div>`;
   };
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
@@ -1700,7 +1705,7 @@ function cardComer(l) {
     </div>
     <details class="c2-mas" data-key="cm:${esc(id)}" ${abierto('cm:' + id, false) ? 'open' : ''}><summary>Más detalles${e.nota ? ' · 📝' : ''}${Number(e.val) ? ' · ' + '★'.repeat(Number(e.val)) : ''}</summary>
       ${l.direccion ? `<div class="muted">📍 ${esc(l.direccion)}</div>` : ''}
-      ${l.nota ? `<div class="muted">${esc(l.nota)}</div>` : ''}
+      ${l.nota ? `<div class="muted">${resaltar(l.nota, true)}</div>` : ''}
       <div class="muted">Fuente: ${esc(FUENTES[l.fuente] || l.fuente || '—')}${l.url ? ` · <a href="${esc(l.url)}" target="_blank" rel="noopener">enlace</a>` : ''}</div>
       ${l.comprobado && l.comprobado.nota ? `<div class="muted">🔎 ${esc(l.comprobado.nota)}${l.comprobado.fecha ? ' (' + esc(l.comprobado.fecha) + ')' : ''}</div>` : ''}
       <div>${verificado('k:' + id) ? '<span class="badge ok">✓ verificado</span>' : '<span class="ver">VERIFICAR que sigue abierto</span>'}
