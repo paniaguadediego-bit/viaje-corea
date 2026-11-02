@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v94';
+const VERSION = 'v95';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -280,6 +280,8 @@ function importFile(file) {
       save(K_TRIP, trip);
       dayIdx = null; tab = 'hoy'; pila.length = 0;
       render();
+      // Con el viaje ya cargado se sabe de qué ciudades pedir el tiempo (antes no había datos).
+      if (TIEMPO) TIEMPO.ts = 0; actualizarTiempo(); actualizarCambio(false);
       alert('Viaje importado y guardado en el móvil.');
     } catch {
       alert('El archivo no es un JSON válido.');
@@ -2170,7 +2172,7 @@ if ('serviceWorker' in navigator) {
     if (habiaSW && !recargado) { recargado = true; location.reload(); }
   });
   navigator.serviceWorker.register('./sw.js').then(r => {
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) { r.update().catch(() => {}); actualizarCambio(false); } });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) { r.update().catch(() => {}); actualizarCambio(false); actualizarTiempo(); } });
   });
 }
 // Muestra la versión de caché en Más.
