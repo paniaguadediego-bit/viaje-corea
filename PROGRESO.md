@@ -172,3 +172,18 @@ Caché del service worker: corea-v74
 - Hacer fotos del pasaporte, reservas y póliza y añadirlas en Más → Fotos de documentos.
 - Comer: comprobar con Naver que los sitios siguen abiertos y marcar los cerrados.
 - Con wifi: Más → "Descargar fotos de los imprescindibles" y comprobar en Ciudades que salen las fotos (también en modo avión).
+
+## Propuestas pendientes (preguntar al usuario tras el compact)
+Propuestas por Claude el 2/11/2026; el usuario pidió apuntarlas y que se le pregunten después.
+Recomendadas antes de salir (1, 2 y 3):
+1. Botón "Preparar para viajar": con wifi descarga fotos, tiempo y cambio y comprueba la caché offline; muestra un resumen (✓ N fotos · ✓ tiempo hasta X · ✓ cambio).
+2. Tarjeta "🆘 Ayuda" a un toque desde Hoy: hotel de esa noche en hangul grande con dirección, 112 / 119 / 1330, teléfono del seguro y Embajada de España en Seúl (VERIFICAR teléfono).
+3. Exportar a calendario (.ics): vuelos, trenes, check-ins y reservas (Sky Capsule), con alarmas del móvil que funcionan sin la app y sin conexión. Necesita el trip.json.
+Durante el viaje:
+4. Diario del día en Hoy (nota, foto, carita).
+5. Compartir marcas con Cristina (pasar visitados, notas, añadidos y valoraciones a su móvil).
+6. "Antes de salir" en días de traslado (pasaporte, cargadores, T-money, pagar hotel, hora del tren).
+Retoques:
+7. Menos pestañas en la barra (juntar Planes con Ciudades o Comer).
+8. Hoy más limpio una vez empezado el viaje (quitar cuenta atrás y lo que ya no sirve).
+Descartado por Claude: gastos (el usuario usa otra app) y mapas de metro offline (derechos de las imágenes; Naver lo hace mejor).
