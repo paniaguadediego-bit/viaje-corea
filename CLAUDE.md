@@ -64,9 +64,9 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    abre en 1,5 s, la web móvil m.map.naver.com; igual con Kakao Map; requiere conexión),
    Hoy con tira deslizable de días, tarjeta del día con banner (foto del
    primer sitio, fecha, título y tiempo), etiquetas con los sitios del día
-   y nombres propios en negrita, y botones Sitios / Traslado / Hotel /
-   Ciudad / Diario bajo la tarjeta del día (Mañana quitado en v88) (hotel por fechas, no por ciudad),
-   "🧳 Antes de salir" en Traslado los días que se deja hotel (vuelo, tren, pagar hotel, pasaportes…; casillas por fecha),
+   y nombres propios en negrita, y botones Sitios / Hotel / Ciudad / Diario bajo la tarjeta del día (Mañana quitado en v88;
+   el traslado va dentro de Sitios, al principio, desde v89) (hotel por fechas, no por ciudad),
+   "🧳 Antes de salir" (plegable) al principio de Sitios los días que se deja hotel (vuelo, tren, pagar hotel, pasaportes…; casillas por fecha),
    "📔 Diario" (carita y nota por día en user.diario; resumen en Más → Notas;
    en viaje, días pasados atenuados, avisos solo en días con traslado y sin avisos de compras pasadas), tarjeta "Ahora" (lo próximo con hora o cuenta
    atrás) y hora Corea/Canarias en Hoy, frases por situación en Corea, fotos y PDF de
