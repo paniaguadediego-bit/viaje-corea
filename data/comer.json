@@ -23,7 +23,15 @@
 "n": 14200,
 "fuente": "Google (vía agregadores)",
 "fecha": "2026-11"
+},
+"guias": [
+{
+"g": "michelin",
+"d": "Bib Gourmand",
+"anio": null,
+"verificar": true
 }
+]
 },
 {
 "id": "wangbijib",
@@ -151,7 +159,14 @@
 "n": 46,
 "fuente": "Polle",
 "fecha": "2026-11"
+},
+"guias": [
+{
+"g": "bluer",
+"d": "1 cinta",
+"anio": "2023"
 }
+]
 },
 {
 "id": "ganjogoe",
@@ -745,7 +760,15 @@
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": "https://www.ladyironchef.com/tag/seoul-best-korean-eateries/",
-"nota": "Lonely Planet Korea 2016, p. 71 · también en guía web"
+"nota": "Lonely Planet Korea 2016, p. 71 · también en guía web",
+"guias": [
+{
+"g": "michelin",
+"d": "Bib Gourmand",
+"anio": "2023",
+"verificar": true
+}
+]
 },
 {
 "id": "lp-gosang",
@@ -773,7 +796,14 @@
 "precio": "₩ barato (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 71 · ★ elección del autor"
+"nota": "Lonely Planet Korea 2016, p. 71 · ★ elección del autor",
+"guias": [
+{
+"g": "michelin",
+"d": "Bib Gourmand",
+"anio": "2026"
+}
+]
 },
 {
 "id": "lp-deongjang-yesool",
@@ -815,7 +845,14 @@
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 73 · ★ elección del autor"
+"nota": "Lonely Planet Korea 2016, p. 73 · ★ elección del autor",
+"guias": [
+{
+"g": "michelin",
+"d": "Bib Gourmand",
+"anio": "2026"
+}
+]
 },
 {
 "id": "lp-samarkand",
@@ -843,7 +880,14 @@
 "precio": "₩₩₩ caro (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 74 · ★ elección del autor"
+"nota": "Lonely Planet Korea 2016, p. 74 · ★ elección del autor",
+"guias": [
+{
+"g": "michelin",
+"d": "2 estrellas",
+"anio": "2026"
+}
+]
 },
 {
 "id": "lp-samwon-garden",
@@ -1603,7 +1647,15 @@
 "n": 13,
 "fuente": "Polle",
 "fecha": "2026-11"
+},
+"guias": [
+{
+"g": "bluer",
+"d": "cinta",
+"anio": null,
+"verificar": true
 }
+]
 },
 {
 "id": "w-hyundai",

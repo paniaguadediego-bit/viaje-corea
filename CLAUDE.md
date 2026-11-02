@@ -116,6 +116,9 @@ usuario). Opcional opiniones{v,n,fuente,fecha}: nota media de usuarios
 Trip.com, Polle…). El usuario puede apuntar la suya (user.comer[id].op),
 que manda sobre la guardada; orden "👥 Mejor valorados" ajustado por nº
 de reseñas; enlaces para consultarla en Naver, Kakao y Google.
+Opcional guias[{g(michelin|bluer),d,anio,verificar?}]: distintivos de
+guías de prestigio (🔴 Michelin, 🎗️ Blue Ribbon); suman en el orden
+"Recomendado". Solo los confirmados en fuentes; si no, VERIFICAR.
 Estado (Quiero/Visitado/Descartado/Cerrado), notas y lugares
 propios se guardan en el móvil (user.comer, user.comerPropios).
 "Hecho/visitado" es UNA marca por sitio (user.hecho, clave = hangul

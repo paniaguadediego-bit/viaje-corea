@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v70';
+const VERSION = 'v71';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1238,7 +1238,8 @@ function viewComer() {
 function puntos(l) {
   const e = estadoDe(String(l.id));
   if (['descartado', 'cerrado'].includes(e.estado)) return -100;
-  return (e.estado === 'quiero' ? 100 : 0) + (l.fuente === 'itinerario' ? 50 : 0) + (/★/.test(l.nota || '') ? 30 : 0)
+  const gp = arr(l.guias).reduce((s, g) => s + (g.g === 'michelin' ? (/estrella/.test(g.d) ? 45 : 35) : 20), 0);
+  return gp + (e.estado === 'quiero' ? 100 : 0) + (l.fuente === 'itinerario' ? 50 : 0) + (/★/.test(l.nota || '') ? 30 : 0)
     + (l.fuente === 'guia' ? 20 : l.fuente === 'lonely' ? 10 : 0) + (Number(e.val) || 0) * 5 - (e.estado === 'visitado' ? 40 : 0);
 }
 function distKm(l) { const h = hotelDe(l.ciudad), p = coordsLugar(l); return h && p ? km(h, p) : Infinity; }
@@ -1271,6 +1272,7 @@ function cardComer(l) {
         <div class="c2-nom"><b>${esc(l.nombre || 'Sin nombre')}</b>${lpPill(l)}</div>
         <div class="c2-sub">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, l.ciudad)}</div>
         ${meta.length ? `<div class="c2-meta">${meta.map(esc).join(' · ')}</div>` : ''}
+        ${arr(l.guias).map(g => `<span class="c2-guia ${g.g}" title="${g.g === 'michelin' ? 'Guía Michelin Seúl y Busan' : 'Blue Ribbon Survey'}">${g.g === 'michelin' ? '🔴 Michelin' : '🎗️ Blue Ribbon'} ${esc(g.d)}${g.anio ? ' ' + esc(g.anio) : ''}${g.verificar ? ' <span class="ver">VERIFICAR</span>' : ''}</span>`).join('')}
         ${(o => o ? `<span class="c2-op" title="${esc(o.fuente || '')}${o.fecha ? ', ' + esc(o.fecha) : ''}">👥 ★${Number(o.v).toLocaleString('es-ES')}${o.n ? ` · ${fmtN(o.n)} reseñas` : ''}${o.fuente ? ` · ${esc(String(o.fuente).split(' (')[0])}` : ''}</span>` : '')(opinionDe(l))}${planBadge(l)}${comp ? `<span class="c2-comp">${comp}</span>` : ''}
       </div>
     </div>
@@ -1471,6 +1473,7 @@ function renderLuego() {
 }
 document.addEventListener('focusout', () => { if (renderPendiente) { renderPendiente = false; setTimeout(render, 50); } });
 
+let tiraX = null;
 // ---------- render ----------
 function render() {
   applyTheme();
@@ -1496,9 +1499,11 @@ function render() {
     case 'comer': html = viewComer(); break;
     default: html = viewMas();
   }
+  const tiraAnt = document.getElementById('tira'); tiraX = tiraAnt ? tiraAnt.scrollLeft : null;
   $('#view').innerHTML = html;
   if (['ciudades', 'hoy', 'comer', 'planes'].includes(tab)) pintarFotos();
-  const ch = tab === 'hoy' && document.querySelector('#tira .dchip.on'); if (ch) ch.parentElement.scrollLeft = ch.offsetLeft - ch.parentElement.clientWidth / 2 + ch.offsetWidth / 2;
+  const ch = tab === 'hoy' && document.querySelector('#tira .dchip.on');
+  if (ch) { const t = ch.parentElement, obj = ch.offsetLeft - t.clientWidth / 2 + ch.offsetWidth / 2; t.style.scrollBehavior = 'auto'; t.scrollLeft = tiraX != null ? tiraX : obj; if (tiraX != null) requestAnimationFrame(() => { t.style.scrollBehavior = 'smooth'; t.scrollLeft = obj; }); }
 }
 
 document.addEventListener('click', e => {
