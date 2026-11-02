@@ -24,10 +24,11 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    Guía (primero, con iconos por tema), Historia (historia.js: 22
    capítulos de historia y cultura para leer sin conexión, con índice,
    anterior/siguiente y marca de leído en user.leidos), Enseñar, Frases,
-   Diccionario. Dentro de Más
-   (botones arriba): Checklist, Seguro, Verificar; el conversor ₩/€
-   es el botón 💱 junto al título y se abre en una ventana; y debajo Maleta/
-   Documentos, Fotos y Notas. Gastos: quitado (el usuario usa
+   Diccionario. Más es una rejilla de iconos
+   como la Guía (se toca y sale debajo): Maleta, Checklist, Seguro,
+   Verificar, Documentos (fotos/PDF), Notas y Datos y app (importar,
+   exportar, fotos, actualizar, borrar). El conversor ₩/€
+   es el botón 💱 junto al título y se abre en una ventana. Gastos: quitado (el usuario usa
    otra app). No añadir
    nada que no esté aquí. Ruta: vuelos, mapa y línea de tiempo con cada estancia (ciudad,
    noches, hotel y una línea por día) intercalada con los traslados. Incluye un mapa esquemático de

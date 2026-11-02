@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v56
+Caché del service worker: corea-v57
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -103,6 +103,7 @@ Caché del service worker: corea-v56
 - v54: arreglo de instalación: manifest "id" pasa de "./" a "/viaje-corea/". El id se resuelve contra el origen (paniaguadediego-bit.github.io/), así que "./" coincidía con el de otras apps del usuario en el mismo dominio y Chrome creía que ya estaba instalada ("Añadir a pantalla de inicio" no hacía nada).
 - v55: Chrome seguía diciendo "ya está instalada" sin que hubiera app. Manifiesto igualado al de las otras apps del usuario que sí se instalan (MIO-Check, PPEE-Check): sin id, scope ni orientation, start_url "./index.html" (identidad nueva para Chrome) e iconos sin purpose. [Supuesto] Chrome guardaba un registro de instalación fallida con la identidad anterior.
 - v56: fotos (Wikipedia) para los 59 sitios que no tenían: 47 de Ciudades (WIKI en contenido.js) y los 12 de Planes (campo wiki; foto ancha arriba de cada ficha). Para empresas (T1, Olive Young, Daiso, Lotte, Shinsegae) la foto es la del artículo de la marca (puede ser el logo); spas → artículo Jjimjilbang; lavanderías → Laundromat (foto genérica). "Descargar fotos" de Más incluye ya Planes y LP. [Supuesto] Títulos de Wikipedia no comprobados (la red de pruebas no llega a Wikipedia): si alguno no existe, se queda el icono.
+- v57: Más rediseñado como la Guía de Corea: rejilla de 7 iconos (Maleta, Checklist, Seguro, Verificar con nº de pendientes, Documentos, Notas, Datos y app) y el contenido del elegido debajo. Las antiguas pestañas checklist/seguro/verificar redirigen a Más con ese icono marcado.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

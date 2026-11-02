@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v56';
+const VERSION = 'v57';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -94,7 +94,7 @@ function naver(l) {
 
 // ---------- distancias al hotel (línea recta, sin conexión) ----------
 let COORDS_LUGARES = {};
-fetch('data/coords.json').then(r => r.json()).then(d => { COORDS_LUGARES = d || {}; if (['ciudades', 'comer', 'corea', 'checklist'].includes(tab)) render(); }).catch(() => {});
+fetch('data/coords.json').then(r => r.json()).then(d => { COORDS_LUGARES = d || {}; if (['ciudades', 'comer', 'corea', 'mas'].includes(tab)) render(); }).catch(() => {});
 const coordsLugar = l => {
   if (!l) return null;
   if (l.lat != null && l.lon != null) return [Number(l.lat), Number(l.lon)];
@@ -1309,24 +1309,33 @@ function viewVerificar() {
         <button class="mini ${verificado(x.key) ? 'sec' : ''}" data-verif="${esc(x.key)}">${verificado(x.key) ? 'Deshacer' : '✓'}</button></div></div>`).join('')}</details>`; }).join('')}`;
 }
 
+// Más con rejilla de iconos, como la Guía de Corea: se toca un tema y sale debajo.
+let masSub = 'maleta';
+const MAS_SUB = [['maleta', 'Maleta', '🧳'], ['checklist', 'Checklist', '✅'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'],
+  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['datos', 'Datos y app', '⚙️']];
 function viewMas() {
-  const t = load(K_THEME, 'auto');
-  const docs = arr(trip && trip.checklist_documentos).map((d, i) => ({ id: d.id || 'd' + i, texto: d.texto, url: d.url }));
   const pend = trip ? pendientesVerificar().reduce((a, [, ls]) => a + ls.filter(x => !verificado(x.key)).length, 0) : 0;
-  return `<div class="rejilla">${EN_MAS.map(([id, t, ic]) => `<button class="sec" data-tab="${id}"><span>${ic}</span>${t}${id === 'verificar' && pend ? ` (${pend})` : ''}</button>`).join('')}</div>
-    ${trip ? `<h2>Maleta y documentos</h2>${checks('docs', docs)}
-    ${viewFotos()}
-    <h2>Notas</h2><textarea data-notas rows="6" placeholder="Escribe aquí… (se guarda solo)">${esc(u().notas)}</textarea>` : ''}
-    <h2>Datos del viaje</h2>
+  const subs = trip ? MAS_SUB : MAS_SUB.filter(([k]) => k === 'datos');
+  if (!subs.some(([k]) => k === masSub)) masSub = subs[0][0];
+  const rej = `<div class="guia-rej">${subs.map(([k, t, ic]) => `<button class="guia-t ${k === masSub ? 'on' : ''}" data-ms="${k}"><span>${ic}</span>${t}${k === 'verificar' && pend ? `<small>${pend}</small>` : ''}</button>`).join('')}</div>`;
+  let c = '';
+  if (masSub === 'maleta') { const docs = arr(trip.checklist_documentos).map((d, i) => ({ id: d.id || 'd' + i, texto: d.texto, url: d.url })); c = `<h2>🧳 Maleta y documentos</h2>${checks('docs', docs)}`; }
+  else if (masSub === 'checklist') c = viewChecklist();
+  else if (masSub === 'seguro') c = viewSeguro();
+  else if (masSub === 'verificar') c = viewVerificar();
+  else if (masSub === 'docs') c = viewFotos();
+  else if (masSub === 'notas') c = `<h2>📝 Notas</h2><textarea data-notas rows="10" placeholder="Escribe aquí… (se guarda solo)">${esc(u().notas)}</textarea>`;
+  else c = `<h2>Datos del viaje</h2>
     <button data-act="import">📂 Importar viaje</button>
     <button class="sec" data-act="export">💾 Exportar copia</button>
     <p class="muted">La copia incluye el viaje, checklist, notas, fotos, lo marcado en Comer y lo verificado. Guárdala fuera del móvil.
       Última copia: <b>${esc(localStorage.getItem('corea.ultimaCopia') || 'nunca')}</b></p>
-    <h2>Borrar</h2>
-    <button class="sec" data-act="fotos">📷 Descargar fotos de los imprescindibles (para usar sin conexión)</button>
+    <h2>App</h2>
+    <button class="sec" data-act="fotos">📷 Descargar fotos (para usar sin conexión)</button>
     <button class="sec" data-act="update">🔄 Forzar actualización (no borra tus datos)</button>
     <button class="danger" data-act="wipe">Borrar datos de este móvil</button>
     <p class="muted" id="ver">Versión: ${esc(window.VERSION || '…')}</p>`;
+  return rej + c;
 }
 
 // ---------- render ----------
@@ -1337,6 +1346,7 @@ function render() {
   $('#tabs').innerHTML = TABS.map(([id, label, ic]) =>
     `<button data-tab="${id}" class="${tab === id || (id === 'mas' && EN_MAS.some(m => m[0] === tab)) ? 'on' : ''}"><span>${ic}</span>${label}</button>`).join('');
 
+  if (['checklist', 'seguro', 'verificar'].includes(tab)) { masSub = tab; tab = 'mas'; }
   let html;
   if (!trip && tab !== 'mas' && tab !== 'conv') html = viewWelcome();
   else switch (tab) {
@@ -1433,6 +1443,8 @@ document.addEventListener('click', e => {
   const hc = e.target.closest('[data-hc]');
   if (hc) { if (hc.dataset.leido !== undefined) { const U = u(); U.leidos = U.leidos || {}; U.leidos[hc.dataset.leido] = 1; saveUser(); }
     histCap = hc.dataset.hc === 'ind' ? null : +hc.dataset.hc; render(); window.scrollTo(0, 0); return; }
+  const ms = e.target.closest('[data-ms]');
+  if (ms) { masSub = ms.dataset.ms; render(); return; }
   const pc = e.target.closest('[data-pc]');
   if (pc) { planesCiudad = pc.dataset.pc; render(); return; }
   const gs = e.target.closest('[data-guia]');
