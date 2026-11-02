@@ -851,3 +851,41 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .card.ahora .big { font-size: .95rem; line-height: 1.3; }
 .ahora .muted { font-size: .8em; }
 .alert.compacta { padding: 6px 10px; font-size: .88em; }
+
+/* v99: Historia con identidad propia (papel hanji y colores dancheong) */
+:root { --hanji: #f6f0e2; --hanji2: #efe5cf; --tinta: #2b2118; --sello: #b8322a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --hanji: #24201b; --hanji2: #1d1a16; --tinta: #efe6d6; --sello: #e0574d; } }
+:root[data-theme="dark"] { --hanji: #24201b; --hanji2: #1d1a16; --tinta: #efe6d6; --sello: #e0574d; }
+.hist-tema { background: radial-gradient(circle at 20% 10%, rgba(255,255,255,.35), transparent 40%), repeating-linear-gradient(45deg, var(--hanji) 0 6px, var(--hanji2) 6px 7px);
+  color: var(--tinta); border-radius: 16px; padding: 0 10px 12px; margin-top: 6px; position: relative; overflow: hidden;
+  border-top: 8px solid transparent; border-image: repeating-linear-gradient(90deg, #2e8b57 0 18px, #b8322a 18px 30px, #1f4e8c 30px 46px, #e3b23c 46px 56px, #f4efe6 56px 60px) 8; }
+.hist-portada { text-align: center; padding: 16px 6px 10px; }
+.hist-ko { font-size: 3rem; font-weight: 900; letter-spacing: .15em; color: var(--sello); line-height: 1; font-family: "Nanum Myeongjo", "Noto Serif KR", serif; }
+.hist-tit { font-size: 1.25rem; font-weight: 800; margin-top: 6px; font-family: Georgia, "Times New Roman", serif; }
+.hist-sub { font-size: .82rem; opacity: .75; margin-top: 4px; }
+.hist-barra { height: 6px; background: rgba(0,0,0,.12); border-radius: 99px; margin: 10px 20px 0; overflow: hidden; }
+.hist-barra i { display: block; height: 100%; background: var(--sello); }
+.hist-seguir { margin-top: 10px; background: var(--sello); color: #fff; border: 0; }
+.hist-sec { font-weight: 800; margin: 14px 2px 6px; font-family: Georgia, serif; border-bottom: 1px solid rgba(0,0,0,.15); padding-bottom: 4px; text-align: left; }
+.hist-linea { display: flex; gap: 6px; overflow-x: auto; padding: 4px 2px 8px; scroll-snap-type: x mandatory; }
+.hl-era { flex: 0 0 auto; width: 118px; min-height: 0; padding: 8px 6px; display: flex; flex-direction: column; align-items: center; gap: 2px; background: var(--card); color: var(--fg);
+  border: 0; border-top: 4px solid var(--ec); border-radius: 10px; scroll-snap-align: start; position: relative; }
+.hl-era .hl-ko { font-size: 1.1rem; font-weight: 800; color: var(--ec); }
+.hl-era b { font-size: .8rem; } .hl-era small { font-size: .68rem; opacity: .7; }
+.hist-simb { display: flex; flex-direction: column; gap: 6px; }
+.hs-it { display: flex; gap: 10px; align-items: flex-start; background: var(--card); color: var(--fg); border-radius: 10px; padding: 8px 10px; font-size: .88rem; text-align: left; line-height: 1.35; }
+.hs-ic { font-size: 1.4rem; font-weight: 900; color: var(--sello); min-width: 28px; text-align: center; }
+.hc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.hc-card { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 0; min-height: 0; margin: 0; background: var(--card); color: var(--fg); border: 0; border-radius: 12px; overflow: hidden; text-align: left; box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+.hc-card .hc-foto { width: 100%; height: 84px; border-radius: 0; margin: 0; font-size: 1.8rem; }
+.hc-card .hc-txt { padding: 6px 8px 8px; display: flex; flex-direction: column; gap: 2px; }
+.hc-card small { font-size: .68rem; opacity: .7; } .hc-card b { font-size: .82rem; line-height: 1.25; }
+.hc-card.leido { opacity: .6; }
+.hist-cap2 { padding-top: 10px; }
+.hist-cap2 .hc-banner { height: 150px; margin: 0 0 8px; border-radius: 12px; font-size: 2.4rem; }
+.hc-meta { display: flex; justify-content: space-between; gap: 8px; font-size: .75rem; opacity: .8; flex-wrap: wrap; }
+.hc-era { color: #fff; background: var(--ec); border-radius: 99px; padding: 1px 8px; font-weight: 700; opacity: 1; }
+.hist-cap2 .hist-h { font-family: Georgia, "Times New Roman", serif; font-size: 1.3rem; margin: 10px 0; color: var(--tinta); }
+.hist-cap2 p { font-size: 1.02rem; line-height: 1.65; margin: 0 0 12px; text-align: left; }
+.hist-cap2 p.capital::first-letter { float: left; font-size: 3.1em; line-height: .85; padding: 4px 6px 0 0; color: var(--sello); font-family: Georgia, serif; font-weight: 700; }
+.hist-cap2 p b { color: var(--tinta); }

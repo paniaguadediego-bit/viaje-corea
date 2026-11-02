@@ -23,7 +23,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    con distancia al hotel, "cerca", foto, 💰 precio aproximado y 👥 reseñas; lavandería y Olive Young en cada ciudad), Más. Corea tiene apartados:
    Guía (primero, con iconos por tema), Historia (historia.js: 22
    capítulos de historia y cultura para leer sin conexión, con índice,
-   anterior/siguiente y marca de leído en user.leidos), Enseñar, Frases,
+   anterior/siguiente y marca de leído en user.leidos; diseño propio desde v99: papel hanji, franja dancheong,
+   línea del tiempo de dinastías, símbolos del país y foto por capítulo), Enseñar, Frases,
    Diccionario. Más es una rejilla de iconos
    como la Guía (se toca y sale debajo): Maleta, Seguro,
    Verificar, Documentos (fotos/PDF), Notas y Datos y app (importar,

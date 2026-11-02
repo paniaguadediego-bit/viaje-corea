@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v98';
+const VERSION = 'v99';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -820,7 +820,7 @@ function pintarFotos() {
 }
 // Descarga las fotos (y la versión grande de los banners de cada día) para usarlas sin conexión.
 async function descargarFotos(prog) {
-  const ts = [...new Set([...Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat().map(l => l.wiki), ...Object.values(typeof WIKI !== 'undefined' ? WIKI : {}), ...(typeof PLANES !== 'undefined' ? PLANES : []).map(p => p.wiki), ...Object.values(LP).flat().map(l => l.wiki)].filter(Boolean))];
+  const ts = [...new Set([...Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat().map(l => l.wiki), ...Object.values(typeof WIKI !== 'undefined' ? WIKI : {}), ...(typeof PLANES !== 'undefined' ? PLANES : []).map(p => p.wiki), ...Object.values(LP).flat().map(l => l.wiki), ...HIST_WIKI].filter(Boolean))];
   const banners = new Set(arr(trip && trip.dias).map(d => listaDia(d).map(wikiDe).find(Boolean)).filter(Boolean));
   let n = 0, hechas = 0, i = 0;
   const uno = async t => {
@@ -1416,21 +1416,52 @@ function pagoAlli() {
 // Historia de Corea para leer en el avión: índice, capítulo, anterior/siguiente y marca de leído (en el móvil).
 let histCap = null;
 const minLect = c => Math.max(1, Math.round(c.p.join(' ').split(/\s+/).length / 220));
+// Línea del tiempo (capítulo al que lleva) y foto de Wikipedia de cada capítulo.
+const HIST_ERAS = [
+  ['고조선', 'Gojoseon', 'mito – 108 a. C.', 1, '#8a6a3a'], ['삼국', 'Tres Reinos', '57 a. C. – 668', 2, '#b8322a'],
+  ['통일신라', 'Silla Unificada', '668 – 935', 3, '#c9962e'], ['고려', 'Goryeo', '918 – 1392', 4, '#2e7d6b'],
+  ['조선', 'Joseon', '1392 – 1897', 5, '#1f4e8c'], ['대한제국', 'Imperio Coreano', '1897 – 1910', 8, '#6b3fa0'],
+  ['일제강점기', 'Ocupación japonesa', '1910 – 1945', 9, '#555'], ['한국전쟁', 'División y guerra', '1945 – 1953', 10, '#8b2020'],
+  ['대한민국', 'República de Corea', '1948 – hoy', 11, '#0047a0']];
+const HIST_WIKI = ['Flag_of_South_Korea', 'Dangun', 'Three_Kingdoms_of_Korea', 'Bulguksa', 'Goryeo_ware', 'Gyeongbokgung', 'Sejong_the_Great', 'Turtle_ship',
+  'Gojong_of_Korea', 'March_1st_Movement', 'Korean_War', 'Han_River_(Korea)', 'June_Democratic_Struggle', 'Korean_Demilitarized_Zone', 'Yi_Sun-sin', 'Hanbok',
+  'Jogyesa', 'Korean_pottery_and_porcelain', 'Korean_wave', 'Taekwondo', 'Kimchi', 'Hahoe_Folk_Village'];
+// Símbolos del país (texto propio).
+const HIST_SIMBOLOS = [['🇰🇷', 'Taegukgi', 'La bandera: el equilibrio del yin y el yang y cuatro trigramas (cielo, tierra, agua y fuego).'],
+  ['🌺', 'Mugunghwa', 'La flor nacional, el hibisco de Siria: su nombre significa «flor eterna» porque florece sin parar todo el verano.'],
+  ['한', 'Hangul', 'El alfabeto creado en el siglo XV por el rey Sejong; el 9 de octubre es su fiesta nacional.'],
+  ['🐯', 'Tigre', 'Animal protector en el arte popular y la mascota de los Juegos Olímpicos de Seúl 1988.'],
+  ['🎵', 'Arirang', 'La canción popular más querida, casi un himno no oficial; Patrimonio Inmaterial de la Humanidad.']];
+const eraDe = i => HIST_ERAS.slice().reverse().find(e => i >= e[3] && i <= 13) || null;
 function viewHistoria() {
   const H = typeof HISTORIA_COREA !== 'undefined' ? HISTORIA_COREA : []; if (!H.length) return '';
   const U = u(); U.leidos = U.leidos || {};
   const tot = H.reduce((a, c) => a + minLect(c), 0), leidos = H.filter((c, i) => U.leidos[i]).length;
   if (histCap === null || !H[histCap]) {
     const sig = H.findIndex((c, i) => !U.leidos[i]);
-    return `<div class="card hist-cab"><b>📜 Historia y cultura de Corea</b><div class="muted">${H.length} capítulos · unos ${tot} minutos de lectura · ${leidos} leídos</div>
-      ${sig >= 0 ? `<button data-hc="${sig}">${leidos ? '▶ Seguir leyendo' : '▶ Empezar'}: ${esc(H[sig].t)}</button>` : '<div>✅ ¡Todo leído!</div>'}</div>
-      <div class="hist-ind">${H.map((c, i) => `<button class="sec hist-it ${U.leidos[i] ? 'leido' : ''}" data-hc="${i}"><span>${c.ic}</span><span class="hist-t">${i + 1}. ${esc(c.t)}</span><small>${U.leidos[i] ? '✓' : minLect(c) + ' min'}</small></button>`).join('')}</div>`;
+    const tarjeta = i => { const c = H[i]; return `<button class="hc-card ${U.leidos[i] ? 'leido' : ''}" data-hc="${i}">
+        <div class="foto mini hc-foto" data-wiki="${esc(HIST_WIKI[i] || '')}"><span>${c.ic}</span></div>
+        <span class="hc-txt"><small>${i + 1} · ${U.leidos[i] ? '✓ leído' : minLect(c) + ' min'}</small><b>${esc(c.t)}</b></span></button>`; };
+    return `<div class="hist-tema">
+      <div class="hist-portada"><div class="hist-ko">한국사</div><div class="hist-tit">Historia y cultura de Corea</div>
+        <div class="hist-sub">${H.length} capítulos · unos ${tot} minutos · para leer en el avión</div>
+        <div class="hist-barra"><i style="width:${Math.round(leidos / H.length * 100)}%"></i></div><div class="hist-sub">${leidos} de ${H.length} leídos</div>
+        ${sig >= 0 ? `<button class="hist-seguir" data-hc="${sig}">${leidos ? '▶ Seguir' : '▶ Empezar'}: ${esc(H[sig].t)}</button>` : '<div class="hist-sub">✅ ¡Todo leído!</div>'}</div>
+      <div class="hist-sec">⏳ Línea del tiempo</div>
+      <div class="hist-linea">${HIST_ERAS.map(([ko, es, f, cap, col]) => `<button class="hl-era" style="--ec:${col}" data-hc="${cap}"><span class="hl-ko">${ko}</span><b>${es}</b><small>${f}</small></button>`).join('')}</div>
+      <div class="hist-sec">🇰🇷 Símbolos del país</div>
+      <div class="hist-simb">${HIST_SIMBOLOS.map(([ic, t, d]) => `<div class="hs-it"><span class="hs-ic">${ic}</span><span><b>${t}</b> ${esc(d)}</span></div>`).join('')}</div>
+      <div class="hist-sec">📜 De Dangun a hoy</div><div class="hc-grid">${H.map((c, i) => i).filter(i => i <= 13).map(tarjeta).join('')}</div>
+      <div class="hist-sec">🎎 Personajes, cultura y vuestra ruta</div><div class="hc-grid">${H.map((c, i) => i).filter(i => i > 13).map(tarjeta).join('')}</div>
+    </div>`;
   }
-  const c = H[histCap], i = histCap;
-  return `<div class="card hist-cap"><div class="muted centro">Capítulo ${i + 1} de ${H.length} · ${minLect(c)} min</div>
-    <h3 class="hist-h">${c.ic} ${esc(c.t)}</h3>${c.p.map(x => `<p>${esc(x)}</p>`).join('')}</div>
+  const c = H[histCap], i = histCap, era = eraDe(i);
+  return `<div class="hist-tema"><div class="hist-cap2">
+    <div class="foto banda hc-banner" data-wiki="${esc(HIST_WIKI[i] || '')}"><span>${c.ic}</span></div>
+    <div class="hc-meta">${era ? `<span class="hc-era" style="--ec:${era[4]}">${era[0]} · ${era[1]}</span>` : ''}<span>Capítulo ${i + 1} de ${H.length} · ${minLect(c)} min</span></div>
+    <h3 class="hist-h">${c.ic} ${esc(c.t)}</h3>${c.p.map((x, j) => `<p class="${j === 0 ? 'capital' : ''}">${resaltar(x, true)}</p>`).join('')}
     <div class="row hist-nav"><button class="sec" data-hc="${i - 1}" ${i === 0 ? 'disabled' : ''}>◀</button><button class="sec" data-hc="ind">Índice</button>
-      <button data-hc="${i + 1 < H.length ? i + 1 : 'ind'}" data-leido="${i}">${i + 1 < H.length ? 'Leído ▶' : 'Leído ✓'}</button></div>`;
+      <button data-hc="${i + 1 < H.length ? i + 1 : 'ind'}" data-leido="${i}">${i + 1 < H.length ? 'Leído ▶' : 'Leído ✓'}</button></div></div></div>`;
 }
 function viewCorea() {
   const seg = [['guia', '🧭 Guía'], ['historia', '📜 Historia'], ['ensenar', '🪧 Enseñar'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.']].map(([k, t]) =>
@@ -1927,7 +1958,7 @@ function render() {
   const posX = tab === tabAnt ? filas($('#view')).map(f => f.scrollLeft) : [];
   $('#view').innerHTML = html; tabAnt = tab;
   filas($('#view')).forEach((f, i) => { if (posX[i]) { f.style.scrollBehavior = 'auto'; f.scrollLeft = posX[i]; f.style.scrollBehavior = ''; } });
-  if (['ciudades', 'hoy', 'comer', 'planes'].includes(tab)) pintarFotos();
+  if (['ciudades', 'hoy', 'comer', 'planes', 'corea'].includes(tab)) pintarFotos();
   if (['ciudades', 'hoy'].includes(tab)) pintarMapas();
   const ch = tab === 'hoy' && document.querySelector('#tira .dchip.on');
   if (ch) { const t = ch.parentElement, obj = ch.offsetLeft - t.clientWidth / 2 + ch.offsetWidth / 2; t.style.scrollBehavior = 'auto'; t.scrollLeft = tiraX != null ? tiraX : obj; if (tiraX != null) requestAnimationFrame(() => { t.style.scrollBehavior = 'smooth'; t.scrollLeft = obj; }); }
