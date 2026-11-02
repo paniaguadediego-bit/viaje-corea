@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v76';
+const VERSION = 'v77';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -320,7 +320,7 @@ function viewWelcome() {
 // "Hanok Hanji Ggulkam (Jeonju)" -> "Jeonju"
 const ciudadCorta = t => { const m = String(t || '').match(/\(([^)]+)\)/); return m ? m[1] : String(t || ''); };
 function pendingAlert() {
-  const p = arr(trip.traslados).filter(isPend);
+  const hoy = todayISO(), p = arr(trip.traslados).filter(t => isPend(t) && !(t.fecha && t.fecha < hoy)); // los ya pasados no avisan
   if (!p.length) return '';
   return `<div class="alert compacta" data-go="ruta">⚠️ Por comprar: ${p.map(t => `${esc(fmtCorto(t.fecha))} ${esc(ciudadCorta(t.de))} → ${esc(ciudadCorta(t.a))}`).join(' · ')} <span class="muted">›</span></div>`;
 }
@@ -337,12 +337,28 @@ const alojCard = (a, sale) => `<div class="card aloj">
     ${a.direccion_en ? `<div class="muted">${esc(a.direccion_en)}</div>` : ''}
     ${a.nota ? `<div class="muted">${esc(a.nota)}</div>` : ''}
     <div class="acciones">${naver(a)}</div></div>`;
+// ---------- Diario: carita y nota de cada día (solo en el móvil; va en "Exportar copia") ----------
+const CARAS = [['😍', 'Genial'], ['🙂', 'Bien'], ['😐', 'Normal'], ['😩', 'Duro']];
+const diarioDe = f => (u().diario || {})[f] || {};
+function diarioCard(d) {
+  const e = diarioDe(d.fecha), fut = d.fecha > todayISO();
+  return `<div class="card diario"><b>📔 ¿Qué tal el día?</b>
+    <div class="caras">${CARAS.map(([c, t]) => `<button class="cara ${e.cara === c ? 'on' : ''}" data-cara="${d.fecha}|${c}"><span>${c}</span><small>${t}</small></button>`).join('')}</div>
+    <textarea data-diario="${d.fecha}" rows="5" placeholder="${fut ? 'Este día aún no ha llegado; puedes apuntar ideas.' : 'Qué hicisteis, lo mejor, anécdotas… (se guarda solo)'}">${esc(e.nota || '')}</textarea>
+    <div class="muted mini-nota">Solo en este móvil. Va incluido en Más → Datos → Exportar copia.</div></div>`;
+}
+function diarioResumen() {
+  const D = u().diario || {}, fs = Object.keys(D).filter(f => D[f] && (D[f].cara || D[f].nota)).sort();
+  if (!fs.length) return '';
+  return `<h2>📔 Diario</h2>${fs.map(f => { const dd = arr(trip.dias).find(x => x.fecha === f) || {};
+    return `<div class="card diario-r" data-diaf="${f}"><b>${D[f].cara || '📔'} ${fmtDate(f)}</b>${dd.ciudad ? ` <span class="muted">· ${esc(dd.ciudad)}</span>` : ''}${D[f].nota ? `<div>${esc(D[f].nota).replace(/\n/g, '<br>')}</div>` : ''}</div>`; }).join('')}`;
+}
 let hoySub = null;
 function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   let html = `<div class="hoy-top"><button class="sos" data-act="ayuda">🆘 Ayuda</button><div class="muted reloj" id="reloj">${relojes()}</div></div>` + ahora() + pendingAlert();
   const avisos = arr(trip.avisos);
-  if (avisos.length) html += `<details class="card avisos" data-key="avisos" ${abierto("avisos", false) ? "open" : ""}><summary><b>⚠️ Avisos (${avisos.length})</b></summary><ul>${avisos.map(a => `<li>${esc(a)}</li>`).join('')}</ul></details>`;
+  const avisosHTML = () => `<details class="card avisos" data-key="avisos" ${abierto("avisos", false) ? "open" : ""}><summary><b>⚠️ Avisos (${avisos.length})</b></summary><ul>${avisos.map(a => `<li>${esc(a)}</li>`).join('')}</ul></details>`;
   if (!dias.length) return html + '<p class="muted">El viaje no tiene días (clave "dias").</p>';
 
   if (dayIdx === null) {
@@ -352,11 +368,13 @@ function viewHoy() {
     if (t > dias[dias.length - 1].fecha) dayIdx = dias.length - 1;
   }
   dayIdx = Math.min(Math.max(dayIdx, 0), dias.length - 1);
-  const d = dias[dayIdx], hoy = todayISO();
+  const d = dias[dayIdx], hoy = todayISO(), enViaje = hoy >= dias[0].fecha;
+  // Ya en el viaje, los avisos (estaciones, buses) solo salen en los días con traslado.
+  if (avisos.length && (!enViaje || arr(trip.traslados).some(t => t.fecha === d.fecha))) html += avisosHTML();
 
   // Tira de días: se desliza y se toca el día.
   html += `<div class="dias-tira" id="tira">${dias.map((x, i) => { const f = new Date(x.fecha + 'T12:00:00');
-    return `<button class="dchip ${i === dayIdx ? 'on' : ''} ${x.fecha === hoy ? 'hoy' : ''}" data-dsel="${i}" style="${varsTema(ck(x.ciudad))}"><small>${f.toLocaleDateString('es-ES', { weekday: 'short' })}</small><b>${f.getDate()}</b><span>${tema(ck(x.ciudad)).ic}</span></button>`; }).join('')}</div>
+    return `<button class="dchip ${i === dayIdx ? 'on' : ''} ${x.fecha === hoy ? 'hoy' : ''} ${enViaje && x.fecha < hoy ? 'pasado' : ''}" data-dsel="${i}" style="${varsTema(ck(x.ciudad))}"><small>${f.toLocaleDateString('es-ES', { weekday: 'short' })}</small><b>${f.getDate()}</b><span>${diarioDe(x.fecha).cara || tema(ck(x.ciudad)).ic}</span></button>`; }).join('')}</div>
   ${(() => { const ls = listaDia(d), fw = ls.map(wikiDe).find(Boolean), tc = tema(ck(d.ciudad));
     return `<div class="card dia dia2" style="${varsTema(ck(d.ciudad))}">
     <div class="dia-banner">${fw ? `<div class="foto dia-foto" data-wiki="${esc(fw)}"><span></span></div>` : ''}
@@ -374,7 +392,8 @@ function viewHoy() {
     ['traslado', '🚆 Traslado', tr.map(trasladoCard).join('')],
     ['hotel', '🛏️ Hotel', (al.sale && al.sale !== al.noche ? alojCard(al.sale, true) : '') + (al.noche ? alojCard(al.noche, false) : '')],
     ['ciudad', '⭐ Ciudad', destacados(d.ciudad)],
-    ['manana', '⏭️ Mañana', manana(d, dias)]
+    ['manana', '⏭️ Mañana', manana(d, dias)],
+    ['diario', `${diarioDe(d.fecha).cara || '📔'} Diario`, diarioCard(d)]
   ].filter(s => s[2]);
   if (!secs.length) return html;
   const sel = secs.find(s => s[0] === hoySub) || (tr.length ? secs.find(s => s[0] === 'traslado') : null) || secs[0];
@@ -1694,7 +1713,7 @@ function viewMas() {
   else if (masSub === 'seguro') c = viewSeguro();
   else if (masSub === 'verificar') c = viewVerificar();
   else if (masSub === 'docs') c = viewFotos();
-  else if (masSub === 'notas') c = `<h2>📝 Notas</h2><textarea data-notas rows="10" placeholder="Escribe aquí… (se guarda solo)">${esc(u().notas)}</textarea>`;
+  else if (masSub === 'notas') c = `<h2>📝 Notas</h2><textarea data-notas rows="10" placeholder="Escribe aquí… (se guarda solo)">${esc(u().notas)}</textarea>${diarioResumen()}`;
   else c = `<h2>Datos del viaje</h2>
     <button data-act="import">📂 Importar viaje</button>
     <button class="sec" data-act="export">💾 Exportar copia</button>
@@ -1796,6 +1815,8 @@ document.addEventListener('click', e => {
     }
     return;
   }
+  const ca = e.target.closest('[data-cara]');
+  if (ca) { const [f, c] = ca.dataset.cara.split('|'), U = u(); U.diario = U.diario || {}; const o = U.diario[f] = U.diario[f] || {}; o.cara = o.cara === c ? '' : c; saveUser(); render(); return; }
   const mq = e.target.closest('[data-mpz],[data-mpfit],[data-mpyo],[data-mpcerrar],[data-mpcapa],[data-mpdia]');
   if (mq) {
     if (mq.dataset.mpcapa) { const c = mq.dataset.mpcapa; if (mpCapas.has(c)) mpCapas.delete(c); else mpCapas.add(c); render(); return; }
@@ -1849,6 +1870,8 @@ document.addEventListener('click', e => {
   if (pg) { platoGrupo = +pg.dataset.pg; render(); return; }
   const cs = e.target.closest('[data-csel]');
   if (cs) { ciudadSel = cs.dataset.csel; historiaAbierta = false; lpTodos = false; render(); return; }
+  const df = e.target.closest('[data-diaf]');
+  if (df) { const ds = arr(trip.dias).map(x => x.fecha).sort(); dayIdx = Math.max(0, ds.indexOf(df.dataset.diaf)); hoySub = 'diario'; ir('hoy'); render(); window.scrollTo(0, 0); return; }
   const dd = e.target.closest('[data-dia]');
   if (dd) { dayIdx = +dd.dataset.dia; ir('hoy'); render(); return; }
   if (e.target.closest('#tema')) { const o = ['auto', 'light', 'dark'], t0 = load(K_THEME, 'auto'); save(K_THEME, o[(o.indexOf(t0) + 1) % 3]); applyTheme(); return; }
@@ -1925,6 +1948,7 @@ document.addEventListener('input', e => {
     otro.value = !t.value || !c ? '' : t.dataset.conv === 'KRW' ? (v / c).toFixed(2) : Math.round(v * c);
   }
   else if (t.dataset.notas !== undefined) { u().notas = t.value; saveUser(); }
+  else if (t.dataset.diario) { const U = u(); U.diario = U.diario || {}; (U.diario[t.dataset.diario] = U.diario[t.dataset.diario] || {}).nota = t.value; saveUser(); }
   else if (t.dataset.cnota) { const U = u(); U.comer = U.comer || {}; (U.comer[t.dataset.cnota] = U.comer[t.dataset.cnota] || {}).nota = t.value; saveUser(); }
 });
 document.addEventListener('change', e => {

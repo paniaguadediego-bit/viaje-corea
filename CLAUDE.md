@@ -64,7 +64,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    primer sitio, fecha, título y tiempo), etiquetas con los sitios del día
    y nombres propios en negrita, y botones Sitios / Traslado / Hotel /
    Ciudad / Mañana bajo la tarjeta del día (hotel por fechas, no por ciudad),
-   resumen "Mañana", tarjeta "Ahora" (lo próximo con hora o cuenta
+   resumen "Mañana", "📔 Diario" (carita y nota por día en user.diario; resumen en Más → Notas;
+   en viaje, días pasados atenuados, avisos solo en días con traslado y sin avisos de compras pasadas), tarjeta "Ahora" (lo próximo con hora o cuenta
    atrás) y hora Corea/Canarias en Hoy, frases por situación en Corea, fotos y PDF de
    documentos/billetes en Más (IndexedDB, solo en el móvil; el PDF se
    abre con el visor del móvil). Gastos

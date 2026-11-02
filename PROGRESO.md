@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v76
+Caché del service worker: corea-v77
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -128,6 +128,7 @@ Caché del service worker: corea-v76
 - (sin versión nueva, solo trip.json privado): Mini Hotel 141 = 141미니호텔 (sin espacio), 경주시 원효로 141 (황오동), según webs coreanas (Yanolja, Trip.com, VisitKorea). Check-in 16:00. VERIFICAR en Naver.
 - v75 (propuestas 1 y 2; la 3, calendario .ics, descartada por el usuario): "🧳 Preparar para viajar" en Más → Datos y app (sustituye a "Descargar fotos") y como botón en la cuenta atrás de Hoy. Con wifi comprueba que los archivos de la app están en la caché offline (lista leída de sw.js; añade los que falten), fuerza el tiempo, baja el cambio (si no es manual), descarga fotos de 6 en 6 (y la foto grande de cada banner de día) y avisa si no hay copia exportada. Resumen ✓/◐/⚠️ guardado en corea.prep. "🆘 Ayuda" (botón rojo arriba en Hoy, a pantalla completa): hotel de esta noche (de madrugada, el de la noche anterior; antes del viaje, el primer hotel) con "<hotel>로 가 주세요" o, sin hangul, la dirección coreana en grande con "이 주소로 가 주세요"; Naver y copiar; botones de llamada 112, 119, 1330 (02-1330 con móvil extranjero); teléfono y póliza del seguro (de trip.json, solo en el móvil); Embajada de España en Seúl: oficina +82 2-794-3581 y urgencia consular +82 10-3793-5706 según la web de la Embajada, con VERIFICAR porque la lista del Ministerio da +82 10-793-5706.
 - v76: mapa interactivo propio (sin librerías). En Ciudades, botón "🗺️ Mapa" junto a Historia: puntos de colores por capa (🔴 itinerario con el día del mes, 🔵 más sitios LP/guía, 🟠 Comer sin descartados ni cerrados, 🟣 Planes, ⬛ hotel), chips para encender/apagar capas. En Hoy → Sitios, "🗺️ Mapa" en la Ruta del día: hotel y sitios numerados en orden de visita unidos por una línea. Arrastrar, pellizcar, +/−, ⤢ ver todo, 📍 dónde estoy (GPS, funciona sin datos). Tocar un punto: ficha con hangul, descripción, distancia y tiempo desde el hotel, 🧭 Ruta y Naver. Fondo: calles de OpenStreetMap con conexión (proyección Web Mercator, teselas 256 px, zoom 11-18, modo oscuro invertido); el service worker guarda en 'corea-mapa' solo las teselas ya vistas (la política de OSM no permite descargas masivas), así que sin conexión se ven los puntos sobre fondo liso y las calles de las zonas que se hayan mirado antes. [Supuesto] Al abrir el mapa de ciudad se encuadra el itinerario; si queda por debajo de zoom 14, se centra en el hotel a zoom 14 (⤢ muestra todo). No se pudo probar con teselas reales (OSM bloqueado desde el entorno de pruebas): se probó con teselas simuladas.
+- v77 (propuestas 4 y 8; el usuario confirma que el mapa de Hoy está bien como está): Diario en Hoy, botón "📔 Diario" bajo la tarjeta del día: carita (😍 Genial, 🙂 Bien, 😐 Normal, 😩 Duro) y nota libre por día en user.diario[fecha] = {cara, nota} (solo en el móvil; va en Exportar copia). La carita sustituye al icono de la ciudad en la tira de días y en el botón. Más → Notas muestra debajo el diario completo; tocar un día abre su diario en Hoy. El usuario eligió solo nota y carita (sin fotos ni "lo mejor del día"). Hoy en viaje: los traslados por comprar de fechas pasadas ya no avisan; los avisos (estaciones, buses) solo salen en días con traslado; los días pasados de la tira salen atenuados. La cuenta atrás ya desaparecía sola al empezar el viaje.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
@@ -181,7 +182,7 @@ Recomendadas antes de salir (1, 2 y 3). Hechas en v75: 1 y 2. La 3 descartada po
 1. Botón "Preparar para viajar": con wifi descarga fotos, tiempo y cambio y comprueba la caché offline; muestra un resumen (✓ N fotos · ✓ tiempo hasta X · ✓ cambio).
 2. Tarjeta "🆘 Ayuda" a un toque desde Hoy: hotel de esa noche en hangul grande con dirección, 112 / 119 / 1330, teléfono del seguro y Embajada de España en Seúl (VERIFICAR teléfono).
 3. Exportar a calendario (.ics): vuelos, trenes, check-ins y reservas (Sky Capsule), con alarmas del móvil que funcionan sin la app y sin conexión. Necesita el trip.json.
-Durante el viaje:
+Durante el viaje (4 y 8 hechas en v77):
 4. Diario del día en Hoy (nota, foto, carita).
 5. Compartir marcas con Cristina (pasar visitados, notas, añadidos y valoraciones a su móvil).
 6. "Antes de salir" en días de traslado (pasaporte, cargadores, T-money, pagar hotel, hora del tren).
