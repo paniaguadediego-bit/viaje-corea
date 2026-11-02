@@ -441,7 +441,7 @@ const WIKI = {
   '경기전': 'Gyeonggijeon', '전주향교': 'Jeonju_Hyanggyo', '풍남문': 'Pungnammun', '오목대': 'Omokdae', '모악산도립공원': 'Moaksan'
 };
 // Alias para reconocer sitios en el texto del itinerario cuando el nombre no basta.
-const ALIAS = { '서울역사박물관': ['museo de historia'], '전주한옥마을': ['hanok village'], 'N서울타워': ['n seoul tower', 'namsan'], '동궁과 월지': ['donggung', 'wolji'],
+const ALIAS = { '서울역사박물관': ['museo de historia'], '국립중앙박물관': ['museo nacional de corea'], '전주한옥마을': ['hanok village'], 'N서울타워': ['n seoul tower', 'namsan'], '동궁과 월지': ['donggung', 'wolji'],
   '대릉원': ['daereungwon', 'cheonmachong'], '안동 하회마을': ['hahoe'], '하회마을': ['hahoe'], '해운대해수욕장': ['playa de haeundae'], '전동성당': ['jeondong'],
   '황리단길': ['hwangnidan'], '국립경주박물관': ['museo nacional de gyeongju'] };
 

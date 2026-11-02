@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v83';
+const VERSION = 'v84';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -145,7 +145,7 @@ const IC_COMER = { restaurante: '🍲', 'café': '☕', mercado: '🧺', plato: 
 const tipoClase = t => 'tipo-' + norm(t || 'otro');
 
 // ---------- ¿Está en nuestro itinerario? (y qué día) ----------
-const STOP = new Set('palacio templo mercado aldea barrio calle parque museo nacional gruta observatorio tumulos playa estanque santuario catedral cafe restaurante hanok village puerta mirador academia escuela torre puente plaza estacion aeropuerto cultural tradicional folclorica comida callejera puestos desayuno platos probar seul seoul andong gyeongju busan jeonju incheon corea hotel seowon square market para con los las del una tumbas reales hall center centro comercial historia moderna arte murales teleferico tour city turistico bus cafes wonjo halmae gukbap milmyeon jjimdak bibimbap samgyeopsal bakery calle viejo rocas yongsan'.split(' '));
+const STOP = new Set('sauna palacio templo mercado aldea barrio calle parque museo nacional gruta observatorio tumulos playa estanque santuario catedral cafe restaurante hanok village puerta mirador academia escuela torre puente plaza estacion aeropuerto cultural tradicional folclorica comida callejera puestos desayuno platos probar seul seoul andong gyeongju busan jeonju incheon corea hotel seowon square market para con los las del una tumbas reales hall center centro comercial historia moderna arte murales teleferico tour city turistico bus cafes wonjo halmae gukbap milmyeon jjimdak bibimbap samgyeopsal bakery calle viejo rocas yongsan'.split(' '));
 let _plan = null, _planTrip = null;
 function planIdx() {
   if (_plan && _planTrip === trip) return _plan;
