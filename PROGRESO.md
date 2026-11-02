@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v58
+Caché del service worker: corea-v59
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -105,6 +105,7 @@ Caché del service worker: corea-v58
 - v56: fotos (Wikipedia) para los 59 sitios que no tenían: 47 de Ciudades (WIKI en contenido.js) y los 12 de Planes (campo wiki; foto ancha arriba de cada ficha). Para empresas (T1, Olive Young, Daiso, Lotte, Shinsegae) la foto es la del artículo de la marca (puede ser el logo); spas → artículo Jjimjilbang; lavanderías → Laundromat (foto genérica). "Descargar fotos" de Más incluye ya Planes y LP. [Supuesto] Títulos de Wikipedia no comprobados (la red de pruebas no llega a Wikipedia): si alguno no existe, se queda el icono.
 - v57: Más rediseñado como la Guía de Corea: rejilla de 7 iconos (Maleta, Checklist, Seguro, Verificar con nº de pendientes, Documentos, Notas, Datos y app) y el contenido del elegido debajo. Las antiguas pestañas checklist/seguro/verificar redirigen a Más con ese icono marcado.
 - v58: Planes: Mundial de LoL plegado (desplegable); LoL / Cosmética / Lavandería son botones como los de Corea y debajo salen solo los sitios del elegido. Más: las casillas (Maleta, Checklist) las marca la app al tocar la fila o la casilla (el toque se perdía en el móvil al redibujar), igual que se hizo con los desplegables.
+- v59: Hoy rediseñado para navegar mejor: tira deslizable de días (fecha, día de la semana e icono de ciudad; se toca para saltar; hoy con borde), tarjeta del día y debajo botones como los de Corea (📖 Sitios, 🚆 Traslado, 🛏️ Hotel, ⭐ Ciudad, ⏭️ Mañana; solo los que tienen contenido; por defecto Traslado si lo hay). Arreglo: el hotel salía duplicado (se filtraba por ciudad); ahora se calcula por fechas: el de esa noche y, si se deja ese día, "Hoy dejáis este alojamiento". Aviso rojo de compras en una sola línea ("Por comprar: 15 nov Busan → Jeonju…", lleva a Ruta). "Falta 1 día".
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

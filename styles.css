@@ -601,3 +601,18 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .pcats { margin-top: 4px; }
 .pcats button { font-size: .85rem; padding: 6px 4px; min-height: 36px; }
 .lista-check .check { cursor: pointer; -webkit-tap-highlight-color: rgba(0,71,160,.12); }
+
+.dias-tira { display: flex; gap: 6px; overflow-x: auto; padding: 4px 2px 8px; margin: 2px 0 2px; scrollbar-width: none; scroll-behavior: smooth; }
+.dias-tira::-webkit-scrollbar { display: none; }
+.dchip { flex: 0 0 auto; width: 48px; min-height: 0; margin: 0; padding: 5px 0; display: flex; flex-direction: column; align-items: center; gap: 1px;
+  background: var(--card) !important; color: var(--fg); border: 1px solid var(--line); box-shadow: none; border-radius: 12px; font-weight: 500; }
+.dchip small { font-size: .62rem; text-transform: uppercase; color: var(--muted); }
+.dchip b { font-size: 1.05rem; line-height: 1.1; }
+.dchip span { font-size: .8rem; }
+.dchip.on { background: linear-gradient(160deg, var(--c1, #0047a0), var(--c2, #cd2e3a)) !important; color: #fff; border-color: transparent; }
+.dchip.on small { color: rgba(255,255,255,.85); }
+.dchip.hoy:not(.on) { border: 2px solid var(--blue); }
+.hoysubs { gap: 4px; margin-top: 6px; }
+.hoysubs button { font-size: .74rem; padding: 6px 2px; min-height: 36px; letter-spacing: -.02em; }
+.aloj .badge { margin: 2px 0; }
+.alert.compacta { padding: 6px 10px; font-size: .85em; text-align: center; cursor: pointer; }

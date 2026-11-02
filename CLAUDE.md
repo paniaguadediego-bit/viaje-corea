@@ -42,6 +42,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    "hace X h") en la tarjeta del día de Hoy y en cada día de Ruta,
    destacados de la ciudad en Hoy, lista
    Verificar (marca "✓ verificado" en el móvil), botón "Naver" (abre Naver Map, requiere conexión),
+   Hoy con tira deslizable de días y botones Sitios / Traslado / Hotel /
+   Ciudad / Mañana bajo la tarjeta del día (hotel por fechas, no por ciudad),
    resumen "Mañana", tarjeta "Ahora" (lo próximo con hora o cuenta
    atrás) y hora Corea/Canarias en Hoy, frases por situación en Corea, fotos y PDF de
    documentos/billetes en Más (IndexedDB, solo en el móvil; el PDF se

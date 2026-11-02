@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v58';
+const VERSION = 'v59';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -311,13 +311,27 @@ function viewWelcome() {
   </div>`;
 }
 
+// "Hanok Hanji Ggulkam (Jeonju)" -> "Jeonju"
+const ciudadCorta = t => { const m = String(t || '').match(/\(([^)]+)\)/); return m ? m[1] : String(t || ''); };
 function pendingAlert() {
   const p = arr(trip.traslados).filter(isPend);
   if (!p.length) return '';
-  return `<div class="alert" data-go="ruta">⚠️ Traslados PENDIENTES DE COMPRAR:
-    <ul>${p.map(t => `<li>${esc(t.fecha)} · ${esc(t.de)} → ${esc(t.a)}</li>`).join('')}</ul></div>`;
+  return `<div class="alert compacta" data-go="ruta">⚠️ Por comprar: ${p.map(t => `${esc(fmtCorto(t.fecha))} ${esc(ciudadCorta(t.de))} → ${esc(ciudadCorta(t.a))}`).join(' · ')} <span class="muted">›</span></div>`;
 }
 
+// Alojamiento de la noche de una fecha ("2026-11-04 a 2026-11-08": noches del 4 al 7) y el que se deja ese día.
+function alojDe(f) {
+  const r = arr(trip.alojamientos).map(a => { const [ini, fin] = String(a.fechas || '').split(' a ').map(x => x.trim()); return { a, ini, fin: fin || (ini ? sumaDia(ini, Number(a.noches) || 1) : '') }; });
+  return { noche: (r.find(x => x.ini && x.ini <= f && f < x.fin) || {}).a, sale: (r.find(x => x.fin === f) || {}).a };
+}
+const alojCard = (a, sale) => `<div class="card aloj">
+    <div class="big">🛏️ ${esc(a.nombre)} ${ver(a)}</div>${sale ? '<div class="badge pend">Hoy dejáis este alojamiento</div>' : ''}
+    ${a.ko ? `<div class="ko">${esc(a.ko)}</div>` : ''}
+    ${a.direccion_ko ? `<div>${esc(a.direccion_ko)}</div>` : ''}
+    ${a.direccion_en ? `<div class="muted">${esc(a.direccion_en)}</div>` : ''}
+    ${a.nota ? `<div class="muted">${esc(a.nota)}</div>` : ''}
+    <div class="acciones">${naver(a)}</div></div>`;
+let hoySub = null;
 function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   let html = `<div class="muted reloj" id="reloj">${relojes()}</div>` + ahora() + pendingAlert();
@@ -332,36 +346,31 @@ function viewHoy() {
     if (t > dias[dias.length - 1].fecha) dayIdx = dias.length - 1;
   }
   dayIdx = Math.min(Math.max(dayIdx, 0), dias.length - 1);
-  const d = dias[dayIdx];
-  const esHoy = d.fecha === todayISO();
+  const d = dias[dayIdx], hoy = todayISO();
 
-  html += `<div class="daynav row">
-    <button class="sec" data-day="-1" ${dayIdx === 0 ? 'disabled' : ''}>◀</button>
-    <div class="label">Día ${/^\d+$/.test(String(d.dia ?? '')) ? esc(d.dia) : dayIdx + 1} de ${dias.length}${d.dia && !/^\d+$/.test(String(d.dia)) ? ' · ' + esc(d.dia) : ''}${esHoy ? '<br>HOY' : ''}</div>
-    <button class="sec" data-day="1" ${dayIdx === dias.length - 1 ? 'disabled' : ''}>▶</button>
-  </div>
+  // Tira de días: se desliza y se toca el día.
+  html += `<div class="dias-tira" id="tira">${dias.map((x, i) => { const f = new Date(x.fecha + 'T12:00:00');
+    return `<button class="dchip ${i === dayIdx ? 'on' : ''} ${x.fecha === hoy ? 'hoy' : ''}" data-dsel="${i}" style="${varsTema(ck(x.ciudad))}"><small>${f.toLocaleDateString('es-ES', { weekday: 'short' })}</small><b>${f.getDate()}</b><span>${tema(ck(x.ciudad)).ic}</span></button>`; }).join('')}</div>
   <div class="card dia" style="${varsTema(ck(d.ciudad))}">
-    <div class="muted">${tema(ck(d.ciudad)).ic} ${fmtDate(d.fecha)} · ${esc(d.ciudad)}</div>
+    <div class="muted">Día ${dayIdx + 1} de ${dias.length} · ${fmtDate(d.fecha)} · ${esc(d.ciudad)}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</div>
     <div class="big">${esc(d.titulo)}</div>
     ${lineaTiempo(d)}
     <ul class="items">${arr(d.items).map(i =>
       `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${resaltar(i.texto)}</li>`).join('')}</ul>
-  </div>
-  ${sitiosDia(d)}
-  ${destacados(d.ciudad)}`;
+  </div>`;
 
-  const tr = arr(trip.traslados).filter(t => t.fecha === d.fecha);
-  if (tr.length) html += '<h2>Traslado de hoy</h2>' + tr.map(trasladoCard).join('');
-
-  const aloj = arr(trip.alojamientos).filter(a => a.ciudad && a.ciudad === d.ciudad);
-  if (aloj.length) html += '<h2>Alojamiento</h2>' + aloj.map(a => `<div class="card">
-    <div class="big">${esc(a.nombre)} ${ver(a)}</div>
-    ${a.ko ? `<div class="ko">${esc(a.ko)}</div>` : ''}
-    ${a.direccion_ko ? `<div>${esc(a.direccion_ko)}</div>` : ''}
-    ${a.direccion_en ? `<div class="muted">${esc(a.direccion_en)}</div>` : ''}
-    ${a.nota ? `<div class="muted">${esc(a.nota)}</div>` : ''}
-    <div class="acciones">${naver(a)}</div></div>`).join('');
-  return html + manana(d, dias);
+  // Apartados del día como botones (como en Corea); solo los que tienen algo.
+  const tr = arr(trip.traslados).filter(t => t.fecha === d.fecha), al = alojDe(d.fecha);
+  const secs = [
+    ['sitios', '📖 Sitios', sitiosDia(d)],
+    ['traslado', '🚆 Traslado', tr.map(trasladoCard).join('')],
+    ['hotel', '🛏️ Hotel', (al.sale && al.sale !== al.noche ? alojCard(al.sale, true) : '') + (al.noche ? alojCard(al.noche, false) : '')],
+    ['ciudad', '⭐ Ciudad', destacados(d.ciudad)],
+    ['manana', '⏭️ Mañana', manana(d, dias)]
+  ].filter(s => s[2]);
+  if (!secs.length) return html;
+  const sel = secs.find(s => s[0] === hoySub) || (tr.length ? secs.find(s => s[0] === 'traslado') : null) || secs[0];
+  return html + `<div class="row daynav hoysubs">${secs.map(([k, t]) => `<button class="${k === sel[0] ? '' : 'sec'}" data-hs="${k}">${t}</button>`).join('')}</div>${sel[2]}`;
 }
 
 // "Ahora": lo próximo que toca hoy (o la cuenta atrás antes del viaje).
@@ -381,7 +390,7 @@ function ahora() {
   const hoy = todayISO(), n = new Date(), nowM = n.getHours() * 60 + n.getMinutes();
   if (hoy < dias[0]) {
     const falta = Math.round((new Date(dias[0] + 'T12:00') - new Date(hoy + 'T12:00')) / 864e5);
-    return `<div class="card ahora"><b>✈️ Faltan ${falta} ${falta === 1 ? 'día' : 'días'} para el viaje</b><div class="muted">Sale el ${fmtDate(dias[0])}. Revisa Más → Maleta y documentos.</div></div>`;
+    return `<div class="card ahora"><b>✈️ ${falta === 1 ? 'Falta' : 'Faltan'} ${falta} ${falta === 1 ? 'día' : 'días'} para el viaje</b><div class="muted">Sale el ${fmtDate(dias[0])}. Revisa Más → Maleta y documentos.</div></div>`;
   }
   if (hoy > dias[dias.length - 1]) return '';
   const [d, ev] = eventosDe(hoy);
@@ -1367,6 +1376,7 @@ function render() {
   }
   $('#view').innerHTML = html;
   if (['ciudades', 'hoy', 'comer', 'planes'].includes(tab)) pintarFotos();
+  const ch = tab === 'hoy' && document.querySelector('#tira .dchip.on'); if (ch) ch.parentElement.scrollLeft = ch.offsetLeft - ch.parentElement.clientWidth / 2 + ch.offsetWidth / 2;
 }
 
 document.addEventListener('click', e => {
@@ -1454,6 +1464,10 @@ document.addEventListener('click', e => {
   const hc = e.target.closest('[data-hc]');
   if (hc) { if (hc.dataset.leido !== undefined) { const U = u(); U.leidos = U.leidos || {}; U.leidos[hc.dataset.leido] = 1; saveUser(); }
     histCap = hc.dataset.hc === 'ind' ? null : +hc.dataset.hc; render(); window.scrollTo(0, 0); return; }
+  const ds = e.target.closest('[data-dsel]');
+  if (ds) { dayIdx = +ds.dataset.dsel; render(); return; }
+  const hs = e.target.closest('[data-hs]');
+  if (hs) { hoySub = hs.dataset.hs; render(); return; }
   const ms = e.target.closest('[data-ms]');
   if (ms) { masSub = ms.dataset.ms; render(); return; }
   const pk = e.target.closest('[data-pcat]');
