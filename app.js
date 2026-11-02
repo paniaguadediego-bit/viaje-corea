@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v68';
+const VERSION = 'v69';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1216,19 +1216,20 @@ function viewComer() {
   const chip = (attr, v, t, on) => `<button class="chip ${on ? 'on' : ''}" ${attr}="${esc(v)}">${esc(t)}</button>`;
   const opt = (v, t, on) => `<option value="${esc(v)}" ${on ? 'selected' : ''}>${esc(t)}</option>`;
   const glosario = typeof PLATOS === 'undefined' ? '' : `<div class="glosario">
-      <button class="sec glos-btn" data-act="platos">📖 Glosario de platos (Lonely Planet) ${verPlatos ? '▾' : '▸'}</button>
+      <button class="sec glos-btn" data-act="platos">📖 Glosario de platos ${lpPill({ lp: 1 })} ${verPlatos ? '▾' : '▸'}</button>
       ${verPlatos ? `<div class="chips">${PLATOS.map(([t], gi) => `<button class="chip ${gi === platoGrupo ? 'on' : ''}" data-pg="${gi}">${esc(t)}</button>`).join('')}</div>
         <div class="muted">Toca un plato para enseñárselo al camarero.</div>
         ${(PLATOS[platoGrupo] || PLATOS[0])[1].map((p, i) => `<div class="card plato" data-full="p:${platoGrupo}:${i}"><div><b>${esc(p[0])}</b><div class="muted">${esc(p[2])}</div></div><div class="ko">${esc(p[1])}</div></div>`).join('')}` : ''}
     </div>`;
-  return glosario + `<div class="par filtros">
-      <select data-sc aria-label="Ciudad">${opt('todas', '🗺️ Todas las ciudades', comerCiudad === 'todas')}${CIUDADES_COMER.map(([k, t]) => opt(k, `${tema(k).ic} ${t}${k === ck(ciudadActual()) ? ' (hoy)' : ''}`, comerCiudad === k)).join('')}</select>
-      <select data-st aria-label="Tipo">${TIPOS.map(t => { const nt = lugaresComer().filter(l => (comerCiudad === 'todas' || l.ciudad === comerCiudad) && (t === 'todos' || l.tipo === t)).length;
-        return t !== 'todos' && !nt && comerTipo !== t ? '' : opt(t, (t === 'todos' ? '🍽️ Todo tipo' : `${IC_COMER[t] || ''} ${t[0].toUpperCase() + t.slice(1)}`) + ` (${nt})`, comerTipo === t); }).join('')}</select>
-    </div>
-    <div class="chips">${chip('data-ce', 'todos', 'Todos', comerEstado === 'todos')}${chip('data-ce', 'quiero', `⭐ Quiero (${n('quiero')})`, comerEstado === 'quiero')}${chip('data-ce', 'visitado', `✅ Visitados (${n('visitado')})`, comerEstado === 'visitado')}${chip('data-ce', 'pendiente', 'Sin marcar', comerEstado === 'pendiente')}</div>
-    <div class="orden"><span class="muted">${lista.length} lugares · Ordenar:</span>
-      ${[['rec', 'Recomendado'], ['dist', 'Distancia'], ['val', 'Mi valoración']].map(([k, t]) => chip('data-co', k, t, comerOrden === k)).join('')}</div>
+  const enC = l => comerCiudad === 'todas' || l.ciudad === comerCiudad;
+  const tipos = TIPOS.slice(1).map(t => [t, lugaresComer().filter(l => enC(l) && l.tipo === t).length]).filter(([t, nt]) => nt || comerTipo === t);
+  const ord = { rec: '⭐ Recomendado', dist: '📍 Cerca del hotel', val: '★ Mi valoración' }, sigOrd = { rec: 'dist', dist: 'val', val: 'rec' };
+  return `<div class="cc-row">${[['todas', 'Todas', '🗺️'], ...CIUDADES_COMER.map(([k, t]) => [k, t, tema(k).ic])].map(([k, t, ic]) =>
+      `<button class="cbtn ${comerCiudad === k ? 'on' : ''}" ${k !== 'todas' ? `style="${varsTema(k)}"` : ''} data-cc="${k}"><span>${ic}</span>${esc(t)}</button>`).join('')}</div>
+    <div class="chips tipos-c">${chip('data-ct', 'todos', `🍽️ Todo (${lugaresComer().filter(enC).length})`, comerTipo === 'todos')}${tipos.map(([t, nt]) => chip('data-ct', t, `${IC_COMER[t] || ''} ${t[0].toUpperCase() + t.slice(1)} (${nt})`, comerTipo === t)).join('')}</div>
+    <div class="chips estados-c">${chip('data-ce', 'todos', 'Todos', comerEstado === 'todos')}${chip('data-ce', 'quiero', `⭐ ${n('quiero')}`, comerEstado === 'quiero')}${chip('data-ce', 'visitado', `✅ ${n('visitado')}`, comerEstado === 'visitado')}${chip('data-ce', 'pendiente', 'Sin marcar', comerEstado === 'pendiente')}</div>
+    ${glosario}
+    <div class="c2-cuenta"><span class="muted">${lista.length} lugares</span><button class="chip orden-btn" data-co="${sigOrd[comerOrden] || 'rec'}">↕ ${ord[comerOrden] || ord.rec}</button></div>
     ${lista.map(cardComer).join('') || '<p class="muted">No hay lugares con este filtro.</p>'}
     ${comerForm ? formComer() : '<button class="sec" data-act="comer-nuevo">＋ Añadir lugar</button>'}`;
 }
@@ -1252,29 +1253,34 @@ function ordenarComer(ls) {
 function cardComer(l) {
   const id = String(l.id ?? ''), e = estadoDe(id), q = l.ko || l.nombre || '';
   const ciudad = (CIUDADES_COMER.find(c => c[0] === l.ciudad) || [])[1] || l.ciudad || '';
-  const cinta = { quiero: '⭐ QUIERO IR', visitado: '✅ VISITADO', descartado: 'DESCARTADO', cerrado: '🚫 CERRADO' }[e.estado];
-  return `<div class="card comer ${tipoClase(l.tipo)} est-${esc(e.estado || '')}">
-    ${cinta ? `<div class="cinta">${cinta}</div>` : ''}
-    <div class="big"><span class="ic-tipo">${IC_COMER[l.tipo] || '🍽️'}</span> ${esc(l.nombre || 'Sin nombre')}${lpPill(l)}</div>${planBadge(l)}
-    ${wikiDe(l) ? `<div class="foto banda" data-wiki="${esc(wikiDe(l))}"><span>📷</span></div>` : ''}
-    ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : ''}
-    <div class="muted">${[l.tipo, l.plato].filter(Boolean).map(esc).join(' · ')}${ciudad && comerCiudad === 'todas' ? ' · ' + esc(ciudad) : ''}${distHotel(l, l.ciudad)}</div>
-    ${l.precio ? `<div>💰 ${esc(l.precio)}${precioEur(l.precio)}</div>` : ''}${l.horario ? `<div>🕒 ${esc(l.horario)}</div>` : ''}
-    ${l.direccion ? `<div class="muted">📍 ${esc(l.direccion)}</div>` : ''}
-    ${l.nota ? `<div class="muted">${esc(l.nota)}</div>` : ''}
-    <div class="muted">Fuente: ${esc(FUENTES[l.fuente] || l.fuente || '—')}${l.url ? ` · <a href="${esc(l.url)}" target="_blank" rel="noopener">enlace</a>` : ''}</div>
-    ${l.comprobado ? `<div class="comprobado c-${esc(String(l.comprobado.estado || '').replace(/\s+/g, '-'))}">🔎 ${esc({ activo: 'Abierto según fuentes recientes', existe: 'Aparece en listados actuales', dudoso: 'Dudoso', 'no encontrado': 'No encontrado' }[l.comprobado.estado] || l.comprobado.estado)} (revisado ${esc(l.comprobado.fecha || '')})${l.comprobado.nota ? ': ' + esc(l.comprobado.nota) : ''}${l.comprobado.fuente ? ` · <a href="${esc(l.comprobado.fuente)}" target="_blank" rel="noopener">fuente</a>` : ''}</div>` : ''}
-    <div>${verificado('k:' + id) ? '<span class="badge ok">✓ verificado</span>' : '<span class="ver">VERIFICAR que sigue abierto</span>'}
-      <button class="sec mini verif" data-verif="k:${esc(id)}">${verificado('k:' + id) ? 'Deshacer' : '✓ Verificado'}</button></div>
-    <div class="acciones">
-      ${l.ko ? `<button class="sec mini" data-copy="${esc(l.ko)}">📋 Copiar coreano</button>` : ''}
-      <button class="mini" data-full="k:${esc(id)}">Enseñar</button>
-      ${q ? `<a class="btn sec mini" href="https://map.naver.com/p/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">🗺️ Naver</a>` : ''}
-      ${l.fuente === 'propio' ? `<button class="sec mini" data-delcomer="${esc(id)}">✕</button>` : ''}
+  const w = wikiDe(l), meta = [l.plato, l.precio ? '💰 ' + l.precio + precioEur(l.precio).replace(/<[^>]+>/g, '') : '', l.horario ? '🕒 ' + l.horario : '', comerCiudad === 'todas' ? ciudad : ''].filter(Boolean);
+  const comp = l.comprobado ? { activo: '🟢 Abierto (fuentes recientes)', existe: '🟡 En listados actuales', dudoso: '🟠 Dudoso', 'no encontrado': '🔴 No encontrado' }[l.comprobado.estado] : '';
+  return `<div class="card comer c2 ${tipoClase(l.tipo)} est-${esc(e.estado || '')}">
+    <div class="c2-top">
+      ${w ? `<div class="foto mini c2-foto" data-wiki="${esc(w)}"><span>${IC_COMER[l.tipo] || '🍽️'}</span></div>` : `<div class="c2-ic">${IC_COMER[l.tipo] || '🍽️'}</div>`}
+      <div class="c2-txt">
+        <div class="c2-nom"><b>${esc(l.nombre || 'Sin nombre')}</b>${lpPill(l)}</div>
+        <div class="c2-sub">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, l.ciudad)}</div>
+        ${meta.length ? `<div class="c2-meta">${meta.map(esc).join(' · ')}</div>` : ''}
+        ${planBadge(l)}${comp ? `<span class="c2-comp">${comp}</span>` : ''}
+      </div>
     </div>
-    <div class="chips estados">${ESTADOS.map(([k, t]) => `<button class="chip ${e.estado === k ? 'on' : ''} e-${k}" data-est="${esc(id)}" data-v="${k}">${k === 'quiero' ? '⭐ ' : ''}${t}</button>`).join('')}</div>
-    <div class="estrellas">Mi valoración: ${[1, 2, 3, 4, 5].map(v => `<button class="star ${(Number(e.val) || 0) >= v ? 'on' : ''}" data-val="${esc(id)}" data-n="${v}" aria-label="${v} estrellas">★</button>`).join('')}</div>
-    <textarea data-cnota="${esc(id)}" rows="1" placeholder="Nota propia…">${esc(e.nota || '')}</textarea>
+    <div class="c2-acc">
+      ${ESTADOS.map(([k, t]) => `<button class="c2-est ${e.estado === k ? 'on' : ''} e-${k}" data-est="${esc(id)}" data-v="${k}" title="${t}">${{ quiero: '⭐', visitado: '✅', descartado: '👎', cerrado: '🚫' }[k]}<small>${t}</small></button>`).join('')}
+      <button class="mini" data-full="k:${esc(id)}">Enseñar</button>
+      ${q ? `<a class="btn sec mini" href="https://map.naver.com/p/search/${encodeURIComponent(q)}" target="_blank" rel="noopener">🗺️</a>` : ''}
+    </div>
+    <details class="c2-mas" data-key="cm:${esc(id)}" ${abierto('cm:' + id, false) ? 'open' : ''}><summary>Más detalles${e.nota ? ' · 📝' : ''}${Number(e.val) ? ' · ' + '★'.repeat(Number(e.val)) : ''}</summary>
+      ${l.direccion ? `<div class="muted">📍 ${esc(l.direccion)}</div>` : ''}
+      ${l.nota ? `<div class="muted">${esc(l.nota)}</div>` : ''}
+      <div class="muted">Fuente: ${esc(FUENTES[l.fuente] || l.fuente || '—')}${l.url ? ` · <a href="${esc(l.url)}" target="_blank" rel="noopener">enlace</a>` : ''}</div>
+      ${l.comprobado && l.comprobado.nota ? `<div class="muted">🔎 ${esc(l.comprobado.nota)}${l.comprobado.fecha ? ' (' + esc(l.comprobado.fecha) + ')' : ''}</div>` : ''}
+      <div>${verificado('k:' + id) ? '<span class="badge ok">✓ verificado</span>' : '<span class="ver">VERIFICAR que sigue abierto</span>'}
+        <button class="sec mini verif" data-verif="k:${esc(id)}">${verificado('k:' + id) ? 'Deshacer' : '✓ Verificado'}</button></div>
+      <div class="estrellas">Mi valoración: ${[1, 2, 3, 4, 5].map(v => `<button class="star ${(Number(e.val) || 0) >= v ? 'on' : ''}" data-val="${esc(id)}" data-n="${v}" aria-label="${v} estrellas">★</button>`).join('')}</div>
+      <textarea data-cnota="${esc(id)}" rows="1" placeholder="Nota propia…">${esc(e.nota || '')}</textarea>
+      <div class="acciones">${l.ko ? `<button class="sec mini" data-copy="${esc(l.ko)}">📋 Copiar coreano</button>` : ''}${l.fuente === 'propio' ? `<button class="sec mini" data-delcomer="${esc(id)}">✕ Borrar</button>` : ''}</div>
+    </details>
   </div>`;
 }
 

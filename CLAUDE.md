@@ -174,7 +174,11 @@ SX Comer (independiente): data/comer.json precacheado; pestaña
    Comer con filtro por ciudad (por defecto la del día) y tipo;
    tarjeta con hangul, precio, horario, fuente y "VERIFICAR que
    sigue abierto"; Copiar coreano, Enseñar, Naver; estado y nota
-   por lugar; "Añadir lugar". (El botón "Comer en <ciudad>" de Hoy
+   por lugar; "Añadir lugar". Diseño compacto (v69): botones de ciudad
+   como Ciudades, chips de tipo con recuento, chips de estado, orden con
+   un botón; tarjeta con foto o icono, nombre, hangul, distancia y una
+   línea de datos; botones ⭐ ✅ 👎 🚫, Enseñar y Naver; el resto en
+   "Más detalles". (El botón "Comer en <ciudad>" de Hoy
    se quitó: Comer ya filtra por la ciudad del día.)
 
 ## Pruebas mínimas por sesión
