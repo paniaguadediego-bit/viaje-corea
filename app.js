@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v62';
+const VERSION = 'v63';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -456,9 +456,7 @@ function listaDia(d) {
   const k = ck(d.ciudad), A = agendaVer(d.fecha), todos = sitiosCiudadObj(k);
   const auto = autoDia(d).filter(l => !A.del.includes(hKey(l)));
   const extra = A.add.map(h => todos.find(l => hKey(l) === h)).filter(l => l && !auto.includes(l));
-  let ls = [...auto, ...extra];
-  if (A.orden) ls.sort((a, b) => { const ia = A.orden.indexOf(hKey(a)), ib = A.orden.indexOf(hKey(b)); return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib); });
-  return ls;
+  return [...auto, ...extra];
 }
 // Días en que un sitio está en la agenda (itinerario sin quitar + añadidos).
 function diasDeSitio(l, k) {
@@ -483,17 +481,36 @@ function agendaToggle(h, f) {
   saveUser();
 }
 
+// Cómo ir de un punto a otro: distancia en línea recta, tiempo aproximado y ruta en la app de Naver Map.
+function tramo(o, dst, nO, nD) {
+  if (!o || !dst) return '';
+  const k = km(o, dst), pie = k <= 1.6, min = pie ? Math.max(2, Math.round(k * 1.3 / 4.5 * 60)) : Math.round(k * 1.3 / 22 * 60 + 8);
+  const modo = pie ? 'walk' : 'public';
+  const url = `nmap://route/${modo}?slat=${o[0]}&slng=${o[1]}&sname=${encodeURIComponent(nO)}&dlat=${dst[0]}&dlng=${dst[1]}&dname=${encodeURIComponent(nD)}&appname=viajecorea`;
+  return `<div class="tramo-ir"><span>${pie ? '🚶' : '🚇🚕'} ${fmtDist(k)} · ${pie ? `~${min} min a pie` : `metro o taxi, ~${min} min`}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>`;
+}
 function sitiosDia(d) {
-  const k = ck(d.ciudad), ls = listaDia(d), A = agendaVer(d.fecha);
-  if (!ls.length) return '';
+  const k = ck(d.ciudad), A = agendaVer(d.fecha), todos = listaDia(d);
+  if (!todos.length) return '';
+  const auto = autoDia(d).filter(l => !A.del.includes(hKey(l)));
   const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}; const G = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
-  return `<div class="card sitios-dia" data-fecha="${d.fecha}"><b>📖 Sitios de hoy</b>
-    <div class="muted mini-nota">Mantén pulsado un sitio (o arrastra ≡) para cambiar el orden. Añade más desde Ciudades con 📅.</div>
-    <div class="sd-lista">${ls.map(l => {
-    const h = hKey(l), mas = D[h.slice(2)] || D[h], txt = mas || l.desc || l.nota || G[h.slice(2)] || '';
-    return `<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}" data-k="${esc(h)}"><span class="sd-handle" aria-label="Mover">≡</span>${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span><button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button></div>
-      ${txt ? `<div class="muted">${esc(txt).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}${mas || l.lp ? ' <span class="badge otro">LP</span>' : ''}</div>` : ''}</div></div>`;
-  }).join('')}</div>${A.orden || A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}${planesCerca(ls)}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado.</div></div>`;
+  const al = alojDe(d.fecha), hot = al.noche && al.noche.lat != null && ck(al.noche.ciudad) === k ? al.noche : (al.sale && al.sale.lat != null && ck(al.sale.ciudad) === k ? al.sale : null);
+  let prev = hot ? [Number(hot.lat), Number(hot.lon)] : null, prevN = hot ? hot.nombre : '';
+  const fila = (l, extra) => {
+    const h = hKey(l), mas = D[h.slice(2)] || D[h], txt = mas || l.desc || l.nota || G[h.slice(2)] || '', c = coordsLugar(l);
+    const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es) : '';
+    if (c) { prev = c; prevN = l.ko || l.es; }
+    return `${t}<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</div>
+      ${txt ? `<div class="muted">${esc(txt).replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>')}</div>` : ''}</div></div>`;
+  };
+  const extras = todos.filter(l => !auto.includes(l));
+  return `<div class="card sitios-dia" data-fecha="${d.fecha}"><b>📖 Ruta del día</b>
+    <div class="muted mini-nota">En el orden del itinerario${hot ? ', saliendo del hotel' : ''}. Distancias en línea recta y tiempos aproximados; "🧭 Ruta" abre Naver Map (con conexión).</div>
+    ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>` : ''}
+    ${auto.map(l => fila(l, false)).join('')}
+    ${extras.length ? `<div class="sd-anadidos">➕ Añadidos desde Ciudades</div>${extras.map(l => fila(l, true)).join('')}` : ''}
+    ${A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}
+    ${planesCerca(todos)}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado.</div></div>`;
 }
 
 // Resumen del día siguiente al que se está viendo.
@@ -1620,33 +1637,6 @@ $('#file').addEventListener('change', e => {
   e.target.value = '';
 });
 
-// ---------- Arrastrar para ordenar los sitios del día (≡ al momento; mantener pulsado 0,4 s en el resto) ----------
-let arr_ = null, pulsa = null;
-function empiezaArrastre(it, y) { arr_ = { it, lista: it.parentElement }; it.classList.add('arrastrando'); try { navigator.vibrate && navigator.vibrate(15); } catch {} }
-document.addEventListener('pointerdown', e => {
-  const it = e.target.closest('.sd'); if (!it || !it.closest('.sd-lista')) return;
-  if (e.target.closest('.sd-handle')) { e.preventDefault(); empiezaArrastre(it, e.clientY); return; }
-  if (e.target.closest('button, a, input')) return;
-  pulsa = { it, x: e.clientX, y: e.clientY, t: setTimeout(() => { empiezaArrastre(it, e.clientY); pulsa = null; }, 400) };
-});
-document.addEventListener('pointermove', e => {
-  if (pulsa && (Math.abs(e.clientX - pulsa.x) > 8 || Math.abs(e.clientY - pulsa.y) > 8)) { clearTimeout(pulsa.t); pulsa = null; }
-  if (!arr_) return;
-  const otros = [...arr_.lista.querySelectorAll('.sd')].filter(x => x !== arr_.it);
-  const sig = otros.find(x => { const r = x.getBoundingClientRect(); return e.clientY < r.top + r.height / 2; });
-  arr_.lista.insertBefore(arr_.it, sig || null);
-});
-document.addEventListener('touchmove', e => { if (arr_) e.preventDefault(); }, { passive: false });
-document.addEventListener('contextmenu', e => { if (arr_ || e.target.closest('.sd-lista')) e.preventDefault(); });
-function sueltaArrastre() {
-  if (pulsa) { clearTimeout(pulsa.t); pulsa = null; }
-  if (!arr_) return;
-  const f = arr_.lista.closest('[data-fecha]').dataset.fecha;
-  agendaDe(f).orden = [...arr_.lista.querySelectorAll('.sd')].map(x => x.dataset.k); saveUser();
-  arr_.it.classList.remove('arrastrando'); arr_ = null; render();
-}
-document.addEventListener('pointerup', sueltaArrastre);
-document.addEventListener('pointercancel', () => { if (pulsa) { clearTimeout(pulsa.t); pulsa = null; } if (arr_) sueltaArrastre(); });
 
 render();
 cargarFotos().then(() => { if (tab === 'mas') renderLuego(); });

@@ -36,9 +36,11 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    (las fichas de ciudad con sitios van en Ciudades: 5 botones, se
    despliega la ciudad elegida; botón 📜 Historia; cada sitio tiene
    "📅" para apuntarlo a un día de esa ciudad). Agenda en user.agenda[fecha]
-   = {add, del, orden}: Hoy → Sitios muestra los del itinerario (en el
-   orden del texto) + los apuntados; se reordenan manteniendo pulsado o
-   arrastrando ≡, se quitan con ✕ y "↺ Volver al itinerario". Extras
+   = {add, del}: Hoy → Sitios es la "Ruta del día": hotel → sitios del
+   itinerario en orden fijo (orden del texto) → "Añadidos desde Ciudades"
+   al final (se quitan con ✕). Entre cada dos puntos, distancia, tiempo
+   aproximado (a pie ≤1,6 km; si no, metro o taxi) y "🧭 Ruta" que abre
+   la app de Naver Map (nmap://route). Extras
    aprobados: conversor ₩↔€ con cambio automático del BCE vía
    api.frankfurter (solo con conexión; se guarda para offline; se
    puede fijar a mano), tiempo previsto por día (Open-Meteo, sin clave,

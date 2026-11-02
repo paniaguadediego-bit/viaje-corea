@@ -631,3 +631,8 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 
 .lp-pill { display: inline-block; vertical-align: middle; margin-left: 4px; padding: 1px 6px; border-radius: 6px; font-size: .62rem; font-weight: 800; letter-spacing: .03em;
   color: #fff; background: #1d6fb8; line-height: 1.4; white-space: nowrap; }
+
+.tramo-ir { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 0 2px 18px; padding: 3px 8px; border-left: 2px dashed var(--line); font-size: .82em; color: var(--muted); }
+.tramo-ir a.btn.mini { min-height: 28px; padding: 2px 8px; font-size: .78rem; }
+.sd-hotel { font-weight: 700; font-size: .9em; margin: 6px 0 0; }
+.sd-anadidos { margin: 10px 0 2px; font-weight: 700; font-size: .85em; color: var(--blue); border-top: 1px solid var(--line); padding-top: 6px; }
