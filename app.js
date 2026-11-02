@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v63';
+const VERSION = 'v64';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -489,6 +489,22 @@ function tramo(o, dst, nO, nD) {
   const url = `nmap://route/${modo}?slat=${o[0]}&slng=${o[1]}&sname=${encodeURIComponent(nO)}&dlat=${dst[0]}&dlng=${dst[1]}&dname=${encodeURIComponent(nD)}&appname=viajecorea`;
   return `<div class="tramo-ir"><span>${pie ? '🚶' : '🚇🚕'} ${fmtDist(k)} · ${pie ? `~${min} min a pie` : `metro o taxi, ~${min} min`}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>`;
 }
+// Sitios recomendados que no están en ningún día del plan y quedan a ≤900 m de la ruta de ese día.
+function sugerenciasCerca(d, ruta) {
+  const k = ck(d.ciudad), cs = ruta.map(coordsLugar).filter(Boolean); if (!cs.length) return '';
+  const enAlgun = new Set(); arr(trip.dias).forEach(x => listaDia(x).forEach(l => enAlgun.add(hKey(l))));
+  const imp = new Set(((typeof IMPRES !== 'undefined' && IMPRES[k]) || []).map(hKey));
+  const s = sitiosCiudadObj(k).filter(l => !enAlgun.has(hKey(l)) && coordsLugar(l)).map(l => {
+    const ds = ruta.filter(x => coordsLugar(x)).map(x => [x, km(coordsLugar(x), coordsLugar(l))]).sort((a, b) => a[1] - b[1]);
+    return ds.length && ds[0][1] <= 0.9 ? { l, dm: ds[0][1], junto: ds[0][0], peso: (imp.has(hKey(l)) ? 2 : 0) + (l.top ? 1 : 0) } : null;
+  }).filter(Boolean).sort((a, b) => b.peso - a.peso || a.dm - b.dm).slice(0, 4);
+  if (!s.length) return '';
+  const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {};
+  return `<div class="sugerencias"><b>💡 Cerca y no lo tenéis</b>${s.map(({ l, dm, junto }) => { const h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
+    return `<div class="sug">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit"><b>${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)}</div>
+      <div class="muted">📍 ${fmtDist(dm)} de ${esc(junto.es)}${txt ? ` · ${esc(txt.length > 140 ? txt.slice(0, 137) + '…' : txt)}` : ''}</div></div>
+      <button class="mini sug-add" data-agtog="${esc(h)}|${d.fecha}" aria-label="Añadir a este día">+</button></div>`; }).join('')}</div>`;
+}
 function sitiosDia(d) {
   const k = ck(d.ciudad), A = agendaVer(d.fecha), todos = listaDia(d);
   if (!todos.length) return '';
@@ -510,6 +526,7 @@ function sitiosDia(d) {
     ${auto.map(l => fila(l, false)).join('')}
     ${extras.length ? `<div class="sd-anadidos">➕ Añadidos desde Ciudades</div>${extras.map(l => fila(l, true)).join('')}` : ''}
     ${A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}
+    ${sugerenciasCerca(d, todos)}
     ${planesCerca(todos)}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado.</div></div>`;
 }
 

@@ -40,7 +40,9 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    itinerario en orden fijo (orden del texto) → "Añadidos desde Ciudades"
    al final (se quitan con ✕). Entre cada dos puntos, distancia, tiempo
    aproximado (a pie ≤1,6 km; si no, metro o taxi) y "🧭 Ruta" que abre
-   la app de Naver Map (nmap://route). Extras
+   la app de Naver Map (nmap://route). Debajo, "💡 Cerca y no lo tenéis":
+   hasta 4 sitios recomendados que no están en ningún día y quedan a
+   ≤900 m de la ruta, con "+" para añadirlos a ese día. Extras
    aprobados: conversor ₩↔€ con cambio automático del BCE vía
    api.frankfurter (solo con conexión; se guarda para offline; se
    puede fijar a mano), tiempo previsto por día (Open-Meteo, sin clave,
