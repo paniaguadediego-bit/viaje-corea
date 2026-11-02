@@ -1888,5 +1888,25 @@
 "nota": "Lonely Planet (artículo de Jeonju).",
 "fuente": "https://www.lonelyplanet.com/south-korea/jeollabuk-do/jeonju/travel-tips-and-articles/48-hours-in-jeonju-koreas-foodie-capital"
 }
+},
+{
+"id": "cafe-pokpo",
+"ciudad": "seul",
+"nombre": "Café Pokpo (frente a la cascada de Hongjecheon)",
+"ko": "카페 폭포",
+"tipo": "café",
+"plato": "café con terraza frente a una cascada artificial",
+"direccion": "262-24 Yeonhui-ro, Seodaemun-gu (algunas webs dan el 262-29), junto a la cascada de Hongjecheon · ubicación aproximada",
+"horario": null,
+"precio": null,
+"fuente": "guia",
+"url": "https://seoulsearching.net/cafe-pokpo-waterfall-seoul/",
+"nota": "Añadido por vosotros como excepción: queda a unos 5 km del hotel. Encaja como desvío en taxi desde Hongdae (día 6; unos 7.000 ₩) o al salir de Seodaemun (día 18, a unos 2 km).",
+"comprobado": {
+"fecha": "2026-11-02",
+"estado": "existe",
+"nota": "Varias guías de 2024-2025; teléfono 02-330-4998 según una de ellas.",
+"fuente": "https://koreatravelpost.com/?p=14357"
+}
 }
 ]
