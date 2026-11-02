@@ -18,8 +18,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    así se instala en el Xiaomi del usuario), service worker con ruta
    relativa, iconos relativos.
 5. Pestañas (barra inferior): Hoy, Ruta, Ciudades, Corea,
-   Comer, Planes (calendario del Mundial de LoL: WORLDS en contenido.js, hora de
-   Corea y dónde estaréis; League of Legends, cosmética y lavandería: PLANES en contenido.js,
+   Comer, Planes (calendario del Mundial de LoL plegado: WORLDS en contenido.js, hora de
+   Corea y dónde estaréis; botones LoL / Cosmética / Lavandería que muestran sus sitios debajo: PLANES en contenido.js,
    con distancia al hotel y "cerca"), Más. Corea tiene apartados:
    Guía (primero, con iconos por tema), Historia (historia.js: 22
    capítulos de historia y cultura para leer sin conexión, con índice,

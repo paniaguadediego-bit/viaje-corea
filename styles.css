@@ -597,3 +597,7 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .w-fila.hoy { font-weight: 700; }
 .w-fila.pasado { opacity: .5; }
 .worlds > .muted { margin-top: 6px; font-size: .85em; }
+.worlds > summary { text-align: center; }
+.pcats { margin-top: 4px; }
+.pcats button { font-size: .85rem; padding: 6px 4px; min-height: 36px; }
+.lista-check .check { cursor: pointer; -webkit-tap-highlight-color: rgba(0,71,160,.12); }

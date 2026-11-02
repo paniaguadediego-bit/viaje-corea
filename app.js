@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v57';
+const VERSION = 'v58';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -921,12 +921,13 @@ function viewCorea() {
 
 
 // ---------- Planes: League of Legends y cosmética ----------
-let planesCiudad = null;
+let planesCiudad = null, planesCat = 'lol';
+const PCATS = [['lol', '🎮 LoL'], ['cosme', '💄 Cosmética'], ['servicio', '🧺 Lavandería']];
 // Calendario del Mundial de LoL con la ciudad donde estaréis cada día.
 function worldsCard() {
   if (typeof WORLDS === 'undefined') return '';
   const hoy = todayISO(), dias = arr(trip && trip.dias);
-  return `<div class="card worlds"><b>🏆 Mundial de LoL 2026 · hora de Corea</b>
+  return `<details class="card worlds" data-key="worlds" ${abierto('worlds', false) ? 'open' : ''}><summary><b>🏆 Mundial de LoL 2026 · hora de Corea</b></summary>
     ${WORLDS.partidos.map(m => { const pas = m.f < hoy;
       // De madrugada seguís en la ciudad de la noche anterior.
       const d = dias.find(x => x.fecha === (parseInt(m.h) < 10 ? sumaDia(m.f, -1) : m.f));
@@ -935,7 +936,7 @@ function worldsCard() {
       const extra = donde === 'en el avión' ? donde : sal && sal <= m.h ? `en el tren a ${esc(String(tr.a).replace(/.*\((.*)\)/, '$1'))} (sale ${esc(sal)})` : donde + (tr ? ' · día de traslado' : '');
       return `<div class="w-fila ${pas ? 'pasado' : ''} ${m.f === hoy ? 'hoy' : ''} ${m.t1 || m.final ? 'top' : ''}"><span class="hora">${fmtCorto(m.f)} ${esc(m.h)}</span><span><b>${esc(m.fase)}</b> · ${esc(m.p)}${extra ? `<small class="muted"> · ${extra}</small>` : ''}</span></div>`; }).join('')}
     <div class="muted">${esc(WORLDS.nota)} <span class="ver">VERIFICAR</span></div>
-    <div class="muted">Dónde verlo en grupo: T1 Base Camp (Hongdae, Gangnam y Busan, 24 h) y LoL Park en Seúl. Final: el T1 Base Camp de Busan está a unos 300 m del hotel.</div></div>`;
+    <div class="muted">Dónde verlo en grupo: T1 Base Camp (Hongdae, Gangnam y Busan, 24 h) y LoL Park en Seúl. Final: el T1 Base Camp de Busan está a unos 300 m del hotel.</div></details>`;
 }
 const icPlan = p => ({ lol: '🎮', cosme: '💄', servicio: '🧺' })[p.cat] || '⭐';
 function viewPlanes() {
@@ -962,10 +963,11 @@ function viewPlanes() {
       <div class="acciones">${naver(p)}<button class="mini" data-full="pl:${i}">Enseñar</button></div></div>`;
   };
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
-    return ls.length ? `<h2>${t}</h2>` + ls.map(card).join('') : ''; };
+    return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
   return `<div class="chips centro">${cs.map(([c, n]) => `<button class="chip ${c === k ? 'on' : ''}" data-pc="${c}">${tema(c).ic} ${n}</button>`).join('')}</div>
     <p class="muted">Ordenados por distancia al hotel. Horarios de webs (nov 2026): compruébalos antes de ir.</p>
-    ${worldsCard()}${grupo('lol', '🎮 League of Legends')}${grupo('cosme', '💄 Cosmética')}${grupo('servicio', '🧺 Lavandería')}`;
+    ${worldsCard()}${(() => { const cats = PCATS.filter(([c]) => P.some(p => p.ciudad === k && p.cat === c)); if (!cats.some(([c]) => c === planesCat)) planesCat = (cats[0] || [])[0];
+      return `<div class="row daynav pcats">${cats.map(([c, t]) => `<button class="${c === planesCat ? '' : 'sec'}" data-pcat="${c}">${t}</button>`).join('')}</div>` + grupo(planesCat, ''); })()}`;
 }
 
 // ---------- Seguro ----------
@@ -1368,6 +1370,15 @@ function render() {
 }
 
 document.addEventListener('click', e => {
+  // Casillas: las marca la app (así no se pierde el toque si la pantalla se redibuja en el móvil).
+  const lab = e.target.closest('label.check');
+  if (lab && !e.target.closest('a, button')) {
+    const inp = lab.querySelector('input[type=checkbox]');
+    if (inp) { const v = e.target === inp ? inp.checked : !inp.checked; e.preventDefault();
+      if (inp.dataset.hk) marcarHecho(inp.dataset.hk, v);
+      else if (inp.dataset.check) { u().checklist[inp.dataset.check] = v; if (!v) delete user.checklist[inp.dataset.check]; saveUser(); }
+      render(); return; }
+  }
   const del = e.target.closest('[data-delitem]');
   if (del) {
     e.preventDefault();
@@ -1445,6 +1456,8 @@ document.addEventListener('click', e => {
     histCap = hc.dataset.hc === 'ind' ? null : +hc.dataset.hc; render(); window.scrollTo(0, 0); return; }
   const ms = e.target.closest('[data-ms]');
   if (ms) { masSub = ms.dataset.ms; render(); return; }
+  const pk = e.target.closest('[data-pcat]');
+  if (pk) { planesCat = pk.dataset.pcat; render(); return; }
   const pc = e.target.closest('[data-pc]');
   if (pc) { planesCiudad = pc.dataset.pc; render(); return; }
   const gs = e.target.closest('[data-guia]');
