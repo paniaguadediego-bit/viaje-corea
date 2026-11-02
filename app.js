@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v91';
+const VERSION = 'v92';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1888,7 +1888,7 @@ function renderLuego() {
 }
 document.addEventListener('focusout', () => { if (renderPendiente) { renderPendiente = false; setTimeout(render, 50); } });
 
-let tiraX = null;
+let tiraX = null, tabAnt = null;
 // ---------- render ----------
 function render() {
   applyTheme();
@@ -1915,7 +1915,11 @@ function render() {
     default: html = viewMas();
   }
   const tiraAnt = document.getElementById('tira'); tiraX = tiraAnt ? tiraAnt.scrollLeft : null;
-  $('#view').innerHTML = html;
+  // Las filas de chips deslizables conservan su posición al redibujar (si no, vuelven al principio).
+  const filas = el => [...el.querySelectorAll('.chips, .hoysubs, .pcats')];
+  const posX = tab === tabAnt ? filas($('#view')).map(f => f.scrollLeft) : [];
+  $('#view').innerHTML = html; tabAnt = tab;
+  filas($('#view')).forEach((f, i) => { if (posX[i]) { f.style.scrollBehavior = 'auto'; f.scrollLeft = posX[i]; f.style.scrollBehavior = ''; } });
   if (['ciudades', 'hoy', 'comer', 'planes'].includes(tab)) pintarFotos();
   if (['ciudades', 'hoy'].includes(tab)) pintarMapas();
   const ch = tab === 'hoy' && document.querySelector('#tira .dchip.on');
