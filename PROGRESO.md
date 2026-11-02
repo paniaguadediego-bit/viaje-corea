@@ -113,6 +113,7 @@ Caché del service worker: corea-v62
 - (sin versión nueva, solo trip.json privado): hangul de los otros tres hoteles según la IA de Google, todos con VERIFICAR: 141 미니호텔, 헤리움 호텔 (puede ser 해리움) y 한옥 한지꿀잠. Hay que confirmarlos en Naver Map o en la reserva.
 - (sin versión nueva, solo trip.json privado): comprobado en Naver Map por el usuario. 고려호텔 existe en Andong (confirmado). 한지꿀잠 sale en Naver como "HanjiHoneySleep" en Jeonju (hay también una "Second House": VERIFICAR cuál). 헤리움 호텔 no existe en Naver, así que se quita el hangul del HaeRium (la app muestra "falta hangul" y la dirección). 141 미니호텔 sigue sin confirmar.
 - (sin versión nueva, solo trip.json privado): HaeRium = 해리움 호텔 (con 해), con dirección coreana 해운대해변로197번길 10-9, según webs coreanas de reservas (Yanolja, Trip.com). VERIFICAR en Naver.
+- (sin versión nueva, solo trip.json privado): Mini Hotel 141 = 141미니호텔 (sin espacio), 경주시 원효로 141 (황오동), según webs coreanas (Yanolja, Trip.com, VisitKorea). Check-in 16:00. VERIFICAR en Naver.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
