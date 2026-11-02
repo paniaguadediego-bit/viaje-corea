@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v66
+Caché del service worker: corea-v67
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -113,6 +113,7 @@ Caché del service worker: corea-v66
 - v64: Ruta del día con "💡 Cerca y no lo tenéis": hasta 4 sitios (imprescindibles y ★ primero, luego por cercanía) que no están en ningún día del plan y quedan a ≤900 m de algún sitio de la ruta; botón "+" para añadirlos a ese día (pasan a "Añadidos"). Hallazgos: Jongmyo, Changgyeonggung y Museo Nacional del Folclore (5-6/11), tumbas de Noseo-dong y Banwolseong (10/11), Yongdusan y Museo de Historia Moderna (13/11), catedral de Jeondong (15-16/11), Jongmyo y mercado de Dongdaemun (18/11).
 - v65: quitado el Checklist por ciudad de Más (a petición del usuario): lo visitado se marca con ✓ en Hoy y en Ciudades. Más queda con Maleta, Seguro, Verificar, Documentos, Notas y Datos y app. Las marcas guardadas siguen en el móvil (user.hecho) y en la copia exportada.
 - v66: los añadidos de la Ruta del día ya no van en el orden en que se apuntaron: se ordenan por el camino más corto desde el último sitio del itinerario (todas las combinaciones hasta 7; si hay más, el más cercano cada vez). Cada añadido indica, si le conviene más, entre qué dos puntos del itinerario os pilla de paso y con cuánto desvío ("💡 Os pilla de paso entre Bukchon e Insadong, desvío ~400 m"). El itinerario no se mueve.
+- v67: tarjeta del día de Hoy con banner: foto (Wikipedia) del primer sitio con foto, o degradado de la ciudad si no hay; encima día, fecha, ciudad, título y pastilla del tiempo (icono, mín./máx., cielo, lluvia y "hace X"). Debajo, etiquetas deslizables con los sitios del día (sin "Palacio", "Templo"…; al tocar llevan a Sitios). Las actividades ponen en negrita los nombres propios (palabras con mayúscula, salvo una lista de palabras comunes como Cena, Bajar o Palacio: "Palacio Changdeokgung" pone en negrita solo Changdeokgung).
 - (sin versión nueva, solo trip.json privado): Goryeo Hotel (Andong) ya tiene hangul, 고려호텔, que pasó el usuario desde Google; la tarjeta de Enseñar muestra "고려호텔로 가 주세요".
 - (sin versión nueva, solo trip.json privado): hangul de los otros tres hoteles según la IA de Google, todos con VERIFICAR: 141 미니호텔, 헤리움 호텔 (puede ser 해리움) y 한옥 한지꿀잠. Hay que confirmarlos en Naver Map o en la reserva.
 - (sin versión nueva, solo trip.json privado): comprobado en Naver Map por el usuario. 고려호텔 existe en Andong (confirmado). 한지꿀잠 sale en Naver como "HanjiHoneySleep" en Jeonju (hay también una "Second House": VERIFICAR cuál). 헤리움 호텔 no existe en Naver, así que se quita el hangul del HaeRium (la app muestra "falta hangul" y la dirección). 141 미니호텔 sigue sin confirmar.

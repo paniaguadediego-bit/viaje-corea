@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v66';
+const VERSION = 'v67';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -64,8 +64,14 @@ function resaltar(t) {
     .replace(/\b([A-ZÁÉÍÓÚÑ]{4,}(?:\s+[A-ZÁÉÍÓÚÑ]{2,})*)\b/g, '<b class="mayus">$1</b>')
     .replace(/((?:[A-Z][\w-]+\s)?(?:Station|Terminal))/g, '<b>$1</b>')
     .replace(/(estación de [A-ZÁÉÍÓÚ][\w-]+)/g, '<b>$1</b>');
-  return h;
+  // Nombres propios: grupos de palabras con mayúscula (fuera de las negritas ya puestas), salvo palabras comunes de inicio de frase.
+  return h.split(/(<b[^>]*>.*?<\/b>|<[^>]+>)/).map((s, i) => i % 2 ? s : s.replace(/(?:[A-ZÁÉÍÓÚÑ][a-záéíóúñ'’-]+(?:\s(?=[A-ZÁÉÍÓÚÑ]))?)+/g, m => {
+    const ws = m.trim().split(/\s+/); while (ws.length && NO_PROPIO.has(ws[0])) ws.shift();
+    if (!ws.length) return m; const prop = ws.join(' '), i0 = m.indexOf(prop);
+    return m.slice(0, i0) + '<b>' + prop + '</b>' + m.slice(i0 + prop.length);
+  })).join('');
 }
+const NO_PROPIO = new Set('El La Los Las Un Una En Con De Del Y O A Al Para Por Sin Si Se Su Sus Es Ver Ir Bajar Subir Cena Cenar Almuerzo Comer Comida Desayuno Merienda Paseo Pasear Llegada Llegar Salida Vuelo Visitas Visita Metro Bus Taxi Tren Alquiler Mañana Tarde Noche Retomar Atardecer Volver Vuelta Propuesta Ajustar Acostarse Comprobar Consejo Ojo Estar Pendiente Check-in Noche Hora Horario Entrada Gratis Cerrado Abre Plan Opción Objetivo Coger Madrugar Silencio Priorizar Tomar Si Asientos Asiento Cambio Primera Económica Danza Centro Coche Pasa Empezar Alternativa Cafés Café Mercado Playa Aldea Museo Barrio Prisión Historia Escuela Templo Palacio Santuario Acantilado Puente Puerta Mirador Calle Parque Observatorio Túmulos Isla Nacional'.split(' '));
 const isPend = t => /pendiente/i.test(t.estado || '');
 const isOk = t => /comprad/i.test(t.estado || '') || (t.tren && t.tren.comprado === true);
 function estadoBadge(t) {
@@ -351,10 +357,12 @@ function viewHoy() {
   // Tira de días: se desliza y se toca el día.
   html += `<div class="dias-tira" id="tira">${dias.map((x, i) => { const f = new Date(x.fecha + 'T12:00:00');
     return `<button class="dchip ${i === dayIdx ? 'on' : ''} ${x.fecha === hoy ? 'hoy' : ''}" data-dsel="${i}" style="${varsTema(ck(x.ciudad))}"><small>${f.toLocaleDateString('es-ES', { weekday: 'short' })}</small><b>${f.getDate()}</b><span>${tema(ck(x.ciudad)).ic}</span></button>`; }).join('')}</div>
-  <div class="card dia" style="${varsTema(ck(d.ciudad))}">
-    <div class="muted">Día ${dayIdx + 1} de ${dias.length} · ${fmtDate(d.fecha)} · ${esc(d.ciudad)}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</div>
-    <div class="big">${esc(d.titulo)}</div>
-    ${lineaTiempo(d)}
+  ${(() => { const ls = listaDia(d), fw = ls.map(wikiDe).find(Boolean), tc = tema(ck(d.ciudad));
+    return `<div class="card dia dia2" style="${varsTema(ck(d.ciudad))}">
+    <div class="dia-banner">${fw ? `<div class="foto dia-foto" data-wiki="${esc(fw)}"><span></span></div>` : ''}
+      <div class="dia-ov"><div class="dia-sup">${tc.ic} Día ${dayIdx + 1} de ${dias.length} · ${fmtDate(d.fecha)} · ${esc(d.ciudad)}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</div>
+        <div class="dia-tit">${esc(d.titulo)}</div>${chipTiempo(d)}</div></div>
+    ${ls.length ? `<div class="dia-chips">${ls.map(l => `<button class="dchip2" data-hs="sitios">${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es.replace(/^(Palacio|Templo|Barrio|Mercado|Aldea|Playa|Puerta|Mirador|Santuario|Calle|Arroyo|Plaza|Torre|Túmulos|Observatorio|Museo|Gruta|Puente|Academia|Escuela confuciana|Isla) /, ''))}</button>`).join('')}</div>` : ''}`; })()}
     <ul class="items">${arr(d.items).map(i =>
       `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${resaltar(i.texto)}</li>`).join('')}</ul>
   </div>`;
@@ -1325,6 +1333,11 @@ function lineaTiempo(d) {
   const t = tiempoDe(ck(d.ciudad), d.fecha); if (!t) return '';
   const [c, mx, mn, p] = t, viejo = Date.now() - TIEMPO.ts > 24 * 3600e3;
   return `<div class="tiempo">${icTiempo(c)} <b>${Math.round(mn)}° / ${Math.round(mx)}°</b> · ${descTiempo(c)}${p != null ? ` · 💧 ${p} %` : ''} <span class="muted ${viejo ? 'viejo' : ''}">(${haceTiempo()})</span></div>`;
+}
+function chipTiempo(d) {
+  const t = tiempoDe(ck(d.ciudad), d.fecha); if (!t) return '';
+  const [c, mx, mn, p] = t;
+  return `<div class="dia-tiempo"><span class="t-ic">${icTiempo(c)}</span><b>${Math.round(mn)}° / ${Math.round(mx)}°</b><span>${descTiempo(c)}</span>${p != null ? `<span>💧 ${p} %</span>` : ''}<small>${haceTiempo()}</small></div>`;
 }
 const miniTiempo = (k, f) => { const t = tiempoDe(k, f); return t ? `<span class="t-mini">${icTiempo(t[0])} ${Math.round(t[1])}°/${Math.round(t[2])}°</span>` : ''; };
 
