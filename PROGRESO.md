@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v96
+Caché del service worker: corea-v97
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -148,6 +148,7 @@ Caché del service worker: corea-v96
 - v94: ubicación de los 18 sitios de Comer sin coordenadas, sacada de la Lonely 2016 (salida de metro o cuadro del mapa; ±300-400 m, se indica "ubicación aproximada" en la dirección). Después se aplica la regla de v93 (>3 km del hotel y >500 m del itinerario → fuera): salen Sigol Yeohaeng (Samneung, 6 km) y los cinco de Seomyeon en Busan (Yetnal Jjajang, Gyeongju Gukbap, Podo Cheong, True Octopus, Emo; unos 9 km). También Yeongjin Dwaeji Gukbap (Saha-gu, lejísimos) y Hyangjeokwon (no aparece en ninguna web; fuente dudosa). Se quedan con coordenadas: Daebak Jip, Kisoya y Pyongyang Naengmyeon (centro de Gyeongju), Loving Hut, Jaerim Galbi y Lavender (centro de Andong), Sulbing y Boribap & Cheonggukjang (Haeundae) y Dolgorae (junto al mercado Gukje). Sigue sin coordenadas "Platos de Busan a probar" (nota del itinerario, no es un local). 114 → 106 lugares.
 - v95: a Cristina (iPhone) no le salía el tiempo. El tiempo solo se pedía al abrir la app; si aún no había viaje importado no se sabía qué ciudades pedir, y en iPhone la app instalada no se recarga al volver a ella. Ahora se pide justo después de importar el viaje (forzado) y cada vez que la app vuelve a primer plano (respetando la caché de 3 h). El cambio ₩/€ también se pide al importar.
 - v96: Café Pokpo (카페 폭포, junto a la cascada de Hongjecheon, Seodaemun-gu) añadido a Comer como excepción a la regla de 3 km, a petición del usuario (unos 5 km del hotel; desvío desde Hongdae o Seodaemun). Una cita personal del usuario se añadió solo en su trip.json privado (no en el repo).
+- v97: Planes abre por defecto en "💄 Cosmética" (antes LoL).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

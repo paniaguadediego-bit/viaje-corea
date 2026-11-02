@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v96';
+const VERSION = 'v97';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1453,7 +1453,7 @@ function viewCorea() {
 
 
 // ---------- Planes: League of Legends y cosmética ----------
-let planesCiudad = null, planesCat = 'lol';
+let planesCiudad = null, planesCat = 'cosme';
 const PCATS = [['lol', '🎮 LoL'], ['cosme', '💄 Cosmética'], ['ropa', '👕 Ropa'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería']];
 // Calendario del Mundial de LoL con la ciudad donde estaréis cada día.
 function worldsCard() {
