@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v106';
+const VERSION = 'v107';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -909,7 +909,7 @@ function abrirAyuda() {
   if (!a && !enViaje) for (let i = 1; i < 4 && !a; i++) { const g = sumaDia(f, i); a = alojDe(g).noche; if (a) f = g; }
   const s = trip.seguro || {}, as = s.asistencia || {};
   // Sin nombre en hangul: la dirección en grande con "lléveme a esta dirección".
-  const hotel = a ? `${a.ko ? `<div class="enorme">${esc(fraseTaxi(a.ko))}</div>${a.direccion_ko ? `<div class="dir">${esc(a.direccion_ko)}</div>` : ''}`
+  const hotel = a ? `${a.ko ? `<div class="enorme">${esc(fraseTaxi(a.ko))}</div>${pronHTML(fraseTaxi(a.ko))}${a.direccion_ko ? `<div class="dir">${esc(a.direccion_ko)}</div>` : ''}`
       : a.direccion_ko ? `<div class="enorme">${esc(a.direccion_ko)}</div><div class="dir">이 주소로 가 주세요</div>` : '<div class="falta">falta hangul del hotel</div>'}
       <div class="es"><b>${esc(a.nombre)}</b>${a.direccion_en ? '<br>' + esc(a.direccion_en) : ''} ${ver(a)}</div>
       <div class="row ay-row">${naver(a)}${a.direccion_ko || a.ko ? `<button class="sec mini" data-copy="${esc(a.direccion_ko || a.ko)}">📋 Copiar</button>` : ''}</div>`
@@ -1273,6 +1273,70 @@ function viewMapa() {
     <b style="color:var(--red)">┅</b> pendiente · toca una ciudad</div>`;
 }
 
+// ---------- Pronunciación "a la española" del coreano (aproximada) ----------
+// Separa cada sílaba en inicial, vocal y final; aplica las reglas de sonido más comunes entre sílabas
+// (enlace con la vocal siguiente, nasalización, ㄹ doble, aspiración, palatalización) y lo escribe con letras españolas.
+const PR_INI = ['g', 'kk', 'n', 'd', 'tt', 'r', 'm', 'b', 'pp', 's', 'ss', '', 'j', 'jj', 'ch', 'k', 't', 'p', 'h'];
+const PR_VOC = ['a', 'e', 'ya', 'ye', 'o', 'e', 'yo', 'ye', 'o', 'ua', 'ue', 'ue', 'yo', 'u', 'uo', 'ue', 'ui', 'yu', 'u', 'ui', 'i'];
+// Finales: [letra que suena al cerrar sílaba, consonante que pasa a la sílaba siguiente si empieza por vocal (índice de inicial o -1), resto que se queda]
+const PR_FIN = [null, ['k', 0, ''], ['k', 1, ''], ['k', 9, 'k'], ['n', 2, ''], ['n', 12, 'n'], ['n', -2, 'n'], ['t', 3, ''], ['l', 5, ''], ['k', 0, 'l'], ['m', 6, 'l'],
+  ['l', 7, 'l'], ['l', 9, 'l'], ['l', 16, 'l'], ['p', 17, 'l'], ['l', -2, 'l'], ['m', 6, ''], ['p', 7, ''], ['p', 9, 'p'], ['t', 9, ''], ['t', 10, ''], ['ng', -1, 'ng'],
+  ['t', 12, ''], ['t', 14, ''], ['k', 15, ''], ['t', 16, ''], ['p', 17, ''], ['t', -2, '']];
+function pronuncia(txt) {
+  const out = [];
+  // Palabra a palabra (el espacio corta las reglas).
+  return String(txt || '').split(/(\s+)/).map(pal => {
+    const s = [...pal].map(ch => { const c = ch.charCodeAt(0) - 0xAC00; return c >= 0 && c < 11172 ? { i: Math.floor(c / 588), v: Math.floor((c % 588) / 28), f: c % 28 } : { x: ch }; });
+    // Reglas entre sílabas.
+    for (let n = 0; n < s.length - 1; n++) {
+      const a = s[n], b = s[n + 1]; if (a.x !== undefined || b.x !== undefined || !a.f) continue;
+      const F = PR_FIN[a.f];
+      if (b.i === 11) { // la siguiente empieza por vocal: enlace
+        if (F[1] === -1) continue; // ㅇ final se queda
+        if (F[1] === -2) { if (F[2] === 'n') b.i = 2; else if (F[2] === 'l') b.i = 5; else b.h = true; a.f = 0; continue; } // ㅎ final: desaparece (ㄶ/ㅀ: la ㄴ/ㄹ pasa a la vocal)
+        if ((a.f === 7 || a.f === 25) && b.v === 20) { b.i = a.f === 7 ? 12 : 14; a.f = 0; continue; } // 굳이, 같이: palatalización
+        b.i = F[1]; a.f = F[2] === '' ? 0 : F[2] === 'k' ? 1 : F[2] === 'n' ? 4 : F[2] === 'l' ? 8 : F[2] === 'p' ? 17 : 0; continue;
+      }
+      if (F[1] === -2 && [0, 3, 12].includes(b.i)) { b.i = b.i === 0 ? 15 : b.i === 3 ? 16 : 14; a.f = F[2] === 'n' ? 4 : F[2] === 'l' ? 8 : 0; continue; } // ㅎ + ㄱㄷㅈ: aspiradas
+      if (b.i === 18 && ['k', 't', 'p'].includes(F[0])) { b.i = F[0] === 'k' ? 15 : F[0] === 't' ? 16 : 17; a.f = 0; continue; } // ㄱㄷㅂ + ㅎ
+      if ((b.i === 2 || b.i === 6) && ['k', 't', 'p'].includes(F[0])) { a.nas = F[0] === 'k' ? 'ng' : F[0] === 't' ? 'n' : 'm'; continue; } // nasalización
+      if (b.i === 5 && (F[0] === 'n' || F[0] === 'l')) { a.nas = 'l'; b.ll = true; continue; } // ㄴ+ㄹ, ㄹ+ㄹ → ll
+      if (b.i === 2 && F[0] === 'l') { b.i = 5; b.ll = true; continue; } // ㄹ+ㄴ → ll
+      if (b.i === 5 && ['m', 'ng'].includes(F[0])) { b.i = 2; continue; } // ㅁ/ㅇ + ㄹ → n
+    }
+    let r = '', prevSonora = false, prevFuerte = false, prevVocal = false;
+    s.forEach((y, n) => {
+      if (y.x !== undefined) { r += y.x; prevSonora = false; prevFuerte = false; prevVocal = false; return; }
+      const vo = PR_VOC[y.v], ini = n === 0 || prevFuerte ? 'inicio' : 'medio';
+      let c = '';
+      switch (y.i) {
+        case 0: c = ini === 'inicio' || !prevSonora ? 'k' : 'g'; break; case 1: case 15: c = 'k'; break;
+        case 3: c = ini === 'inicio' || !prevSonora ? 't' : 'd'; break; case 4: case 16: c = 't'; break;
+        case 7: c = ini === 'inicio' || !prevSonora ? 'p' : 'b'; break; case 8: case 17: c = 'p'; break;
+        case 9: case 10: c = /^[iy]/.test(vo) || vo === 'ui' && false ? 'sh' : 's'; break;
+        case 12: case 13: case 14: c = 'ch'; break;
+        case 2: c = 'n'; break; case 6: c = 'm'; break;
+        case 5: c = y.ll ? 'l' : 'r'; break;
+        case 18: c = y.h ? '' : (n > 0 && !prevVocal ? '' : 'j'); break; // ㅎ suave: se oye tras vocal, se pierde tras consonante
+        case 11: c = ''; break;
+      }
+      if (y.i === 9 && /^y/.test(vo)) c = 'sh';
+      let v = vo; if ((c === 'sh' || c === 'ch') && /^y/.test(v)) v = v.slice(1);
+      // g/k delante de e/i al estilo español.
+      if (c === 'g' && /^[ei]/.test(v)) c = 'gu';
+      let fin = '';
+      if (y.f) { fin = y.nas || PR_FIN[y.f][0]; }
+      if (r.endsWith('ng') && !c && /^[ei]/.test(v)) r += '-'; // pochang-e (si no, se leería «je»)
+      r += c + v + fin;
+      prevSonora = !y.f || ['n', 'l', 'm', 'ng'].includes(fin);
+      prevFuerte = !!y.f && ['k', 't', 'p'].includes(fin); prevVocal = !y.f;
+    });
+    return r;
+  }).join('');
+}
+
+const pronHTML = ko => { const p = pronuncia(ko); return p && /[a-z]/.test(p) ? `<div class="pron">🗣️ ${esc(p)}</div>` : ''; };
+
 // ---------- Enseñar ----------
 // 로 si termina en vocal o en ㄹ; 으로 en otra consonante.
 function particula(ko) {
@@ -1289,7 +1353,7 @@ function fraseTaxi(ko) {
 function lugarFila(l, key, k) {
   return `<div class="card lugar ${hecho(l, k) ? 'hecho-card' : ''}">
     <div><div class="big">${esc(l.es)}${lpTag(l)}${tick(l, k)} ${ver(l)}</div>${planBadge(l, k)}${k ? distHotel(l, k) : ''}
-    ${l.ko ? `<div class="ko">${esc(l.ko)}</div>` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}</div>
+    ${l.ko ? `<div class="ko">${esc(l.ko)}</div>${pronHTML(l.ko)}` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}</div>
     <div class="acciones col">${naver(l)}<button class="mini" data-full="${key}">Enseñar</button></div></div>`;
 }
 // Ciudades del viaje (en orden, sin repetir) y después el resto del catálogo.
@@ -1384,21 +1448,21 @@ function showFull(key) {
   }
   if (t === 'f' || t === 'd') {
     const f = t === 'f' ? FRASES[a] : ((DICC[a] || [])[1] || [])[b]; if (!f) return;
-    return full(`<div class="enorme">${esc(f[1])}</div><div class="es">${esc(f[0])} · ${esc(f[2])}</div>`);
+    return full(`<div class="enorme">${esc(f[1])}</div>${t === 'f' ? pronHTML(f[1]) : ''}<div class="es">${esc(f[0])} · ${esc(f[2])}</div>`);
   }
   if (t === 'pl') {
     const l = (typeof PLANES !== 'undefined' ? PLANES : [])[a]; if (!l) return;
-    return full(`<div class="enorme">${esc(fraseTaxi(l.ko))}</div>${l.direccion_ko ? `<div class="dir">${esc(l.direccion_ko)}</div>` : ''}
+    return full(`<div class="enorme">${esc(fraseTaxi(l.ko))}</div>${pronHTML(fraseTaxi(l.ko))}${l.direccion_ko ? `<div class="dir">${esc(l.direccion_ko)}</div>` : ''}
       <div class="es">${esc(l.es)}${l.direccion_en ? '<br>' + esc(l.direccion_en) : ''}</div>`);
   }
   if (t === 'k') {
     const c = lugaresComer().find(x => String(x.id) === key.slice(2)); if (!c) return;
-    return full(`${c.ko ? `<div class="enorme">${esc(c.ko)}</div>` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}
+    return full(`${c.ko ? `<div class="enorme">${esc(c.ko)}</div>${pronHTML(c.ko)}` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}
       <div class="es">${esc(c.nombre || '')}${c.plato ? ' · ' + esc(c.plato) : ''}${c.direccion ? '<br>' + esc(c.direccion) : ''}</div>`);
   }
   const l = t === 'j' ? arr(trip.lugares)[a] : sitiosCiudad(a)[b];
   if (!l) return;
-  full(`${l.ko ? `<div class="enorme">${esc(fraseTaxi(l.ko))}</div>
+  full(`${l.ko ? `<div class="enorme">${esc(fraseTaxi(l.ko))}</div>${pronHTML(fraseTaxi(l.ko))}
       ${particula(l.ko) ? '' : '<div class="es">VERIFICAR partícula (으)로</div>'}`
       : '<div class="falta">falta hangul: copiar de Naver Map</div>'}
     ${l.direccion_ko ? `<div class="dir">${esc(l.direccion_ko)}</div>` : ''}
@@ -1410,8 +1474,8 @@ function showFull(key) {
 // ---------- Corea (frases, diccionario, guía) ----------
 let coreaSub = 'guia', guiaSel = null, fraseSit = 'Básicas';
 const sinTildes = t => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-const dFila = (e, key) => `<div class="card lugar" data-full="${key}"><div><div>${esc(e[0])}${e[3] ? ' <span class="ver">VERIFICAR</span>' : ''}</div>
-  <div class="ko">${esc(e[1])}</div><div class="muted">${esc(e[2])}</div></div></div>`;
+const dFila = (e, key, conPron = false) => `<div class="card lugar" data-full="${key}"><div><div>${esc(e[0])}${e[3] ? ' <span class="ver">VERIFICAR</span>' : ''}</div>
+  <div class="ko">${esc(e[1])}</div>${conPron ? pronHTML(e[1]) : ''}<div class="muted ${conPron ? 'rom' : ''}">${esc(e[2])}</div></div></div>`;
 
 function dResultados(q) {
   q = sinTildes(q).trim();
@@ -1521,7 +1585,7 @@ function viewCorea() {
     let off = 0; const grupos = FRASES_SIT.map(([t, fs]) => { const g = [t, fs, off]; off += fs.length; return g; });
     const g = grupos.find(x => x[0] === fraseSit) || grupos[0];
     html += `<div class="chips sit">${grupos.map(([t]) => `<button class="chip ${t === g[0] ? 'on' : ''}" data-sit="${esc(t)}">${esc(t)}</button>`).join('')}</div>
-      <p class="muted">Toca una frase para verla a pantalla completa.</p>` + g[1].map((f, i) => dFila(f, 'f:' + (g[2] + i))).join('');
+      <p class="muted">Toca una frase para verla a pantalla completa.</p>` + g[1].map((f, i) => dFila(f, 'f:' + (g[2] + i), true)).join('');
   }
   // La búsqueda se recuerda: si la pantalla se redibuja (p. ej. al cerrar el teclado), no se pierde.
   else if (coreaSub === 'dicc') html += `<input id="q" type="search" placeholder="Buscar (español, coreano o romanización)" autocomplete="off" enterkeyhint="search" value="${esc(qDic)}">

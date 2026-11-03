@@ -957,3 +957,8 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 /* El recorte con "hidden" impedía que la barra de Historia se quedara fija (sticky). */
 .hist-tema { overflow: clip; overflow: visible; }
 @supports (overflow: clip) { .hist-tema { overflow: clip; } }
+
+/* v107: pronunciación a la española (destacada) y romanización oficial en pequeño */
+.pron { font-weight: 700; color: var(--blue); font-size: 1rem; margin-top: 2px; }
+.card .muted.rom { font-size: .75rem; opacity: .8; }
+#full .pron { font-size: min(7vw, 1.8rem); color: #0047a0; margin-top: 12px; }

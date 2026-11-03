@@ -174,7 +174,7 @@ S1 Estructura PWA, importar/exportar, pantalla de bienvenida
    está "PENDIENTE DE COMPRAR". Ruta: ciudades y traslados
    paso a paso con estado (comprado/pendiente).
 S2 Enseñar: tarjetas a pantalla completa con hangul enorme para
-   taxistas y recepcionistas. Se generan desde "lugares" con
+   taxistas y recepcionistas (con 🗣️ pronunciación a la española desde v107, como en Frases). Se generan desde "lugares" con
    "<lugar>(으)로 가 주세요". Regla de partícula: termina en
    vocal o en ㄹ -> 로; en otra consonante -> 으로. Si falta el
    hangul: "falta hangul: copiar de Naver Map". Más la pestaña
