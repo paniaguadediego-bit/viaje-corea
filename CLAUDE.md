@@ -79,7 +79,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
 6. Dato dudoso = "VERIFICAR". No inventar hangul, teléfonos,
    horarios ni precios. Si un objeto del JSON trae
    "verificar": true, mostrar una marca visible.
-7. Mobile-first, compacto pero legible, una mano, tema claro/oscuro.
+7. Mobile-first, compacto pero legible, una mano, tema claro/oscuro. Estilo desde v109: papel hanji, franja
+   dancheong y un color por pestaña (body[data-tab] → --acc) en títulos, botones activos y filo de las tarjetas.
 8. Cada sesión acaba con: cómo probarlo en modo avión, versión
    subida (CACHE en sw.js y VERSION en app.js, iguales), PROGRESO.md actualizado
    y commit en main.

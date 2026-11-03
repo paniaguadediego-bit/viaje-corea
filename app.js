@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v108';
+const VERSION = 'v109';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -2151,6 +2151,7 @@ function render() {
   const filas = el => [...el.querySelectorAll('.chips, .hoysubs, .pcats')];
   const posX = tab === tabAnt ? filas($('#view')).map(f => f.scrollLeft) : [];
   const cambia = tab !== tabAnt;
+  document.body.dataset.tab = tab; // color propio de cada pestaña (CSS)
   $('#view').innerHTML = html; tabAnt = tab;
   if (cambia) { const v = $('#view'); v.classList.remove('entra'); void v.offsetWidth; v.classList.add('entra'); } // fundido suave al cambiar de pestaña
   filas($('#view')).forEach((f, i) => { if (posX[i]) { f.style.scrollBehavior = 'auto'; f.scrollLeft = posX[i]; f.style.scrollBehavior = ''; } });

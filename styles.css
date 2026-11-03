@@ -970,3 +970,38 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .sug-encaje { font-size: .82rem; font-weight: 600; color: #8a6200; margin: 2px 0; }
 :root[data-theme="dark"] .sug-encaje { color: #e8c36a; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sug-encaje { color: #e8c36a; } }
+
+/* ===== v109: aspecto general inspirado en Historia (papel hanji, franja dancheong, color por pestaña) =====
+   Solo estilos: no cambia cómo funciona nada. */
+:root { --bg: #f3eee4; --card: #fffdf9; --line: #e4dccd; --tint-b: #ece6da; --tint-r: #f5e9e2;
+  --sombra: 0 1px 2px rgba(70,50,20,.07), 0 4px 14px rgba(70,50,20,.08); --acc: #0047a0; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #12161d; --card: #1b2230; --line: #2d3748; --tint-b: #172031; --tint-r: #241a21;
+  --sombra: 0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.35); } }
+:root[data-theme="dark"] { --bg: #12161d; --card: #1b2230; --line: #2d3748; --tint-b: #172031; --tint-r: #241a21;
+  --sombra: 0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.35); }
+/* Color de cada pestaña */
+body[data-tab="hoy"] { --acc: #0047a0; } body[data-tab="ruta"] { --acc: #0b6e78; } body[data-tab="ciudades"] { --acc: #2c6e45; }
+body[data-tab="historia"] { --acc: #b8322a; } body[data-tab="corea"] { --acc: #1f4e8c; } body[data-tab="comer"] { --acc: #c2630a; } body[data-tab="mas"] { --acc: #6b3fa0; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body { --acc2: color-mix(in srgb, var(--acc) 60%, white); } }
+:root[data-theme="dark"] body { --acc2: color-mix(in srgb, var(--acc) 60%, white); }
+body { --acc2: var(--acc); }
+/* Fondo de papel con trama muy suave */
+body { background: repeating-linear-gradient(45deg, transparent 0 7px, rgba(120,90,40,.025) 7px 8px), linear-gradient(175deg, var(--tint-b) 0%, var(--bg) 35%, var(--bg) 75%, var(--tint-r) 100%) fixed, var(--bg); }
+/* Cabecera con franja de colores de los aleros de palacio */
+header::after { height: 4px; opacity: 1; background: repeating-linear-gradient(90deg, #2e8b57 0 18px, #b8322a 18px 30px, #1f4e8c 30px 46px, #e3b23c 46px 56px, #f4efe6 56px 60px); }
+/* Tarjetas: más separación, borde y sombra para distinguirlas al hacer scroll */
+.card { border: 1px solid var(--line); box-shadow: var(--sombra); }
+#view > .card, #view > details.card, #view > .sitios-dia, #view > .card.ciudad { margin: 10px 0; }
+#view > .card:not(.dia2):not(.ciudad):not(.ahora):not(.alert), #view > details.card { border-top: 3px solid color-mix(in srgb, var(--acc2) 70%, transparent); }
+/* Títulos de sección con el color de la pestaña */
+h2 { color: var(--acc2); opacity: 1; display: flex; align-items: center; gap: 8px; margin: 16px 0 6px; }
+h2::before { content: ""; width: 4px; height: 1.05em; border-radius: 2px; background: var(--acc2); flex: none; }
+h2::after { content: ""; flex: 1; height: 1px; background: color-mix(in srgb, var(--acc2) 30%, transparent); }
+/* Pestaña activa y botones de sección con el color de la pestaña */
+nav#tabs button.on { color: var(--acc2); } nav#tabs button.on span { background: color-mix(in srgb, var(--acc) 14%, transparent); }
+.daynav > button:not(.sec), .exsubs > button:not(.sec), .hoysubs > button:not(.sec), .seg5 > button:not(.sec) { background: var(--acc); box-shadow: 0 2px 6px color-mix(in srgb, var(--acc) 35%, transparent); }
+.chip.on { background: var(--acc); border-color: var(--acc); color: #fff; }
+.guia-t.on { outline: 2px solid var(--acc2); }
+/* Tarjetas dentro de tarjetas: un poco más hundidas para separar niveles */
+.card .card { box-shadow: none; background: color-mix(in srgb, var(--card) 92%, var(--acc) 3%); }
+.exsubs button { font-size: .66rem; font-weight: 600; letter-spacing: -.035em; }
