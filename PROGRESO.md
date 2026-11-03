@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v101
+Caché del service worker: corea-v102
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -153,6 +153,7 @@ Caché del service worker: corea-v101
 - v99: Historia con identidad propia (dentro de Corea → Historia, sin pestaña nueva). Fondo de papel hanji (CSS) con franja de colores dancheong arriba y variables propias para claro/oscuro; portada con 한국사, barra de progreso y "Seguir"; línea del tiempo deslizable de 9 etapas (HIST_ERAS: hangul, nombre, fechas y color; lleva a su capítulo); "Símbolos del país" (Taegukgi, Mugunghwa, Hangul, tigre, Arirang); índice en tarjetas con foto (HIST_WIKI, un artículo de Wikipedia por capítulo) en dos bloques: "De Dangun a hoy" y "Personajes, cultura y vuestra ruta". Capítulo: foto de cabecera, etiqueta de la etapa, letra capital roja y negritas (resaltar en prosa). Las fotos de Historia entran en "Preparar para viajar".
 - v100: el mapa grande de la Ruta del día tiene filtros "Cerca de la ruta": Más sitios, Comer y Planes (mpCapasDia, apagados por defecto), con lo que queda a ≤1,2 km de algún punto del recorrido y no está ya en él. El encuadre sigue siendo el del recorrido. Al tocar un punto extra, la ficha dice a qué distancia está de la parada más cercana ("📍 A 300 m de la parada 3 (Insadong)"). Al cambiar de capa se cierra la ficha abierta. El banner pequeño no lleva filtros.
 - v101: nueva sección "🇨🇳 Escala Pekín" en Más (viewEscala). Hora actual de Pekín (Asia/Shanghai) y diferencias (España +7 h, Canarias +8 h, Corea −1 h). Tarjeta por cada escala en PEK sacada de trip.vuelos en el móvil (llegada, vuelo y hora de salida, terminal, minutos de conexión; en rojo si es menor de 2 h 30). Desplegables con lo útil: paso a paso del tránsito internacional (carteles "International Transfer / 国际中转", control de tránsito, sin visado si no se sale de la zona internacional en menos de 24 h, nuevo control de seguridad, colas de 40-50 min), equipaje directo con un solo billete, internet (Google/WhatsApp bloqueados con wifi chino; itinerancia española suele funcionar; wifi del aeropuerto con código por pasaporte), baterías (solo cabina, capacidad visible, 3C) y mecheros, dinero (yuan, tarjetas, Alipay). 12 frases en chino mandarín (caracteres y pinyin) a pantalla completa (data-full="cn:i"). Fuentes: guías y foros 2025-2026, web oficial de Pekín; procedimientos con aviso de que pueden cambiar.
+- v102: la pestaña Ciudades pasa a llamarse "🧭 Explorar" (nombre elegido por el usuario; id interno sigue siendo 'ciudades') y Planes sale de la barra (6 pestañas). En cada ciudad, debajo de la cabecera, cuatro botones (exSub): 📍 Puntos de interés (por defecto: introducción, imprescindibles, lista y Lonely), 🗺️ Mapa, 📜 Historia (de la ciudad, con negritas) y ⭐ Planes (planesDe(k): Mundial de LoL, LoL / Cosmética / Ropa / Curioso / Lavandería). La ciudad de Planes es la misma que la elegida en Explorar. Los botones Mapa e Historia de la cabecera se quitan. "⭐ Cerca" de la Ruta del día abre Explorar → Planes de esa ciudad; un tab 'planes' antiguo se redirige.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

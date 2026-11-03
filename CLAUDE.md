@@ -17,10 +17,10 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    la raíz): start_url "./index.html" (sin id ni scope:
    así se instala en el Xiaomi del usuario), service worker con ruta
    relativa, iconos relativos.
-5. Pestañas (barra inferior): Hoy, Ruta, Ciudades, Corea,
-   Comer, Planes (calendario del Mundial de LoL plegado: WORLDS en contenido.js, hora de
+5. Pestañas (barra inferior, 6 desde v102): Hoy, Ruta, Explorar (antes Ciudades; por ciudad, botones
+   📍 Puntos de interés / 🗺️ Mapa / 📜 Historia / ⭐ Planes), Corea, Comer y Más. Planes va dentro de Explorar (calendario del Mundial de LoL plegado: WORLDS en contenido.js, hora de
    Corea y dónde estaréis; botones LoL / Cosmética / Ropa (solo cerca del hotel) / Curioso (cafés de animales, postres famosos, tiendas raras) / Lavandería que muestran sus sitios debajo: PLANES en contenido.js,
-   con distancia al hotel, "cerca", foto, 💰 precio aproximado y 👥 reseñas; lavandería y Olive Young en cada ciudad), Más. Corea tiene apartados:
+   con distancia al hotel, "cerca", foto, 💰 precio aproximado y 👥 reseñas; lavandería y Olive Young en cada ciudad). Corea tiene apartados:
    Guía (primero, con iconos por tema), Historia (historia.js: 22
    capítulos de historia y cultura para leer sin conexión, con índice,
    anterior/siguiente y marca de leído en user.leidos; diseño propio desde v99: papel hanji, franja dancheong,
@@ -38,8 +38,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    nada que no esté aquí. Ruta: vuelos, mapa y línea de tiempo con cada estancia (ciudad,
    noches, hotel y una línea por día) intercalada con los traslados. Incluye un mapa esquemático de
    Corea (SVG propio, offline) con ciudades, traslados y sitios
-   (las fichas de ciudad con sitios van en Ciudades: buscador arriba (todas las ciudades, sin tildes y en hangul;
-   también en Comer), 5 botones, se despliega la ciudad elegida; botón 📜 Historia; cada sitio tiene
+   (las fichas de ciudad con sitios van en Explorar: buscador arriba (todas las ciudades, sin tildes y en hangul;
+   también en Comer), 5 botones, se despliega la ciudad elegida con sus cuatro botones; cada sitio tiene
    "📅" para apuntarlo a un día de esa ciudad). Agenda en user.agenda[fecha]
    = {add, del}: Hoy → Sitios es la "Ruta del día": hotel → sitios del
    itinerario en orden fijo (orden del texto) → "Añadidos desde Ciudades"

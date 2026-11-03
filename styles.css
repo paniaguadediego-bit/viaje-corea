@@ -898,3 +898,9 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .esc-vuelo div { margin-top: 3px; }
 .esc-con { font-weight: 600; } .esc-con.justa { color: var(--red); }
 .esc-sec ul { margin: 6px 0 0; padding-left: 18px; } .esc-sec li { margin: 4px 0; line-height: 1.4; }
+
+/* v102: Explorar (Puntos de interés, Mapa, Historia, Planes) */
+.exsubs { gap: 4px; margin: 8px 8px 4px; }
+.exsubs button { font-size: .72rem; padding: 6px 2px; min-height: 36px; letter-spacing: -.02em; }
+.ciudad .plan-card, .ciudad .worlds, .ciudad .pcats { margin-left: 8px; margin-right: 8px; }
+.ciudad > p.muted { margin: 6px 10px; }
