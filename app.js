@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v99';
+const VERSION = 'v100';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -994,7 +994,7 @@ const mpY = (lat, z) => { const s = Math.sin(lat * Math.PI / 180); return (0.5 -
 const mpLon = (x, z) => x / (MPT * 2 ** z) * 360 - 180;
 const mpLat = (y, z) => 180 / Math.PI * Math.atan(Math.sinh(Math.PI - 2 * Math.PI * y / (MPT * 2 ** z)));
 const MP_CAPAS = [['itin', 'Itinerario', '#cd2e3a'], ['sitios', 'Más sitios', '#0047a0'], ['comer', 'Comer', '#d97706'], ['planes', 'Planes', '#7c3aed']];
-let mpCapas = new Set(['itin', 'sitios', 'comer', 'planes']), mapaCiudad = false;
+let mpCapas = new Set(['itin', 'sitios', 'comer', 'planes']), mapaCiudad = false, mpCapasDia = new Set();
 const mapaDia = new Set();
 const recorta = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
 
@@ -1002,6 +1002,7 @@ const recorta = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0
 function mapaHTML(id, pts, { linea = null, fit = null, hotel = null, capas = '', mini = false } = {}) {
   const prev = MP[id];
   MP[id] = { ...(prev || {}), pts, linea, hotel, fit: fit || pts.map(p => p.c) };
+  if (prev && prev.pts && prev.pts.length !== pts.length) MP[id].sel = null; // cambiaron las capas: se cierra la ficha
   if (!pts.length) return '<div class="muted">No hay sitios con ubicación para el mapa.</div>';
   if (mini) return `<div class="mapa mini" data-mapa="${esc(id)}"><div class="mp-vista"><div class="mp-capa"></div></div></div>`;
   return `${capas}<div class="mapa" data-mapa="${esc(id)}">
@@ -1058,6 +1059,8 @@ function mpFicha(p, m) {
   return `<div class="mp-f"><div class="mp-f-t"><b>${p.ic} ${esc(p.es)}</b>${p.l ? lpPill(p.l) : ''}<button class="sec mini" data-mpcerrar>✕</button></div>
     ${p.ko ? `<div class="ko-s">${esc(p.ko)}</div>` : ''}
     <div class="muted">${esc(p.sub || '')}${p.txt ? ` · ${esc(recorta(p.txt, 150))}` : ''}</div>
+    ${(() => { if (['itin', 'hotel'].includes(p.capa)) return ''; const ps = m.pts.filter(x => x.capa === 'itin' && x.num != null); if (!ps.length || m.pts.some(x => x.capa === 'itin' && x.num == null)) return '';
+      const [q, dk] = ps.map(x => [x, km(x.c, p.c)]).sort((a, b) => a[1] - b[1])[0]; return `<div class="mp-parada">📍 A ${fmtDist(dk)} de la parada ${q.num} (${esc(q.es)})</div>`; })()}
     ${m.hotel && p.capa !== 'hotel' ? tramo(m.hotel, p.c, 'Hotel', p.ko || p.es).replace('<span>', '<span>Desde el hotel: ') : ''}
     <div class="acciones">${naver(p.l || p)}</div></div>`;
 }
@@ -1175,7 +1178,14 @@ function mapaDiaHTML(d, hot, orden, mini = false) {
   if (hot) pts.push({ capa: 'hotel', c: hot, es: 'Hotel', ic: '🛏️', sub: 'Salida' });
   let n = 0; orden.forEach(l => { const c = coordsLugar(l); if (!c) return; const h = hKey(l);
     pts.push({ capa: 'itin', c, l, es: l.es, ko: l.ko, num: ++n, ic: icSitio(l.es), sub: `Parada ${n}`, txt: D[h.slice(2)] || D[h] || l.desc || l.nota || '', hecho: hecho(l, k) }); });
-  return mapaHTML((mini ? 'dm:' : 'd:') + d.fecha, pts, { linea: pts.map(p => p.c), hotel: hot, mini });
+  const ruta = pts.map(p => p.c);
+  if (mini) return mapaHTML('dm:' + d.fecha, pts, { linea: ruta, hotel: hot, mini });
+  // Capas extra (apagadas por defecto): lo que queda a ≤1,2 km de algún punto de la ruta.
+  const ya = new Set(orden.map(hKey)), cuenta = {};
+  puntosCiudad(k).todos.filter(p => ['sitios', 'comer', 'planes'].includes(p.capa) && !(p.l && ya.has(hKey(p.l))) && ruta.some(c => km(c, p.c) <= 1.2))
+    .forEach(p => { cuenta[p.capa] = (cuenta[p.capa] || 0) + 1; if (mpCapasDia.has(p.capa)) pts.push(p); });
+  const capas = Object.keys(cuenta).length ? `<div class="mp-capas"><span class="muted mini-nota">Cerca de la ruta:</span>${MP_CAPAS.filter(([c]) => cuenta[c]).map(([c, t, col]) => `<button class="chip ${mpCapasDia.has(c) ? 'on' : ''}" data-mpcapad="${c}" style="--mc:${col}"><i></i>${t} <small>${cuenta[c]}</small></button>`).join('')}</div>` : '';
+  return mapaHTML('d:' + d.fecha, pts, { linea: ruta, hotel: hot, capas, fit: ruta });
 }
 
 // ---------- mapa esquemático (SVG propio, sin internet) ----------
@@ -2017,8 +2027,9 @@ document.addEventListener('click', e => {
   }
   const ca = e.target.closest('[data-cara]');
   if (ca) { const [f, c] = ca.dataset.cara.split('|'), U = u(); U.diario = U.diario || {}; const o = U.diario[f] = U.diario[f] || {}; o.cara = o.cara === c ? '' : c; saveUser(); render(); return; }
-  const mq = e.target.closest('[data-mpz],[data-mpfit],[data-mpyo],[data-mpcerrar],[data-mpcapa],[data-mpdia]');
+  const mq = e.target.closest('[data-mpz],[data-mpfit],[data-mpyo],[data-mpcerrar],[data-mpcapa],[data-mpcapad],[data-mpdia]');
   if (mq) {
+    if (mq.dataset.mpcapad) { const c = mq.dataset.mpcapad; if (mpCapasDia.has(c)) mpCapasDia.delete(c); else mpCapasDia.add(c); render(); return; }
     if (mq.dataset.mpcapa) { const c = mq.dataset.mpcapa; if (mpCapas.has(c)) mpCapas.delete(c); else mpCapas.add(c); render(); return; }
     if (mq.dataset.mpdia) { const f = mq.dataset.mpdia; if (mapaDia.has(f)) mapaDia.delete(f); else mapaDia.add(f); render(); return; }
     const el = mq.closest('.mapa'), m = el && MP[el.dataset.mapa]; if (!m) return;

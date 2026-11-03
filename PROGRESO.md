@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v99
+Caché del service worker: corea-v100
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -151,6 +151,7 @@ Caché del service worker: corea-v99
 - v97: Planes abre por defecto en "💄 Cosmética" (antes LoL).
 - v98 (el usuario eligió negrita, compactar e Historia con identidad): resaltar(t, prosa) se usa ahora en los textos largos (Ruta del día, Más de la Lonely, Con ojos de guía, imprescindibles, Lonely, buscador, Guía, Planes y notas de Comer). En modo prosa no pone en negrita la palabra suelta con mayúscula al principio de frase; además marca distancias, minutos, horas y € (antes solo ₩ y horas) y convierte VERIFICAR en su marca. Los nombres propios exigen minúscula tras la mayúscula (evita "VI-VII"). Compactar: en Planes, "Cerca" y "Cerca de vuestro plan" pasan a un desplegable de una línea ("📍 Cerca: 7 planes · 📅 4 de vuestro plan") y la foto baja a 96 px; en Hoy, tarjeta Ahora y aviso de compras más pequeños.
 - v99: Historia con identidad propia (dentro de Corea → Historia, sin pestaña nueva). Fondo de papel hanji (CSS) con franja de colores dancheong arriba y variables propias para claro/oscuro; portada con 한국사, barra de progreso y "Seguir"; línea del tiempo deslizable de 9 etapas (HIST_ERAS: hangul, nombre, fechas y color; lleva a su capítulo); "Símbolos del país" (Taegukgi, Mugunghwa, Hangul, tigre, Arirang); índice en tarjetas con foto (HIST_WIKI, un artículo de Wikipedia por capítulo) en dos bloques: "De Dangun a hoy" y "Personajes, cultura y vuestra ruta". Capítulo: foto de cabecera, etiqueta de la etapa, letra capital roja y negritas (resaltar en prosa). Las fotos de Historia entran en "Preparar para viajar".
+- v100: el mapa grande de la Ruta del día tiene filtros "Cerca de la ruta": Más sitios, Comer y Planes (mpCapasDia, apagados por defecto), con lo que queda a ≤1,2 km de algún punto del recorrido y no está ya en él. El encuadre sigue siendo el del recorrido. Al tocar un punto extra, la ficha dice a qué distancia está de la parada más cercana ("📍 A 300 m de la parada 3 (Insadong)"). Al cambiar de capa se cierra la ficha abierta. El banner pequeño no lleva filtros.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

@@ -889,3 +889,6 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .hist-cap2 p { font-size: 1.02rem; line-height: 1.65; margin: 0 0 12px; text-align: left; }
 .hist-cap2 p.capital::first-letter { float: left; font-size: 3.1em; line-height: .85; padding: 4px 6px 0 0; color: var(--sello); font-family: Georgia, serif; font-weight: 700; }
 .hist-cap2 p b { color: var(--tinta); }
+
+/* v100: capas en el mapa del día */
+.mp-parada { font-weight: 700; font-size: .88em; margin-top: 3px; }
