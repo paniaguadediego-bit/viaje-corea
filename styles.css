@@ -925,3 +925,9 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .hist-ciudad summary { display: flex; align-items: center; gap: 8px; padding: 10px 0; cursor: pointer; }
 .hist-ciudad summary span { font-size: 1.4rem; } .hist-ciudad summary small { color: var(--muted); font-size: .75rem; margin-left: auto; text-align: right; }
 .hist-ciudad p { line-height: 1.55; margin: 0 0 10px; }
+
+/* v104: los tres botones de Explorar, iguales y en una línea */
+.exsubs button { flex: 1 1 0; min-width: 0; height: 38px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: .74rem; padding: 0 4px; }
+.exsubs { gap: 3px; }
+.exsubs button { font-size: .7rem; letter-spacing: -.03em; padding: 0 2px; }
+.exsubs { margin-left: 5px; margin-right: 5px; }

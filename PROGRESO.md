@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v103
+Caché del service worker: corea-v104
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -155,6 +155,7 @@ Caché del service worker: corea-v103
 - v101: nueva sección "🇨🇳 Escala Pekín" en Más (viewEscala). Hora actual de Pekín (Asia/Shanghai) y diferencias (España +7 h, Canarias +8 h, Corea −1 h). Tarjeta por cada escala en PEK sacada de trip.vuelos en el móvil (llegada, vuelo y hora de salida, terminal, minutos de conexión; en rojo si es menor de 2 h 30). Desplegables con lo útil: paso a paso del tránsito internacional (carteles "International Transfer / 国际中转", control de tránsito, sin visado si no se sale de la zona internacional en menos de 24 h, nuevo control de seguridad, colas de 40-50 min), equipaje directo con un solo billete, internet (Google/WhatsApp bloqueados con wifi chino; itinerancia española suele funcionar; wifi del aeropuerto con código por pasaporte), baterías (solo cabina, capacidad visible, 3C) y mecheros, dinero (yuan, tarjetas, Alipay). 12 frases en chino mandarín (caracteres y pinyin) a pantalla completa (data-full="cn:i"). Fuentes: guías y foros 2025-2026, web oficial de Pekín; procedimientos con aviso de que pueden cambiar.
 - v102: la pestaña Ciudades pasa a llamarse "🧭 Explorar" (nombre elegido por el usuario; id interno sigue siendo 'ciudades') y Planes sale de la barra (6 pestañas). En cada ciudad, debajo de la cabecera, cuatro botones (exSub): 📍 Puntos de interés (por defecto: introducción, imprescindibles, lista y Lonely), 🗺️ Mapa, 📜 Historia (de la ciudad, con negritas) y ⭐ Planes (planesDe(k): Mundial de LoL, LoL / Cosmética / Ropa / Curioso / Lavandería). La ciudad de Planes es la misma que la elegida en Explorar. Los botones Mapa e Historia de la cabecera se quitan. "⭐ Cerca" de la Ruta del día abre Explorar → Planes de esa ciudad; un tab 'planes' antiguo se redirige.
 - v103: Historia pasa a pestaña propia en la barra (📜, entre Explorar y Corea; 7 pestañas) y sale de Corea y de Explorar. [Supuesto] Reúne la historia del país y la de cada ciudad. Apartados (histSub): ⏳ Línea del tiempo (etapas de colores + 34 fechas en línea vertical, HIST_EVENTOS en historia.js; tocar abre el capítulo), 📚 Capítulos (tarjetas con foto y años), 🏯 Vuestras ciudades (HISTORIA de cada ciudad, desplegables con su color) y 🇰🇷 Símbolos. Cada capítulo: foto, etapa y años, "⏱️ En 30 segundos" (HIST_META.r), texto con letra capital y negritas, "📅 Fechas clave" del capítulo y "📍 Dónde lo veréis en el viaje" (chips que abren Explorar con ese sitio buscado). Resúmenes revisados contra el texto de cada capítulo. Clases de la línea del tiempo .htl* (.tl ya era de Ruta).
+- v104: los tres botones de Explorar (Puntos de interés, Mapa, Planes) tienen el mismo ancho y alto (38 px, una sola línea). Los botones de Planes van en orden alfabético: Cosmética, Curioso, Lavandería, LoL, Ropa (Cosmética sigue por defecto).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

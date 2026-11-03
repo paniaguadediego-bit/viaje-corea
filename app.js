@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v103';
+const VERSION = 'v104';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1526,7 +1526,8 @@ function viewCorea() {
 
 // ---------- Planes: League of Legends y cosmética ----------
 let planesCat = 'cosme';
-const PCATS = [['lol', '🎮 LoL'], ['cosme', '💄 Cosmética'], ['ropa', '👕 Ropa'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería']];
+// Orden alfabético (Cosmética es además la que se abre por defecto).
+const PCATS = [['cosme', '💄 Cosmética'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🎮 LoL'], ['ropa', '👕 Ropa']];
 // Calendario del Mundial de LoL con la ciudad donde estaréis cada día.
 function worldsCard() {
   if (typeof WORLDS === 'undefined') return '';
