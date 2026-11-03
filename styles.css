@@ -892,3 +892,9 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 
 /* v100: capas en el mapa del día */
 .mp-parada { font-weight: 700; font-size: .88em; margin-top: 3px; }
+
+/* v101: escala en Pekín */
+.esc-hora .big { font-size: 1.1rem; }
+.esc-vuelo div { margin-top: 3px; }
+.esc-con { font-weight: 600; } .esc-con.justa { color: var(--red); }
+.esc-sec ul { margin: 6px 0 0; padding-left: 18px; } .esc-sec li { margin: 4px 0; line-height: 1.4; }

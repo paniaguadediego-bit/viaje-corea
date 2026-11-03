@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v100';
+const VERSION = 'v101';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1369,6 +1369,10 @@ function full(html) {
 }
 function showFull(key) {
   const [t, a, b] = key.split(':');
+  if (t === 'cn') {
+    const f = FRASES_CN[a]; if (!f) return;
+    return full(`<div class="enorme">${esc(f[1])}</div><div class="es">${esc(f[2])}</div><div class="es">${esc(f[0])}</div>`);
+  }
   if (t === 'p') {
     const p = ((PLATOS[a] || [])[1] || [])[b]; if (!p) return;
     return full(`<div class="enorme">${esc(p[1])}</div><div class="es">${esc(p[0])} · ${esc(p[2])}</div><div class="es">Glosario Lonely Planet 2016</div>`);
@@ -1902,7 +1906,7 @@ function viewVerificar() {
 // Más con rejilla de iconos, como la Guía de Corea: se toca un tema y sale debajo.
 let masSub = 'maleta';
 const MAS_SUB = [['maleta', 'Maleta', '🧳'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'],
-  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['datos', 'Datos y app', '⚙️']];
+  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️']];
 function viewMas() {
   const pend = trip ? pendientesVerificar().reduce((a, [, ls]) => a + ls.filter(x => !verificado(x.key)).length, 0) : 0;
   const subs = trip ? MAS_SUB : MAS_SUB.filter(([k]) => k === 'datos');
@@ -1913,6 +1917,7 @@ function viewMas() {
   else if (masSub === 'seguro') c = viewSeguro();
   else if (masSub === 'verificar') c = viewVerificar();
   else if (masSub === 'docs') c = viewFotos();
+  else if (masSub === 'escala') c = viewEscala();
   else if (masSub === 'notas') c = `<h2>📝 Notas</h2><textarea data-notas rows="10" placeholder="Escribe aquí… (se guarda solo)">${esc(u().notas)}</textarea>${diarioResumen()}`;
   else c = `<h2>Datos del viaje</h2>
     <button data-act="import">📂 Importar viaje</button>
@@ -1925,6 +1930,67 @@ function viewMas() {
     <button class="danger" data-act="wipe">Borrar datos de este móvil</button>
     <p class="muted" id="ver">Versión: ${esc(window.VERSION || '…')}</p>`;
   return rej + c;
+}
+
+// ---------- Escala en Pekín (Capital, T3): todo lo útil para el tránsito ----------
+// Frases en chino mandarín: [español, caracteres, pinyin].
+const FRASES_CN = [
+  ['¿Dónde está el tránsito internacional?', '国际中转在哪里？', 'Guójì zhōngzhuǎn zài nǎlǐ?'],
+  ['Tenemos que hacer transbordo a Seúl.', '我们要转机去首尔。', 'Wǒmen yào zhuǎnjī qù Shǒu’ěr.'],
+  ['Tenemos que hacer transbordo a Madrid.', '我们要转机去马德里。', 'Wǒmen yào zhuǎnjī qù Mǎdélǐ.'],
+  ['¿Dónde está la puerta de embarque?', '登机口在哪里？', 'Dēngjīkǒu zài nǎlǐ?'],
+  ['Vamos justos de tiempo.', '我们赶时间。', 'Wǒmen gǎn shíjiān.'],
+  ['¿Mi equipaje va directo?', '我的行李是直挂的吗？', 'Wǒ de xíngli shì zhí guà de ma?'],
+  ['¿Dónde está el baño?', '洗手间在哪里？', 'Xǐshǒujiān zài nǎlǐ?'],
+  ['No hablo chino.', '我不会说中文。', 'Wǒ bú huì shuō Zhōngwén.'],
+  ['Ayúdeme, por favor.', '请帮帮我。', 'Qǐng bāngbang wǒ.'],
+  ['Agua', '水', 'Shuǐ'],
+  ['¿Cuánto cuesta?', '多少钱？', 'Duōshao qián?'],
+  ['Hola / Gracias', '你好 / 谢谢', 'Nǐ hǎo / Xièxie']];
+const ESCALA_INFO = [
+  ['🚶', 'Paso a paso del tránsito', [
+    'Al bajar del avión NO sigáis "Arrival" (entrada a China): buscad los carteles "International Transfer / 国际中转".',
+    'Control de tránsito: pasaporte y tarjeta de embarque del siguiente vuelo. Si no la tenéis, se saca en el mostrador de tránsito de Air China.',
+    'Sin visado: si no salís de la zona internacional y seguís viaje en menos de 24 h, no hace falta (VERIFICAR con Air China si hay dudas).',
+    'Después, control de seguridad otra vez: líquidos de 100 ml como máximo en bolsa transparente, portátil fuera.',
+    'Mirad la puerta en las pantallas nada más pasar el control. Los vuelos internacionales salen de la zona T3-E.',
+    'Puede haber colas de 40-50 min en el control de tránsito: id directos, sin paradas.']],
+  ['🧳', 'Equipaje', [
+    'Con un solo billete de Air China, la maleta facturada va directa hasta el destino final: no hay que recogerla en Pekín.',
+    'Comprobadlo al facturar: la etiqueta de la maleta debe decir ICN a la ida (y MAD a la vuelta). Frase útil: "¿Va directa a Seúl?".',
+    'No compréis líquidos en el duty free de Madrid ni de Incheon para llevar en cabina: en el control de Pekín os los pueden quitar.']],
+  ['📶', 'Internet y comunicación', [
+    'En China están bloqueados Google (Maps, Gmail, Traductor), WhatsApp, Instagram, YouTube y Facebook si usáis la wifi del aeropuerto.',
+    'Con los datos de vuestra tarjeta española en itinerancia suelen funcionar, porque la conexión sale por España. Pero China no es UE: mirad antes el precio de vuestra tarifa.',
+    'Wifi gratis del aeropuerto: hace falta un código; para extranjeros, máquinas que escanean el pasaporte o el mostrador de información.',
+    'Mandad un mensaje a la familia antes de despegar; tened las tarjetas de embarque en captura de pantalla.',
+    'Para traducir sin Google: esta misma sección tiene las frases clave en chino a pantalla completa.']],
+  ['🔋', 'Baterías y seguridad', [
+    'Baterías externas solo en cabina, nunca en la maleta facturada, con la capacidad visible (mAh o Wh) en la etiqueta.',
+    'China es muy estricta: en vuelos nacionales exige la marca 3C y algunos controles la piden también en internacionales. Si tenéis una con 3C, llevad esa.',
+    'Mecheros y cerillas: en China los retiran en el control. Mejor no llevarlos.']],
+  ['💴', 'Dinero', [
+    'No hace falta cambiar: la moneda es el yuan (CNY, ¥). Muchas tiendas del aeropuerto aceptan Visa/Mastercard.',
+    'En China casi todo se paga con Alipay o WeChat Pay. Alipay admite tarjetas extranjeras, pero para 2 h no merece la pena instalarlo.']]];
+function viewEscala() {
+  const ahora = new Date(), hPek = ahora.toLocaleTimeString('es-ES', { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit' });
+  // Vuestras escalas en Pekín (del trip.json, solo en el móvil).
+  const escalas = arr(trip && trip.vuelos).map(v => { const ts = arr(v.tramos).filter(x => x.vuelo); const i = ts.findIndex(x => x.a === 'PEK');
+    if (i < 0 || !ts[i + 1]) return null; const lleg = ts[i].llegada, sal = ts[i + 1].salida;
+    const min = (new Date(sal.replace(' ', 'T')) - new Date(lleg.replace(' ', 'T'))) / 60000;
+    return { v, de: ts[i], a: ts[i + 1], lleg, sal, min }; }).filter(Boolean);
+  const hm = m => `${Math.floor(m / 60)} h${m % 60 ? ' ' + (m % 60) + ' min' : ''}`;
+  return `<h2>🇨🇳 Escala en Pekín</h2>
+    <div class="card esc-hora"><div class="big">🕐 Ahora en Pekín: ${hPek}</div>
+      <div class="muted">China no cambia la hora: Pekín = España <b>+7 h</b> · Canarias <b>+8 h</b> · Corea <b>−1 h</b>. Los horarios de vuelo de Pekín están en hora local.</div></div>
+    ${escalas.map(e => `<div class="card esc-vuelo"><b>${e.v.tipo === 'vuelta' ? '⬅️ Vuelta' : '➡️ Ida'} · ${fmtDate(e.lleg.slice(0, 10))}</b>
+      <div>🛬 Llegáis a las <b>${e.lleg.slice(11)}</b> en el ${esc(e.de.vuelo)} (terminal ${esc(e.de.a_terminal || '?')})</div>
+      <div>🛫 Sale el <b>${esc(e.a.vuelo)}</b> a las <b>${e.sal.slice(11)}</b> (terminal ${esc(e.a.de_terminal || '?')}) → ${esc(e.a.a_nombre || e.a.a)}</div>
+      <div class="esc-con ${e.min < 150 ? 'justa' : ''}">⏱️ Conexión de <b>${hm(e.min)}</b>${e.min < 150 ? ': id directos al tránsito, sin paradas' : ''}</div></div>`).join('')}
+    ${ESCALA_INFO.map(([ic, t, ls]) => `<details class="card esc-sec" data-key="esc:${esc(t)}" ${abierto('esc:' + t, t.startsWith('Paso')) ? 'open' : ''}><summary><b>${ic} ${esc(t)}</b></summary><ul>${ls.map(x => `<li>${resaltar(x, true)}</li>`).join('')}</ul></details>`).join('')}
+    <h2>🗣️ Frases en chino (toca para enseñar)</h2>
+    ${FRASES_CN.map((f, i) => `<div class="card lugar" data-full="cn:${i}"><div><div>${esc(f[0])}</div><div class="muted">${esc(f[2])}</div></div><div class="ko">${esc(f[1])}</div></div>`).join('')}
+    <p class="muted">Información de guías y foros de 2025-2026; los procedimientos pueden cambiar: ante la duda, preguntad al personal de Air China.</p>`;
 }
 
 // Redibujado por tareas en segundo plano (datos, tiempo, fotos): se espera si estás usando un desplegable o escribiendo.

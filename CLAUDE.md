@@ -27,7 +27,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    línea del tiempo de dinastías, símbolos del país y foto por capítulo), Enseñar, Frases,
    Diccionario. Más es una rejilla de iconos
    como la Guía (se toca y sale debajo): Maleta, Seguro,
-   Verificar, Documentos (fotos/PDF), Notas y Datos y app (importar,
+   Verificar, Documentos (fotos/PDF), Notas, Escala Pekín (hora de Pekín, vuestras escalas desde trip.vuelos,
+   tránsito, equipaje, internet, baterías, dinero y frases en chino a pantalla completa) y Datos y app (importar,
    exportar, "Preparar para viajar" (con wifi: app offline, fotos, mapas, tiempo,
    cambio y aviso de copia), actualizar, borrar). En Hoy, botón rojo "🆘 Ayuda"
    a pantalla completa: hotel de esta noche en hangul grande, 112/119/1330,
