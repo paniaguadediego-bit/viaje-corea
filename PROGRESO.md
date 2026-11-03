@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v105
+Caché del service worker: corea-v106
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -157,6 +157,7 @@ Caché del service worker: corea-v105
 - v103: Historia pasa a pestaña propia en la barra (📜, entre Explorar y Corea; 7 pestañas) y sale de Corea y de Explorar. [Supuesto] Reúne la historia del país y la de cada ciudad. Apartados (histSub): ⏳ Línea del tiempo (etapas de colores + 34 fechas en línea vertical, HIST_EVENTOS en historia.js; tocar abre el capítulo), 📚 Capítulos (tarjetas con foto y años), 🏯 Vuestras ciudades (HISTORIA de cada ciudad, desplegables con su color) y 🇰🇷 Símbolos. Cada capítulo: foto, etapa y años, "⏱️ En 30 segundos" (HIST_META.r), texto con letra capital y negritas, "📅 Fechas clave" del capítulo y "📍 Dónde lo veréis en el viaje" (chips que abren Explorar con ese sitio buscado). Resúmenes revisados contra el texto de cada capítulo. Clases de la línea del tiempo .htl* (.tl ya era de Ruta).
 - v104: los tres botones de Explorar (Puntos de interés, Mapa, Planes) tienen el mismo ancho y alto (38 px, una sola línea). Los botones de Planes van en orden alfabético: Cosmética, Curioso, Lavandería, LoL, Ropa (Cosmética sigue por defecto).
 - v105: navegación de Historia: barra flotante (sticky) siempre visible encima de la barra inferior con ◀ · ☰ n/22 · Leído ▶; línea de progreso de lectura arriba del capítulo; deslizar el dedo ←/→ cambia de capítulo (sin marcarlo como leído). Transiciones ligeras solo con CSS (opacidad y transform): el capítulo entra deslizándose según la dirección, línea del tiempo, tarjetas, símbolos y ciudades aparecen escalonados, pulsación con leve encogimiento en tarjetas y botones de ciudad/día, y fundido suave al cambiar de pestaña. Todo se desactiva con "reducir movimiento". Para que funcione sticky: body pasa de overflow-x hidden a clip (hidden creaba un contenedor de scroll que no se movía) y .hist-tema usa overflow clip. Comprobado que ninguna pestaña tiene desplazamiento lateral.
+- v106: el buscador del diccionario "no funcionaba" en el móvil: al cerrar el teclado (focusout) se ejecutaba un redibujado pendiente (tiempo, fotos…) y el campo se vaciaba. [Supuesto] Era esa la causa (en Chromium de escritorio buscaba bien). Ahora la búsqueda se guarda en qDic y se repinta con su valor y resultados, como los buscadores de Explorar y Comer. Añadida a Frases → Básicas: "¡Maravilloso!" 정말 멋져요! (jeongmal meotjyeoyo!).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

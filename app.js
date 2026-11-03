@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v105';
+const VERSION = 'v106';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1309,7 +1309,7 @@ function ciudadDeLugar(l) {
 }
 // Botones de ciudad (los mismos de Ciudades). La ciudad elegida se comparte entre pestañas.
 // ---------- Buscadores de Ciudades y Comer (todas las ciudades; sin tildes; también en hangul) ----------
-let qCiu = '', qCom = '';
+let qCiu = '', qCom = '', qDic = '';
 const nb = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 const buscadorHTML = (id, v, ph, res) => `<div class="buscador"><input id="${id}" type="search" placeholder="🔎 ${esc(ph)}" value="${esc(v)}" autocomplete="off" enterkeyhint="search"><button class="sec mini" data-qclear="${id}" aria-label="Borrar">✕</button></div><div id="r${id}">${res}</div>`;
 // Puntuación: 2 si está en el nombre o el hangul, 1 si solo en la descripción.
@@ -1523,8 +1523,9 @@ function viewCorea() {
     html += `<div class="chips sit">${grupos.map(([t]) => `<button class="chip ${t === g[0] ? 'on' : ''}" data-sit="${esc(t)}">${esc(t)}</button>`).join('')}</div>
       <p class="muted">Toca una frase para verla a pantalla completa.</p>` + g[1].map((f, i) => dFila(f, 'f:' + (g[2] + i))).join('');
   }
-  else if (coreaSub === 'dicc') html += `<input id="q" type="search" placeholder="Buscar (español, coreano o romanización)" autocomplete="off">
-    <div id="dres">${dResultados('')}</div>`;
+  // La búsqueda se recuerda: si la pantalla se redibuja (p. ej. al cerrar el teclado), no se pierde.
+  else if (coreaSub === 'dicc') html += `<input id="q" type="search" placeholder="Buscar (español, coreano o romanización)" autocomplete="off" enterkeyhint="search" value="${esc(qDic)}">
+    <div id="dres">${dResultados(qDic)}</div>`;
   else {
     const g = GUIA.find(([t]) => t === guiaSel);
     html += `<div class="guia-rej">${GUIA.map(([t]) => `<button class="guia-t ${t === guiaSel ? 'on' : ''}" data-guia="${esc(t)}"><span>${icGuia(t)}</span>${esc(t.replace(/ \(Lonely Planet\)/, ''))}${/Lonely/.test(t) ? '<small>LP</small>' : ''}</button>`).join('')}</div>
@@ -2259,7 +2260,7 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('input', e => {
   const t = e.target;
-  if (t.id === 'q') $('#dres').innerHTML = dResultados(t.value);
+  if (t.id === 'q') { qDic = t.value; $('#dres').innerHTML = dResultados(qDic); }
   else if (t.id === 'qcs' || t.id === 'qcm') {
     if (t.id === 'qcs') qCiu = t.value; else qCom = t.value;
     $('#r' + t.id).innerHTML = t.id === 'qcs' ? resCiudades(qCiu) : resComer(qCom); pintarFotos();
