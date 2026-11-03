@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v107
+Caché del service worker: corea-v108
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -159,6 +159,7 @@ Caché del service worker: corea-v107
 - v105: navegación de Historia: barra flotante (sticky) siempre visible encima de la barra inferior con ◀ · ☰ n/22 · Leído ▶; línea de progreso de lectura arriba del capítulo; deslizar el dedo ←/→ cambia de capítulo (sin marcarlo como leído). Transiciones ligeras solo con CSS (opacidad y transform): el capítulo entra deslizándose según la dirección, línea del tiempo, tarjetas, símbolos y ciudades aparecen escalonados, pulsación con leve encogimiento en tarjetas y botones de ciudad/día, y fundido suave al cambiar de pestaña. Todo se desactiva con "reducir movimiento". Para que funcione sticky: body pasa de overflow-x hidden a clip (hidden creaba un contenedor de scroll que no se movía) y .hist-tema usa overflow clip. Comprobado que ninguna pestaña tiene desplazamiento lateral.
 - v106: el buscador del diccionario "no funcionaba" en el móvil: al cerrar el teclado (focusout) se ejecutaba un redibujado pendiente (tiempo, fotos…) y el campo se vaciaba. [Supuesto] Era esa la causa (en Chromium de escritorio buscaba bien). Ahora la búsqueda se guarda en qDic y se repinta con su valor y resultados, como los buscadores de Explorar y Comer. Añadida a Frases → Básicas: "¡Maravilloso!" 정말 멋져요! (jeongmal meotjyeoyo!).
 - v107: pronunciación "a la española" (🗣️) además de la romanización oficial, a petición del usuario (Frases y Enseñar; el diccionario no). pronuncia(ko) en app.js: separa la sílaba en inicial/vocal/final y aplica las reglas de sonido más comunes (enlace con la vocal siguiente, ㅎ final que desaparece y ㄶ/ㅀ que pasan la ㄴ/ㄹ, nasalización, ㄴ+ㄹ y ㄹ+ㄹ → ll, ㅁ/ㅇ+ㄹ → n, aspiración con ㅎ, palatalización 같이 → kachi); escribe con letras españolas: ㄱㄷㅂ sordas al inicio (k/t/p) y sonoras entre sonidos sonoros (g/d/b), ㅈㅊㅉ → ch, ㅅ+i/y → sh, ㅎ → j suave (se pierde tras consonante), ㅓ → o, ㅡ → u, ㅐ/ㅔ → e, «gu» delante de e/i y guion en «ng-e/ng-i». Las 74 frases revisadas a mano. Sale destacada en Frases (lista y pantalla completa), en la lista y las tarjetas de Enseñar (sitios, planes, restaurantes) y en el hotel de 🆘 Ayuda; la romanización oficial queda en pequeño. [Supuesto] Es una aproximación: no recoge todas las excepciones (p. ej. la ㄴ que se añade en 서울역).
+- v108: los sitios de "💡 Cerca y no lo tenéis" salen en el mapa del día (banner y mapa grande) como puntos de asterisco discontinuo con la etiqueta de la parada tras la que encajan con menos desvío ("2*" = entre la parada 2 y la 3; "H*" = entre el hotel y la primera; si encaja mejor al final, tras la última). sugerenciasDe(d, ruta, hot) calcula el hueco de menor desvío con el mismo orden de la Ruta del día (itinerario + añadidos). La lista lleva la misma etiqueta y el texto "De paso entre … : desvío ~X". Ficha del asterisco: dónde encaja, descripción corta, "＋ Añadir a este día" y Naver. Las fichas del mapa ya no muestran todos los pasos de metro (solo la línea resumen). El encuadre del mapa del día incluye los asteriscos; la capa "Más sitios" no los repite.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

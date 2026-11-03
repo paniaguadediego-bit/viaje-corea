@@ -55,7 +55,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    ~1.000 teselas de zoom 12-16 alrededor de los sitios del viaje; nunca zoom 17+ ni ciudades enteras).
    Debajo, "💡 Cerca y no lo tenéis":
    hasta 4 sitios recomendados que no están en ningún día y quedan a
-   ≤900 m de la ruta, con "+" para añadirlos a ese día. Extras
+   ≤900 m de la ruta, con "+" para añadirlos a ese día; también en el mapa del día con asterisco y la
+   parada tras la que encajan ("2*" = entre la 2 y la 3; "H*" = tras el hotel). Extras
    aprobados: conversor ₩↔€ con cambio automático del BCE vía
    api.frankfurter (solo con conexión; se guarda para offline; se
    puede fijar a mano), tiempo previsto por día (Open-Meteo, sin clave,

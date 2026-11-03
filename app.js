@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v107';
+const VERSION = 'v108';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -602,19 +602,35 @@ function tramo(o, dst, nO, nD) {
   return `<div class="tramo-ir"><span>${pie ? '🚶 ' : ''}${fmtDist(k)} · ${txt}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>${r ? pasosMetro(r) : ''}`;
 }
 // Sitios recomendados que no están en ningún día del plan y quedan a ≤900 m de la ruta de ese día.
-function sugerenciasCerca(d, ruta) {
-  const k = ck(d.ciudad), cs = ruta.map(coordsLugar).filter(Boolean); if (!cs.length) return '';
+// Sitios recomendados que no están en ningún día y quedan a ≤900 m de la ruta, con dónde encajan
+// (tras qué parada numerada: "2*" = entre la parada 2 y la 3, el sitio con menos desvío).
+function sugerenciasDe(d, ruta, hot) {
+  const k = ck(d.ciudad), cs = ruta.map(coordsLugar).filter(Boolean); if (!cs.length) return [];
   const enAlgun = new Set(); arr(trip.dias).forEach(x => listaDia(x).forEach(l => enAlgun.add(hKey(l))));
   const imp = new Set(((typeof IMPRES !== 'undefined' && IMPRES[k]) || []).map(hKey));
-  const s = sitiosCiudadObj(k).filter(l => !enAlgun.has(hKey(l)) && coordsLugar(l)).map(l => {
-    const ds = ruta.filter(x => coordsLugar(x)).map(x => [x, km(coordsLugar(x), coordsLugar(l))]).sort((a, b) => a[1] - b[1]);
-    return ds.length && ds[0][1] <= 0.9 ? { l, dm: ds[0][1], junto: ds[0][0], peso: (imp.has(hKey(l)) ? 2 : 0) + (l.top ? 1 : 0) } : null;
+  const paradas = []; if (hot) paradas.push({ n: 0, es: 'el hotel', c: hot });
+  let n = 0; ruta.forEach(l => { const c = coordsLugar(l); if (c) paradas.push({ n: ++n, es: l.es, c }); });
+  return sitiosCiudadObj(k).filter(l => !enAlgun.has(hKey(l)) && coordsLugar(l)).map(l => {
+    const c = coordsLugar(l), ds = ruta.filter(x => coordsLugar(x)).map(x => [x, km(coordsLugar(x), c)]).sort((a, b) => a[1] - b[1]);
+    if (!ds.length || ds[0][1] > 0.9) return null;
+    let mejor = null;
+    for (let j = 1; j < paradas.length; j++) { const dv = km(paradas[j - 1].c, c) + km(c, paradas[j].c) - km(paradas[j - 1].c, paradas[j].c);
+      if (!mejor || dv < mejor.dv) mejor = { dv, tras: paradas[j - 1], antes: paradas[j] }; }
+    const ult = paradas[paradas.length - 1], alFinal = km(ult.c, c);
+    if (!mejor || alFinal < mejor.dv) mejor = { dv: alFinal, tras: ult, antes: null };
+    return { l, c, dm: ds[0][1], junto: ds[0][0], peso: (imp.has(hKey(l)) ? 2 : 0) + (l.top ? 1 : 0), ...mejor,
+      etq: (mejor.tras.n === 0 ? 'H' : mejor.tras.n) + '*' };
   }).filter(Boolean).sort((a, b) => b.peso - a.peso || a.dm - b.dm).slice(0, 4);
-  if (!s.length) return '';
+}
+const textoEncaje = g => g.antes ? `De paso entre ${g.tras.n ? 'la parada ' + g.tras.n + ' (' + g.tras.es + ')' : 'el hotel'} y la parada ${g.antes.n} (${g.antes.es}): desvío ~${fmtDist(g.dv)}`
+  : `Al final, después de ${g.tras.n ? 'la parada ' + g.tras.n + ' (' + g.tras.es + ')' : 'el hotel'}: a ${fmtDist(g.dv)}`;
+function sugerenciasCerca(d, ruta, hot) {
+  const s = sugerenciasDe(d, ruta, hot); if (!s.length) return '';
   const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {};
-  return `<div class="sugerencias"><b>💡 Cerca y no lo tenéis</b>${s.map(({ l, dm, junto }) => { const h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
-    return `<div class="sug">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit"><b>${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)}</div>
-      <div class="muted">📍 ${fmtDist(dm)} de ${esc(junto.es)}${txt ? ` · ${esc(txt.length > 140 ? txt.slice(0, 137) + '…' : txt)}` : ''}</div></div>
+  return `<div class="sugerencias"><b>💡 Cerca y no lo tenéis</b> <span class="muted mini-nota">(en el mapa con *)</span>${s.map(g => { const l = g.l, h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
+    return `<div class="sug">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit"><span class="sug-etq">${g.etq}</span><b>${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)}</div>
+      <div class="sug-encaje">${esc(textoEncaje(g))}</div>
+      ${txt ? `<div class="muted">${resaltar(recorta(txt, 140), true)}</div>` : ''}</div>
       <button class="mini sug-add" data-agtog="${esc(h)}|${d.fecha}" aria-label="Añadir a este día">+</button></div>`; }).join('')}</div>`;
 }
 function sitiosDia(d) {
@@ -654,7 +670,7 @@ function sitiosDia(d) {
     ${auto.map(l => fila(l, false)).join('')}
     ${extras.length ? `<div class="sd-anadidos">➕ Añadidos desde Ciudades</div>${extras.map(l => fila(l, true)).join('')}` : ''}
     ${A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}
-    ${sugerenciasCerca(d, todos)}
+    ${sugerenciasCerca(d, [...auto, ...extras], hc)}
     ${planesCerca(todos)}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado. Metro: tiempos aproximados; estaciones y líneas de Seúl © OpenStreetMap (ODbL).</div></div>`;
 }
 
@@ -1050,7 +1066,7 @@ function mpDibujar(el, m) {
   if (m.linea && m.linea.length > 1) h += `<svg class="mp-linea" width="${W}" height="${H}"><polyline points="${m.linea.map(c => P(c).map(v => v.toFixed(1)).join(',')).join(' ')}"/></svg>`;
   const etiq = z >= 15;
   // Primero los de detrás (Comer, Planes, más sitios), encima itinerario y hotel.
-  const orden = { comer: 0, planes: 1, sitios: 2, itin: 3, hotel: 4 };
+  const orden = { comer: 0, planes: 1, sitios: 2, sug: 3, itin: 4, hotel: 5 };
   m.pts.map((p, i) => [p, i]).sort((a, b) => orden[a[0].capa] - orden[b[0].capa]).forEach(([p, i]) => {
     const [x, y] = P(p.c); if (x < -40 || y < -40 || x > W + 40 || y > H + 40) return;
     h += `<button class="mp-pt c-${p.capa} ${p.hecho ? 'hecho' : ''} ${m.sel === i ? 'sel' : ''}" data-mpp="${i}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${p.num != null ? `<b>${esc(p.num)}</b>` : p.ic}${etiq || p.capa === 'hotel' || m.sel === i ? `<span class="mp-lab">${esc(recorta(p.es, 22))}</span>` : ''}</button>`;
@@ -1063,11 +1079,11 @@ function mpDibujar(el, m) {
 function mpFicha(p, m) {
   return `<div class="mp-f"><div class="mp-f-t"><b>${p.ic} ${esc(p.es)}</b>${p.l ? lpPill(p.l) : ''}<button class="sec mini" data-mpcerrar>✕</button></div>
     ${p.ko ? `<div class="ko-s">${esc(p.ko)}</div>` : ''}
-    <div class="muted">${esc(p.sub || '')}${p.txt ? ` · ${esc(recorta(p.txt, 150))}` : ''}</div>
-    ${(() => { if (['itin', 'hotel'].includes(p.capa)) return ''; const ps = m.pts.filter(x => x.capa === 'itin' && x.num != null); if (!ps.length || m.pts.some(x => x.capa === 'itin' && x.num == null)) return '';
+    ${p.capa === 'sug' ? `<div class="sug-encaje">📍 ${esc(p.sub)}</div>${p.txt ? `<div class="muted">${esc(recorta(p.txt, 120))}</div>` : ''}` : `<div class="muted">${esc(p.sub || '')}${p.txt ? ` · ${esc(recorta(p.txt, 150))}` : ''}</div>`}
+    ${(() => { if (['itin', 'hotel', 'sug'].includes(p.capa)) return ''; const ps = m.pts.filter(x => x.capa === 'itin' && x.num != null); if (!ps.length || m.pts.some(x => x.capa === 'itin' && x.num == null)) return '';
       const [q, dk] = ps.map(x => [x, km(x.c, p.c)]).sort((a, b) => a[1] - b[1])[0]; return `<div class="mp-parada">📍 A ${fmtDist(dk)} de la parada ${q.num} (${esc(q.es)})</div>`; })()}
-    ${m.hotel && p.capa !== 'hotel' ? tramo(m.hotel, p.c, 'Hotel', p.ko || p.es).replace('<span>', '<span>Desde el hotel: ') : ''}
-    <div class="acciones">${naver(p.l || p)}</div></div>`;
+    ${m.hotel && !['hotel', 'sug'].includes(p.capa) ? tramo(m.hotel, p.c, 'Hotel', p.ko || p.es).replace('<span>', '<span>Desde el hotel: ').replace(/<ol class="metro-pasos">[\s\S]*?<\/ol>(<div class="muted mini-nota">[\s\S]*?<\/div>)?/, '') : ''}
+    <div class="acciones">${p.add ? `<button class="mini" data-agtog="${esc(p.add)}">＋ Añadir a este día</button>` : ''}${naver(p.l || p)}</div></div>`;
 }
 function mpGestos(el, m) {
   const v = el.querySelector('.mp-vista'), capa = () => el.querySelector('.mp-capa');
@@ -1184,13 +1200,17 @@ function mapaDiaHTML(d, hot, orden, mini = false) {
   let n = 0; orden.forEach(l => { const c = coordsLugar(l); if (!c) return; const h = hKey(l);
     pts.push({ capa: 'itin', c, l, es: l.es, ko: l.ko, num: ++n, ic: icSitio(l.es), sub: `Parada ${n}`, txt: D[h.slice(2)] || D[h] || l.desc || l.nota || '', hecho: hecho(l, k) }); });
   const ruta = pts.map(p => p.c);
-  if (mini) return mapaHTML('dm:' + d.fecha, pts, { linea: ruta, hotel: hot, mini });
+  // Lo que queda de paso y no tenéis: con asterisco y el número de la parada tras la que encaja.
+  sugerenciasDe(d, orden, hot).forEach(g => pts.push({ capa: 'sug', c: g.c, l: g.l, es: g.l.es, ko: g.l.ko, num: g.etq, ic: icSitio(g.l.es), sub: textoEncaje(g),
+    txt: (DIA_LP[hKey(g.l).slice(2)] || g.l.desc || g.l.nota || ''), add: hKey(g.l) + '|' + d.fecha }));
+  const encuadre = pts.map(p => p.c); // recorrido + asteriscos
+  if (mini) return mapaHTML('dm:' + d.fecha, pts, { linea: ruta, hotel: hot, mini, fit: encuadre });
   // Capas extra (apagadas por defecto): lo que queda a ≤1,2 km de algún punto de la ruta.
-  const ya = new Set(orden.map(hKey)), cuenta = {};
+  const ya = new Set([...orden.map(hKey), ...pts.filter(p => p.capa === 'sug').map(p => hKey(p.l))]), cuenta = {};
   puntosCiudad(k).todos.filter(p => ['sitios', 'comer', 'planes'].includes(p.capa) && !(p.l && ya.has(hKey(p.l))) && ruta.some(c => km(c, p.c) <= 1.2))
     .forEach(p => { cuenta[p.capa] = (cuenta[p.capa] || 0) + 1; if (mpCapasDia.has(p.capa)) pts.push(p); });
   const capas = Object.keys(cuenta).length ? `<div class="mp-capas"><span class="muted mini-nota">Cerca de la ruta:</span>${MP_CAPAS.filter(([c]) => cuenta[c]).map(([c, t, col]) => `<button class="chip ${mpCapasDia.has(c) ? 'on' : ''}" data-mpcapad="${c}" style="--mc:${col}"><i></i>${t} <small>${cuenta[c]}</small></button>`).join('')}</div>` : '';
-  return mapaHTML('d:' + d.fecha, pts, { linea: ruta, hotel: hot, capas, fit: ruta });
+  return mapaHTML('d:' + d.fecha, pts, { linea: ruta, hotel: hot, capas, fit: encuadre });
 }
 
 // ---------- mapa esquemático (SVG propio, sin internet) ----------
