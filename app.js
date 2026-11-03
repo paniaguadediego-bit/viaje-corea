@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v104';
+const VERSION = 'v105';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1452,7 +1452,15 @@ const HIST_SIMBOLOS = [['🇰🇷', 'Taegukgi', 'La bandera: el equilibrio del y
   ['🐯', 'Tigre', 'Animal protector en el arte popular y la mascota de los Juegos Olímpicos de Seúl 1988.'],
   ['🎵', 'Arirang', 'La canción popular más querida, casi un himno no oficial; Patrimonio Inmaterial de la Humanidad.']];
 const eraDe = i => HIST_ERAS.slice().reverse().find(e => i >= e[3] && i <= 13) || null;
-let histSub = 'linea';
+let histSub = 'linea', histDir = 'sig';
+// Barra de lectura del capítulo y paso de capítulo deslizando el dedo.
+window.addEventListener('scroll', () => { const c = document.querySelector('.hist-cap2'); if (!c) return; const r = c.getBoundingClientRect(), tot = r.height - innerHeight;
+  const b = c.querySelector('.hc-prog i'); if (b) b.style.width = Math.max(0, Math.min(100, tot > 0 ? -r.top / tot * 100 : 100)) + '%'; }, { passive: true });
+let toque0 = null;
+document.addEventListener('touchstart', e => { toque0 = e.target.closest('.hist-cap2') && !e.target.closest('.mapa') ? [e.touches[0].clientX, e.touches[0].clientY] : null; }, { passive: true });
+document.addEventListener('touchend', e => { if (!toque0 || histCap === null) return; const t = e.changedTouches[0], dx = t.clientX - toque0[0], dy = t.clientY - toque0[1]; toque0 = null;
+  if (Math.abs(dx) < 70 || Math.abs(dy) > 50) return; const n = histCap + (dx < 0 ? 1 : -1), H = HISTORIA_COREA;
+  if (n < 0 || n >= H.length) return; histDir = dx < 0 ? 'sig' : 'ant'; histCap = n; render(); window.scrollTo(0, 0); }, { passive: true });
 const HIST_SUBS = [['linea', '⏳ Línea del tiempo'], ['caps', '📚 Capítulos'], ['ciudades', '🏯 Vuestras ciudades'], ['simbolos', '🇰🇷 Símbolos']];
 // Sitio del catálogo por su hangul (para "Dónde lo veréis").
 function sitioPorKo(ko) { for (const k of ciudadesCatalogo()) { const l = sitiosCiudadObj(k).find(x => hKey(x).slice(2) === ko); if (l) return [l, k]; } return null; }
@@ -1464,7 +1472,8 @@ function viewHistoria() {
   if (histCap !== null && H[histCap]) {
     const c = H[histCap], i = histCap, era = eraDe(i), m = M[i] || {}, evs = EV.filter(e => e[2] === i);
     const ver = arr(m.v).map(sitioPorKo).filter(Boolean);
-    return `<div class="hist-tema"><div class="hist-cap2">
+    return `<div class="hist-tema"><div class="hist-cap2" data-dir="${histDir}">
+      <div class="hc-prog"><i></i></div>
       <div class="foto banda hc-banner" data-wiki="${esc(HIST_WIKI[i] || '')}"><span>${c.ic}</span></div>
       <div class="hc-meta">${era ? `<span class="hc-era" style="--ec:${era[4]}">${era[0]} · ${era[1]}</span>` : m.e ? `<span class="hc-era" style="--ec:#7a5c3a">${esc(m.e)}</span>` : ''}<span>${m.a ? esc(m.a) + ' · ' : ''}Cap. ${i + 1}/${H.length} · ${minLect(c)} min</span></div>
       <h3 class="hist-h">${c.ic} ${esc(c.t)}</h3>
@@ -1472,8 +1481,10 @@ function viewHistoria() {
       ${c.p.map((x, j) => `<p class="${j === 0 ? 'capital' : ''}">${resaltar(x, true)}</p>`).join('')}
       ${evs.length ? `<div class="hc-box"><b>📅 Fechas clave</b>${evs.map(e => `<div class="hc-ev"><span>${esc(e[0])}</span>${esc(e[1])}</div>`).join('')}</div>` : ''}
       ${ver.length ? `<div class="hc-box"><b>📍 Dónde lo veréis en el viaje</b><div class="hc-ver">${ver.map(([l, k]) => `<button class="chip" data-bcity="${esc(k)}" data-bq="${esc(l.es)}">${tema(k).ic} ${esc(l.es)}</button>`).join('')}</div></div>` : ''}
-      <div class="row hist-nav"><button class="sec" data-hc="${i - 1}" ${i === 0 ? 'disabled' : ''}>◀</button><button class="sec" data-hc="ind">Índice</button>
-        <button data-hc="${i + 1 < H.length ? i + 1 : 'ind'}" data-leido="${i}">${i + 1 < H.length ? 'Leído ▶' : 'Leído ✓'}</button></div></div></div>`;
+      <div class="hc-fin muted">Desliza ← → para cambiar de capítulo</div>
+      <div class="hist-nav2"><button class="sec" data-hc="${i - 1}" ${i === 0 ? 'disabled' : ''} aria-label="Anterior">◀</button>
+        <button class="sec hn-ind" data-hc="ind">☰ ${i + 1}/${H.length}</button>
+        <button class="hn-sig" data-hc="${i + 1 < H.length ? i + 1 : 'ind'}" data-leido="${i}">${i + 1 < H.length ? 'Leído ▶' : 'Leído ✓'}</button></div></div></div>`;
   }
   const sig = H.findIndex((c, i) => !U.leidos[i]);
   const portada = `<div class="hist-portada"><div class="hist-ko">한국사</div><div class="hist-tit">Historia y cultura de Corea</div>
@@ -1485,9 +1496,9 @@ function viewHistoria() {
   if (histSub === 'linea') {
     // Línea vertical: cada etapa con su color y sus fechas; tocar una fecha abre el capítulo.
     cuerpo = `<div class="hist-linea">${HIST_ERAS.map(([ko, es, f, cap, col]) => `<button class="hl-era" style="--ec:${col}" data-hc="${cap}"><span class="hl-ko">${ko}</span><b>${es}</b><small>${f}</small></button>`).join('')}</div>
-      <div class="htl">${EV.map(e => { const era = eraDe(e[2]) || ['', '', '', 0, '#7a5c3a']; return `<button class="htl-ev" style="--ec:${era[4]}" data-hc="${e[2]}"><span class="htl-a">${esc(e[0])}</span><span class="htl-t">${esc(e[1])}</span></button>`; }).join('')}</div>`;
+      <div class="htl">${EV.map((e, n) => { const era = eraDe(e[2]) || ['', '', '', 0, '#7a5c3a']; return `<button class="htl-ev" style="--ec:${era[4]};--i:${Math.min(n, 14)}" data-hc="${e[2]}"><span class="htl-a">${esc(e[0])}</span><span class="htl-t">${esc(e[1])}</span></button>`; }).join('')}</div>`;
   } else if (histSub === 'caps') {
-    const tarjeta = i => { const c = H[i], m = M[i] || {}; return `<button class="hc-card ${U.leidos[i] ? 'leido' : ''}" data-hc="${i}">
+    const tarjeta = i => { const c = H[i], m = M[i] || {}; return `<button class="hc-card ${U.leidos[i] ? 'leido' : ''}" style="--i:${Math.min(i % 14, 10)}" data-hc="${i}">
         <div class="foto mini hc-foto" data-wiki="${esc(HIST_WIKI[i] || '')}"><span>${c.ic}</span></div>
         <span class="hc-txt"><small>${i + 1} · ${m.a ? esc(m.a) + ' · ' : ''}${U.leidos[i] ? '✓ leído' : minLect(c) + ' min'}</small><b>${esc(c.t)}</b></span></button>`; };
     cuerpo = `<div class="hist-sec">📜 De Dangun a hoy</div><div class="hc-grid">${H.map((c, i) => i).filter(i => i <= 13).map(tarjeta).join('')}</div>
@@ -2054,7 +2065,9 @@ function render() {
   // Las filas de chips deslizables conservan su posición al redibujar (si no, vuelven al principio).
   const filas = el => [...el.querySelectorAll('.chips, .hoysubs, .pcats')];
   const posX = tab === tabAnt ? filas($('#view')).map(f => f.scrollLeft) : [];
+  const cambia = tab !== tabAnt;
   $('#view').innerHTML = html; tabAnt = tab;
+  if (cambia) { const v = $('#view'); v.classList.remove('entra'); void v.offsetWidth; v.classList.add('entra'); } // fundido suave al cambiar de pestaña
   filas($('#view')).forEach((f, i) => { if (posX[i]) { f.style.scrollBehavior = 'auto'; f.scrollLeft = posX[i]; f.style.scrollBehavior = ''; } });
   if (['ciudades', 'hoy', 'comer', 'corea', 'historia'].includes(tab)) pintarFotos();
   if (['ciudades', 'hoy'].includes(tab)) pintarMapas();
@@ -2185,7 +2198,8 @@ document.addEventListener('click', e => {
   if (sm) { e.preventDefault(); const dt = sm.parentElement; abiertos[dt.dataset.key] = !dt.open; dt.open = abiertos[dt.dataset.key]; return; }
   const hc = e.target.closest('[data-hc]');
   if (hc) { if (hc.dataset.leido !== undefined) { const U = u(); U.leidos = U.leidos || {}; U.leidos[hc.dataset.leido] = 1; saveUser(); }
-    histCap = hc.dataset.hc === 'ind' ? null : +hc.dataset.hc; render(); window.scrollTo(0, 0); return; }
+    const nuevo = hc.dataset.hc === 'ind' ? null : +hc.dataset.hc; histDir = histCap !== null && nuevo !== null && nuevo < histCap ? 'ant' : 'sig';
+    histCap = nuevo; render(); window.scrollTo(0, 0); return; }
   const ap = e.target.closest('[data-agpick]');
   if (ap) { agendaAbre = agendaAbre === ap.dataset.agpick ? null : ap.dataset.agpick; render(); return; }
   const at = e.target.closest('[data-agtog]');

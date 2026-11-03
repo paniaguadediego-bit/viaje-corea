@@ -19,6 +19,7 @@
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; overflow-x: hidden; }
 body { overflow-x: hidden; }
+@supports (overflow: clip) { body { overflow-x: clip; } } /* clip no crea contenedor de scroll: así funcionan las barras fijas (sticky) */
 main, .card, form { max-width: 100%; min-width: 0; }
 body {
   margin: 0; background: var(--bg); color: var(--fg);
@@ -931,3 +932,28 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .exsubs { gap: 3px; }
 .exsubs button { font-size: .7rem; letter-spacing: -.03em; padding: 0 2px; }
 .exsubs { margin-left: 5px; margin-right: 5px; }
+
+/* v105: navegación de Historia y transiciones ligeras (solo opacidad y transform; se apagan con "reducir movimiento") */
+.hc-prog { position: sticky; top: 0; z-index: 6; height: 4px; margin: -10px -10px 8px; background: rgba(0,0,0,.08); }
+.hc-prog i { display: block; height: 100%; width: 0; background: var(--sello); transition: width .1s linear; }
+.hist-nav2 { position: sticky; bottom: calc(64px + env(safe-area-inset-bottom)); z-index: 6; display: grid; grid-template-columns: 52px 1fr 1.3fr; gap: 6px;
+  margin: 10px -4px 0; padding: 6px; border-radius: 16px; background: var(--nav, var(--bg)); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 18px rgba(0,0,0,.18); }
+.hist-nav2 button { margin: 0; min-height: 42px; width: auto; border-radius: 12px; font-weight: 700; }
+.hist-nav2 .hn-sig { background: var(--sello); color: #fff; border: 0; }
+.hc-fin { text-align: center; font-size: .75rem; margin-top: 8px; }
+@keyframes hcEntraSig { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes hcEntraAnt { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+@keyframes subeSuave { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes fundido { from { opacity: 0; } to { opacity: 1; } }
+.hist-cap2[data-dir="sig"] { animation: hcEntraSig .32s ease-out; }
+.hist-cap2[data-dir="ant"] { animation: hcEntraAnt .32s ease-out; }
+.htl-ev, .hc-card, .hs-it, .hist-ciudad, .hl-era { animation: subeSuave .35s ease-out both; animation-delay: calc(var(--i, 0) * 35ms); }
+.hist-portada .hist-ko { animation: fundido .6s ease-out; }
+.hc-card, .htl-ev, .hl-era, .hist-nav2 button, .cbtn, .dchip, .guia-t { transition: transform .12s ease; }
+.hc-card:active, .htl-ev:active, .hl-era:active, .hist-nav2 button:active, .cbtn:active, .dchip:active, .guia-t:active { transform: scale(.96); }
+#view.entra { animation: fundido .22s ease-out; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+/* El recorte con "hidden" impedía que la barra de Historia se quedara fija (sticky). */
+.hist-tema { overflow: clip; overflow: visible; }
+@supports (overflow: clip) { .hist-tema { overflow: clip; } }
