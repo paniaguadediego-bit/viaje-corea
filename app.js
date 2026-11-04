@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v118';
+const VERSION = 'v119';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -602,7 +602,7 @@ function tramo(o, dst, nO, nD, op = {}) {
   const txt = c.modo === 'pie' ? `🚶 ${fmtDist(c.k)} · ~${c.m} min a pie`
     : c.modo === 'metro' ? `${fmtDist(c.k)} · 🚇 ~${r.min} min en metro · 🚕 ~${c.taxi} min en taxi`
     : `${fmtDist(c.k)} · 🚕 mejor taxi, ~${c.taxi} min${r ? '' : ' (o bus: miradlo en Naver)'}`;
-  const pasos = !r ? '' : c.modo === 'metro' ? pasosMetro(r) : `<details class="alt-metro"><summary>🚇 Alternativa en metro (~${r.min} min)</summary>${pasosMetro(r)}</details>`;
+  const pasos = !r ? '' : c.modo === 'metro' ? pasosMetro(r) : `<details class="alt-metro" data-key="am:${o.join()}>${dst.join()}" ${abierto(`am:${o.join()}>${dst.join()}`, false) ? 'open' : ''}><summary>🚇 Alternativa en metro (~${r.min} min)</summary>${pasosMetro(r)}</details>`;
   const fila = `<div class="tramo-ir"><span>${op.prefijo || ''}${txt}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>`;
   if (op.sinPasos) return fila;
   // Franja propia entre sitio y sitio, con el destino, para que no parezca parte del sitio anterior.
