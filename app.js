@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v112';
+const VERSION = 'v113';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -480,12 +480,6 @@ function destacados(ciudad) {
     <div class="acciones"><button class="sec mini" data-tab="ciudades">Ver la ciudad</button></div></div>`;
 }
 
-// Planes (LoL / cosmética) a menos de 1 km de algún sitio del día.
-function planesCerca(ls) {
-  const P = typeof PLANES !== 'undefined' ? PLANES : [], cs = ls.map(coordsLugar).filter(Boolean);
-  const cerca = P.map(p => { const c = coordsLugar(p); if (!c || !cs.length) return null; const d = Math.min(...cs.map(x => km(x, c))); return d <= 1 ? [p, d] : null; }).filter(Boolean).sort((a, b) => a[1] - b[1]);
-  return cerca.length ? `<div class="planes-cerca" data-plc="${esc(cerca[0][0].ciudad)}">⭐ Cerca: ${cerca.map(([p, d]) => `${icPlan(p)} ${esc(p.es)} <span class="muted">(${fmtDist(d)})</span>`).join(' · ')}</div>` : '';
-}
 // Sitios cuyo nombre comparte palabra con un barrio: exigen otra palabra en el plan.
 const EXIGE = { '명동성당': 'catedral' };
 // Sitios que aparecen en el plan del día, con lo que cuenta la Lonely (DIA_LP) o la descripción corta.
@@ -591,16 +585,39 @@ function pasosMetro(r) {
   return `<ol class="metro-pasos">${ps.map(p => `<li>${p}</li>`).join('')}</ol>${r.busan ? '<div class="muted mini-nota">Busan: líneas apuntadas a mano, <span class="ver">VERIFICAR</span> en Naver.</div>' : ''}`;
 }
 
-// Cómo ir de un punto a otro: distancia en línea recta, tiempo aproximado y ruta en la app de Naver Map.
+// Cómo ir de un punto a otro (la misma decisión para la Ruta del día y el horario):
+// a pie hasta 1,6 km en línea recta; si no, metro si no tarda mucho más que el taxi (≤1,6 veces); si no, taxi.
+function comoIr(o, dst) {
+  const k = km(o, dst);
+  if (k <= 1.6) return { k, modo: 'pie', m: Math.max(2, Math.round(k * 1.3 / 4.5 * 60)) };
+  const taxi = Math.round(k * 1.3 / (k > 8 ? 40 : 22) * 60 + 8), r = rutaMetro(o, dst); // fuera de ciudad el taxi va más rápido
+  return r && r.min <= taxi * 1.6 ? { k, modo: 'metro', m: r.min, taxi, r } : { k, modo: 'taxi', m: taxi, taxi, r };
+}
+// Distancia, tiempo y "🧭 Ruta" en la app de Naver Map; pasos de metro abiertos si es la opción buena, plegados si gana el taxi.
 function tramo(o, dst, nO, nD) {
   if (!o || !dst) return '';
-  const k = km(o, dst), pie = k <= 1.6, min = pie ? Math.max(2, Math.round(k * 1.3 / 4.5 * 60)) : Math.round(k * 1.3 / (k > 8 ? 40 : 22) * 60 + 8); // fuera de ciudad el taxi va más rápido
-  const modo = pie ? 'walk' : 'public';
+  const c = comoIr(o, dst), r = c.r;
   // Sin punto de salida: Naver Map calcula la ruta desde donde estéis en ese momento.
-  const url = `nmap://route/${modo}?dlat=${dst[0]}&dlng=${dst[1]}&dname=${encodeURIComponent(nD)}&appname=viajecorea`;
-  const r = pie ? null : rutaMetro(o, dst);
-  const txt = pie ? `~${min} min a pie` : r ? (r.min > min * 1.6 ? `🚕 mejor taxi, ~${min} min · 🚇 metro ~${r.min} min` : `🚇 ~${r.min} min en metro · 🚕 ~${min} min en taxi`) : `🚕 taxi ~${min} min (o bus)`;
-  return `<div class="tramo-ir"><span>${pie ? '🚶 ' : ''}${fmtDist(k)} · ${txt}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>${r ? pasosMetro(r) : ''}`;
+  const url = `nmap://route/${c.modo === 'pie' ? 'walk' : 'public'}?dlat=${dst[0]}&dlng=${dst[1]}&dname=${encodeURIComponent(nD)}&appname=viajecorea`;
+  const txt = c.modo === 'pie' ? `🚶 ${fmtDist(c.k)} · ~${c.m} min a pie`
+    : c.modo === 'metro' ? `${fmtDist(c.k)} · 🚇 ~${r.min} min en metro · 🚕 ~${c.taxi} min en taxi`
+    : `${fmtDist(c.k)} · 🚕 mejor taxi, ~${c.taxi} min${r ? '' : ' (o bus: miradlo en Naver)'}`;
+  const pasos = !r ? '' : c.modo === 'metro' ? pasosMetro(r) : `<details class="alt-metro"><summary>🚇 Alternativa en metro (~${r.min} min)</summary>${pasosMetro(r)}</details>`;
+  return `<div class="tramo-ir"><span>${txt}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>${pasos}`;
+}
+// Todo el día en Naver Map: hotel → paradas → hotel. Naver admite hasta 5 paradas intermedias por enlace
+// (documentado para la ruta en coche), así que con más paradas se parte en tramos.
+function naverDia(hc, hotN, lista) {
+  const pts = lista.filter(l => coordsLugar(l)).map(l => [coordsLugar(l), l.ko || l.es]);
+  if (hc) { pts.unshift([hc, hotN || 'Hotel']); pts.push([hc, hotN || 'Hotel']); }
+  if (pts.length < 3) return '';
+  // Tramos repartidos a partes iguales (cada uno empieza donde acaba el anterior).
+  const n = pts.length - 1, paso = Math.ceil(n / Math.ceil(n / 6)), partes = [];
+  for (let i = 0; i < n; i += paso) partes.push(pts.slice(i, i + paso + 1));
+  const q = (p, c) => `${p}lat=${c[0][0]}&${p}lng=${c[0][1]}&${p}name=${encodeURIComponent(c[1])}`;
+  const url = P => `nmap://route/car?${q('s', P[0])}&${P.slice(1, -1).map((c, i) => q('v' + (i + 1), c) + '&').join('')}${q('d', P[P.length - 1])}&appname=viajecorea`;
+  return `<div class="naver-dia">${partes.map((P, i) => `<a class="btn mini" href="${url(P)}">🧭 ${partes.length > 1 ? `Día en Naver (${i + 1}/${partes.length})` : 'Todo el día en Naver'}</a>`).join('')}
+    <span class="muted">Todas las paradas de un vistazo (Naver solo las admite en la ruta en coche).</span></div>`;
 }
 // Sitios recomendados que no están en ningún día del plan y quedan a ≤900 m de la ruta de ese día.
 // Sitios recomendados que no están en ningún día y quedan a ≤900 m de la ruta, con dónde encajan
@@ -643,18 +660,14 @@ const hhmm = m => `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(
 function horarioLinea(l, fecha) {
   const h = horDe(l); if (!h) return '';
   const ds = fecha ? new Date(fecha + 'T12:00').getDay() : null;
-  const cierra = arr(h.x).length ? ` · cierra los ${arr(h.x).map(x => DIAS_SEM[x]).join(' y ')}` : '';
+  const cierra = arr(h.x).length && !/cierra/i.test(h.t || '') ? ` · cierra los ${arr(h.x).map(x => DIAS_SEM[x].replace(/([^s])$/, '$1s')).join(' y ')}` : '';
   let aviso = '';
   if (ds !== null && arr(h.x).includes(ds)) aviso = `<div class="hor-cerrado">⛔ El ${DIAS_SEM[ds]} está cerrado: cambiadlo de día</div>`;
   else if (ds !== null && h.noche && !h.noche.includes(ds)) aviso = `<div class="hor-cerrado">🌙 El mercado nocturno solo abre viernes y sábado: el ${DIAS_SEM[ds]} no hay</div>`;
   return `<div class="hor-linea">🕒 ${esc(h.t)}${cierra}${h.v ? ' <span class="ver">VERIFICAR</span>' : ''}${h.n ? `<div class="muted">${esc(h.n)}</div>` : ''}</div>${aviso}`;
 }
-// Minutos para ir de un punto a otro (a pie hasta 1,6 km; si no, metro si compensa o taxi).
-function minutosTramo(o, dst) {
-  const k = km(o, dst); if (k <= 1.6) return { m: Math.max(3, Math.round(k * 1.3 / 4.5 * 60)), modo: '🚶' };
-  const taxi = Math.round(k * 1.3 / (k > 8 ? 40 : 22) * 60 + 8), r = rutaMetro(o, dst);
-  return r && r.min <= taxi * 1.6 ? { m: r.min, modo: '🚇' } : { m: taxi, modo: '🚕' };
-}
+// Minutos e icono del trayecto para el horario (misma decisión que la Ruta del día).
+function minutosTramo(o, dst) { const c = comoIr(o, dst); return { m: c.m, modo: { pie: '🚶', metro: '🚇', taxi: '🚕' }[c.modo] }; }
 const DUR_TIPO = [[/palacio/i, 120], [/museo/i, 90], [/templo|santuario|pagoda/i, 60], [/mercado/i, 60], [/aldea|barrio|calle/i, 75], [/playa|parque|isla|mirador/i, 45]];
 // Horario propuesto del día (ritmo tranquilo). Nunca acaba más tarde de ~21:00: si no cabe todo,
 // primero acorta las visitas y después deja los últimos sitios (antes los añadidos) en "Si os da tiempo".
@@ -765,13 +778,14 @@ function sitiosDia(d) {
     return best && best.dv < alFinal - 0.2 ? `<div class="encaje">💡 Os pilla de paso entre ${esc(best.a)} y ${esc(best.b)} (desvío ~${fmtDist(best.dv)}).</div>` : ''; };
   const hc = hot ? [Number(hot.lat), Number(hot.lon)] : null, conMapa = [...auto, ...extras].some(l => coordsLugar(l));
   return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${horarioDia(d, hc, [...auto, ...extras], auto.length)}<b>📖 Ruta del día</b>
+    ${naverDia(hc, hot && (hot.ko || hot.nombre), [...auto, ...extras])}
     <div class="muted mini-nota">En el orden del itinerario${hot ? ', saliendo del hotel' : ''}. Distancias en línea recta y tiempos aproximados; "🧭 Ruta" abre Naver Map (con conexión).</div>
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>` : ''}
     ${auto.map(l => fila(l, false)).join('')}
     ${extras.length ? `<div class="sd-anadidos">➕ Añadidos desde Ciudades</div>${extras.map(l => fila(l, true)).join('')}` : ''}
     ${A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}
     ${sugerenciasCerca(d, [...auto, ...extras], hc)}
-    ${planesCerca(todos)}<div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado. Metro: tiempos aproximados; estaciones y líneas de Seúl © OpenStreetMap (ODbL).</div></div>`;
+    <div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado. Metro: tiempos aproximados; estaciones y líneas de Seúl © OpenStreetMap (ODbL).</div></div>`;
 }
 
 // Medio de transporte principal de un traslado (para el icono).
@@ -2308,8 +2322,6 @@ document.addEventListener('click', e => {
     }
     return;
   }
-  const plc = e.target.closest('[data-plc]');
-  if (plc) { ciudadSel = plc.dataset.plc; exSub = 'planes'; ir('ciudades'); render(); window.scrollTo(0, 0); return; }
   const hsb = e.target.closest('[data-hsub]');
   if (hsb) { histSub = hsb.dataset.hsub; histCap = null; render(); return; }
   const exs = e.target.closest('[data-exs]');

@@ -556,7 +556,6 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .plan-card > div { margin: 2px 0; }
 .plan-card .cerca { font-size: .85em; background: var(--tint-b); border-radius: 8px; padding: 4px 8px; }
 .plan-card .acciones { display: flex; gap: 6px; justify-content: center; margin-top: 4px; }
-.planes-cerca { margin-top: 6px; padding: 5px 8px; border-radius: 8px; background: var(--tint-b); font-size: .88em; cursor: pointer; }
 .chips.centro { justify-content: center; }
 
 .imp { grid-template-columns: 80px minmax(0, 1fr); }
@@ -1039,4 +1038,10 @@ nav#tabs button.on { color: var(--acc2); } nav#tabs button.on span { background:
 .hd-t small { display: block; color: var(--muted); font-size: .76rem; }
 .hd-fuera { margin: 6px 10px; padding: 8px 10px; border-radius: 10px; background: color-mix(in srgb, #e3b23c 16%, var(--card)); font-size: .85rem; }
 .horario-dia .mini-nota { margin: 4px 10px 10px; }
-.hk { width: auto !important; min-width: 0; height: 26px; padding: 0 8px !important; border-radius: 999px !important; font-size: .72rem; font-weight: 700; white-space: nowrap; }
+.hk { width: auto !important; min-width: 0; height: 26px; padding: 0 8px !important; border-radius: 999px !important; font-size: .72rem; font-weight: 700; white-space: nowrap; color: var(--muted); }
+/* v113: ruta de todo el día en Naver y metro como alternativa plegada */
+.naver-dia { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0 4px; }
+.naver-dia .btn { background: #03c75a; color: #fff; border-color: #03c75a; }
+.naver-dia .muted { flex-basis: 100%; font-size: .76rem; }
+.alt-metro { margin: 0 0 6px 14px; font-size: .86rem; }
+.alt-metro > summary { cursor: pointer; color: var(--muted); }
