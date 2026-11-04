@@ -1070,3 +1070,7 @@ nav#tabs button.on { color: var(--acc2); } nav#tabs button.on span { background:
 .vuelo.pasado .big, .vuelo.pasado b { text-decoration: line-through; }
 .timeline .tl.pasado .dad-dia.pasado { opacity: 1; }
 .timeline .tl.pasado .tl-meta::before { content: "✓ hecho"; color: var(--ok); font-weight: 800; margin-right: 6px; }
+/* v125: hora de Canarias en la cabecera, entre el conversor y la versión */
+header #reloj { margin-left: auto; flex: none; font-size: .8rem; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; }
+header #reloj .bandera { width: 18px; height: 12px; }
+header #version { margin-left: 8px; }

@@ -74,7 +74,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    "🧳 Antes de salir" (plegable) al principio de Sitios los días que se deja hotel (vuelo, tren, pagar hotel, pasaportes…; casillas por fecha),
    "📔 Diario" (carita y nota por día en user.diario; resumen en Más → Notas;
    en viaje, días pasados atenuados, avisos solo en días con traslado y sin avisos de compras pasadas), tarjeta "Ahora" (lo próximo con hora o cuenta
-   atrás) y hora Corea/Canarias en Hoy, frases por situación en Corea, fotos y PDF de
+   atrás) en Hoy, hora de Canarias en la cabecera (entre 💱 y la versión; la de Corea no: la da el móvil), frases por situación en Corea, fotos y PDF de
    documentos/billetes en Más (IndexedDB, solo en el móvil; el PDF se
    abre con el visor del móvil). Gastos
    compartidos: descartado por el usuario.
