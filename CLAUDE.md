@@ -20,7 +20,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
 5. Pestañas (barra inferior, 8 desde v122): Hoy, Ruta (✈️), Qué ver (antes Explorar/Ciudades; id interno 'ciudades'; por ciudad, botones
    📍 Puntos de interés / ⭐ Planes), Mapas (🗺️, mapa de cada ciudad con botones de ciudad; la ficha de cada icono enlaza con Qué ver, Comer, Planes u Hoy → Hotel), Historia, Corea, Comer y Más. Historia (pestaña propia): portada,
    ⏳ Línea del tiempo (HIST_EVENTOS en historia.js, unas 35 fechas que abren su capítulo), 📚 Capítulos (cada uno con
-   época y años, "En 30 segundos", fechas clave y "📍 Dónde lo veréis" con enlace a Explorar; HIST_META), 🏯 Vuestras
+   época y años, "En 30 segundos", fechas clave y "📍 Dónde lo veréis" con enlace a Qué ver; HIST_META), 🏯 Vuestras
    ciudades (HISTORIA de cada ciudad) y 🇰🇷 Símbolos. Planes va dentro de Qué ver (calendario del Mundial de LoL plegado: WORLDS en contenido.js, hora de
    Corea y dónde estaréis; botones en orden alfabético Cosmética / Curioso (cafés de animales, postres famosos, tiendas raras) / Lavandería / LoL / Ropa (solo cerca del hotel) que muestran sus sitios debajo: PLANES en contenido.js,
    con distancia al hotel, "cerca", foto, 💰 precio aproximado y 👥 reseñas; lavandería y Olive Young en cada ciudad). Corea tiene apartados:
@@ -38,7 +38,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    nada que no esté aquí. Ruta: vuelos, mapa y línea de tiempo con cada estancia (ciudad,
    noches, hotel y una línea por día) intercalada con los traslados. Incluye un mapa esquemático de
    Corea (SVG propio, offline) con ciudades, traslados y sitios
-   (las fichas de ciudad con sitios van en Explorar: buscador arriba (todas las ciudades, sin tildes y en hangul;
+   (las fichas de ciudad con sitios van en Qué ver: buscador arriba (todas las ciudades, sin tildes y en hangul;
    también en Comer), 5 botones, se despliega la ciudad elegida con sus botones; cada sitio tiene
    "📅" para apuntarlo a un día de esa ciudad). Agenda en user.agenda[fecha]
    = {add, del}: Hoy → Sitios es la "Ruta del día": hotel → sitios del
@@ -50,7 +50,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    Seúl © OpenStreetMap ODbL, Busan L1/L2 a mano con VERIFICAR; o taxi) y "🧭 Ruta" que abre
    la app de Naver Map (nmap://route, sin origen: sale desde la ubicación del móvil; si gana el taxi, el metro va plegado como alternativa; misma decisión en el horario). Botón "🧭 Todo el día en Naver" (ruta en coche con hasta 5 paradas intermedias por enlace; si hay más, tramos). Encima, banner "🕘 Horario del día"
    (ritmo tranquilo: 8:00 levantarse, 9:15 salida, comida ~13:30, cena ~19:30, acaba hacia las 21:00: acorta visitas y lo que no cabe va a "⏭️ Si os da tiempo"; casilla de visitado en cada parada; "🚪 Llegar a la 1ª parada a las" (user.hdIni) y "⏰ Levantarse a las" (user.hdLev) por día; salida hacia atrás y desayuno fuera si sobra tiempo; horas fijas y aperturas respetadas;
-   HORARIOS en contenido.js con cierre semanal y VERIFICAR; "🕒" en cada sitio). En Explorar, botón "☐ Visitado". Banner con vista previa del mapa encima de la Ruta del día (hotel y sitios numerados unidos por línea; al tocarlo, mapa grande con filtros "Cerca de la ruta": más sitios, Comer y Planes a ≤1,2 km, apagados por defecto) y pestaña Mapas con el mapa de cada
+   HORARIOS en contenido.js con cierre semanal y VERIFICAR; "🕒" en cada sitio). En Qué ver, botón "☐ Visitado". Banner con vista previa del mapa encima de la Ruta del día (hotel y sitios numerados unidos por línea; al tocarlo, mapa grande con filtros "Cerca de la ruta": más sitios, Comer y Planes a ≤1,2 km, apagados por defecto) y pestaña Mapas con el mapa de cada
    ciudad (capas itinerario, más sitios, Comer, Planes y hotel; tocar = ficha con
    Naver y botón a su sección: Qué ver, Comer, Planes u Hoy → Hotel). Solo iconos, sin nombres. Mapa propio sin librerías: puntos offline; calles de OpenStreetMap solo con conexión
    (el service worker guarda las teselas vistas en 'corea-mapa'; "Preparar para viajar" baja
