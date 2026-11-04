@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v113';
+const VERSION = 'v114';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -688,7 +688,7 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
   const ZONA_COMIDA = /mercado|myeongdong|gwangjang|jagalchi|nambu|biff|hongdae|insadong|hwangridan/i;
   // Simula el día con las paradas dadas y las visitas multiplicadas por k.
   const simula = (lista, k) => {
-    const L = [], add = (m, ic, txt, ex = '', f = m, tipo = '') => L.push({ m, ic, txt, ex, f, tipo });
+    const L = [], add = (m, ic, txt, ex = '', f = m, tipo = '', l = null) => L.push({ m, ic, txt, ex, f, tipo, l });
     let t = t0;
     if (inicio === 'normal') { add(8 * 60, '⏰', 'Levantarse'); add(8 * 60 + 30, '🥐', 'Desayuno', '', 9 * 60, 'c'); add(t, '🏨', 'Salida del hotel'); }
     else add(t, inicio === 'vuelo' ? '✈️' : '🧳', inicio === 'vuelo' ? 'Tras el aeropuerto, el bus y dejar las maletas' : inicio === 'tren' ? 'Tras el tren y dejar las maletas' : 'Tras el traslado (hora aproximada: depende del billete)');
@@ -712,7 +712,7 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
       let aviso = '';
       if (arr(h.x).includes(ds)) { aviso = ' ⛔ cerrado ese día'; avisos++; }
       else if (cie != null && a + Math.min(dur, h.d || dur) > cie) { aviso = ` ⚠️ cierra a las ${h.c}`; avisos++; }
-      add(a, String(paradas.indexOf(l) + 1), l.es, `${hhmm(a)}-${hhmm(a + dur)}${via.m ? ` · ${via.modo} ${via.m} min antes` : ''}${nota}${aviso}`, a + dur, 'v');
+      add(a, String(paradas.indexOf(l) + 1), l.es, `${hhmm(a)}-${hhmm(a + dur)}${via.m ? ` · ${via.modo} ${via.m} min antes` : ''}${nota}${aviso}`, a + dur, 'v', l);
       t = a + dur; prev = c;
     });
     if (!comido) { const cm = Math.max(t, 13 * 60 + 30); add(cm, '🍜', 'Comida', '1 h', cm + 60, 'c'); t = cm + 60; }
@@ -733,7 +733,7 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
   // Si al quitar ha sobrado hueco, se recupera lo que quepa (en el orden de la ruta).
   for (const l of [...fuera]) { const prueba = paradas.filter(x => lista.includes(x) || x === l), r2 = simula(prueba, k);
     if (r2.fin <= FIN_DIA) { lista = prueba; r = r2; fuera.splice(fuera.indexOf(l), 1); } }
-  const { L, avisos } = r, ini = L[0].m, ultima = L[L.length - 1].m;
+  const kc = ck(d.ciudad), { L, avisos } = r, ini = L[0].m, ultima = L[L.length - 1].m;
   // Barra del día: visitas y comidas sobre la franja desde la primera hora hasta la vuelta.
   const pct = m => ((m - ini) / Math.max(1, ultima - ini) * 100).toFixed(1);
   const barra = L.filter(x => x.tipo).map(x => `<i class="hd-seg ${x.tipo}" style="left:${pct(x.m)}%;width:${(pct(x.f) - pct(x.m)).toFixed(1)}%"></i>`).join('');
@@ -742,7 +742,8 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
   return `<details class="horario-dia" data-key="hd:${d.fecha}" ${abierto('hd:' + d.fecha, false) ? 'open' : ''}><summary>
       <span class="hd-cab"><span class="hd-reloj">🕘</span><span class="hd-tit"><b>Horario del día</b><small>${hhmm(ini)} → ${hhmm(ultima)} · ${nPar} ${nPar === 1 ? 'parada' : 'paradas'} · ritmo tranquilo${avisos ? ` · ⚠️ ${avisos}` : ''}${fuera.length ? ` · ⏭️ ${fuera.length} no ${fuera.length === 1 ? 'cabe' : 'caben'}` : ''}</small></span><span class="hd-flecha">▾</span></span>
       <span class="hd-barra">${barra}</span><span class="hd-ext"><span>${hhmm(ini)}</span><span>${hhmm(ultima)}</span></span></summary>
-    <div class="hd-lista">${L.map(x => `<div class="hd-fila ${x.tipo === 'v' ? 'parada' : x.tipo === 'c' ? 'comida' : ''}"><span class="hd-h">${hhmm(x.m)}</span><span class="hd-ic">${x.ic}</span><span class="hd-t"><b>${esc(x.txt)}</b>${x.ex ? `<small>${esc(x.ex)}</small>` : ''}</span></div>`).join('')}</div>
+    <div class="hd-lista">${L.map(x => { const ok = x.l && hecho(x.l, kc);
+      return `<div class="hd-fila ${x.tipo === 'v' ? 'parada' : x.tipo === 'c' ? 'comida' : ''} ${ok ? 'hd-hecho' : ''}"><span class="hd-h">${hhmm(x.m)}</span><span class="hd-ic">${x.ic}</span><span class="hd-t"><b>${esc(x.txt)}</b>${x.ex ? `<small>${esc(x.ex)}</small>` : ''}</span>${x.l ? `<button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hKey(x.l))}" data-v="${ok ? 0 : 1}" aria-label="Marcar como visitado">${ok ? '✓' : ''}</button>` : ''}</div>`; }).join('')}</div>
     ${fuera.length ? `<div class="hd-fuera"><b>⏭️ Si os da tiempo</b> (no caben antes de las 21:00): ${fuera.map(l => `<b>${esc(l.es)}</b>`).join(', ')}.<br><span class="muted">Podéis pasarlos a otro día con 📅 en Explorar.</span></div>` : ''}
     <div class="muted mini-nota">${esc(nota[0].toUpperCase() + nota.slice(1))}.</div></details>`;
 }

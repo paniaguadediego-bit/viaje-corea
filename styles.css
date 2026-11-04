@@ -1029,7 +1029,7 @@ nav#tabs button.on { color: var(--acc2); } nav#tabs button.on span { background:
 .hd-seg.c { background: #e3b23c; }
 .hd-ext { display: flex; justify-content: space-between; font-size: .72rem; opacity: .9; font-variant-numeric: tabular-nums; }
 .hd-lista { display: flex; flex-direction: column; margin: 4px 10px; }
-.hd-fila { display: grid; grid-template-columns: 46px 26px 1fr; align-items: start; gap: 4px; padding: 6px 0; border-top: 1px dashed var(--line); font-size: .88rem; }
+.hd-fila { display: grid; grid-template-columns: 46px 26px 1fr auto; align-items: start; gap: 4px; padding: 6px 0; border-top: 1px dashed var(--line); font-size: .88rem; }
 .hd-fila:first-child { border-top: 0; }
 .hd-h { font-weight: 800; color: var(--acc2, var(--blue)); font-variant-numeric: tabular-nums; }
 .hd-ic { text-align: center; }
@@ -1045,3 +1045,8 @@ nav#tabs button.on { color: var(--acc2); } nav#tabs button.on span { background:
 .naver-dia .muted { flex-basis: 100%; font-size: .76rem; }
 .alt-metro { margin: 0 0 6px 14px; font-size: .86rem; }
 .alt-metro > summary { cursor: pointer; color: var(--muted); }
+/* v114: casilla de visitado en el horario del día */
+.hd-ck { width: 22px !important; height: 22px; min-height: 22px !important; padding: 0 !important; margin: 0; align-self: center; border-radius: 6px !important;
+  border: 1.5px solid var(--line) !important; background: var(--card) !important; color: #fff; font-size: .8rem; font-weight: 800; line-height: 1; box-shadow: none; }
+.hd-ck.on { background: var(--ok) !important; border-color: var(--ok) !important; }
+.hd-hecho .hd-t b { text-decoration: line-through; opacity: .6; }
