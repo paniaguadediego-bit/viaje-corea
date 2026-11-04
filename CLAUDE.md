@@ -52,7 +52,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    (ritmo tranquilo: 8:00 levantarse, 9:15 salida, comida ~13:30, cena ~19:30, acaba hacia las 21:00: acorta visitas y lo que no cabe va a "⏭️ Si os da tiempo"; casilla de visitado en cada parada; "🚪 Llegar a la 1ª parada a las" (user.hdIni) y "⏰ Levantarse a las" (user.hdLev) por día; salida hacia atrás y desayuno fuera si sobra tiempo; horas fijas y aperturas respetadas;
    HORARIOS en contenido.js con cierre semanal y VERIFICAR; "🕒" en cada sitio). En Explorar, botón "☐ Visitado". Banner con vista previa del mapa encima de la Ruta del día (hotel y sitios numerados unidos por línea; al tocarlo, mapa grande con filtros "Cerca de la ruta": más sitios, Comer y Planes a ≤1,2 km, apagados por defecto) y botón "🗺️ Mapa" en cada
    ciudad de Ciudades (capas itinerario, más sitios, Comer, Planes y hotel; tocar = ficha con
-   Naver). Mapa propio sin librerías: puntos offline; calles de OpenStreetMap solo con conexión
+   Naver y botón a su sección: Explorar, Comer, Planes u Hoy → Hotel). Solo iconos, sin nombres. Mapa propio sin librerías: puntos offline; calles de OpenStreetMap solo con conexión
    (el service worker guarda las teselas vistas en 'corea-mapa'; "Preparar para viajar" baja
    ~1.000 teselas de zoom 12-16 alrededor de los sitios del viaje; nunca zoom 17+ ni ciudades enteras).
    Debajo, "💡 Cerca y no lo tenéis":

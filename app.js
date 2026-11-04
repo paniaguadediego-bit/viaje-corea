@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v119';
+const VERSION = 'v120';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1152,7 +1152,7 @@ const recorta = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0
 // Registra un mapa (puntos y línea) y devuelve su HTML; se dibuja después de render().
 function mapaHTML(id, pts, { linea = null, fit = null, hotel = null, capas = '', mini = false } = {}) {
   const prev = MP[id];
-  MP[id] = { ...(prev || {}), pts, linea, hotel, fit: fit || pts.map(p => p.c) };
+  MP[id] = { ...(prev || {}), pts, linea, hotel, fit: fit || pts.map(p => p.c), k: id.startsWith('c:') ? id.slice(2) : ck((arr(trip.dias).find(x => x.fecha === id.replace(/^d[m]?:/, '')) || {}).ciudad || '') };
   if (prev && prev.pts && prev.pts.length !== pts.length) MP[id].sel = null; // cambiaron las capas: se cierra la ficha
   if (!pts.length) return '<div class="muted">No hay sitios con ubicación para el mapa.</div>';
   if (mini) return `<div class="mapa mini" data-mapa="${esc(id)}"><div class="mp-vista"><div class="mp-capa"></div></div></div>`;
@@ -1194,12 +1194,11 @@ function mpDibujar(el, m) {
       h += `<img class="mp-t" alt="" draggable="false" src="https://tile.openstreetmap.org/${z}/${((tx % n) + n) % n}/${ty}.png" style="left:${tx * MPT - ox}px;top:${ty * MPT - oy}px" onerror="this.remove()">`;
     }
   if (m.linea && m.linea.length > 1) h += `<svg class="mp-linea" width="${W}" height="${H}"><polyline points="${m.linea.map(c => P(c).map(v => v.toFixed(1)).join(',')).join(' ')}"/></svg>`;
-  const etiq = z >= 15;
   // Primero los de detrás (Comer, Planes, más sitios), encima itinerario y hotel.
   const orden = { comer: 0, planes: 1, sitios: 2, sug: 3, itin: 4, hotel: 5 };
   m.pts.map((p, i) => [p, i]).sort((a, b) => orden[a[0].capa] - orden[b[0].capa]).forEach(([p, i]) => {
     const [x, y] = P(p.c); if (x < -40 || y < -40 || x > W + 40 || y > H + 40) return;
-    h += `<button class="mp-pt c-${p.capa} ${p.hecho ? 'hecho' : ''} ${m.sel === i ? 'sel' : ''}" data-mpp="${i}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${p.num != null ? `<b>${esc(p.num)}</b>` : p.ic}${etiq || p.capa === 'hotel' || m.sel === i ? `<span class="mp-lab">${esc(recorta(p.es, 22))}</span>` : ''}</button>`;
+    h += `<button class="mp-pt c-${p.capa} ${p.hecho ? 'hecho' : ''} ${m.sel === i ? 'sel' : ''}" data-mpp="${i}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${p.num != null ? `<b>${esc(p.num)}</b>` : p.ic}</button>`;
   });
   if (m.yo) { const [x, y] = P(m.yo); h += `<span class="mp-yo" style="left:${x}px;top:${y}px"></span>`; }
   const capa = el.querySelector('.mp-capa'); capa.style.transform = ''; capa.innerHTML = h;
@@ -1213,7 +1212,15 @@ function mpFicha(p, m) {
     ${(() => { if (['itin', 'hotel', 'sug'].includes(p.capa)) return ''; const ps = m.pts.filter(x => x.capa === 'itin' && x.num != null); if (!ps.length || m.pts.some(x => x.capa === 'itin' && x.num == null)) return '';
       const [q, dk] = ps.map(x => [x, km(x.c, p.c)]).sort((a, b) => a[1] - b[1])[0]; return `<div class="mp-parada">📍 A ${fmtDist(dk)} de la parada ${q.num} (${esc(q.es)})</div>`; })()}
     ${m.hotel && !['hotel', 'sug'].includes(p.capa) ? tramo(m.hotel, p.c, 'Hotel', p.ko || p.es, { prefijo: 'Desde el hotel: ', sinPasos: true }) : ''}
-    <div class="acciones">${p.add ? `<button class="mini" data-agtog="${esc(p.add)}">＋ Añadir a este día</button>` : ''}${naver(p.l || p)}</div></div>`;
+    <div class="acciones">${mpEnlace(p, m)}${p.add ? `<button class="mini" data-agtog="${esc(p.add)}">＋ Añadir a este día</button>` : ''}${naver(p.l || p)}</div></div>`;
+}
+// Botón de la ficha del mapa que lleva a la sección de la app donde está ese sitio.
+function mpEnlace(p, m) {
+  const k = ck((p.l && p.l.ciudad) || '') || m.k || '';
+  if (p.capa === 'hotel') return `<button class="mini" data-irhotel>🛏️ Ver el hotel</button>`;
+  if (p.capa === 'comer') return `<button class="mini" data-ircomer="${esc(k)}" data-q="${esc(p.es)}">🍜 Ver en Comer</button>`;
+  if (p.capa === 'planes') return `<button class="mini" data-irplan="${esc(k)}" data-cat="${esc((p.l && p.l.cat) || '')}">⭐ Ver en Planes</button>`;
+  return k ? `<button class="mini" data-bcity="${esc(k)}" data-bq="${esc(p.es)}">🧭 Ver en Explorar</button>` : '';
 }
 function mpGestos(el, m) {
   const v = el.querySelector('.mp-vista'), capa = () => el.querySelector('.mp-capa');
@@ -2344,6 +2351,13 @@ document.addEventListener('click', e => {
   if (hsb) { histSub = hsb.dataset.hsub; histCap = null; render(); return; }
   const exs = e.target.closest('[data-exs]');
   if (exs) { exSub = exs.dataset.exs; render(); return; }
+  const irc = e.target.closest('[data-ircomer],[data-irplan],[data-irhotel]');
+  if (irc) {
+    if (irc.hasAttribute('data-irhotel')) { hoySub = 'hotel'; ir('hoy'); }
+    else if (irc.dataset.ircomer != null) { if (irc.dataset.ircomer) comerCiudad = irc.dataset.ircomer; comerTipo = 'todos'; comerEstado = 'todos'; qCom = irc.dataset.q || ''; ir('comer'); }
+    else { if (irc.dataset.irplan) ciudadSel = irc.dataset.irplan; exSub = 'planes'; if (irc.dataset.cat) planesCat = irc.dataset.cat; ir('ciudades'); }
+    render(); window.scrollTo(0, 0); return;
+  }
   const qc = e.target.closest('[data-qclear],[data-bcity]');
   if (qc) {
     if (qc.dataset.bcity) { ciudadSel = qc.dataset.bcity; qCiu = qc.dataset.bq || ''; exSub = 'puntos'; if (tab !== 'ciudades') ir('ciudades'); render(); window.scrollTo(0, 0); }

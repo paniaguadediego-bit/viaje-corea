@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v119
+Caché del service worker: corea-v120
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -171,6 +171,7 @@ Caché del service worker: corea-v119
 - v117: en el horario, también "⏰ Levantarse a las" (user.hdLev[fecha]). Si queda más de 1 h 10 hasta salir, el desayuno sale como "Desayuno fuera, cerca del hotel" (ideas en Comer → 📍 Cerca del hotel). "↺ Por defecto" borra las dos horas. Horarios revisados en la web: Hadongkwan 7:00-16:00, cierra los domingos; Isaac Toast junto a la catedral 7:00-20:00 todos los días (ambos VERIFICAR).
 - v118: campos opcionales dias[].llegada y dias[].levantarse (hh:mm) en trip.json como valor por defecto del horario de ese día; lo elegido en el móvil (hdIni/hdLev) manda y "↺ Por defecto" vuelve al del itinerario. Reimportar trip.json no toca las marcas, notas ni diario.
 - v119: ARREGLO: "🚇 Alternativa en metro" no tenía data-key, así que se cerraba cuando la pantalla se redibujaba (fotos, tiempo…) justo después de tocarla. Ahora recuerda si está abierta. Todos los desplegables de la app llevan data-key.
+- v120: mapas (del día y de cada ciudad) solo con iconos, sin nombres. La ficha que se abre al tocar un icono lleva un botón a su sección: "🧭 Ver en Explorar" (sitios: busca el sitio en Explorar), "🍜 Ver en Comer" (busca el restaurante en Comer), "⭐ Ver en Planes" (Explorar → Planes en su categoría) y "🛏️ Ver el hotel" (Hoy → Hotel).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
