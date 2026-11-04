@@ -840,3 +840,52 @@ const WORLDS = {
     { f: '2026-11-15', h: '04:00', fase: 'Final', p: 'Por decidir', final: true }
   ]
 };
+
+// Horarios de los sitios del itinerario (noviembre, búsqueda web nov 2026). Clave: hangul sin espacios.
+// a/c = abre/cierra (HH:MM), u = última entrada, x = días de cierre (0 dom … 6 sáb), d = minutos de visita,
+// t = texto corto, n = nota, v = VERIFICAR. Sin a/c = zona abierta (sin horario).
+const HORARIOS = {
+  '경복궁': { a: '09:00', c: '17:00', u: '16:00', x: [2], d: 120, t: '9:00-17:00 (última entrada 16:00)', n: 'Gratis con hanbok. Cambio de guardia en Gwanghwamun.' },
+  '창덕궁': { a: '09:00', c: '17:30', u: '16:30', x: [1], d: 120, t: '9:00-17:30 (última entrada 16:30)', n: 'Jardín secreto aparte: visitas en grupo, 10:00-16:30; reservar.' },
+  '덕수궁': { a: '09:00', c: '21:00', u: '20:00', x: [1], d: 75, t: '9:00-21:00 (última entrada 20:00)', n: 'El palacio que cierra más tarde: bonito de noche.' },
+  '서대문형무소역사관': { a: '09:30', c: '17:00', u: '16:30', x: [1], d: 90, t: '9:30-17:00 en noviembre (última entrada 16:30)' },
+  '서울역사박물관': { a: '09:00', c: '18:00', x: [1], d: 75, t: '9:00-18:00', v: true },
+  '남산골한옥마을': { a: '09:00', c: '20:00', x: [1], d: 60, t: '9:00-20:00 aprox.', v: true },
+  '국립중앙박물관': { a: '10:00', c: '18:00', x: [], d: 150, t: '10:00-18:00 (miércoles y sábado hasta las 21:00)', n: 'Gratis.' },
+  '국립경주박물관': { a: '10:00', c: '18:00', x: [], d: 90, t: '10:00-18:00', v: true, n: 'Gratis.' },
+  '불국사': { a: '09:00', c: '18:00', u: '17:00', x: [], d: 90, t: 'unas 9:00-18:00 (última entrada 17:00)', v: true, n: 'Las webs dan horarios algo distintos según la temporada.' },
+  '석굴암': { a: '09:00', c: '17:00', x: [], d: 45, t: 'unas 9:00-17:00', v: true },
+  '대릉원': { a: '09:00', c: '22:00', u: '21:00', x: [], d: 60, t: '9:00-22:00 (última entrada 21:00)' },
+  '동궁과월지': { a: '09:00', c: '22:00', u: '21:30', x: [], d: 60, t: '9:00-22:00 (mejor al anochecer, iluminado)' },
+  '첨성대': { d: 20, t: 'Exterior, siempre visible; iluminado de noche' },
+  '안동하회마을': { a: '09:00', c: '17:00', u: '16:30', x: [], d: 150, t: '9:00-17:00 de octubre a marzo (última entrada 16:30)', v: true },
+  'museodemascarasdehahoe': { a: '09:30', c: '18:00', x: [], d: 45, t: '9:30-18:00', v: true, n: 'Gratis según una web.' },
+  '도산서원': { a: '09:00', c: '17:00', x: [], d: 60, t: 'unas 9:00-17:00 en invierno', v: true },
+  '봉정사': { d: 60, t: 'Templo: de día (sin horario fijo publicado)', v: true },
+  '경기전': { a: '09:00', c: '18:00', x: [], d: 60, t: 'unas 9:00-18:00', v: true, n: 'El museo de retratos reales estuvo cerrado por obras: comprobad si ya ha reabierto.' },
+  '전주향교': { a: '10:00', c: '17:00', x: [1], d: 30, t: '10:00-17:00 en invierno', n: 'Cierra los lunes.' },
+  '남부시장': { a: '07:00', c: '19:00', x: [], d: 60, t: 'Mercado de día; el mercado nocturno solo viernes y sábado (18:00-23:00 aprox.)', v: true, noche: [5, 6] },
+  '해동용궁사': { a: '04:30', c: '19:20', u: '18:50', x: [], d: 60, t: '4:30-19:20 (última entrada 18:50)', n: 'Gratis. Famoso al amanecer.' },
+  '자갈치시장': { a: '05:00', c: '22:00', x: [], d: 60, t: 'unas 5:00-22:00', v: true, n: 'Algunas webs dicen que cierra el 1.er y 3.er martes del mes.' },
+  '국제시장': { a: '09:00', c: '20:00', x: [], d: 60, t: 'unas 9:00-20:00 (según el puesto)', v: true },
+  '감천문화마을': { d: 90, t: 'Barrio abierto; tiendas y centro de información unas 9:00-18:00', v: true },
+  '남대문시장': { a: '07:00', c: '23:00', x: [0], d: 60, t: 'Según el puesto; muchos cierran los domingos', v: true },
+  '광장시장': { a: '09:00', c: '23:00', x: [], d: 75, t: 'Puestos de comida hasta tarde; las tiendas de telas cierran antes y muchas el domingo', v: true },
+  'N서울타워': { a: '10:00', c: '23:00', x: [], d: 75, t: 'Mirador unas 10:00-23:00', v: true },
+  '별마당도서관': { a: '10:30', c: '22:00', x: [], d: 30, t: '10:30-22:00', v: true },
+  '코엑스': { a: '10:30', c: '22:00', x: [], d: 60, t: 'Centro comercial unas 10:30-22:00', v: true },
+  '봉은사': { d: 45, t: 'Templo abierto todo el día', v: true },
+  '조계사': { d: 30, t: 'Templo abierto todo el día' },
+  '명동성당': { d: 30, t: 'Abierta todos los días; respetad las misas', v: true },
+  '드래곤힐스파': { d: 150, t: 'Abierto 24 h' },
+  '북촌한옥마을': { a: '10:00', c: '17:00', x: [], d: 75, t: 'Zona residencial: visitas turísticas de 10:00 a 17:00 en la zona más protegida', v: true },
+  '명동': { d: 90, t: 'Zona abierta; puestos de comida por la tarde-noche' },
+  '청계천': { d: 45, t: 'Paseo abierto siempre' }, '인사동': { d: 60, t: 'Calle abierta; tiendas unas 10:00-20:00' }, '익선동': { d: 60, t: 'Callejones abiertos; cafés desde media mañana' },
+  '서촌': { d: 60, t: 'Barrio abierto' }, '광화문광장': { d: 20, t: 'Plaza abierta' }, '홍대': { d: 120, t: 'Barrio abierto; mejor por la tarde-noche' },
+  '부용대': { d: 45, t: 'Mirador abierto (se llega en barca o a pie)' }, '황리단길': { d: 60, t: 'Calle abierta; tiendas unas 10:00-21:00' }, '교촌마을': { d: 45, t: 'Aldea abierta' },
+  '월정교': { d: 30, t: 'Puente abierto; iluminado de noche' }, '분황사': { d: 30, t: 'Templo de día', v: true }, '월영교': { d: 30, t: 'Puente abierto; iluminado de noche' },
+  '해운대해수욕장': { d: 45, t: 'Playa abierta' }, '동백섬': { d: 60, t: 'Paseo abierto' }, '광안리해수욕장': { d: 60, t: 'Playa abierta; puente iluminado de noche' },
+  '송도해수욕장': { d: 60, t: 'Playa abierta (el teleférico tiene su horario)' }, 'BIFF광장': { d: 30, t: 'Plaza abierta; puestos por la tarde' }, '청사포': { d: 45, t: 'Pueblo abierto' },
+  '전주한옥마을': { d: 120, t: 'Aldea abierta; tiendas unas 10:00-20:00' }, '풍남문': { d: 15, t: 'Puerta, exterior' }, '오목대': { d: 30, t: 'Mirador abierto' },
+  '자만마을': { d: 45, t: 'Barrio abierto' }, '이화벽화마을': { d: 45, t: 'Barrio residencial: en silencio' }, '낙산공원': { d: 45, t: 'Parque abierto; precioso al atardecer' }
+};

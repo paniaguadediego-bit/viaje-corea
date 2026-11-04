@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v110';
+const VERSION = 'v111';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -596,7 +596,8 @@ function tramo(o, dst, nO, nD) {
   if (!o || !dst) return '';
   const k = km(o, dst), pie = k <= 1.6, min = pie ? Math.max(2, Math.round(k * 1.3 / 4.5 * 60)) : Math.round(k * 1.3 / (k > 8 ? 40 : 22) * 60 + 8); // fuera de ciudad el taxi va más rápido
   const modo = pie ? 'walk' : 'public';
-  const url = `nmap://route/${modo}?slat=${o[0]}&slng=${o[1]}&sname=${encodeURIComponent(nO)}&dlat=${dst[0]}&dlng=${dst[1]}&dname=${encodeURIComponent(nD)}&appname=viajecorea`;
+  // Sin punto de salida: Naver Map calcula la ruta desde donde estéis en ese momento.
+  const url = `nmap://route/${modo}?dlat=${dst[0]}&dlng=${dst[1]}&dname=${encodeURIComponent(nD)}&appname=viajecorea`;
   const r = pie ? null : rutaMetro(o, dst);
   const txt = pie ? `~${min} min a pie` : r ? (r.min > min * 1.6 ? `🚕 mejor taxi, ~${min} min · 🚇 metro ~${r.min} min` : `🚇 ~${r.min} min en metro · 🚕 ~${min} min en taxi`) : `🚕 taxi ~${min} min (o bus)`;
   return `<div class="tramo-ir"><span>${pie ? '🚶 ' : ''}${fmtDist(k)} · ${txt}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>${r ? pasosMetro(r) : ''}`;
@@ -633,6 +634,75 @@ function sugerenciasCerca(d, ruta, hot) {
       ${txt ? `<div class="muted">${resaltar(recorta(txt, 140), true)}</div>` : ''}</div>
       <button class="mini sug-add" data-agtog="${esc(h)}|${d.fecha}" aria-label="Añadir a este día">+</button></div>`; }).join('')}</div>`;
 }
+// ---------- Horarios de apertura y horario propuesto del día (ritmo tranquilo) ----------
+const DIAS_SEM = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const horDe = l => (typeof HORARIOS !== 'undefined' && l && HORARIOS[hKey(l).slice(2)]) || null;
+const aMinH = h => { const m = String(h || '').match(/(\d{1,2}):(\d{2})/); return m ? +m[1] * 60 + +m[2] : null; };
+const hhmm = m => `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(Math.round(m % 60)).padStart(2, '0')}`;
+// Línea de horario de un sitio; con fecha, avisa si ese día cierra.
+function horarioLinea(l, fecha) {
+  const h = horDe(l); if (!h) return '';
+  const ds = fecha ? new Date(fecha + 'T12:00').getDay() : null;
+  const cierra = arr(h.x).length ? ` · cierra los ${arr(h.x).map(x => DIAS_SEM[x]).join(' y ')}` : '';
+  let aviso = '';
+  if (ds !== null && arr(h.x).includes(ds)) aviso = `<div class="hor-cerrado">⛔ El ${DIAS_SEM[ds]} está cerrado: cambiadlo de día</div>`;
+  else if (ds !== null && h.noche && !h.noche.includes(ds)) aviso = `<div class="hor-cerrado">🌙 El mercado nocturno solo abre viernes y sábado: el ${DIAS_SEM[ds]} no hay</div>`;
+  return `<div class="hor-linea">🕒 ${esc(h.t)}${cierra}${h.v ? ' <span class="ver">VERIFICAR</span>' : ''}${h.n ? `<div class="muted">${esc(h.n)}</div>` : ''}</div>${aviso}`;
+}
+// Minutos para ir de un punto a otro (a pie hasta 1,6 km; si no, metro si compensa o taxi).
+function minutosTramo(o, dst) {
+  const k = km(o, dst); if (k <= 1.6) return { m: Math.max(3, Math.round(k * 1.3 / 4.5 * 60)), modo: '🚶' };
+  const taxi = Math.round(k * 1.3 / (k > 8 ? 40 : 22) * 60 + 8), r = rutaMetro(o, dst);
+  return r && r.min <= taxi * 1.6 ? { m: r.min, modo: '🚇' } : { m: taxi, modo: '🚕' };
+}
+const DUR_TIPO = [[/palacio/i, 120], [/museo/i, 90], [/templo|santuario|pagoda/i, 60], [/mercado/i, 60], [/aldea|barrio|calle/i, 75], [/playa|parque|isla|mirador/i, 45]];
+function horarioDia(d, hot, orden) {
+  const paradas = orden.filter(l => coordsLugar(l)); if (!paradas.length) return '';
+  const ds = new Date(d.fecha + 'T12:00').getDay(), L = [], add = (m, ic, txt, extra = '') => L.push([m, ic, txt, extra]);
+  let t = 9 * 60 + 15, inicio = 'normal';
+  const tr = arr(trip.traslados).filter(x => x.fecha === d.fecha), lleg = tr.map(x => aMinH(x.tren && x.tren.llegada)).find(x => x != null);
+  const vuelo = arr(trip.vuelos).flatMap(v => arr(v.tramos)).find(x => x.a === 'ICN' && String(x.llegada || '').startsWith(d.fecha));
+  if (vuelo) { t = aMinH(vuelo.llegada.slice(11)) + 150; inicio = 'vuelo'; }
+  else if (lleg != null) { t = Math.max(t, lleg + 45); inicio = 'tren'; }
+  else if (tr.length) { t = 13 * 60; inicio = 'traslado'; }
+  if (inicio === 'normal') { add(8 * 60, '⏰', 'Levantarse'); add(8 * 60 + 30, '🥐', 'Desayuno'); add(t, '🏨', 'Salida del hotel'); }
+  else add(t, inicio === 'vuelo' ? '✈️' : '🧳', inicio === 'vuelo' ? 'Tras el aeropuerto, el bus y dejar las maletas' : inicio === 'tren' ? 'Tras el tren y dejar las maletas' : 'Tras el traslado (hora aproximada: depende del billete)');
+  // Horas fijas del itinerario ("09:00 Palacio…").
+  const fijas = {}; arr(d.items).forEach(i => { const m = aMinH(i.hora); if (m == null) return; const txt = ' ' + norm(i.texto) + ' ';
+    paradas.forEach(l => { if (tokensDe(l).some(tk => txt.includes(norm(tk.trim())))) fijas[hKey(l)] = fijas[hKey(l)] ?? m; }); });
+  // Sitios donde se puede comer o cenar (mercados y zonas de comida).
+  const ZONA_COMIDA = /mercado|myeongdong|gwangjang|jagalchi|nambu|biff|hongdae|insadong|hwangridan/i;
+  let prev = hot, comido = t >= 15 * 60, cenado = false, avisos = 0;
+  paradas.forEach((l, i) => {
+    // Si la parada es un mercado o zona de comida, se come o cena allí en vez de parar antes.
+    const comida = ZONA_COMIDA.test(l.es);
+    if (!comido && t >= 13 * 60 && !(comida && t <= 14 * 60 + 30)) { add(t, '🍜', 'Comida', '1 h'); t += 60; comido = true; }
+    if (!cenado && t >= 19 * 60 + 30 && !comida) { add(t, '🍽️', 'Cena', '1 h 15'); t += 75; cenado = true; }
+    const c = coordsLugar(l), via = prev ? minutosTramo(prev, c) : { m: 0, modo: '' };
+    let a = t + via.m; const h = horDe(l) || {}, abre = aMinH(h.a), cie = aMinH(h.c), fija = fijas[hKey(l)];
+    let dur = h.d || (DUR_TIPO.find(([re]) => re.test((l.tipo || '') + ' ' + l.es)) || [0, 60])[1];
+    // Hora fija del itinerario: si está cerca, se espera; si está lejos, se llega antes y se alarga la visita hasta pasarla.
+    if (fija != null && fija > a) { if (fija - a <= 45) a = fija; else dur = Math.max(dur, fija - a + 60); }
+    if (abre != null && a < abre) a = abre;
+    let nota = '';
+    if (!comido && comida && a >= 12 * 60 && a <= 14 * 60 + 30) { comido = true; dur += 30; nota = ' · 🍜 comer aquí'; }
+    else if (!cenado && comida && a >= 18 * 60) { cenado = true; dur += 30; nota = ' · 🍽️ cenar aquí'; }
+    else if (!comido && a < 13 * 60 && a + dur >= 13 * 60 + 30) { comido = true; dur += 60; nota = ' · 🍜 incluye comer por la zona'; }
+    let aviso = '';
+    if (arr(h.x).includes(ds)) { aviso = ' ⛔ cerrado ese día'; avisos++; }
+    else if (cie != null && a + Math.min(dur, h.d || dur) > cie) { aviso = ` ⚠️ cierra a las ${h.c}`; avisos++; }
+    add(a, String(i + 1), l.es, `${hhmm(a)}-${hhmm(a + dur)}${via.m ? ` · ${via.modo} ${via.m} min antes` : ''}${nota}${aviso}`);
+    t = a + dur; prev = c;
+  });
+  if (!comido) { add(Math.max(t, 13 * 60 + 30), '🍜', 'Comida', '1 h'); t = Math.max(t, 13 * 60 + 30) + 60; }
+  let fin = t;
+  if (!cenado) { if (t < 19 * 60 + 30) add(t, '☕', 'Tiempo libre, café o compras'); const cena = Math.max(t, 19 * 60 + 30); add(cena, '🍽️', 'Cena', 'hacia las ' + hhmm(cena)); fin = cena + 75; }
+  if (hot && prev) { const v = minutosTramo(prev, hot); add(fin + v.m, '🛏️', 'Vuelta al hotel', `${v.modo} ~${v.m} min`); }
+  const ini = L[0][0], ultima = L[L.length - 1][0];
+  return `<details class="horario-dia" data-key="hd:${d.fecha}" ${abierto('hd:' + d.fecha, false) ? 'open' : ''}><summary><b>🕘 Horario propuesto</b> <span class="muted">${hhmm(ini)} → ${hhmm(ultima)} · ritmo tranquilo${avisos ? ` · ⚠️ ${avisos}` : ''}</span></summary>
+    <div class="hd-lista">${L.map(([m, ic, txt, ex]) => `<div class="hd-fila ${/^\d+$/.test(ic) ? 'parada' : ''}"><span class="hd-h">${hhmm(m)}</span><span class="hd-ic">${ic}</span><span class="hd-t"><b>${esc(txt)}</b>${ex ? `<small>${esc(ex)}</small>` : ''}</span></div>`).join('')}</div>
+    <div class="muted mini-nota">Duraciones y trayectos aproximados; las horas fijas del itinerario se respetan.</div></details>`;
+}
 function sitiosDia(d) {
   const k = ck(d.ciudad), A = agendaVer(d.fecha), todos = listaDia(d);
   if (!todos.length) return '';
@@ -645,7 +715,7 @@ function sitiosDia(d) {
     const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es) : '';
     if (c) { prev = c; prevN = l.ko || l.es; }
     return `${t}${extra ? encaje(l) : ''}<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</div>
-      ${txt ? `<div class="muted">${resaltar(txt, true)}</div>` : ''}${guiaCult(l, 'dia')}</div></div>`;
+      ${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(txt, true)}</div>` : ''}${guiaCult(l, 'dia')}</div></div>`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
   let extras = todos.filter(l => !auto.includes(l));
@@ -664,7 +734,7 @@ function sitiosDia(d) {
     const alFinal = km(puntos[puntos.length - 1].c, c);
     return best && best.dv < alFinal - 0.2 ? `<div class="encaje">💡 Os pilla de paso entre ${esc(best.a)} y ${esc(best.b)} (desvío ~${fmtDist(best.dv)}).</div>` : ''; };
   const hc = hot ? [Number(hot.lat), Number(hot.lon)] : null, conMapa = [...auto, ...extras].some(l => coordsLugar(l));
-  return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}<b>📖 Ruta del día</b>
+  return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${horarioDia(d, hc, [...auto, ...extras])}<b>📖 Ruta del día</b>
     <div class="muted mini-nota">En el orden del itinerario${hot ? ', saliendo del hotel' : ''}. Distancias en línea recta y tiempos aproximados; "🧭 Ruta" abre Naver Map (con conexión).</div>
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>` : ''}
     ${auto.map(l => fila(l, false)).join('')}
@@ -804,7 +874,7 @@ function imprescindibles(k) {
   return `<div class="impres">${porPlan(ls, k).map(l => `<div class="imp ${hecho(l, k) ? 'hecho-card' : ''}">
     <div class="foto" data-wiki="${esc(l.wiki)}"><span>📷</span></div>
     <div class="imp-txt"><div class="imp-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)}</div>
-      <div class="ko-s">${esc(l.ko)}${distHotel(l, k)}</div>${agendaBtn(l, k, 'imp')}
+      <div class="ko-s">${esc(l.ko)}${distHotel(l, k)}</div>${horarioLinea(l)}${agendaBtn(l, k, 'imp')}
       ${masLP(l, 'imp')}
       <div class="muted">${resaltar(l.desc, true)}</div>
       <div class="credito" data-cred="${esc(l.wiki)}"></div></div></div>`).join('')}</div>`;
@@ -965,7 +1035,7 @@ function seccionLP(k) {
         <div class="lp-nom">${btnHecho(l, k)}<b>${esc(l.es)}</b>${lpPill(l)}</div>
         <div class="lp-meta"><span class="lp-tipo">${esc(l.tipo)}</span>${l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(l)}</div>
         <div class="lp-nota">${resaltar(l.nota, true)}</div>
-        <div class="lp-pie">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, k)}</div>${agendaBtn(l, k, 'lp')}
+        <div class="lp-pie">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, k)}</div>${horarioLinea(l)}${agendaBtn(l, k, 'lp')}
         ${masLP(l, 'lp')}
       </div></div>`).join('')}
       ${ls.length > 8 ? `<button class="sec lp-mas" data-act="lptodos">${lpTodos ? 'Ver menos' : `Ver los ${ls.length - 8} restantes`}</button>` : ''}</div>` : ''}
@@ -1772,7 +1842,7 @@ function marcarHecho(key, v) {
   saveUser();
 }
 const tick = (l, k) => hecho(l, k) ? ' <span class="badge ok">✅</span>' : '';
-const btnHecho = (l, k) => `<button class="hk ${hecho(l, k) ? 'on' : ''}" data-hk="${esc(hKey(l))}" data-v="${hecho(l, k) ? 0 : 1}" aria-label="Hecho">✓</button>`;
+const btnHecho = (l, k) => `<button class="hk ${hecho(l, k) ? 'on' : ''}" data-hk="${esc(hKey(l))}" data-v="${hecho(l, k) ? 0 : 1}" aria-label="Marcar como visitado">${hecho(l, k) ? '✅ Visitado' : '☐ Visitado'}</button>`;
 
 
 // ---------- Comer (data/comer.json + lugares propios) ----------
@@ -2173,6 +2243,8 @@ document.addEventListener('click', e => {
   setTimeout(() => { document.removeEventListener('visibilitychange', vis); if (!fue && !document.hidden) window.open(web, '_blank'); }, 1500);
 }, true);
 document.addEventListener('click', e => {
+  // Campos de texto: el toque es para escribir; nunca debe redibujar nada.
+  if (e.target.matches('input:not([type=checkbox]):not([type=radio]), textarea, select')) return;
   // Casillas: las marca la app (así no se pierde el toque si la pantalla se redibuja en el móvil).
   const lab = e.target.closest('label.check');
   if (lab && !e.target.closest('a, button')) {

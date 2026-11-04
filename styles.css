@@ -1005,3 +1005,17 @@ nav#tabs button.on { color: var(--acc2); } nav#tabs button.on span { background:
 /* Tarjetas dentro de tarjetas: un poco más hundidas para separar niveles */
 .card .card { box-shadow: none; background: color-mix(in srgb, var(--card) 92%, var(--acc) 3%); }
 .exsubs button { font-size: .66rem; font-weight: 600; letter-spacing: -.035em; }
+
+/* v111: horarios, horario propuesto y botón Visitado */
+.hor-linea { font-size: .8rem; margin: 3px 0; color: var(--fg); }
+.hor-linea .muted { font-size: .75rem; }
+.hor-cerrado { font-size: .82rem; font-weight: 700; color: var(--red); margin: 3px 0; }
+.horario-dia { margin: 4px 0 10px; border: 1px solid var(--line); border-left: 4px solid var(--acc2, var(--blue)); border-radius: 0 12px 12px 0; padding: 4px 10px; background: color-mix(in srgb, var(--card) 94%, var(--acc, #0047a0) 6%); text-align: left; }
+.horario-dia summary { cursor: pointer; padding: 6px 0; }
+.hd-lista { display: flex; flex-direction: column; gap: 2px; margin: 4px 0; }
+.hd-fila { display: grid; grid-template-columns: 46px 26px 1fr; align-items: start; gap: 4px; padding: 4px 0; border-top: 1px dashed var(--line); font-size: .86rem; }
+.hd-h { font-weight: 800; color: var(--acc2, var(--blue)); font-variant-numeric: tabular-nums; }
+.hd-ic { text-align: center; }
+.hd-fila.parada .hd-ic { background: #cd2e3a; color: #fff; border-radius: 50%; width: 22px; height: 22px; line-height: 22px; font-weight: 800; font-size: .75rem; }
+.hd-t small { display: block; color: var(--muted); font-size: .76rem; }
+.hk { width: auto !important; min-width: 0; height: 26px; padding: 0 8px !important; border-radius: 999px !important; font-size: .72rem; font-weight: 700; white-space: nowrap; }
