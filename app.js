@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v121';
+const VERSION = 'v122';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -38,7 +38,7 @@ window.addEventListener('popstate', () => {
 let dayIdx = null;
 
 const TABS = [
-  ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '🗺️'], ['ciudades', 'Explorar', '🧭'], ['historia', 'Historia', '📜'], ['corea', 'Corea', '🇰🇷'],
+  ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '✈️'], ['ciudades', 'Qué ver', '🧭'], ['mapas', 'Mapas', '🗺️'], ['historia', 'Historia', '📜'], ['corea', 'Corea', '🇰🇷'],
   ['comer', 'Comer', '🍜'], ['mas', 'Más', '☰']
 ];
 // Secciones agrupadas dentro de "Más" (la barra no cabe con 9 pestañas).
@@ -538,7 +538,7 @@ fetch('data/metro.json').then(r => r.json()).then(d => {
   const ady = {}; d.tramos.forEach(([a, b, l]) => { (ady[a + '|' + l] = ady[a + '|' + l] || []).push(b); (ady[b + '|' + l] = ady[b + '|' + l] || []).push(a); });
   Object.values(est).forEach(e => { e.en = e.en.replace(/(\d)\([a-z]+\)/g, '$1'); });
   METRO = { est, ady, lin: d.lineas, conC: Object.values(est).filter(e => e.c) };
-  if (['hoy', 'ciudades'].includes(tab)) renderLuego();
+  if (['hoy', 'ciudades', 'mapas'].includes(tab)) renderLuego();
 }).catch(() => {});
 const MIN_PARADA = 2.2, MIN_CAMBIO = 6, minPie = k => k * 1.3 / 4.5 * 60;
 const rutasMetro = {};
@@ -759,7 +759,7 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
       <label>🚪 Llegar a la 1ª parada a las <input type="time" step="300" data-hdini="${d.fecha}" value="${iniU != null ? hhmm(iniU) : ''}"></label>${iniM || levM ? ` <button class="sec mini" data-hdini-x="${d.fecha}">↺ Por defecto</button>` : `<span class="muted"> (por defecto${d.llegada || d.levantarse ? ': lo del itinerario' : ': 8:00 y salida 9:15'})</span>`}</div>` : ''}
     <div class="hd-lista">${L.map(x => { const ok = x.l && hecho(x.l, kc);
       return `<div class="hd-fila ${x.tipo === 'v' ? 'parada' : x.tipo === 'c' ? 'comida' : ''} ${ok ? 'hd-hecho' : ''}"><span class="hd-h">${hhmm(x.m)}</span><span class="hd-ic">${x.ic}</span><span class="hd-t"><b>${esc(x.txt)}</b>${x.ex ? `<small>${esc(x.ex)}</small>` : ''}</span>${x.l ? `<button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hKey(x.l))}" data-v="${ok ? 0 : 1}" aria-label="Marcar como visitado">${ok ? '✓' : ''}</button>` : ''}</div>`; }).join('')}</div>
-    ${fuera.length ? `<div class="hd-fuera"><b>⏭️ Si os da tiempo</b> (no caben antes de las 21:00): ${fuera.map(l => `<b>${esc(l.es)}</b>`).join(', ')}.<br><span class="muted">Podéis pasarlos a otro día con 📅 en Explorar.</span></div>` : ''}
+    ${fuera.length ? `<div class="hd-fuera"><b>⏭️ Si os da tiempo</b> (no caben antes de las 21:00): ${fuera.map(l => `<b>${esc(l.es)}</b>`).join(', ')}.<br><span class="muted">Podéis pasarlos a otro día con 📅 en Qué ver.</span></div>` : ''}
     <div class="muted mini-nota">${esc(nota[0].toUpperCase() + nota.slice(1))}.</div></details>`;
 }
 function sitiosDia(d) {
@@ -1103,9 +1103,14 @@ function seccionLP(k) {
 }
 
 // Ciudades: 5 botones; al tocar uno se despliega su ficha debajo. Por defecto, la ciudad del día.
-// Explorar (antes Ciudades): por ciudad, Puntos de interés, Mapa, Historia y Planes.
+// Qué ver (antes Explorar y Ciudades): por ciudad, Puntos de interés y Planes. El mapa de cada ciudad va en la pestaña Mapas.
 let ciudadSel = null, historiaAbierta = false, exSub = 'puntos';
-const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['mapa', '🗺️ Mapa'], ['planes', '⭐ Planes']];
+const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['planes', '⭐ Planes']];
+// Mapas: el mapa de cada ciudad (itinerario, más sitios, Comer, Planes y hotel). Al tocar un icono, su ficha enlaza con Qué ver o Comer.
+function viewMapas() {
+  const botones = botonesCiudad(); if (!botones) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
+  return `<h2>🗺️ Mapas</h2>${botones}<div class="mapas-ciudad" style="${varsTema(ciudadSel)}">${mapaCiudadHTML(ciudadSel)}</div>`;
+}
 function viewCiudades() {
   if (!EX_SUBS.some(([x]) => x === exSub)) exSub = 'puntos';
   const uniq = ciudadesUnicas();
@@ -1124,7 +1129,6 @@ function viewCiudades() {
       <div class="ciudad-fechas">${fechas}</div>
     </div>
     <div class="row daynav exsubs">${EX_SUBS.filter(([x]) => x !== 'historia' || h).map(([x, tt]) => `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}">${tt}</button>`).join('')}</div>
-    ${exSub === 'mapa' ? mapaCiudadHTML(k) : ''}
     ${exSub === 'planes' ? planesDe(k) : ''}
     ${exSub !== 'puntos' ? '</div>' : ''}${exSub === 'puntos' ? `
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
@@ -1220,7 +1224,7 @@ function mpEnlace(p, m) {
   if (p.capa === 'hotel') return `<button class="mini" data-irhotel>🛏️ Ver el hotel</button>`;
   if (p.capa === 'comer') return `<button class="mini" data-ircomer="${esc(k)}" data-q="${esc(p.es)}">🍜 Ver en Comer</button>`;
   if (p.capa === 'planes') return `<button class="mini" data-irplan="${esc(k)}" data-cat="${esc((p.l && p.l.cat) || '')}">⭐ Ver en Planes</button>`;
-  return k ? `<button class="mini" data-bcity="${esc(k)}" data-bq="${esc(p.es)}">🧭 Ver en Explorar</button>` : '';
+  return k ? `<button class="mini" data-bcity="${esc(k)}" data-bq="${esc(p.es)}">🧭 Ver en Qué ver</button>` : '';
 }
 function mpGestos(el, m) {
   const v = el.querySelector('.mp-vista'), capa = () => el.querySelector('.mp-capa');
@@ -2280,7 +2284,7 @@ function render() {
     `<button data-tab="${id}" class="${tab === id || (id === 'mas' && EN_MAS.some(m => m[0] === tab)) ? 'on' : ''}"><span>${ic}</span>${label}</button>`).join('');
 
   if (tab === 'checklist') { masSub = 'maleta'; tab = 'mas'; }
-  if (tab === 'planes') { exSub = 'planes'; tab = 'ciudades'; } // Planes vive dentro de Explorar desde v102
+  if (tab === 'planes') { exSub = 'planes'; tab = 'ciudades'; } // Planes vive dentro de Qué ver desde v102
   if (['seguro', 'verificar'].includes(tab)) { masSub = tab; tab = 'mas'; }
   let html;
   if (!trip && tab !== 'mas' && tab !== 'conv') html = viewWelcome();
@@ -2292,6 +2296,7 @@ function render() {
     case 'historia': html = viewHistoria(); break;
     case 'corea': html = viewCorea(); break;
     case 'ciudades': html = viewCiudades(); break;
+    case 'mapas': html = viewMapas(); break;
     case 'conv': html = viewConv(); break;
     case 'verificar': html = viewVerificar(); break;
     case 'comer': html = viewComer(); break;
@@ -2307,7 +2312,7 @@ function render() {
   if (cambia) { const v = $('#view'); v.classList.remove('entra'); void v.offsetWidth; v.classList.add('entra'); } // fundido suave al cambiar de pestaña
   filas($('#view')).forEach((f, i) => { if (posX[i]) { f.style.scrollBehavior = 'auto'; f.scrollLeft = posX[i]; f.style.scrollBehavior = ''; } });
   if (['ciudades', 'hoy', 'comer', 'corea', 'historia'].includes(tab)) pintarFotos();
-  if (['ciudades', 'hoy'].includes(tab)) pintarMapas();
+  if (['ciudades', 'hoy', 'mapas'].includes(tab)) pintarMapas();
   const ch = tab === 'hoy' && document.querySelector('#tira .dchip.on');
   if (ch) { const t = ch.parentElement, obj = ch.offsetLeft - t.clientWidth / 2 + ch.offsetWidth / 2; t.style.scrollBehavior = 'auto'; t.scrollLeft = tiraX != null ? tiraX : obj; if (tiraX != null) requestAnimationFrame(() => { t.style.scrollBehavior = 'smooth'; t.scrollLeft = obj; }); }
 }

@@ -347,6 +347,7 @@ details > summary.card { text-align: center; }
 
 /* Ciudades: botones y historia */
 .ciudad-btns { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 6px 0 8px; }
+.mapas-ciudad { margin-top: 6px; }
 .cbtn { margin: 0; padding: 8px 2px; min-height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   font-size: .72rem; font-weight: 700; color: var(--c1); background: linear-gradient(160deg, var(--card), color-mix(in srgb, var(--c1) 10%, var(--card)));
   border: 1.5px solid color-mix(in srgb, var(--c1) 30%, var(--line)); box-shadow: none; border-radius: 14px; }
@@ -977,7 +978,7 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 :root[data-theme="dark"] { --bg: #12161d; --card: #1b2230; --line: #2d3748; --tint-b: #172031; --tint-r: #241a21;
   --sombra: 0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.35); }
 /* Color de cada pestaña */
-body[data-pest="hoy"] { --acc: #0047a0; } body[data-pest="ruta"] { --acc: #0b6e78; } body[data-pest="ciudades"] { --acc: #2c6e45; }
+body[data-pest="hoy"] { --acc: #0047a0; } body[data-pest="ruta"] { --acc: #0b6e78; } body[data-pest="ciudades"] { --acc: #2c6e45; } body[data-pest="mapas"] { --acc: #8a5a14; }
 body[data-pest="historia"] { --acc: #b8322a; } body[data-pest="corea"] { --acc: #1f4e8c; } body[data-pest="comer"] { --acc: #c2630a; } body[data-pest="mas"] { --acc: #6b3fa0; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body { --acc2: color-mix(in srgb, var(--acc) 60%, white); } }
 :root[data-theme="dark"] body { --acc2: color-mix(in srgb, var(--acc) 60%, white); }
