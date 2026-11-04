@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v115
+Caché del service worker: corea-v116
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -167,6 +167,7 @@ Caché del service worker: corea-v115
 - v113: (1) "🧭 Todo el día en Naver" bajo "Ruta del día": nmap://route/car con hotel → paradas → hotel; Naver documenta paradas intermedias (v1…) solo en la ruta en coche, hasta 5 por enlace, así que con más paradas se parte en tramos iguales ("Día en Naver 1/2, 2/2"). [Supuesto] Máximo 5 paradas intermedias: la página oficial no se pudo leer desde aquí. (2) Transporte: una sola decisión (comoIr) para la Ruta del día y el horario: a pie ≤1,6 km; metro si tarda ≤1,6 veces el taxi; si no, taxi. Cuando gana el taxi, los pasos de metro van plegados en "🚇 Alternativa en metro". Revisados todos los tramos del viaje. (3) Quitado el párrafo "⭐ Cerca" de la Ruta del día (ya sale en el mapa). (4) Arreglos: texto "☐ Visitado" invisible en Hoy; "cierra los domingo" → plural y sin repetir si la nota ya lo dice.
 - v114: casilla de visitado (☐/✓) en cada parada del "🕘 Horario del día"; misma marca user.hecho que Hoy, Explorar, Enseñar y Comer. La parada visitada sale tachada y el horario sigue abierto al marcar.
 - v115: cada trayecto de la Ruta del día va en su propia franja (recuadro discontinuo con el color de la pestaña) entre sitio y sitio, con "⬇️ Hasta <sitio>", distancia, transporte, tiempo, "🧭 Ruta" y los pasos o la alternativa de metro dentro. Antes parecía parte del sitio anterior. En la ficha del mapa, "Desde el hotel" sigue en una línea sin pasos.
+- v116: en el "🕘 Horario del día" (días sin vuelo ni traslado), "🚪 Llegar a la 1ª parada a las [hora]" guardado en el móvil (user.hdIni[fecha]); la salida del hotel se calcula restando el trayecto, el desayuno 45 min antes de salir y levantarse 75 min antes. "↺ Por defecto" vuelve a salir a las 9:15. Si se llega antes de abrir o de una hora fija: "llegáis a las X, abre a las Y".
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

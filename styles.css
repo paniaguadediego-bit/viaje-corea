@@ -1058,3 +1058,7 @@ nav#tabs button.on { color: var(--acc2); } nav#tabs button.on span { background:
 .tramo .tramo-ir { margin: 0; padding: 0; border-left: 0; font-size: .86em; color: inherit; }
 .tramo .metro-pasos { margin: 6px 0 0; border-left: 3px solid color-mix(in srgb, var(--acc2) 35%, var(--line)); }
 .tramo .alt-metro { margin: 6px 0 0; }
+/* v116: hora de llegada a la primera parada */
+.hd-ini { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 10px 2px; padding: 8px 10px; border-radius: 10px; font-size: .86rem;
+  background: color-mix(in srgb, var(--acc) 8%, var(--card)); }
+.hd-ini input[type=time] { font: inherit; font-weight: 800; padding: 4px 6px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: inherit; }
