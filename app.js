@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v117';
+const VERSION = 'v118';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -685,10 +685,12 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
   else if (lleg != null) { t0 = Math.max(t0, lleg + 45); inicio = 'tren'; }
   else if (tr.length) { t0 = 13 * 60; inicio = 'traslado'; }
   // Hora de llegada a la primera parada elegida en el móvil (user.hdIni[fecha]): la salida se calcula hacia atrás.
-  const iniU = inicio === 'normal' ? aMinH((u().hdIni || {})[d.fecha]) : null;
+  // Si el día trae "llegada"/"levantarse" en trip.json, es su valor por defecto; lo elegido en el móvil manda.
+  const iniM = (u().hdIni || {})[d.fecha], levM = (u().hdLev || {})[d.fecha];
+  const iniU = inicio === 'normal' ? aMinH(iniM || d.llegada) : null;
   if (iniU != null) { const c1 = coordsLugar(paradas[0]); t0 = iniU - (hot && c1 ? minutosTramo(hot, c1).m : 0); }
   // Hora de levantarse elegida (user.hdLev[fecha]); con más de 1 h 10 hasta salir, el desayuno es fuera, cerca del hotel.
-  const levU = inicio === 'normal' ? aMinH((u().hdLev || {})[d.fecha]) : null;
+  const levU = inicio === 'normal' ? aMinH(levM || d.levantarse) : null;
   // Horas fijas del itinerario ("09:00 Palacio…").
   const fijas = {}; arr(d.items).forEach(i => { const m = aMinH(i.hora); if (m == null) return; const txt = ' ' + norm(i.texto) + ' ';
     paradas.forEach(l => { if (tokensDe(l).some(tk => txt.includes(norm(tk.trim())))) fijas[hKey(l)] = fijas[hKey(l)] ?? m; }); });
@@ -754,7 +756,7 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
       <span class="hd-cab"><span class="hd-reloj">🕘</span><span class="hd-tit"><b>Horario del día</b><small>${hhmm(ini)} → ${hhmm(ultima)} · ${nPar} ${nPar === 1 ? 'parada' : 'paradas'} · ritmo tranquilo${avisos ? ` · ⚠️ ${avisos}` : ''}${fuera.length ? ` · ⏭️ ${fuera.length} no ${fuera.length === 1 ? 'cabe' : 'caben'}` : ''}</small></span><span class="hd-flecha">▾</span></span>
       <span class="hd-barra">${barra}</span><span class="hd-ext"><span>${hhmm(ini)}</span><span>${hhmm(ultima)}</span></span></summary>
     ${inicio === 'normal' ? `<div class="hd-ini"><label>⏰ Levantarse a las <input type="time" step="300" data-hdlev="${d.fecha}" value="${levU != null ? hhmm(levU) : ''}"></label>
-      <label>🚪 Llegar a la 1ª parada a las <input type="time" step="300" data-hdini="${d.fecha}" value="${iniU != null ? hhmm(iniU) : ''}"></label>${iniU != null || levU != null ? ` <button class="sec mini" data-hdini-x="${d.fecha}">↺ Por defecto</button>` : '<span class="muted"> (por defecto: 8:00 y salida 9:15)</span>'}</div>` : ''}
+      <label>🚪 Llegar a la 1ª parada a las <input type="time" step="300" data-hdini="${d.fecha}" value="${iniU != null ? hhmm(iniU) : ''}"></label>${iniM || levM ? ` <button class="sec mini" data-hdini-x="${d.fecha}">↺ Por defecto</button>` : `<span class="muted"> (por defecto${d.llegada || d.levantarse ? ': lo del itinerario' : ': 8:00 y salida 9:15'})</span>`}</div>` : ''}
     <div class="hd-lista">${L.map(x => { const ok = x.l && hecho(x.l, kc);
       return `<div class="hd-fila ${x.tipo === 'v' ? 'parada' : x.tipo === 'c' ? 'comida' : ''} ${ok ? 'hd-hecho' : ''}"><span class="hd-h">${hhmm(x.m)}</span><span class="hd-ic">${x.ic}</span><span class="hd-t"><b>${esc(x.txt)}</b>${x.ex ? `<small>${esc(x.ex)}</small>` : ''}</span>${x.l ? `<button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hKey(x.l))}" data-v="${ok ? 0 : 1}" aria-label="Marcar como visitado">${ok ? '✓' : ''}</button>` : ''}</div>`; }).join('')}</div>
     ${fuera.length ? `<div class="hd-fuera"><b>⏭️ Si os da tiempo</b> (no caben antes de las 21:00): ${fuera.map(l => `<b>${esc(l.es)}</b>`).join(', ')}.<br><span class="muted">Podéis pasarlos a otro día con 📅 en Explorar.</span></div>` : ''}
