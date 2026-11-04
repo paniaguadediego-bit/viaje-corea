@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v116';
+const VERSION = 'v117';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -687,6 +687,8 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
   // Hora de llegada a la primera parada elegida en el móvil (user.hdIni[fecha]): la salida se calcula hacia atrás.
   const iniU = inicio === 'normal' ? aMinH((u().hdIni || {})[d.fecha]) : null;
   if (iniU != null) { const c1 = coordsLugar(paradas[0]); t0 = iniU - (hot && c1 ? minutosTramo(hot, c1).m : 0); }
+  // Hora de levantarse elegida (user.hdLev[fecha]); con más de 1 h 10 hasta salir, el desayuno es fuera, cerca del hotel.
+  const levU = inicio === 'normal' ? aMinH((u().hdLev || {})[d.fecha]) : null;
   // Horas fijas del itinerario ("09:00 Palacio…").
   const fijas = {}; arr(d.items).forEach(i => { const m = aMinH(i.hora); if (m == null) return; const txt = ' ' + norm(i.texto) + ' ';
     paradas.forEach(l => { if (tokensDe(l).some(tk => txt.includes(norm(tk.trim())))) fijas[hKey(l)] = fijas[hKey(l)] ?? m; }); });
@@ -696,7 +698,9 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
   const simula = (lista, k) => {
     const L = [], add = (m, ic, txt, ex = '', f = m, tipo = '', l = null) => L.push({ m, ic, txt, ex, f, tipo, l });
     let t = t0;
-    if (inicio === 'normal') { add(t - 75, '⏰', 'Levantarse'); add(t - 45, '🥐', 'Desayuno', '', t - 15, 'c'); add(t, '🏨', 'Salida del hotel'); }
+    if (inicio === 'normal') { const lev = levU != null && levU < t - 30 ? levU : t - 75, fuera = levU != null && t - lev >= 70;
+      add(lev, '⏰', 'Levantarse'); add(Math.min(lev + 30, t - 30), '🥐', fuera ? 'Desayuno fuera, cerca del hotel' : 'Desayuno', fuera ? 'ideas en Comer → 📍 Cerca del hotel' : '', fuera ? t - 5 : t - 15, 'c');
+      add(t, '🏨', fuera ? 'Salida hacia la 1ª parada' : 'Salida del hotel'); }
     else add(t, inicio === 'vuelo' ? '✈️' : '🧳', inicio === 'vuelo' ? 'Tras el aeropuerto, el bus y dejar las maletas' : inicio === 'tren' ? 'Tras el tren y dejar las maletas' : 'Tras el traslado (hora aproximada: depende del billete)');
     let prev = hot, comido = t >= 15 * 60, cenado = false, avisos = 0;
     lista.forEach(l => {
@@ -749,7 +753,8 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
   return `<details class="horario-dia" data-key="hd:${d.fecha}" ${abierto('hd:' + d.fecha, false) ? 'open' : ''}><summary>
       <span class="hd-cab"><span class="hd-reloj">🕘</span><span class="hd-tit"><b>Horario del día</b><small>${hhmm(ini)} → ${hhmm(ultima)} · ${nPar} ${nPar === 1 ? 'parada' : 'paradas'} · ritmo tranquilo${avisos ? ` · ⚠️ ${avisos}` : ''}${fuera.length ? ` · ⏭️ ${fuera.length} no ${fuera.length === 1 ? 'cabe' : 'caben'}` : ''}</small></span><span class="hd-flecha">▾</span></span>
       <span class="hd-barra">${barra}</span><span class="hd-ext"><span>${hhmm(ini)}</span><span>${hhmm(ultima)}</span></span></summary>
-    ${inicio === 'normal' ? `<div class="hd-ini"><label>🚪 Llegar a la 1ª parada a las <input type="time" step="300" data-hdini="${d.fecha}" value="${iniU != null ? hhmm(iniU) : ''}"></label>${iniU != null ? ` <button class="sec mini" data-hdini-x="${d.fecha}">↺ Por defecto</button>` : '<span class="muted"> (por defecto, salida 9:15)</span>'}</div>` : ''}
+    ${inicio === 'normal' ? `<div class="hd-ini"><label>⏰ Levantarse a las <input type="time" step="300" data-hdlev="${d.fecha}" value="${levU != null ? hhmm(levU) : ''}"></label>
+      <label>🚪 Llegar a la 1ª parada a las <input type="time" step="300" data-hdini="${d.fecha}" value="${iniU != null ? hhmm(iniU) : ''}"></label>${iniU != null || levU != null ? ` <button class="sec mini" data-hdini-x="${d.fecha}">↺ Por defecto</button>` : '<span class="muted"> (por defecto: 8:00 y salida 9:15)</span>'}</div>` : ''}
     <div class="hd-lista">${L.map(x => { const ok = x.l && hecho(x.l, kc);
       return `<div class="hd-fila ${x.tipo === 'v' ? 'parada' : x.tipo === 'c' ? 'comida' : ''} ${ok ? 'hd-hecho' : ''}"><span class="hd-h">${hhmm(x.m)}</span><span class="hd-ic">${x.ic}</span><span class="hd-t"><b>${esc(x.txt)}</b>${x.ex ? `<small>${esc(x.ex)}</small>` : ''}</span>${x.l ? `<button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hKey(x.l))}" data-v="${ok ? 0 : 1}" aria-label="Marcar como visitado">${ok ? '✓' : ''}</button>` : ''}</div>`; }).join('')}</div>
     ${fuera.length ? `<div class="hd-fuera"><b>⏭️ Si os da tiempo</b> (no caben antes de las 21:00): ${fuera.map(l => `<b>${esc(l.es)}</b>`).join(', ')}.<br><span class="muted">Podéis pasarlos a otro día con 📅 en Explorar.</span></div>` : ''}
@@ -2314,7 +2319,7 @@ document.addEventListener('click', e => {
     saveUser(); render(); return;
   }
   const hix = e.target.closest('[data-hdini-x]');
-  if (hix) { const U = u(); if (U.hdIni) delete U.hdIni[hix.dataset.hdiniX]; saveUser(); render(); return; }
+  if (hix) { const U = u(); ['hdIni', 'hdLev'].forEach(c => { if (U[c]) delete U[c][hix.dataset.hdiniX]; }); saveUser(); render(); return; }
   const hk = e.target.closest('button[data-hk]');
   if (hk) { marcarHecho(hk.dataset.hk, hk.dataset.v === '1'); render(); return; }
   const vf = e.target.closest('[data-verif]');
@@ -2488,7 +2493,7 @@ document.addEventListener('change', e => {
   if (t.dataset.sc !== undefined) { comerCiudad = t.value; if (comerTipo !== 'todos' && !lugaresComer().some(l => (comerCiudad === 'todas' || l.ciudad === comerCiudad) && l.tipo === comerTipo)) comerTipo = 'todos'; render(); }
   else if (t.dataset.st !== undefined) { comerTipo = t.value; render(); }
   else if (t.dataset.hk) { marcarHecho(t.dataset.hk, t.checked); render(); }
-  else if (t.dataset.hdini) { const U = u(); U.hdIni = U.hdIni || {}; if (t.value) U.hdIni[t.dataset.hdini] = t.value; else delete U.hdIni[t.dataset.hdini]; saveUser(); render(); }
+  else if (t.dataset.hdini || t.dataset.hdlev) { const U = u(), c = t.dataset.hdini ? 'hdIni' : 'hdLev', f = t.dataset.hdini || t.dataset.hdlev; U[c] = U[c] || {}; if (t.value) U[c][f] = t.value; else delete U[c][f]; saveUser(); render(); }
   else if (t.dataset.check) { u().checklist[t.dataset.check] = t.checked; if (!t.checked) delete user.checklist[t.dataset.check]; saveUser(); render(); }
   else if (t.dataset.opv || t.dataset.opn || t.dataset.opf) {
     const id = t.dataset.opv || t.dataset.opn || t.dataset.opf, U = u(); U.comer = U.comer || {}; const e = U.comer[id] = U.comer[id] || {}, o = e.op = e.op || {};
