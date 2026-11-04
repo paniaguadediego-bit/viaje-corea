@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v122';
+const VERSION = 'v123';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -239,7 +239,6 @@ async function anadirFotos(files) {
 }
 function viewFotos() {
   return `<h2>Documentos y billetes</h2>
-    <p class="muted">Billetes, pasaporte, reservas, póliza… Fotos o PDF. Se guardan solo en este móvil y se abren sin conexión.</p>
     <div class="fotos">${fotos.map(f => `<figure class="card" data-foto="${esc(f.id)}">${esPdfData(f.data) ? '<div class="pdf-ic">📄<small>PDF</small></div>' : `<img src="${f.data}" alt="">`}
       <figcaption>${esc(f.nombre)}</figcaption></figure>`).join('')}</div>
     <button class="sec" data-act="foto">📎 Añadir foto o PDF</button>`;
@@ -352,8 +351,7 @@ function diarioCard(d) {
   const e = diarioDe(d.fecha), fut = d.fecha > todayISO();
   return `<div class="card diario"><b>📔 ¿Qué tal el día?</b>
     <div class="caras">${CARAS.map(([c, t]) => `<button class="cara ${e.cara === c ? 'on' : ''}" data-cara="${d.fecha}|${c}"><span>${c}</span><small>${t}</small></button>`).join('')}</div>
-    <textarea data-diario="${d.fecha}" rows="5" placeholder="${fut ? 'Este día aún no ha llegado; puedes apuntar ideas.' : 'Qué hicisteis, lo mejor, anécdotas… (se guarda solo)'}">${esc(e.nota || '')}</textarea>
-    <div class="muted mini-nota">Solo en este móvil. Va incluido en Más → Datos → Exportar copia.</div></div>`;
+    <textarea data-diario="${d.fecha}" rows="5" placeholder="${fut ? 'Este día aún no ha llegado; puedes apuntar ideas.' : 'Qué hicisteis, lo mejor, anécdotas… (se guarda solo)'}">${esc(e.nota || '')}</textarea></div>`;
 }
 function diarioResumen() {
   const D = u().diario || {}, fs = Object.keys(D).filter(f => D[f] && (D[f].cara || D[f].nota)).sort();
@@ -619,8 +617,7 @@ function naverDia(hc, hotN, lista) {
   for (let i = 0; i < n; i += paso) partes.push(pts.slice(i, i + paso + 1));
   const q = (p, c) => `${p}lat=${c[0][0]}&${p}lng=${c[0][1]}&${p}name=${encodeURIComponent(c[1])}`;
   const url = P => `nmap://route/car?${q('s', P[0])}&${P.slice(1, -1).map((c, i) => q('v' + (i + 1), c) + '&').join('')}${q('d', P[P.length - 1])}&appname=viajecorea`;
-  return `<div class="naver-dia">${partes.map((P, i) => `<a class="btn mini" href="${url(P)}">🧭 ${partes.length > 1 ? `Día en Naver (${i + 1}/${partes.length})` : 'Todo el día en Naver'}</a>`).join('')}
-    <span class="muted">Todas las paradas de un vistazo (Naver solo las admite en la ruta en coche).</span></div>`;
+  return `<div class="naver-dia">${partes.map((P, i) => `<a class="btn mini" href="${url(P)}">🧭 ${partes.length > 1 ? `Día en Naver (${i + 1}/${partes.length})` : 'Todo el día en Naver'}</a>`).join('')}</div>`;
 }
 // Sitios recomendados que no están en ningún día del plan y quedan a ≤900 m de la ruta de ese día.
 // Sitios recomendados que no están en ningún día y quedan a ≤900 m de la ruta, con dónde encajan
@@ -648,7 +645,7 @@ const textoEncaje = g => g.antes ? `De paso entre ${g.tras.n ? 'la parada ' + g.
 function sugerenciasCerca(d, ruta, hot) {
   const s = sugerenciasDe(d, ruta, hot); if (!s.length) return '';
   const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {};
-  return `<div class="sugerencias"><b>💡 Cerca y no lo tenéis</b> <span class="muted mini-nota">(en el mapa con *)</span>${s.map(g => { const l = g.l, h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
+  return `<div class="sugerencias"><b>💡 Cerca y no lo tenéis</b>${s.map(g => { const l = g.l, h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
     return `<div class="sug">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit"><span class="sug-etq">${g.etq}</span><b>${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)}</div>
       <div class="sug-encaje">${esc(textoEncaje(g))}</div>
       ${txt ? `<div class="muted">${resaltar(recorta(txt, 140), true)}</div>` : ''}</div>
@@ -751,16 +748,15 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
   const pct = m => ((m - ini) / Math.max(1, ultima - ini) * 100).toFixed(1);
   const barra = L.filter(x => x.tipo).map(x => `<i class="hd-seg ${x.tipo}" style="left:${pct(x.m)}%;width:${(pct(x.f) - pct(x.m)).toFixed(1)}%"></i>`).join('');
   const nPar = L.filter(x => x.tipo === 'v').length;
-  const nota = [k < 1 ? 'visitas algo más cortas para acabar a buena hora' : '', 'duraciones y trayectos aproximados; las horas fijas del itinerario se respetan'].filter(Boolean).join(' · ');
   return `<details class="horario-dia" data-key="hd:${d.fecha}" ${abierto('hd:' + d.fecha, false) ? 'open' : ''}><summary>
       <span class="hd-cab"><span class="hd-reloj">🕘</span><span class="hd-tit"><b>Horario del día</b><small>${hhmm(ini)} → ${hhmm(ultima)} · ${nPar} ${nPar === 1 ? 'parada' : 'paradas'} · ritmo tranquilo${avisos ? ` · ⚠️ ${avisos}` : ''}${fuera.length ? ` · ⏭️ ${fuera.length} no ${fuera.length === 1 ? 'cabe' : 'caben'}` : ''}</small></span><span class="hd-flecha">▾</span></span>
       <span class="hd-barra">${barra}</span><span class="hd-ext"><span>${hhmm(ini)}</span><span>${hhmm(ultima)}</span></span></summary>
     ${inicio === 'normal' ? `<div class="hd-ini"><label>⏰ Levantarse a las <input type="time" step="300" data-hdlev="${d.fecha}" value="${levU != null ? hhmm(levU) : ''}"></label>
-      <label>🚪 Llegar a la 1ª parada a las <input type="time" step="300" data-hdini="${d.fecha}" value="${iniU != null ? hhmm(iniU) : ''}"></label>${iniM || levM ? ` <button class="sec mini" data-hdini-x="${d.fecha}">↺ Por defecto</button>` : `<span class="muted"> (por defecto${d.llegada || d.levantarse ? ': lo del itinerario' : ': 8:00 y salida 9:15'})</span>`}</div>` : ''}
+      <label>🚪 Llegar a la 1ª parada a las <input type="time" step="300" data-hdini="${d.fecha}" value="${iniU != null ? hhmm(iniU) : ''}"></label>${iniM || levM ? ` <button class="sec mini" data-hdini-x="${d.fecha}">↺ Por defecto</button>` : ''}</div>` : ''}
     <div class="hd-lista">${L.map(x => { const ok = x.l && hecho(x.l, kc);
       return `<div class="hd-fila ${x.tipo === 'v' ? 'parada' : x.tipo === 'c' ? 'comida' : ''} ${ok ? 'hd-hecho' : ''}"><span class="hd-h">${hhmm(x.m)}</span><span class="hd-ic">${x.ic}</span><span class="hd-t"><b>${esc(x.txt)}</b>${x.ex ? `<small>${esc(x.ex)}</small>` : ''}</span>${x.l ? `<button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hKey(x.l))}" data-v="${ok ? 0 : 1}" aria-label="Marcar como visitado">${ok ? '✓' : ''}</button>` : ''}</div>`; }).join('')}</div>
-    ${fuera.length ? `<div class="hd-fuera"><b>⏭️ Si os da tiempo</b> (no caben antes de las 21:00): ${fuera.map(l => `<b>${esc(l.es)}</b>`).join(', ')}.<br><span class="muted">Podéis pasarlos a otro día con 📅 en Qué ver.</span></div>` : ''}
-    <div class="muted mini-nota">${esc(nota[0].toUpperCase() + nota.slice(1))}.</div></details>`;
+    ${fuera.length ? `<div class="hd-fuera"><b>⏭️ Si os da tiempo</b> (no caben antes de las 21:00): ${fuera.map(l => `<b>${esc(l.es)}</b>`).join(', ')}.</div>` : ''}
+    ${k < 1 ? '<div class="muted mini-nota">Visitas algo más cortas para acabar a buena hora.</div>' : ''}</details>`;
 }
 function sitiosDia(d) {
   const k = ck(d.ciudad), A = agendaVer(d.fecha), todos = listaDia(d);
@@ -795,13 +791,12 @@ function sitiosDia(d) {
   const hc = hot ? [Number(hot.lat), Number(hot.lon)] : null, conMapa = [...auto, ...extras].some(l => coordsLugar(l));
   return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${horarioDia(d, hc, [...auto, ...extras], auto.length)}<b>📖 Ruta del día</b>
     ${naverDia(hc, hot && (hot.ko || hot.nombre), [...auto, ...extras])}
-    <div class="muted mini-nota">En el orden del itinerario${hot ? ', saliendo del hotel' : ''}. Distancias en línea recta y tiempos aproximados; "🧭 Ruta" abre Naver Map (con conexión).</div>
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>` : ''}
     ${auto.map(l => fila(l, false)).join('')}
     ${extras.length ? `<div class="sd-anadidos">➕ Añadidos desde Ciudades</div>${extras.map(l => fila(l, true)).join('')}` : ''}
     ${A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}
     ${sugerenciasCerca(d, [...auto, ...extras], hc)}
-    <div class="muted mini-nota">LP = Lonely Planet 2016: horarios y precios pueden haber cambiado. Metro: tiempos aproximados; estaciones y líneas de Seúl © OpenStreetMap (ODbL).</div></div>`;
+    <div class="muted mini-nota">Metro de Seúl © OpenStreetMap (ODbL).</div></div>`;
 }
 
 // Medio de transporte principal de un traslado (para el icono).
@@ -987,7 +982,6 @@ const PREP_PASOS = [['app', '📱 App sin conexión'], ['fotos', '📷 Fotos'], 
 function prepCard() {
   const r = prep || load('corea.prep', null), activo = prep && !prep.fin;
   return `<div class="card prep" id="prep"><div class="big">🧳 Preparar para viajar</div>
-    <div class="muted">Con wifi, antes de salir: guarda la app, las fotos, los mapas, el tiempo y el cambio para usarlos sin conexión (unos minutos).</div>
     ${r ? `<ul class="prep-l">${PREP_PASOS.map(([k, t]) => `<li><span>${t}</span><span>${r[k] || ''}</span></li>`).join('')}</ul>
     ${r.fin ? `<div class="muted">${r.fecha ? `Hecho el ${esc(r.fecha)}. ` : ''}Prueba ahora en modo avión: cierra la app y vuelve a abrirla.</div>` : ''}` : ''}
     <button data-act="preparar" ${activo ? 'disabled' : ''}>${activo ? '⏳ Preparando…' : r ? '🔄 Volver a preparar' : '⬇️ Preparar ahora'}</button></div>`;
@@ -1289,8 +1283,7 @@ function mapaCiudadHTML(k) {
   const { hot, cuenta } = puntosCiudad(k), todos = puntosCiudad(k).todos.filter(p => p.capa === 'hotel' || mpCapas.has(p.capa));
   const capas = `<div class="mp-capas">${MP_CAPAS.filter(([c]) => cuenta[c]).map(([c, t, col]) => `<button class="chip ${mpCapas.has(c) ? 'on' : ''}" data-mpcapa="${c}" style="--mc:${col}"><i></i>${t} <small>${cuenta[c]}</small></button>`).join('')}</div>`;
   const nucleo = todos.filter(p => p.capa === 'itin' || p.capa === 'hotel').map(p => p.c);
-  return `<div class="mp-caja">${mapaHTML('c:' + k, todos, { hotel: hot, capas, fit: nucleo.length > 1 ? nucleo : null })}
-    <div class="muted mini-nota">Número = día del mes en que lo tenéis. Toca un punto para ver qué es y abrirlo en Naver. Calles: con conexión; para tenerlas sin conexión, Más → Datos y app → Preparar para viajar.</div></div>`;
+  return `<div class="mp-caja">${mapaHTML('c:' + k, todos, { hotel: hot, capas, fit: nucleo.length > 1 ? nucleo : null })}</div>`;
 }
 // Teselas para usar el mapa sin conexión: cada ciudad a zoom 12-13, el itinerario a 14 y detalle (15-16)
 // alrededor de vuestros sitios. Nunca más de zoom 16 (la política de OpenStreetMap prohíbe guardar zonas grandes a 17 o más).
@@ -1431,7 +1424,7 @@ function viewMapa() {
       <text x="${izq ? x - 12 : +x + 12}" y="${+y + 5}" text-anchor="${izq ? 'end' : 'start'}">${p.n.join('·')}. ${esc(p.nombre)}</text>`; }).join('')}
   </svg>
   <div class="leyenda muted">Mapa esquemático · <b style="color:var(--blue)">━</b> comprado ·
-    <b style="color:var(--red)">┅</b> pendiente · toca una ciudad</div>`;
+    <b style="color:var(--red)">┅</b> pendiente</div>`;
 }
 
 // ---------- Pronunciación "a la española" del coreano (aproximada) ----------
@@ -1573,7 +1566,6 @@ function viewEnsenar() {
   const deCiudad = mios.filter(([l]) => ciudadDeLugar(l) === k), otros = mios.filter(([l]) => !ciudadDeLugar(l));
   const sitios = sitiosCiudad(k).map((l, i) => [l, i]).sort((a, b) => ((enPlan(a[0], k) || {}).n || 999) - ((enPlan(b[0], k) || {}).n || 999) || a[1] - b[1]);
   return botones + `<div class="ens-ciudad" style="${varsTema(k)}">
-    <p class="muted">Toca "Enseñar" para mostrarlo a pantalla completa al taxista o en recepción.</p>
     ${deCiudad.length ? `<h2>📌 Mis lugares en ${esc(nombreCiudad(k))}</h2>${deCiudad.map(([l, i]) => lugarFila(l, 'j:' + i, k)).join('')}` : ''}
     ${sitios.length ? `<h2>🗺️ Sitios conocidos</h2>${sitios.map(([l, i]) => lugarFila(l, `c:${k}:${i}`, k)).join('')}` : ''}
     ${otros.length ? `<details data-key="mis:otros" ${abierto('mis:otros', false) ? 'open' : ''}><summary class="card big">Otros lugares <span class="muted">${otros.length}</span></summary>${otros.map(([l, i]) => lugarFila(l, 'j:' + i, '')).join('')}</details>` : ''}
@@ -1732,7 +1724,7 @@ function viewHistoria() {
     const HC = typeof HISTORIA !== 'undefined' ? HISTORIA : {};
     cuerpo = ciudadesUnicas().map(c => ck(c.nombre)).filter(k => HC[k]).map(k => `<details class="hist-ciudad" style="${varsTema(k)}" data-key="hcd:${k}" ${abierto('hcd:' + k, false) ? 'open' : ''}>
       <summary><span>${tema(k).ic}</span><b>${esc(nombreCiudad(k))}</b><small>${esc(tema(k).lema || '')}</small></summary>
-      ${HC[k].txt.map(p => `<p>${resaltar(p, true).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}<div class="muted">Resumen de la Lonely Planet 2016 (LP) y datos generales.</div></details>`).join('');
+      ${HC[k].txt.map(p => `<p>${resaltar(p, true).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}</details>`).join('');
   } else cuerpo = `<div class="hist-simb">${HIST_SIMBOLOS.map(([ic, t, d]) => `<div class="hs-it"><span class="hs-ic">${ic}</span><span><b>${t}</b> ${esc(d)}</span></div>`).join('')}</div>`;
   return `<div class="hist-tema">${portada}${subs}${cuerpo}</div>`;
 }
@@ -1745,8 +1737,7 @@ function viewCorea() {
   else if (coreaSub === 'frases') {
     let off = 0; const grupos = FRASES_SIT.map(([t, fs]) => { const g = [t, fs, off]; off += fs.length; return g; });
     const g = grupos.find(x => x[0] === fraseSit) || grupos[0];
-    html += `<div class="chips sit">${grupos.map(([t]) => `<button class="chip ${t === g[0] ? 'on' : ''}" data-sit="${esc(t)}">${esc(t)}</button>`).join('')}</div>
-      <p class="muted">Toca una frase para verla a pantalla completa.</p>` + g[1].map((f, i) => dFila(f, 'f:' + (g[2] + i), true)).join('');
+    html += `<div class="chips sit">${grupos.map(([t]) => `<button class="chip ${t === g[0] ? 'on' : ''}" data-sit="${esc(t)}">${esc(t)}</button>`).join('')}</div>` + g[1].map((f, i) => dFila(f, 'f:' + (g[2] + i), true)).join('');
   }
   // La búsqueda se recuerda: si la pantalla se redibuja (p. ej. al cerrar el teclado), no se pierde.
   else if (coreaSub === 'dicc') html += `<input id="q" type="search" placeholder="Buscar (español, coreano o romanización)" autocomplete="off" enterkeyhint="search" value="${esc(qDic)}">
@@ -1754,7 +1745,7 @@ function viewCorea() {
   else {
     const g = GUIA.find(([t]) => t === guiaSel);
     html += `<div class="guia-rej">${GUIA.map(([t]) => `<button class="guia-t ${t === guiaSel ? 'on' : ''}" data-guia="${esc(t)}"><span>${icGuia(t)}</span>${esc(t.replace(/ \(Lonely Planet\)/, ''))}${/Lonely/.test(t) ? '<small>LP</small>' : ''}</button>`).join('')}</div>
-      ${g ? `<div class="card guia-txt"><b>${icGuia(g[0])} ${esc(g[0])}</b><ul>${g[1].map(x => `<li>${resaltar(x, true)}</li>`).join('')}${g[0] === 'Dinero y pagos' ? pagoAlli() : ''}</ul></div>` : '<p class="muted centro">Toca un tema para verlo.</p>'}
+      ${g ? `<div class="card guia-txt"><b>${icGuia(g[0])} ${esc(g[0])}</b><ul>${g[1].map(x => `<li>${resaltar(x, true)}</li>`).join('')}${g[0] === 'Dinero y pagos' ? pagoAlli() : ''}</ul></div>` : ''}
       <p class="muted centro">La Lonely Planet (2016) solo vale para cultura: precios y apps, verificarlos.</p>`;
   }
   return html;
@@ -1807,7 +1798,7 @@ function planesDe(k) {
   };
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
-  return `<p class="muted">Ordenados por distancia al hotel. Horarios de webs (nov 2026): compruébalos antes de ir.</p>
+  return `<p class="muted">Horarios de webs (nov 2026): compruébalos antes de ir.</p>
     ${worldsCard()}${(() => { const cats = PCATS.filter(([c]) => P.some(p => p.ciudad === k && p.cat === c)); if (!cats.some(([c]) => c === planesCat)) planesCat = (cats[0] || [])[0];
       return `<div class="row daynav pcats">${cats.map(([c, t]) => `<button class="${c === planesCat ? '' : 'sec'}" data-pcat="${c}">${t}</button>`).join('')}</div>` + grupo(planesCat, ''); })()}`;
 }
@@ -1943,7 +1934,6 @@ function viewComer() {
   const glosario = typeof PLATOS === 'undefined' ? '' : `<div class="glosario">
       <button class="sec glos-btn" data-act="platos">📖 Glosario de platos ${lpPill({ lp: 1 })} ${verPlatos ? '▾' : '▸'}</button>
       ${verPlatos ? `<div class="chips">${PLATOS.map(([t], gi) => `<button class="chip ${gi === platoGrupo ? 'on' : ''}" data-pg="${gi}">${esc(t)}</button>`).join('')}</div>
-        <div class="muted">Toca un plato para enseñárselo al camarero.</div>
         ${(PLATOS[platoGrupo] || PLATOS[0])[1].map((p, i) => `<div class="card plato" data-full="p:${platoGrupo}:${i}"><div><b>${esc(p[0])}</b><div class="muted">${esc(p[2])}</div></div><div class="ko">${esc(p[1])}</div></div>`).join('')}` : ''}
     </div>`;
   const enC = l => comerCiudad === 'todas' || l.ciudad === comerCiudad;
@@ -2036,7 +2026,7 @@ function cardComer(l) {
 function formComer() {
   const def = comerCiudad === 'todas' ? 'seul' : comerCiudad;
   return `<form class="card" data-comerform>
-    <div class="muted">Nuevo lugar (se guarda en este móvil)</div>
+    <div class="muted">Nuevo lugar</div>
     <input name="nombre" placeholder="Nombre" required autocomplete="off">
     <div class="par"><select name="ciudad">${CIUDADES_COMER.map(([k, t]) => `<option value="${k}" ${k === def ? 'selected' : ''}>${t}</option>`).join('')}</select>
       <select name="tipo">${TIPOS.slice(1).map(t => `<option>${t}</option>`).join('')}</select></div>
@@ -2136,7 +2126,6 @@ function viewConv() {
     <div class="card">
       <label class="cambio muted">Cambio manual: 1 € = <input data-cambio type="number" inputmode="decimal" step="any" value="${c || ''}" placeholder="1500"> ₩</label>
       <button class="sec" data-act="cambio-auto">🔄 Usar cambio automático (actualizar ahora)</button>
-      <p class="muted">Con conexión se actualiza solo cada pocas horas y se guarda para usarlo sin conexión. Si escribes uno a mano, se usa el tuyo hasta que pulses el botón.</p>
     </div>`;
 }
 
@@ -2161,8 +2150,7 @@ function pendientesVerificar() {
 function viewVerificar() {
   const g = pendientesVerificar();
   const total = g.reduce((a, [, ls]) => a + ls.length, 0), hechos = g.reduce((a, [, ls]) => a + ls.filter(x => verificado(x.key)).length, 0);
-  return `<div class="card"><b>${hechos} de ${total} verificados</b>
-    <div class="muted">Abre cada uno en Naver (con conexión), comprueba que existe y sigue abierto, y pulsa "✓". Si ha cerrado, márcalo como "Cerrado" en Comer.</div></div>
+  return `<div class="card"><b>${hechos} de ${total} verificados</b></div>
     ${g.map(([t, ls]) => { const p = ls.filter(x => !verificado(x.key)).length; return `<details data-key="vf:${esc(t)}" ${abierto('vf:' + t, false) ? 'open' : ''}><summary class="card big">${esc(t)} <span class="muted">${p ? p + ' pendientes' : '✓ todo'}</span></summary>
       ${ls.map(x => `<div class="card lugar ${verificado(x.key) ? 'hecho' : ''}"><div><div>${esc(x.titulo)}</div><div class="muted">${esc(x.sub || '')}</div></div>
         <div class="acciones">${x.q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(x.q)}" data-app="naver" data-q="${esc(x.q)}" target="_blank" rel="noopener">🗺️</a>` : ''}
@@ -2188,8 +2176,7 @@ function viewMas() {
   else c = `<h2>Datos del viaje</h2>
     <button data-act="import">📂 Importar viaje</button>
     <button class="sec" data-act="export">💾 Exportar copia</button>
-    <p class="muted">La copia incluye el viaje, checklist, notas, fotos, lo marcado en Comer y lo verificado. Guárdala fuera del móvil.
-      Última copia: <b>${esc(localStorage.getItem('corea.ultimaCopia') || 'nunca')}</b></p>
+    <p class="muted">Última copia: <b>${esc(localStorage.getItem('corea.ultimaCopia') || 'nunca')}</b></p>
     <h2>App</h2>
     ${prepCard()}
     <button class="sec" data-act="update">🔄 Forzar actualización (no borra tus datos)</button>
