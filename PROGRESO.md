@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v123
+Caché del service worker: corea-v124
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -175,6 +175,7 @@ Caché del service worker: corea-v123
 - v121: al marcar (⭐ ✅ 👎 🚫, valorar, Visitado, casilla del horario, añadir o quitar del día, carita del diario, verificar) la pantalla ya no salta: el botón tocado vuelve al mismo punto tras redibujar (anclar). En Comer el orden se congela al marcar y solo se reordena al cambiar de filtro, de orden, de búsqueda o de pestaña (antes "Descartado" mandaba la tarjeta al final y la pantalla saltaba).
 - v122: Explorar pasa a llamarse "Qué ver" (🧭) con solo 📍 Puntos de interés y ⭐ Planes. Nueva pestaña "🗺️ Mapas" (8 pestañas): botones de ciudad y el mapa de esa ciudad (capas itinerario, más sitios, Comer, Planes y hotel); la ficha de cada icono lleva a Qué ver, Comer, Planes u Hoy → Hotel. Ruta cambia su icono a ✈️ para no repetir 🗺️. Color de Mapas: #8a5a14.
 - v123: quitadas las notas de ayuda obvias: "Toca… para…" (Enseñar, Frases, Guía, platos, mapa de Corea), "se guarda en este móvil" (Documentos, Diario, Añadir lugar), explicación de la Ruta del día, de "Todo el día en Naver", del mapa de ciudad, de "Preparar para viajar", del cambio, de Verificar y de la copia; "(en el mapa con *)", "Podéis pasarlos a otro día con 📅", "(por defecto…)" del horario y la nota general del horario (queda solo "Visitas algo más cortas…" cuando se acortan). Se mantienen: avisos VERIFICAR, aviso de la Lonely 2016 (regla S3), "Horarios de webs: compruébalos" en Planes, aviso de la escala y el crédito "Metro de Seúl © OpenStreetMap (ODbL)" (lo exige la licencia).
+- v124: en Ruta, lo ya pasado sale atenuado y tachado: cada día al día siguiente; cada traslado al día siguiente de su fecha ("✓ hecho" y sin etiquetas de estado ni VERIFICAR); cada estancia desde el día en que se deja el hotel (nombre tachado con ✓); los vuelos ya se atenuaban y ahora también se tachan. Fecha según el reloj del móvil (todayISO).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

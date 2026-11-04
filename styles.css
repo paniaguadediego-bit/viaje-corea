@@ -1061,3 +1061,12 @@ nav#tabs button.on { color: var(--acc2); } nav#tabs button.on span { background:
 .hd-ini { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 10px 2px; padding: 8px 10px; border-radius: 10px; font-size: .86rem;
   background: color-mix(in srgb, var(--acc) 8%, var(--card)); }
 .hd-ini input[type=time] { font: inherit; font-weight: 800; padding: 4px 6px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: inherit; }
+/* v124: en Ruta, lo que ya ha pasado sale tachado y atenuado */
+.timeline .tl.pasado > .card { opacity: .55; }
+.timeline .tl.pasado > .card .big, .timeline .tl.pasado .tl-ruta b { text-decoration: line-through; text-decoration-thickness: 2px; }
+.timeline .tl.pasado > .card .big::after { content: " ✓"; text-decoration: none; display: inline-block; margin-left: 4px; color: var(--ok); }
+.dad-dia.pasado { opacity: .5; }
+.dad-dia.pasado span:not(.hora) { text-decoration: line-through; }
+.vuelo.pasado .big, .vuelo.pasado b { text-decoration: line-through; }
+.timeline .tl.pasado .dad-dia.pasado { opacity: 1; }
+.timeline .tl.pasado .tl-meta::before { content: "✓ hecho"; color: var(--ok); font-weight: 800; margin-right: 6px; }

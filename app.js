@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v123';
+const VERSION = 'v124';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -813,11 +813,11 @@ function trasladoCard(t) {
   const tren = t.tren || {}, [ic, nom] = medio(t), pend = isPend(t);
   const d = new Date(String(t.fecha) + 'T12:00:00');
   const dia = isNaN(d) ? esc(t.fecha || '') : `<b>${d.getDate()}</b><small>${d.toLocaleDateString('es-ES', { month: 'short' })}</small><small>${d.toLocaleDateString('es-ES', { weekday: 'short' })}</small>`;
-  return `<div class="tl ${pend ? 'pend' : isOk(t) ? 'ok' : ''}">
+  return `<div class="tl ${pend ? 'pend' : isOk(t) ? 'ok' : ''} ${t.fecha && t.fecha < todayISO() ? 'pasado' : ''}">
     <div class="tl-fecha">${dia}</div>
     <div class="tl-card card">
       <div class="tl-top"><span class="tl-ic" title="${nom}">${ic}</span><div class="tl-ruta"><b>${esc(t.de)}</b><span class="tl-flecha">↓</span><b>${esc(t.a)}</b></div></div>
-      <div class="tl-meta">${estadoBadge(t)} ${ver(t)}</div>
+      <div class="tl-meta">${t.fecha && t.fecha < todayISO() ? '' : `${estadoBadge(t)} ${ver(t)}`}</div>
       ${tren.salida || tren.llegada ? `<div class="tl-horas"><span>${esc(tren.salida || '?')}</span><i>→</i><span>${esc(tren.llegada || '?')}</span>${tren.comprado === false ? '<em class="badge pend">billete sin comprar</em>' : ''}</div>` : ''}
       ${tren.numero || tren.asientos ? `<div class="tl-billete"><b class="nvuelo">${esc(tren.numero || '')}</b>${tren.clase ? ` <span class="muted">${esc(tren.clase)}</span>` : ''}${tren.precio ? ` <span class="muted">· ${esc(tren.precio)}</span>` : ''}
         ${Object.keys(tren.asientos || {}).length ? `<div>💺 ${tren.coche ? `Coche <b>${esc(tren.coche)}</b> · ` : ''}${Object.entries(tren.asientos).map(([n, a]) => `${esc(n)} <b>${esc(a)}</b>`).join(' · ')}</div>` : ''}${tren.nota ? `<div class="muted">${esc(tren.nota)}</div>` : ''}</div>` : ''}
@@ -886,10 +886,12 @@ function estanciaCard(c) {
   const h = arr(trip.alojamientos).find(a => ck(a.ciudad) === k && String(a.fechas || '').startsWith(c.desde)) || arr(trip.alojamientos).find(a => ck(a.ciudad) === k);
   const ds = planIdx().filter(d => d.fecha >= c.desde && (!c.hasta || d.fecha < c.hasta)), ns = ds.map(d => d.n);
   const dias = arr(trip.dias).filter(d => d && d.fecha).sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
-  return `<div class="tl"><div class="tl-fecha tl-pin" style="${varsTema(k)}">${tema(k).ic}</div><div class="card estancia" style="${varsTema(k)}"><div class="big">${esc(c.nombre)}</div>
+  // Ya pasado: la estancia en cuanto se deja el hotel (día de salida) y cada día al día siguiente.
+  const hoy = todayISO(), fuera = c.hasta && c.hasta <= hoy;
+  return `<div class="tl ${fuera ? 'pasado' : ''}"><div class="tl-fecha tl-pin" style="${varsTema(k)}">${tema(k).ic}</div><div class="card estancia" style="${varsTema(k)}"><div class="big">${esc(c.nombre)}</div>
     <div class="muted">${fmtCorto(c.desde)}${c.hasta ? ' → ' + fmtCorto(c.hasta) : ''}${noches ? ` · ${noches} noche${noches > 1 ? 's' : ''}` : ''}${ns.length ? ` · Día ${ns[0]}${ns.length > 1 ? '-' + ns[ns.length - 1] : ''}` : ''}</div>
     ${h ? `<div class="muted">🛏️ ${esc(h.nombre)}</div>` : ''}
-    ${ds.map(d => `<button class="dad-dia ${d.fecha === todayISO() ? 'on' : ''}" data-dia="${d.n - 1}"><span class="hora">${fmtCorto(d.fecha)}</span><span>${esc((dias[d.n - 1] || {}).titulo || '')}</span>${miniTiempo(k, d.fecha)}</button>`).join('')}</div></div>`;
+    ${ds.map(d => `<button class="dad-dia ${d.fecha === hoy ? 'on' : ''} ${d.fecha < hoy ? 'pasado' : ''}" data-dia="${d.n - 1}"><span class="hora">${fmtCorto(d.fecha)}</span><span>${esc((dias[d.n - 1] || {}).titulo || '')}</span>${miniTiempo(k, d.fecha)}</button>`).join('')}</div></div>`;
 }
 
 function viewRuta() {
