@@ -980,8 +980,8 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 :root[data-theme="dark"] { --bg: #12161d; --card: #1b2230; --line: #2d3748; --tint-b: #172031; --tint-r: #241a21;
   --sombra: 0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.35); }
 /* Color de cada pestaña */
-body[data-tab="hoy"] { --acc: #0047a0; } body[data-tab="ruta"] { --acc: #0b6e78; } body[data-tab="ciudades"] { --acc: #2c6e45; }
-body[data-tab="historia"] { --acc: #b8322a; } body[data-tab="corea"] { --acc: #1f4e8c; } body[data-tab="comer"] { --acc: #c2630a; } body[data-tab="mas"] { --acc: #6b3fa0; }
+body[data-pest="hoy"] { --acc: #0047a0; } body[data-pest="ruta"] { --acc: #0b6e78; } body[data-pest="ciudades"] { --acc: #2c6e45; }
+body[data-pest="historia"] { --acc: #b8322a; } body[data-pest="corea"] { --acc: #1f4e8c; } body[data-pest="comer"] { --acc: #c2630a; } body[data-pest="mas"] { --acc: #6b3fa0; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body { --acc2: color-mix(in srgb, var(--acc) 60%, white); } }
 :root[data-theme="dark"] body { --acc2: color-mix(in srgb, var(--acc) 60%, white); }
 body { --acc2: var(--acc); }
