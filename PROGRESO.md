@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v114
+Caché del service worker: corea-v115
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -166,6 +166,7 @@ Caché del service worker: corea-v114
 - v112: "🕘 Horario del día" como banner a juego con el del mapa (color de la pestaña, franja dancheong, barra del día con visitas en blanco y comidas en dorado; se despliega la lista). Tope: el día acaba hacia las 21:00 (fin de la cena; luego la vuelta). Si no cabe: 1) visitas al 80 % y al 65 %; 2) se quitan sitios del final (primero los añadidos desde Explorar, nunca los de hora fija) y salen en "⏭️ Si os da tiempo"; 3) se recupera lo quitado que vuelva a caber. Motivo: un día con sitios añadidos acababa a la 1:00.
 - v113: (1) "🧭 Todo el día en Naver" bajo "Ruta del día": nmap://route/car con hotel → paradas → hotel; Naver documenta paradas intermedias (v1…) solo en la ruta en coche, hasta 5 por enlace, así que con más paradas se parte en tramos iguales ("Día en Naver 1/2, 2/2"). [Supuesto] Máximo 5 paradas intermedias: la página oficial no se pudo leer desde aquí. (2) Transporte: una sola decisión (comoIr) para la Ruta del día y el horario: a pie ≤1,6 km; metro si tarda ≤1,6 veces el taxi; si no, taxi. Cuando gana el taxi, los pasos de metro van plegados en "🚇 Alternativa en metro". Revisados todos los tramos del viaje. (3) Quitado el párrafo "⭐ Cerca" de la Ruta del día (ya sale en el mapa). (4) Arreglos: texto "☐ Visitado" invisible en Hoy; "cierra los domingo" → plural y sin repetir si la nota ya lo dice.
 - v114: casilla de visitado (☐/✓) en cada parada del "🕘 Horario del día"; misma marca user.hecho que Hoy, Explorar, Enseñar y Comer. La parada visitada sale tachada y el horario sigue abierto al marcar.
+- v115: cada trayecto de la Ruta del día va en su propia franja (recuadro discontinuo con el color de la pestaña) entre sitio y sitio, con "⬇️ Hasta <sitio>", distancia, transporte, tiempo, "🧭 Ruta" y los pasos o la alternativa de metro dentro. Antes parecía parte del sitio anterior. En la ficha del mapa, "Desde el hotel" sigue en una línea sin pasos.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

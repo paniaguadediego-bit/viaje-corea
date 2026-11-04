@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v114';
+const VERSION = 'v115';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -594,7 +594,7 @@ function comoIr(o, dst) {
   return r && r.min <= taxi * 1.6 ? { k, modo: 'metro', m: r.min, taxi, r } : { k, modo: 'taxi', m: taxi, taxi, r };
 }
 // Distancia, tiempo y "🧭 Ruta" en la app de Naver Map; pasos de metro abiertos si es la opción buena, plegados si gana el taxi.
-function tramo(o, dst, nO, nD) {
+function tramo(o, dst, nO, nD, op = {}) {
   if (!o || !dst) return '';
   const c = comoIr(o, dst), r = c.r;
   // Sin punto de salida: Naver Map calcula la ruta desde donde estéis en ese momento.
@@ -603,7 +603,10 @@ function tramo(o, dst, nO, nD) {
     : c.modo === 'metro' ? `${fmtDist(c.k)} · 🚇 ~${r.min} min en metro · 🚕 ~${c.taxi} min en taxi`
     : `${fmtDist(c.k)} · 🚕 mejor taxi, ~${c.taxi} min${r ? '' : ' (o bus: miradlo en Naver)'}`;
   const pasos = !r ? '' : c.modo === 'metro' ? pasosMetro(r) : `<details class="alt-metro"><summary>🚇 Alternativa en metro (~${r.min} min)</summary>${pasosMetro(r)}</details>`;
-  return `<div class="tramo-ir"><span>${txt}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>${pasos}`;
+  const fila = `<div class="tramo-ir"><span>${op.prefijo || ''}${txt}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>`;
+  if (op.sinPasos) return fila;
+  // Franja propia entre sitio y sitio, con el destino, para que no parezca parte del sitio anterior.
+  return `<div class="tramo tramo-${c.modo}">${op.hasta ? `<div class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b></div>` : ''}${fila}${pasos}</div>`;
 }
 // Todo el día en Naver Map: hotel → paradas → hotel. Naver admite hasta 5 paradas intermedias por enlace
 // (documentado para la ruta en coche), así que con más paradas se parte en tramos.
@@ -756,7 +759,7 @@ function sitiosDia(d) {
   let prev = hot ? [Number(hot.lat), Number(hot.lon)] : null, prevN = hot ? hot.nombre : '';
   const fila = (l, extra) => {
     const h = hKey(l), mas = D[h.slice(2)] || D[h], txt = mas || l.desc || l.nota || G[h.slice(2)] || '', c = coordsLugar(l);
-    const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es) : '';
+    const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es, { hasta: l.es }) : '';
     if (c) { prev = c; prevN = l.ko || l.es; }
     return `${t}${extra ? encaje(l) : ''}<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</div>
       ${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(txt, true)}</div>` : ''}${guiaCult(l, 'dia')}</div></div>`;
@@ -1197,7 +1200,7 @@ function mpFicha(p, m) {
     ${p.capa === 'sug' ? `<div class="sug-encaje">📍 ${esc(p.sub)}</div>${p.txt ? `<div class="muted">${esc(recorta(p.txt, 120))}</div>` : ''}` : `<div class="muted">${esc(p.sub || '')}${p.txt ? ` · ${esc(recorta(p.txt, 150))}` : ''}</div>`}
     ${(() => { if (['itin', 'hotel', 'sug'].includes(p.capa)) return ''; const ps = m.pts.filter(x => x.capa === 'itin' && x.num != null); if (!ps.length || m.pts.some(x => x.capa === 'itin' && x.num == null)) return '';
       const [q, dk] = ps.map(x => [x, km(x.c, p.c)]).sort((a, b) => a[1] - b[1])[0]; return `<div class="mp-parada">📍 A ${fmtDist(dk)} de la parada ${q.num} (${esc(q.es)})</div>`; })()}
-    ${m.hotel && !['hotel', 'sug'].includes(p.capa) ? tramo(m.hotel, p.c, 'Hotel', p.ko || p.es).replace('<span>', '<span>Desde el hotel: ').replace(/<ol class="metro-pasos">[\s\S]*?<\/ol>(<div class="muted mini-nota">[\s\S]*?<\/div>)?/, '') : ''}
+    ${m.hotel && !['hotel', 'sug'].includes(p.capa) ? tramo(m.hotel, p.c, 'Hotel', p.ko || p.es, { prefijo: 'Desde el hotel: ', sinPasos: true }) : ''}
     <div class="acciones">${p.add ? `<button class="mini" data-agtog="${esc(p.add)}">＋ Añadir a este día</button>` : ''}${naver(p.l || p)}</div></div>`;
 }
 function mpGestos(el, m) {

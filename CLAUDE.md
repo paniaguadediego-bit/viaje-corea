@@ -45,7 +45,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    itinerario en orden fijo (orden del texto) → "Añadidos desde Ciudades"
    al final (se quitan con ✕), ordenados por el camino más corto desde el
    último sitio y con aviso "💡 Os pilla de paso entre A y B (desvío)"
-   si encajan mejor dentro del itinerario. Entre cada dos puntos, distancia, tiempo
+   si encajan mejor dentro del itinerario. Entre cada dos puntos, en su propia franja ("⬇️ Hasta <sitio>"), distancia, tiempo
    aproximado (a pie ≤1,6 km; si no, líneas de metro concretas con data/metro.json:
    Seúl © OpenStreetMap ODbL, Busan L1/L2 a mano con VERIFICAR; o taxi) y "🧭 Ruta" que abre
    la app de Naver Map (nmap://route, sin origen: sale desde la ubicación del móvil; si gana el taxi, el metro va plegado como alternativa; misma decisión en el horario). Botón "🧭 Todo el día en Naver" (ruta en coche con hasta 5 paradas intermedias por enlace; si hay más, tramos). Encima, banner "🕘 Horario del día"
