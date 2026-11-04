@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v111';
+const VERSION = 'v112';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -656,52 +656,82 @@ function minutosTramo(o, dst) {
   return r && r.min <= taxi * 1.6 ? { m: r.min, modo: '🚇' } : { m: taxi, modo: '🚕' };
 }
 const DUR_TIPO = [[/palacio/i, 120], [/museo/i, 90], [/templo|santuario|pagoda/i, 60], [/mercado/i, 60], [/aldea|barrio|calle/i, 75], [/playa|parque|isla|mirador/i, 45]];
-function horarioDia(d, hot, orden) {
-  const paradas = orden.filter(l => coordsLugar(l)); if (!paradas.length) return '';
-  const ds = new Date(d.fecha + 'T12:00').getDay(), L = [], add = (m, ic, txt, extra = '') => L.push([m, ic, txt, extra]);
-  let t = 9 * 60 + 15, inicio = 'normal';
+// Horario propuesto del día (ritmo tranquilo). Nunca acaba más tarde de ~21:00: si no cabe todo,
+// primero acorta las visitas y después deja los últimos sitios (antes los añadidos) en "Si os da tiempo".
+const FIN_DIA = 21 * 60;
+function horarioDia(d, hot, orden, nAuto = orden.length) {
+  const extra = new Set(orden.slice(nAuto)), paradas = orden.filter(l => coordsLugar(l)); if (!paradas.length) return '';
+  const ds = new Date(d.fecha + 'T12:00').getDay();
+  let t0 = 9 * 60 + 15, inicio = 'normal';
   const tr = arr(trip.traslados).filter(x => x.fecha === d.fecha), lleg = tr.map(x => aMinH(x.tren && x.tren.llegada)).find(x => x != null);
   const vuelo = arr(trip.vuelos).flatMap(v => arr(v.tramos)).find(x => x.a === 'ICN' && String(x.llegada || '').startsWith(d.fecha));
-  if (vuelo) { t = aMinH(vuelo.llegada.slice(11)) + 150; inicio = 'vuelo'; }
-  else if (lleg != null) { t = Math.max(t, lleg + 45); inicio = 'tren'; }
-  else if (tr.length) { t = 13 * 60; inicio = 'traslado'; }
-  if (inicio === 'normal') { add(8 * 60, '⏰', 'Levantarse'); add(8 * 60 + 30, '🥐', 'Desayuno'); add(t, '🏨', 'Salida del hotel'); }
-  else add(t, inicio === 'vuelo' ? '✈️' : '🧳', inicio === 'vuelo' ? 'Tras el aeropuerto, el bus y dejar las maletas' : inicio === 'tren' ? 'Tras el tren y dejar las maletas' : 'Tras el traslado (hora aproximada: depende del billete)');
+  if (vuelo) { t0 = aMinH(vuelo.llegada.slice(11)) + 150; inicio = 'vuelo'; }
+  else if (lleg != null) { t0 = Math.max(t0, lleg + 45); inicio = 'tren'; }
+  else if (tr.length) { t0 = 13 * 60; inicio = 'traslado'; }
   // Horas fijas del itinerario ("09:00 Palacio…").
   const fijas = {}; arr(d.items).forEach(i => { const m = aMinH(i.hora); if (m == null) return; const txt = ' ' + norm(i.texto) + ' ';
     paradas.forEach(l => { if (tokensDe(l).some(tk => txt.includes(norm(tk.trim())))) fijas[hKey(l)] = fijas[hKey(l)] ?? m; }); });
   // Sitios donde se puede comer o cenar (mercados y zonas de comida).
   const ZONA_COMIDA = /mercado|myeongdong|gwangjang|jagalchi|nambu|biff|hongdae|insadong|hwangridan/i;
-  let prev = hot, comido = t >= 15 * 60, cenado = false, avisos = 0;
-  paradas.forEach((l, i) => {
-    // Si la parada es un mercado o zona de comida, se come o cena allí en vez de parar antes.
-    const comida = ZONA_COMIDA.test(l.es);
-    if (!comido && t >= 13 * 60 && !(comida && t <= 14 * 60 + 30)) { add(t, '🍜', 'Comida', '1 h'); t += 60; comido = true; }
-    if (!cenado && t >= 19 * 60 + 30 && !comida) { add(t, '🍽️', 'Cena', '1 h 15'); t += 75; cenado = true; }
-    const c = coordsLugar(l), via = prev ? minutosTramo(prev, c) : { m: 0, modo: '' };
-    let a = t + via.m; const h = horDe(l) || {}, abre = aMinH(h.a), cie = aMinH(h.c), fija = fijas[hKey(l)];
-    let dur = h.d || (DUR_TIPO.find(([re]) => re.test((l.tipo || '') + ' ' + l.es)) || [0, 60])[1];
-    // Hora fija del itinerario: si está cerca, se espera; si está lejos, se llega antes y se alarga la visita hasta pasarla.
-    if (fija != null && fija > a) { if (fija - a <= 45) a = fija; else dur = Math.max(dur, fija - a + 60); }
-    if (abre != null && a < abre) a = abre;
-    let nota = '';
-    if (!comido && comida && a >= 12 * 60 && a <= 14 * 60 + 30) { comido = true; dur += 30; nota = ' · 🍜 comer aquí'; }
-    else if (!cenado && comida && a >= 18 * 60) { cenado = true; dur += 30; nota = ' · 🍽️ cenar aquí'; }
-    else if (!comido && a < 13 * 60 && a + dur >= 13 * 60 + 30) { comido = true; dur += 60; nota = ' · 🍜 incluye comer por la zona'; }
-    let aviso = '';
-    if (arr(h.x).includes(ds)) { aviso = ' ⛔ cerrado ese día'; avisos++; }
-    else if (cie != null && a + Math.min(dur, h.d || dur) > cie) { aviso = ` ⚠️ cierra a las ${h.c}`; avisos++; }
-    add(a, String(i + 1), l.es, `${hhmm(a)}-${hhmm(a + dur)}${via.m ? ` · ${via.modo} ${via.m} min antes` : ''}${nota}${aviso}`);
-    t = a + dur; prev = c;
-  });
-  if (!comido) { add(Math.max(t, 13 * 60 + 30), '🍜', 'Comida', '1 h'); t = Math.max(t, 13 * 60 + 30) + 60; }
-  let fin = t;
-  if (!cenado) { if (t < 19 * 60 + 30) add(t, '☕', 'Tiempo libre, café o compras'); const cena = Math.max(t, 19 * 60 + 30); add(cena, '🍽️', 'Cena', 'hacia las ' + hhmm(cena)); fin = cena + 75; }
-  if (hot && prev) { const v = minutosTramo(prev, hot); add(fin + v.m, '🛏️', 'Vuelta al hotel', `${v.modo} ~${v.m} min`); }
-  const ini = L[0][0], ultima = L[L.length - 1][0];
-  return `<details class="horario-dia" data-key="hd:${d.fecha}" ${abierto('hd:' + d.fecha, false) ? 'open' : ''}><summary><b>🕘 Horario propuesto</b> <span class="muted">${hhmm(ini)} → ${hhmm(ultima)} · ritmo tranquilo${avisos ? ` · ⚠️ ${avisos}` : ''}</span></summary>
-    <div class="hd-lista">${L.map(([m, ic, txt, ex]) => `<div class="hd-fila ${/^\d+$/.test(ic) ? 'parada' : ''}"><span class="hd-h">${hhmm(m)}</span><span class="hd-ic">${ic}</span><span class="hd-t"><b>${esc(txt)}</b>${ex ? `<small>${esc(ex)}</small>` : ''}</span></div>`).join('')}</div>
-    <div class="muted mini-nota">Duraciones y trayectos aproximados; las horas fijas del itinerario se respetan.</div></details>`;
+  // Simula el día con las paradas dadas y las visitas multiplicadas por k.
+  const simula = (lista, k) => {
+    const L = [], add = (m, ic, txt, ex = '', f = m, tipo = '') => L.push({ m, ic, txt, ex, f, tipo });
+    let t = t0;
+    if (inicio === 'normal') { add(8 * 60, '⏰', 'Levantarse'); add(8 * 60 + 30, '🥐', 'Desayuno', '', 9 * 60, 'c'); add(t, '🏨', 'Salida del hotel'); }
+    else add(t, inicio === 'vuelo' ? '✈️' : '🧳', inicio === 'vuelo' ? 'Tras el aeropuerto, el bus y dejar las maletas' : inicio === 'tren' ? 'Tras el tren y dejar las maletas' : 'Tras el traslado (hora aproximada: depende del billete)');
+    let prev = hot, comido = t >= 15 * 60, cenado = false, avisos = 0;
+    lista.forEach(l => {
+      // Si la parada es un mercado o zona de comida, se come o cena allí en vez de parar antes.
+      const comida = ZONA_COMIDA.test(l.es);
+      if (!comido && t >= 13 * 60 && !(comida && t <= 14 * 60 + 30)) { add(t, '🍜', 'Comida', '1 h', t + 60, 'c'); t += 60; comido = true; }
+      if (!cenado && t >= 19 * 60 + 30 && !comida) { add(t, '🍽️', 'Cena', '1 h 15', t + 75, 'c'); t += 75; cenado = true; }
+      const c = coordsLugar(l), via = prev ? minutosTramo(prev, c) : { m: 0, modo: '' };
+      let a = t + via.m; const h = horDe(l) || {}, abre = aMinH(h.a), cie = aMinH(h.c), fija = fijas[hKey(l)];
+      const base = h.d || (DUR_TIPO.find(([re]) => re.test((l.tipo || '') + ' ' + l.es)) || [0, 60])[1];
+      let dur = Math.max(20, Math.round(base * k / 5) * 5);
+      // Hora fija del itinerario: si está cerca, se espera; si está lejos, se llega antes y se alarga la visita hasta pasarla.
+      if (fija != null && fija > a) { if (fija - a <= 45) a = fija; else dur = Math.max(dur, fija - a + 60); }
+      if (abre != null && a < abre) a = abre;
+      let nota = '';
+      if (!comido && comida && a >= 12 * 60 && a <= 14 * 60 + 30) { comido = true; dur += 30; nota = ' · 🍜 comer aquí'; }
+      else if (!cenado && comida && a >= 18 * 60) { cenado = true; dur += 30; nota = ' · 🍽️ cenar aquí'; }
+      else if (!comido && a < 13 * 60 && a + dur >= 13 * 60 + 30) { comido = true; dur += 60; nota = ' · 🍜 incluye comer por la zona'; }
+      let aviso = '';
+      if (arr(h.x).includes(ds)) { aviso = ' ⛔ cerrado ese día'; avisos++; }
+      else if (cie != null && a + Math.min(dur, h.d || dur) > cie) { aviso = ` ⚠️ cierra a las ${h.c}`; avisos++; }
+      add(a, String(paradas.indexOf(l) + 1), l.es, `${hhmm(a)}-${hhmm(a + dur)}${via.m ? ` · ${via.modo} ${via.m} min antes` : ''}${nota}${aviso}`, a + dur, 'v');
+      t = a + dur; prev = c;
+    });
+    if (!comido) { const cm = Math.max(t, 13 * 60 + 30); add(cm, '🍜', 'Comida', '1 h', cm + 60, 'c'); t = cm + 60; }
+    let fin = t;
+    if (!cenado) { if (t < 19 * 60 + 30) add(t, '☕', 'Tiempo libre, café o compras'); const cena = Math.max(t, 19 * 60 + 30); add(cena, '🍽️', 'Cena', 'hacia las ' + hhmm(cena), cena + 75, 'c'); fin = cena + 75; }
+    if (hot && prev) { const v = minutosTramo(prev, hot); add(fin + v.m, '🛏️', 'Vuelta al hotel', `${v.modo} ~${v.m} min`); }
+    return { L, fin, avisos };
+  };
+  // 1) Todo tal cual; 2) visitas más cortas; 3) quitar sitios del final (primero los añadidos; nunca los de hora fija).
+  let lista = paradas.slice(), k = 1, r = simula(lista, 1);
+  for (const kk of [0.8, 0.65]) { if (r.fin <= FIN_DIA) break; k = kk; r = simula(lista, k); }
+  const fuera = [];
+  while (r.fin > FIN_DIA && lista.length > 1) {
+    const quitable = [...lista].reverse().sort((x, y) => extra.has(y) - extra.has(x)).find(l => fijas[hKey(l)] == null);
+    if (!quitable) break;
+    lista = lista.filter(l => l !== quitable); fuera.unshift(quitable); r = simula(lista, k);
+  }
+  // Si al quitar ha sobrado hueco, se recupera lo que quepa (en el orden de la ruta).
+  for (const l of [...fuera]) { const prueba = paradas.filter(x => lista.includes(x) || x === l), r2 = simula(prueba, k);
+    if (r2.fin <= FIN_DIA) { lista = prueba; r = r2; fuera.splice(fuera.indexOf(l), 1); } }
+  const { L, avisos } = r, ini = L[0].m, ultima = L[L.length - 1].m;
+  // Barra del día: visitas y comidas sobre la franja desde la primera hora hasta la vuelta.
+  const pct = m => ((m - ini) / Math.max(1, ultima - ini) * 100).toFixed(1);
+  const barra = L.filter(x => x.tipo).map(x => `<i class="hd-seg ${x.tipo}" style="left:${pct(x.m)}%;width:${(pct(x.f) - pct(x.m)).toFixed(1)}%"></i>`).join('');
+  const nPar = L.filter(x => x.tipo === 'v').length;
+  const nota = [k < 1 ? 'visitas algo más cortas para acabar a buena hora' : '', 'duraciones y trayectos aproximados; las horas fijas del itinerario se respetan'].filter(Boolean).join(' · ');
+  return `<details class="horario-dia" data-key="hd:${d.fecha}" ${abierto('hd:' + d.fecha, false) ? 'open' : ''}><summary>
+      <span class="hd-cab"><span class="hd-reloj">🕘</span><span class="hd-tit"><b>Horario del día</b><small>${hhmm(ini)} → ${hhmm(ultima)} · ${nPar} ${nPar === 1 ? 'parada' : 'paradas'} · ritmo tranquilo${avisos ? ` · ⚠️ ${avisos}` : ''}${fuera.length ? ` · ⏭️ ${fuera.length} no ${fuera.length === 1 ? 'cabe' : 'caben'}` : ''}</small></span><span class="hd-flecha">▾</span></span>
+      <span class="hd-barra">${barra}</span><span class="hd-ext"><span>${hhmm(ini)}</span><span>${hhmm(ultima)}</span></span></summary>
+    <div class="hd-lista">${L.map(x => `<div class="hd-fila ${x.tipo === 'v' ? 'parada' : x.tipo === 'c' ? 'comida' : ''}"><span class="hd-h">${hhmm(x.m)}</span><span class="hd-ic">${x.ic}</span><span class="hd-t"><b>${esc(x.txt)}</b>${x.ex ? `<small>${esc(x.ex)}</small>` : ''}</span></div>`).join('')}</div>
+    ${fuera.length ? `<div class="hd-fuera"><b>⏭️ Si os da tiempo</b> (no caben antes de las 21:00): ${fuera.map(l => `<b>${esc(l.es)}</b>`).join(', ')}.<br><span class="muted">Podéis pasarlos a otro día con 📅 en Explorar.</span></div>` : ''}
+    <div class="muted mini-nota">${esc(nota[0].toUpperCase() + nota.slice(1))}.</div></details>`;
 }
 function sitiosDia(d) {
   const k = ck(d.ciudad), A = agendaVer(d.fecha), todos = listaDia(d);
@@ -734,7 +764,7 @@ function sitiosDia(d) {
     const alFinal = km(puntos[puntos.length - 1].c, c);
     return best && best.dv < alFinal - 0.2 ? `<div class="encaje">💡 Os pilla de paso entre ${esc(best.a)} y ${esc(best.b)} (desvío ~${fmtDist(best.dv)}).</div>` : ''; };
   const hc = hot ? [Number(hot.lat), Number(hot.lon)] : null, conMapa = [...auto, ...extras].some(l => coordsLugar(l));
-  return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${horarioDia(d, hc, [...auto, ...extras])}<b>📖 Ruta del día</b>
+  return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${horarioDia(d, hc, [...auto, ...extras], auto.length)}<b>📖 Ruta del día</b>
     <div class="muted mini-nota">En el orden del itinerario${hot ? ', saliendo del hotel' : ''}. Distancias en línea recta y tiempos aproximados; "🧭 Ruta" abre Naver Map (con conexión).</div>
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>` : ''}
     ${auto.map(l => fila(l, false)).join('')}

@@ -48,8 +48,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    si encajan mejor dentro del itinerario. Entre cada dos puntos, distancia, tiempo
    aproximado (a pie ≤1,6 km; si no, líneas de metro concretas con data/metro.json:
    Seúl © OpenStreetMap ODbL, Busan L1/L2 a mano con VERIFICAR; o taxi) y "🧭 Ruta" que abre
-   la app de Naver Map (nmap://route, sin origen: sale desde la ubicación del móvil). Encima, "🕘 Horario propuesto"
-   (ritmo tranquilo: 8:00 levantarse, 9:15 salida, comida ~13:30, cena ~19:30; horas fijas y aperturas respetadas;
+   la app de Naver Map (nmap://route, sin origen: sale desde la ubicación del móvil). Encima, banner "🕘 Horario del día"
+   (ritmo tranquilo: 8:00 levantarse, 9:15 salida, comida ~13:30, cena ~19:30, acaba hacia las 21:00: acorta visitas y lo que no cabe va a "⏭️ Si os da tiempo"; horas fijas y aperturas respetadas;
    HORARIOS en contenido.js con cierre semanal y VERIFICAR; "🕒" en cada sitio). En Explorar, botón "☐ Visitado". Banner con vista previa del mapa encima de la Ruta del día (hotel y sitios numerados unidos por línea; al tocarlo, mapa grande con filtros "Cerca de la ruta": más sitios, Comer y Planes a ≤1,2 km, apagados por defecto) y botón "🗺️ Mapa" en cada
    ciudad de Ciudades (capas itinerario, más sitios, Comer, Planes y hotel; tocar = ficha con
    Naver). Mapa propio sin librerías: puntos offline; calles de OpenStreetMap solo con conexión

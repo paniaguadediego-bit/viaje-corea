@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v111
+Caché del service worker: corea-v112
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -163,6 +163,7 @@ Caché del service worker: corea-v111
 - v109: aspecto general inspirado en Historia, solo con CSS (más una línea que pone body[data-tab]): fondo de papel cálido con trama suave (oscuro: azul noche), franja de colores dancheong bajo la cabecera, tarjetas con borde, sombra más marcada y más separación, y un filo superior con el color de la pestaña en las tarjetas principales. Cada pestaña tiene su color (--acc): Hoy azul, Ruta verde azulado, Explorar verde, Historia rojo, Corea azul oscuro, Comer naranja, Más morado; se usa en los títulos de sección (barra y línea), la pestaña activa, los botones de sección activos y los chips marcados. Tarjetas dentro de tarjetas, más planas para distinguir niveles. Revisado en claro y oscuro en todas las pestañas; "Puntos de interés" ajustado para que quepa también en negrita.
 - v110: ARREGLO de un fallo de v109. Para el color por pestaña se puso body[data-tab], pero data-tab es el atributo de los botones de la barra: el manejador de clics (closest('[data-tab]')) encontraba siempre el body, así que cualquier toque (p. ej. en el buscador de Explorar) cambiaba de pestaña y redibujaba, perdiendo el foco y lo escrito. Ahora es body[data-pest]. Comprobado con emulación de móvil: buscadores de Explorar, Comer y diccionario, diario, conversor y notas.
 - v111: (1) HORARIOS en contenido.js (unos 60 sitios del itinerario, clave = hangul sin espacios: abre, cierra, días de cierre, duración, nota; los dudosos con VERIFICAR). Línea "🕒" en cada sitio de la Ruta del día y de Explorar; si ese día cierra, "⛔ … cambiadlo de día". (2) "🕘 Horario propuesto" plegable encima de la Ruta del día: ritmo tranquilo (levantarse 8:00, desayuno 8:30, salida 9:15, comida ~13:30, cena ~19:30), trayectos de la Ruta del día, respeta horas fijas del itinerario y horas de apertura; en mercados y zonas de comida se come o cena allí; avisa si un sitio cierra antes de acabar la visita. Días de vuelo/tren empiezan tras la llegada. (3) "🧭 Ruta" de Naver sin punto de salida: Naver calcula desde la ubicación del móvil. (4) Botón "☐ Visitado" visible en Explorar (misma marca user.hecho). (5) El clic en un input ya no pasa por el manejador general (buscador que no abría el teclado).
+- v112: "🕘 Horario del día" como banner a juego con el del mapa (color de la pestaña, franja dancheong, barra del día con visitas en blanco y comidas en dorado; se despliega la lista). Tope: el día acaba hacia las 21:00 (fin de la cena; luego la vuelta). Si no cabe: 1) visitas al 80 % y al 65 %; 2) se quitan sitios del final (primero los añadidos desde Explorar, nunca los de hora fija) y salen en "⏭️ Si os da tiempo"; 3) se recupera lo quitado que vuelva a caber. Motivo: un día con sitios añadidos acababa a la 1:00.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
