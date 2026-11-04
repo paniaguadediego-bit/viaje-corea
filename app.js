@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v120';
+const VERSION = 'v121';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -24,7 +24,7 @@ let tab = 'hoy';
 const pila = [];
 function ir(t) {
   if (t === tab) return;
-  pila.push(tab); tab = t; history.pushState({ t }, ''); window.scrollTo(0, 0);
+  pila.push(tab); tab = t; comerCongelado = false; history.pushState({ t }, ''); window.scrollTo(0, 0);
 }
 function cerrarFull() {
   const cp = document.getElementById('conv-pop'); if (cp) { cp.remove(); return true; }
@@ -1972,7 +1972,15 @@ const opinionDe = l => { const o = estadoDe(String(l.id)).op; return o && Number
 // Valoración ajustada por número de reseñas (pocas reseñas pesan menos).
 const notaAjustada = l => { const o = opinionDe(l); if (!o) return 0; const n = Number(o.n) || 5; return (Number(o.v) * n + 3.8 * 30) / (n + 30); };
 const fmtN = n => n == null || n === '' ? '' : Number(n) >= 1000 ? (Number(n) / 1000).toLocaleString('es-ES', { maximumFractionDigits: 1 }) + ' mil' : String(n);
+// Orden congelado: al marcar (⭐ ✅ 👎 🚫 o valorar) la lista no se reordena hasta cambiar de filtro o de pestaña.
+let comerCongelado = false, comerOrdenPrev = { k: '', ids: [] };
 function ordenarComer(ls) {
+  const clave = [comerCiudad, comerTipo, comerEstado, comerOrden, qCom].join('|');
+  if (comerCongelado && comerOrdenPrev.k === clave) { const pos = new Map(comerOrdenPrev.ids.map((id, i) => [id, i]));
+    return ls.map((l, i) => [l, pos.has(String(l.id)) ? pos.get(String(l.id)) : 1e6 + i]).sort((a, b) => a[1] - b[1]).map(x => x[0]); }
+  const res = ordenarComer0(ls); comerOrdenPrev = { k: clave, ids: res.map(l => String(l.id)) }; return res;
+}
+function ordenarComer0(ls) {
   const r = ls.map((l, i) => [l, i]);
   const f = comerOrden === 'dist' ? ([a], [b]) => distKm(a) - distKm(b)
     : comerOrden === 'nota' ? ([a], [b]) => notaAjustada(b) - notaAjustada(a) || puntos(b) - puntos(a)
@@ -2258,6 +2266,12 @@ document.addEventListener('focusout', () => { if (renderPendiente) { renderPendi
 
 let tiraX = null, tabAnt = null;
 // ---------- render ----------
+// Guarda dónde está un botón en pantalla y devuelve la función que lo deja en el mismo sitio tras redibujar.
+function anclar(el) {
+  const at = [...el.attributes].find(x => /^data-(hk|est|val|verif|agtog|agdel|cara)$/.test(x.name)); if (!at) return () => {};
+  const sel = `[${at.name}="${CSS.escape(at.value)}"]`, i = [...document.querySelectorAll(sel)].indexOf(el), y = el.getBoundingClientRect().top;
+  return () => { const n = document.querySelectorAll(sel)[i] || document.querySelector(sel); if (n) window.scrollBy(0, n.getBoundingClientRect().top - y); };
+}
 function render() {
   applyTheme();
   $('#title').textContent = (trip && trip.meta && trip.meta.titulo) || 'Viaje a Corea';
@@ -2312,6 +2326,9 @@ document.addEventListener('click', e => {
 document.addEventListener('click', e => {
   // Campos de texto: el toque es para escribir; nunca debe redibujar nada.
   if (e.target.matches('input:not([type=checkbox]):not([type=radio]), textarea, select')) return;
+  // Botones de marcar (visitado, valorar, estado…): tras redibujar, el botón tocado vuelve al mismo punto de la pantalla.
+  const mk = e.target.closest('button[data-hk],button[data-est],button[data-val],button[data-verif],button[data-agtog],button[data-agdel],button[data-cara]');
+  if (mk) queueMicrotask(anclar(mk));
   // Casillas: las marca la app (así no se pierde el toque si la pantalla se redibuja en el móvil).
   const lab = e.target.closest('label.check');
   if (lab && !e.target.closest('a, button')) {
@@ -2394,6 +2411,7 @@ document.addEventListener('click', e => {
   if (e.target.id === 'conv-pop') { history.back(); return; }
   const cm = e.target.closest('[data-cc],[data-ct],[data-ce],[data-co],[data-val],[data-est],[data-delcomer]');
   if (cm) {
+    comerCongelado = !!(cm.dataset.val || cm.dataset.est);
     if (cm.dataset.ce) comerEstado = cm.dataset.ce;
     else if (cm.dataset.co) comerOrden = cm.dataset.co;
     else if (cm.dataset.val) {

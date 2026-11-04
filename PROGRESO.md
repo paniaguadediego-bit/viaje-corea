@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v120
+Caché del service worker: corea-v121
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -172,6 +172,7 @@ Caché del service worker: corea-v120
 - v118: campos opcionales dias[].llegada y dias[].levantarse (hh:mm) en trip.json como valor por defecto del horario de ese día; lo elegido en el móvil (hdIni/hdLev) manda y "↺ Por defecto" vuelve al del itinerario. Reimportar trip.json no toca las marcas, notas ni diario.
 - v119: ARREGLO: "🚇 Alternativa en metro" no tenía data-key, así que se cerraba cuando la pantalla se redibujaba (fotos, tiempo…) justo después de tocarla. Ahora recuerda si está abierta. Todos los desplegables de la app llevan data-key.
 - v120: mapas (del día y de cada ciudad) solo con iconos, sin nombres. La ficha que se abre al tocar un icono lleva un botón a su sección: "🧭 Ver en Explorar" (sitios: busca el sitio en Explorar), "🍜 Ver en Comer" (busca el restaurante en Comer), "⭐ Ver en Planes" (Explorar → Planes en su categoría) y "🛏️ Ver el hotel" (Hoy → Hotel).
+- v121: al marcar (⭐ ✅ 👎 🚫, valorar, Visitado, casilla del horario, añadir o quitar del día, carita del diario, verificar) la pantalla ya no salta: el botón tocado vuelve al mismo punto tras redibujar (anclar). En Comer el orden se congela al marcar y solo se reordena al cambiar de filtro, de orden, de búsqueda o de pestaña (antes "Descartado" mandaba la tarjeta al final y la pantalla saltaba).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
