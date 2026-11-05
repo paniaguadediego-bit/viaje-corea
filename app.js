@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v139';
+const VERSION = 'v140';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1233,8 +1233,26 @@ function mpDibujar(el, m) {
   if (m.linea && m.linea.length > 1) h += `<svg class="mp-linea" width="${W}" height="${H}"><polyline points="${m.linea.map(c => P(c).map(v => v.toFixed(1)).join(',')).join(' ')}"/></svg>`;
   // Primero los de detrás (Comer, Planes, más sitios), encima itinerario y hotel.
   const orden = { comer: 0, planes: 1, sitios: 2, sug: 3, itin: 4, hotel: 5 };
-  m.pts.map((p, i) => [p, i]).sort((a, b) => orden[a[0].capa] - orden[b[0].capa]).forEach(([p, i]) => {
-    const [x, y] = P(p.c); if (x < -40 || y < -40 || x > W + 40 || y > H + 40) return;
+  // Marcadores que se pisan: se separan empujando cada pareja que choca (menos de 28 px) hasta que ninguno tape a otro,
+  // con un muelle suave hacia su sitio; los importantes (hotel, itinerario) se mueven menos. Un hilo y un puntito marcan el sitio real.
+  const vis = m.pts.map((p, i) => { const [x, y] = P(p.c); return { p, i, x, y, x0: x, y0: y, w: orden[p.capa] >= 4 ? 0.25 : 1 }; })
+    .filter(o => o.x > -40 && o.y > -40 && o.x < W + 40 && o.y < H + 40);
+  const D = 28;
+  for (let it = 0; it < 60; it++) {
+    let mov = false;
+    for (let a = 0; a < vis.length; a++) for (let c = a + 1; c < vis.length; c++) {
+      const A = vis[a], B = vis[c]; let dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy);
+      if (d >= D) continue; mov = true;
+      if (d < 0.01) { const ang = (c * 2.39996) % (2 * Math.PI); dx = Math.cos(ang); dy = Math.sin(ang); d = 1; }
+      const f = (D - d) / d, t = A.w + B.w; A.x -= dx * f * A.w / t; A.y -= dy * f * A.w / t; B.x += dx * f * B.w / t; B.y += dy * f * B.w / t;
+    }
+    vis.forEach(o => { o.x += (o.x0 - o.x) * 0.02; o.y += (o.y0 - o.y) * 0.02; });
+    if (!mov) break;
+  }
+  const hilos = vis.filter(o => Math.hypot(o.x - o.x0, o.y - o.y0) > 6);
+  if (hilos.length) h += `<svg class="mp-hilo" width="${W}" height="${H}">${hilos.map(o => `<line x1="${o.x0.toFixed(1)}" y1="${o.y0.toFixed(1)}" x2="${o.x.toFixed(1)}" y2="${o.y.toFixed(1)}"/>`).join('')}</svg>`
+    + [...new Set(hilos.map(o => o.x0.toFixed(0) + ',' + o.y0.toFixed(0)))].map(k => { const [x, y] = k.split(','); return `<span class="mp-ancla" style="left:${x}px;top:${y}px"></span>`; }).join('');
+  vis.sort((a, b) => orden[a.p.capa] - orden[b.p.capa]).forEach(({ p, i, x, y }) => {
     h += `<button class="mp-pt c-${p.capa} ${p.hecho ? 'hecho' : p.pasado ? 'pasado' : ''} ${m.sel === i ? 'sel' : ''}" data-mpp="${i}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${p.num != null ? `<b>${esc(p.num)}</b>` : p.ic}</button>`;
   });
   if (m.yo) { const [x, y] = P(m.yo); h += `<span class="mp-yo" style="left:${x}px;top:${y}px"></span>`; }

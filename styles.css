@@ -1163,3 +1163,7 @@ button.mini, a.btn.mini { min-height: 28px !important; padding: 3px 8px !importa
 .pcbang ul { margin: 6px 0 0; padding-left: 18px; font-size: .88rem; line-height: 1.45; }
 .c2-est { min-height: 30px !important; font-size: .85rem; }
 .c2-est small { font-size: .52rem; margin-top: 0; }
+/* v140: marcadores que se pisan, repartidos en corro con un hilo a su sitio real */
+.mp-hilo { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+.mp-hilo line { stroke: rgba(40,40,40,.55); stroke-width: 1.5; }
+.mp-ancla { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: #333; border: 2px solid #fff; transform: translate(-50%, -50%); pointer-events: none; z-index: 1; }

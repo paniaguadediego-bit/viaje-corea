@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v139
+Caché del service worker: corea-v140
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -191,6 +191,7 @@ Caché del service worker: corea-v139
 - v137: nombres nuevos en toda la app: la pestaña "Qué ver" pasa a "🏯 Planes" y su sección "⭐ Planes" (cosmética, LoL, curioso…) pasa a "🧩 Miscelánea" (también la capa del mapa y los botones "Ver en…"). El botón atrás del móvil vuelve a la pestaña anterior en el mismo punto de la pantalla (la pila guarda pestaña y scroll); "🏯 Ver en Planes" abre y lleva a la ficha del sitio.
 - v138: marcadores del mapa: lo visitado (itinerario, puntos de interés, Comer, Miscelánea) sale con fondo verde, su icono o número y un ✓ en la esquina (antes, medio transparente); las paradas del itinerario de días ya pasados sin visitar salen medio transparentes; los puntos de interés fuera del itinerario pasan de borde verde a azul (#1f4e8c) para no confundirse con lo visitado.
 - v139: (1) botones pequeños más compactos en toda la app (Naver, Google, Enseñar, 📅, Visitado: 28 px; estados de Comer: 30 px). (2) Ropa: Musinsa Standard Myeongdong (Euljiro 1-ga, salida 6), Musinsa Standard Hongdae (insignia, 양화로 144), galerías subterráneas de Myeongdong y Hoehyeon (horarios del Ayuntamiento de Seúl) y Musinsa Standard en Lotte Centum City (Busan, VERIFICAR). [Supuesto] Reddit no se puede consultar desde aquí: se eligieron las tiendas que más recomiendan los viajeros (Musinsa Standard, subterráneos) y se comprobaron en webs coreanas; Hongdae y Centum son excepción a "solo cerca del hotel" por estar en el itinerario o a 2 paradas. (3) LoL: T1 HQ Shop (tienda oficial, 627 Seolleung-ro, cerca de Coex; horario de 2024, VERIFICAR) y desplegable "🖥️ Cibercafés (PC bang)" con cómo usarlos (no socio, precio orientativo VERIFICAR, cuenta EUW).
+- v140: en los mapas, los marcadores que se pisan (muchos sitios comparten coordenadas: barrio y sus cafés, mercado en Planes y en Comer, calle del jjimdak…) se separan solos al dibujar: cada pareja a menos de 28 px se empuja hasta no taparse, con un muelle suave hacia su sitio; hotel e itinerario se mueven menos. Un hilo y un puntito negro marcan el lugar real. Comprobado: todos los marcadores visibles se pueden tocar en Seúl, Andong y Gyeongju a zoom 13-17.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
