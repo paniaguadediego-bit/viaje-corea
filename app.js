@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v134';
+const VERSION = 'v135';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1178,7 +1178,7 @@ const mpX = (lon, z) => (lon + 180) / 360 * MPT * 2 ** z;
 const mpY = (lat, z) => { const s = Math.sin(lat * Math.PI / 180); return (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * MPT * 2 ** z; };
 const mpLon = (x, z) => x / (MPT * 2 ** z) * 360 - 180;
 const mpLat = (y, z) => 180 / Math.PI * Math.atan(Math.sinh(Math.PI - 2 * Math.PI * y / (MPT * 2 ** z)));
-const MP_CAPAS = [['itin', 'Itinerario', '#cd2e3a'], ['sitios', 'Más sitios', '#0047a0'], ['comer', 'Comer', '#d97706'], ['planes', 'Planes', '#7c3aed']];
+const MP_CAPAS = [['itin', 'Itinerario', '#cd2e3a'], ['sitios', '🏯 Puntos de interés', '#2c6e45'], ['comer', 'Comer', '#d97706'], ['planes', 'Planes', '#7c3aed']];
 let mpCapas = new Set(['itin', 'sitios', 'comer', 'planes']), mapaCiudad = false, mpCapasDia = new Set();
 const mapaDia = new Set();
 const recorta = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
@@ -1307,7 +1307,7 @@ function puntosCiudad(k) {
   sitiosCiudadObj(k).forEach(l => {
     const h = hKey(l), f = enDia.get(h), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
     if (f) add('itin', l, { num: new Date(f + 'T12:00').getDate(), ic: icSitio(l.es), sub: `Día ${fmtCorto(f)}`, txt, lp: l.lp || l.top, hecho: hecho(l, k) });
-    else add('sitios', l, { ic: icSitio((l.tipo || '') + ' ' + l.es), sub: l.tipo || 'Sitio', txt, lp: !!(LP[k] || []).find(x => hKey(x) === h), hecho: hecho(l, k) });
+    else add('sitios', l, { ic: '🏯', sub: `${icSitio((l.tipo || '') + ' ' + l.es)} ${l.tipo || 'Punto de interés'}`, txt, lp: !!(LP[k] || []).find(x => hKey(x) === h), hecho: hecho(l, k) });
   });
   lugaresComer().filter(c => c.ciudad === k && !['descartado', 'cerrado'].includes(estadoDe(String(c.id)).estado)).forEach(c =>
     add('comer', c, { es: c.nombre, ic: IC_COMER[c.tipo] || '🍴', sub: [c.tipo, c.plato, c.precio].filter(Boolean).join(' · '), txt: c.nota, lp: c.fuente === 'lonely', hecho: hecho(c, k) }));
