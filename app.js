@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v133';
+const VERSION = 'v134';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -974,7 +974,7 @@ function qvPuntos(k, c) {
       extra: o.l.tipo && esLP(o.l) ? `<div class="lp-meta"><span class="lp-tipo">${esc(o.l.tipo)}</span>${o.l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(o.l)}</div>` : '' })).join('')}`).join('') : '<p class="muted">Nada con este filtro.</p>'}`;
 }
 function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) {
-  const h = hKey(l), key = 'qv:' + h, w = l.wiki || wikiDe(l), ic = icSitio((l.tipo || '') + ' ' + l.es);
+  const h = hKey(l), key = 'qv:' + h, w = l.wiki || wikiDe(l) || (l.ko ? 'ko:' + l.ko : ''), ic = icSitio((l.tipo || '') + ' ' + l.es);
   return `<details class="qv ${clase} ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}>
     <summary>${w ? `<div class="foto mini qv-f" data-wiki="${esc(w)}"><span>${ic}</span></div>` : `<div class="foto mini qv-f vacia"><span>${ic}</span></div>`}
       <span class="qv-cab"><b>${esc(l.es)}${lpPill(l)}</b><small>${plan ? `<span class="qv-dia">📅 ${fmtCorto(plan.fecha)}</span> ` : ''}${esc(breve(desc || l.nota || l.desc))}</small></span>
@@ -986,11 +986,26 @@ function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) 
 }
 // Foto principal del artículo de Wikipedia (necesita conexión la primera vez; el service worker la guarda).
 const FOTOS = load('corea.fotos', {});
+// v134: se reintentan las fotos que fallaron antes (artículos mal escritos o sin imagen).
+if (load('corea.fotosv', 0) < 2) { Object.keys(FOTOS).forEach(k => { if (FOTOS[k] === null) delete FOTOS[k]; }); try { save('corea.fotos', FOTOS); save('corea.fotosv', 2); } catch {} }
+// Hangul de cada artículo (para buscar en la Wikipedia coreana si la inglesa no tiene foto).
+let KO_WIKI = null;
+const koDeWiki = t => { if (!KO_WIKI) { KO_WIKI = {};
+    Object.entries(typeof WIKI !== 'undefined' ? WIKI : {}).forEach(([ko, w]) => { KO_WIKI[w] = KO_WIKI[w] || ko; });
+    [...Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat(), ...(typeof PLANES !== 'undefined' ? PLANES : [])].forEach(l => { if (l && l.wiki && l.ko) KO_WIKI[l.wiki] = KO_WIKI[l.wiki] || l.ko; }); }
+  return KO_WIKI[t] || ''; };
+async function resumenWiki(lang, titulo) {
+  const r = await fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/` + encodeURIComponent(titulo.replace(/ /g, '_')));
+  if (!r.ok) return null; const d = await r.json(), im = d && (d.thumbnail || d.originalimage);
+  return im ? { src: im.source, url: d.content_urls && d.content_urls.mobile && d.content_urls.mobile.page } : null;
+}
 async function fotoWiki(t) {
   if (FOTOS[t] !== undefined) return FOTOS[t];
+  let titulo = t; try { titulo = decodeURIComponent(t); } catch {} // algunos nombres venían ya codificados (%27…)
   try {
-    const d = await (await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(t))).json();
-    const f = d && (d.thumbnail || d.originalimage) ? { src: (d.thumbnail || d.originalimage).source, url: d.content_urls && d.content_urls.mobile && d.content_urls.mobile.page } : null;
+    let f = titulo.startsWith('ko:') ? null : await resumenWiki('en', titulo);
+    const ko = titulo.startsWith('ko:') ? titulo.slice(3) : koDeWiki(t);
+    if (!f && ko) f = await resumenWiki('ko', ko.replace(/\s+/g, '')) || (/\s/.test(ko) ? await resumenWiki('ko', ko) : null);
     FOTOS[t] = f; try { save('corea.fotos', FOTOS); } catch {}
     return f;
   } catch { return undefined; } // sin conexión: se reintenta más tarde
