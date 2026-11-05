@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v131';
+const VERSION = 'v132';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1289,8 +1289,8 @@ function puntosCiudad(k) {
     else add('sitios', l, { ic: icSitio((l.tipo || '') + ' ' + l.es), sub: l.tipo || 'Sitio', txt, lp: !!(LP[k] || []).find(x => hKey(x) === h), hecho: hecho(l, k) });
   });
   lugaresComer().filter(c => c.ciudad === k && !['descartado', 'cerrado'].includes(estadoDe(String(c.id)).estado)).forEach(c =>
-    add('comer', c, { es: c.nombre, ic: IC_COMER[c.tipo] || '🍴', sub: [c.tipo, c.plato, c.precio].filter(Boolean).join(' · '), txt: c.nota, lp: c.fuente === 'lonely', hecho: estadoDe(String(c.id)).estado === 'visitado' }));
-  (typeof PLANES !== 'undefined' ? PLANES : []).filter(p => p.ciudad === k).forEach(p => add('planes', p, { ic: icPlan(p), sub: p.direccion_en || '', txt: p.desc }));
+    add('comer', c, { es: c.nombre, ic: IC_COMER[c.tipo] || '🍴', sub: [c.tipo, c.plato, c.precio].filter(Boolean).join(' · '), txt: c.nota, lp: c.fuente === 'lonely', hecho: hecho(c, k) }));
+  (typeof PLANES !== 'undefined' ? PLANES : []).filter(p => p.ciudad === k).forEach(p => add('planes', p, { ic: icPlan(p), sub: p.direccion_en || '', txt: p.desc, hecho: hecho(p, k) }));
   if (hot) todos.push({ capa: 'hotel', c: hot, es: (arr(trip.alojamientos).find(a => ck(a.ciudad) === k) || {}).nombre || 'Hotel', ic: '🛏️', sub: 'Vuestro hotel' });
   return { hot, todos, cuenta };
 }
