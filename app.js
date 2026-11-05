@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v141';
+const VERSION = 'v142';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -721,7 +721,7 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
       if (fija != null && fija > a) { if (fija - a <= 45) a = fija; else dur = Math.max(dur, fija - a + 60); }
       if (abre != null && a < abre) a = abre;
       let nota = a - llega >= 10 ? ` · llegáis a las ${hhmm(llega)}` + (abre != null && a === abre ? `, abre a las ${hhmm(abre)}` : ', esperar') : '';
-      if (!comido && comida && a >= 12 * 60 && a <= 14 * 60 + 30) { comido = true; dur += 30; nota = ' · 🍜 comer aquí'; }
+      if (!comido && comida && a >= 11 * 60 + 30 && a <= 14 * 60 + 30) { comido = true; dur += 30; nota = ' · 🍜 comer aquí'; }
       else if (!cenado && comida && a >= 18 * 60) { cenado = true; dur += 30; nota = ' · 🍽️ cenar aquí'; }
       else if (!comido && a < 13 * 60 && a + dur >= 13 * 60 + 30) { comido = true; dur += 60; nota = ' · 🍜 incluye comer por la zona'; }
       let aviso = '';
