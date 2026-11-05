@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v130';
+const VERSION = 'v131';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1611,6 +1611,10 @@ function showFull(key) {
     const f = FRASES_CN[a]; if (!f) return;
     return full(`<div class="enorme">${esc(f[1])}</div><div class="es">${esc(f[2])}</div><div class="es">${esc(f[0])}</div>`);
   }
+  if (t === 'hc') {
+    const ko = key.slice(3), c = (typeof HG_CARTELES !== 'undefined' ? HG_CARTELES : []).find(x => x[0] === ko); if (!c) return;
+    return full(`<div class="enorme">${esc(c[0])}</div>${pronHTML(c[0])}<div class="es">${esc(c[1])}</div>`);
+  }
   if (t === 'p') {
     const p = ((PLATOS[a] || [])[1] || [])[b]; if (!p) return;
     return full(`<div class="enorme">${esc(p[1])}</div><div class="es">${esc(p[0])} · ${esc(p[2])}</div><div class="es">Glosario Lonely Planet 2016</div>`);
@@ -1656,7 +1660,15 @@ function hablar(t) {
 }
 if ('speechSynthesis' in window) speechSynthesis.getVoices(); // en Android la lista de voces llega tarde
 const btnHabla = (ko, grande = false) => /[가-힣]/.test(ko || '') ? `<button class="habla ${grande ? 'grande' : ''}" data-habla="${esc(ko)}" aria-label="Escuchar en coreano">🔊${grande ? ' Escuchar' : ''}</button>` : '';
-const dFila = (e, key, conPron = false) => `<div class="card lugar" data-full="${key}">${btnHabla(e[1])}<div><div>${esc(e[0])}${e[3] ? ' <span class="ver">VERIFICAR</span>' : ''}</div>
+// ⭐ Favoritas (user.favs: [{k, es, ko, rom}], la última arriba): frases, palabras y carteles.
+const esFav = k => arr(u().favs).some(f => f.k === k);
+const btnFav = (k, es, ko, rom = '') => `<button class="fav ${esFav(k) ? 'on' : ''}" data-fav="${esc(k)}" data-es="${esc(es)}" data-ko="${esc(ko)}" data-rom="${esc(rom)}" aria-label="Favorita">${esFav(k) ? '★' : '☆'}</button>`;
+function viewFavs() {
+  const fs = arr(u().favs); if (!fs.length) return '<p class="muted centro">Toca ☆ en cualquier frase, palabra del diccionario o cartel de Hangul y aparecerá aquí.</p>';
+  const grupos = [['f', '💬 Frases'], ['d', '📖 Palabras'], ['hc', '🪧 Carteles']];
+  return grupos.map(([t, tt]) => { const g = fs.filter(f => f.k.split(':')[0] === t); return g.length ? `<h2>${tt} <small class="muted">${g.length}</small></h2>${g.map(f => dFila([f.es, f.ko, f.rom], f.k, true)).join('')}` : ''; }).join('');
+}
+const dFila = (e, key, conPron = false) => `<div class="card lugar" data-full="${key}"><div class="fila-acc">${btnFav(key, e[0], e[1], e[2])}${btnHabla(e[1])}</div><div><div>${esc(e[0])}${e[3] ? ' <span class="ver">VERIFICAR</span>' : ''}</div>
   <div class="ko">${esc(e[1])}</div>${conPron ? pronHTML(e[1]) : ''}<div class="muted ${conPron ? 'rom' : ''}">${esc(e[2])}</div></div></div>`;
 
 function dResultados(q) {
@@ -1818,7 +1830,7 @@ function viewHangul() {
   const U = u(), n = HG_LEC.filter(l => (U.hgLeidas || {})[l.id]).length;
   const subs = [['lec', `📚 Lecciones ${n}/${HG_LEC.length}`], ['carteles', '🪧 Carteles'], ['test', '🎯 Practicar'], ['fuentes', '🔗 Fuentes']];
   let h = `<div class="chips hg-subs">${subs.map(([k, t]) => `<button class="chip ${k === hgSub ? 'on' : ''}" data-hgsub="${k}">${t}</button>`).join('')}</div>`;
-  if (hgSub === 'carteles') h += HG_CARTELES.map(([ko, es, ing]) => `<div class="card hg-cartel"><div class="hg-c-top"><span class="hg-c-ko">${esc(ko)}</span>${btnHabla(ko)}</div>
+  if (hgSub === 'carteles') h += HG_CARTELES.map(([ko, es, ing]) => `<div class="card hg-cartel"><div class="hg-c-top"><span class="hg-c-ko">${esc(ko)}</span><span class="fila-acc">${btnFav('hc:' + ko, es, ko)}${btnHabla(ko)}</span></div>
       <div><b>${esc(es)}</b>${ing ? ' <span class="badge otro">del inglés</span>' : ''} · <span class="pron-mini">🗣️ ${esc(pronuncia(ko))}</span></div>
       <div class="hg-silabas">${hgDescompon(ko)}</div></div>`).join('');
   else if (hgSub === 'test') h += hgTest();
@@ -1829,11 +1841,12 @@ function viewHangul() {
 }
 function viewCorea() {
   if (coreaSub === 'historia') coreaSub = 'guia'; // Historia tiene pestaña propia desde v103
-  const seg = [['guia', '🧭 Guía'], ['ensenar', '🪧 Enseñar'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.'], ['hangul', '🔤 Hangul']].map(([k, t]) =>
+  const seg = [['guia', '🧭 Guía'], ['ensenar', '🪧 Enseñar'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.'], ['hangul', '🔤 Hangul'], ['favs', `⭐${arr(u().favs).length ? ' ' + arr(u().favs).length : ''}`]].map(([k, t]) =>
     `<button class="${coreaSub === k ? '' : 'sec'}" data-sub="${k}">${t}</button>`).join('');
   let html = `<div class="row daynav seg5">${seg}</div>`;
   if (coreaSub === 'ensenar') html += viewEnsenar();
   else if (coreaSub === 'hangul') html += viewHangul();
+  else if (coreaSub === 'favs') html += viewFavs();
   else if (coreaSub === 'frases') {
     let off = 0; const grupos = FRASES_SIT.map(([t, fs]) => { const g = [t, fs, off]; off += fs.length; return g; });
     const g = grupos.find(x => x[0] === fraseSit) || grupos[0];
@@ -2359,7 +2372,7 @@ let tiraX = null, tabAnt = null;
 // ---------- render ----------
 // Guarda dónde está un botón en pantalla y devuelve la función que lo deja en el mismo sitio tras redibujar.
 function anclar(el) {
-  const at = [...el.attributes].find(x => /^data-(hgleida|hk|est|val|verif|agtog|agdel|cara)$/.test(x.name)); if (!at) return () => {};
+  const at = [...el.attributes].find(x => /^data-(fav|hgleida|hk|est|val|verif|agtog|agdel|cara)$/.test(x.name)); if (!at) return () => {};
   const sel = `[${at.name}="${CSS.escape(at.value)}"]`, i = [...document.querySelectorAll(sel)].indexOf(el), y = el.getBoundingClientRect().top;
   return () => { const n = document.querySelectorAll(sel)[i] || document.querySelector(sel); if (n) window.scrollBy(0, n.getBoundingClientRect().top - y); };
 }
@@ -2418,6 +2431,10 @@ document.addEventListener('click', e => {
 document.addEventListener('click', e => {
   // Campos de texto: el toque es para escribir; nunca debe redibujar nada.
   if (e.target.matches('input:not([type=checkbox]):not([type=radio]), textarea, select')) return;
+  const fv = e.target.closest('[data-fav]');
+  if (fv) { const U = u(), d = fv.dataset; U.favs = arr(U.favs);
+    if (U.favs.some(f => f.k === d.fav)) U.favs = U.favs.filter(f => f.k !== d.fav); else U.favs.unshift({ k: d.fav, es: d.es, ko: d.ko, rom: d.rom });
+    saveUser(); render(); return; }
   const hb = e.target.closest('[data-habla]');
   if (hb) { hablar(hb.dataset.habla); return; }
   const hg = e.target.closest('[data-hgsub],[data-hgleida],[data-hgniv],[data-hgr],[data-hgsig],[data-hgreset]');
@@ -2436,7 +2453,7 @@ document.addEventListener('click', e => {
     render(); return;
   }
   // Botones de marcar (visitado, valorar, estado…): tras redibujar, el botón tocado vuelve al mismo punto de la pantalla.
-  const mk = e.target.closest('button[data-hgleida],button[data-hk],button[data-est],button[data-val],button[data-verif],button[data-agtog],button[data-agdel],button[data-cara]');
+  const mk = e.target.closest('button[data-fav],button[data-hgleida],button[data-hk],button[data-est],button[data-val],button[data-verif],button[data-agtog],button[data-agdel],button[data-cara]');
   if (mk) queueMicrotask(anclar(mk));
   // Casillas: las marca la app (así no se pierde el toque si la pantalla se redibuja en el móvil).
   const lab = e.target.closest('label.check');

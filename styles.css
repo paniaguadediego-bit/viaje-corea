@@ -1078,8 +1078,9 @@ header #version { margin-left: 8px; }
 .habla { float: right; width: 40px !important; height: 40px; min-height: 40px !important; padding: 0 !important; margin: 0 0 4px 8px; border-radius: 50% !important;
   background: color-mix(in srgb, var(--acc) 12%, var(--card)) !important; color: inherit; border: 1px solid var(--line); box-shadow: none; font-size: 1.15rem; line-height: 1; }
 .habla.grande { float: none; display: block; width: auto !important; height: auto; padding: 12px 22px !important; margin: 18px auto 0; border-radius: 999px !important; font-size: 1.2rem; font-weight: 700; }
-.card.lugar > .habla { order: 2; float: none; flex: none; align-self: center; margin: 0 0 0 8px; }
-.card.lugar > .habla + div { flex: 1; min-width: 0; }
+.card.lugar > .fila-acc { order: 2; flex: none; align-self: center; display: flex; gap: 6px; margin-left: 8px; }
+.card.lugar > .fila-acc + div { flex: 1; min-width: 0; }
+.fila-acc .habla { float: none; margin: 0; }
 /* v127: Hangul (lecciones, carteles, test y fuentes) */
 .hg-subs, .hg-niv { margin: 8px 0; }
 .hg-lec > summary { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.02rem; list-style: none; cursor: pointer; }
@@ -1138,3 +1139,9 @@ details.qv[open] > summary::after { transform: rotate(180deg); }
 .qv-bloque { margin: 10px 0 4px; padding: 8px 10px; border-radius: 10px; background: color-mix(in srgb, var(--acc) 6%, var(--card)); border-left: 3px solid var(--acc2); }
 .guia-cult-abierta { border-left-color: #b8322a; }
 .irqv { margin-top: 6px; }
+/* v131: ⭐ favoritas */
+.fav { width: 40px !important; height: 40px; min-height: 40px !important; padding: 0 !important; margin: 0; border-radius: 50% !important; font-size: 1.3rem; line-height: 1;
+  background: var(--card) !important; color: var(--muted); border: 1px solid var(--line); box-shadow: none; }
+.fav.on { color: #e3a008; border-color: #e3b23c; background: color-mix(in srgb, #e3b23c 14%, var(--card)) !important; }
+.hg-c-top .fila-acc { display: flex; gap: 6px; }
+.daynav.seg5 button { white-space: nowrap; font-size: .7rem; padding: 6px 1px; }

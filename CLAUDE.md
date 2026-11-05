@@ -26,7 +26,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    con distancia al hotel, "cerca", foto, 💰 precio aproximado y 👥 reseñas; lavandería y Olive Young en cada ciudad). Corea tiene apartados:
    Guía (primero, con iconos por tema), Enseñar, Frases, Diccionario y 🔤 Hangul (hangul.js: HG_LEC 11 lecciones esquematizadas con letras, sonido a la española,
    romanización, ejemplo con 🔊, trucos y reglas de lectura, marca de leída en user.hgLeidas; 🪧 Carteles HG_CARTELES descompuestos letra a letra; 🎯 Practicar:
-   test de letras o carteles que repite lo fallado, user.hgTest; 🔗 Fuentes gratuitas HG_FUENTES)
+   test de letras o carteles que repite lo fallado, user.hgTest; 🔗 Fuentes gratuitas HG_FUENTES) y ⭐ Favoritas (☆ en cada frase, palabra y cartel; user.favs; agrupadas en Frases, Palabras y Carteles)
    (la Historia, historia.js: 22 capítulos con marca de leído en user.leidos y diseño hanji/dancheong, pasó a su pestaña en v103). Más es una rejilla de iconos
    como la Guía (se toca y sale debajo): Maleta, Seguro,
    Verificar, Documentos (fotos/PDF), Notas, Escala Pekín (hora de Pekín, vuestras escalas desde trip.vuelos,

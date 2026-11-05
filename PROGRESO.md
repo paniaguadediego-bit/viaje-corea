@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v130
+Caché del service worker: corea-v131
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -182,6 +182,7 @@ Caché del service worker: corea-v130
 - v128: Qué ver → Puntos de interés: imprescindibles y lista de la Lonely se muestran enteros (fuera "Ver los X restantes"; la Lonely ya no repite los imprescindibles) como fichas plegadas con foto pequeña, nombre y una línea. Al abrirlas, toda la información a la vista: foto, Visitado, 📅, hangul y distancia, horario, descripción, "📖 Más de la Lonely" y "🎎 Con ojos de guía" sin desplegables dentro. Hoy → Ruta del día queda compacto (horario y una frase) con "🧭 Ver en Qué ver", que abre y lleva a la ficha; la ficha del mapa hace lo mismo.
 - v129: junto a cada botón de Naver, "📍 Google" (Google Maps, búsqueda con el mismo texto que Naver: dirección en hangul o nombre); en las tarjetas de Comer, un "📍 G" junto al 🗺️. Las fichas de Qué ver estrenan Naver y Google al abrirlas. Hoy ya estaba compacto con "🧭 Ver en Qué ver" (v128).
 - v130: icono de Qué ver 🧭 → 🏯 (palacio), también en los botones "🏯 Ver en Qué ver". 🧭 queda solo para las rutas de Naver.
+- v131: ⭐ favoritas. Botón ☆/★ en cada frase, palabra del diccionario y cartel de Hangul; nuevo botón "⭐ n" en Corea con todas, agrupadas (Frases, Palabras, Carteles), con 🔊 y pantalla completa. Se guardan en el móvil (user.favs, van en la copia).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
