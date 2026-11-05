@@ -862,6 +862,8 @@ const WORLDS = {
 // a/c = abre/cierra (HH:MM), u = última entrada, x = días de cierre (0 dom … 6 sáb), d = minutos de visita,
 // t = texto corto, n = nota, v = VERIFICAR. Sin a/c = zona abierta (sin horario).
 const HORARIOS = {
+  '국립민속박물관': { a: '09:00', c: '17:00', u: '16:00', d: 60, t: '9:00-17:00 en invierno (de marzo a octubre, hasta las 18:00; última entrada 1 h antes)', n: 'Gratis. Dentro del recinto de Gyeongbokgung, a la salida del palacio.', v: true },
+  '세종문화회관': { a: '10:00', c: '18:30', x: [1], d: 40, t: 'Exposición «Sejong y Chungmugong» (bajo la plaza): 10:00-18:30 · cierra los lunes', n: 'Gratis. Entrada detrás de la estatua del rey Sejong o por el sótano del Centro Cultural.', v: true },
   '경복궁': { a: '09:00', c: '17:00', u: '16:00', x: [2], d: 120, t: '9:00-17:00 (última entrada 16:00)', n: 'Gratis con hanbok. Cambio de guardia en Gwanghwamun.' },
   '창덕궁': { a: '09:00', c: '17:30', u: '16:30', x: [1], d: 120, t: '9:00-17:30 (última entrada 16:30)', n: 'Jardín secreto aparte: visitas en grupo, 10:00-16:30; reservar.' },
   '덕수궁': { a: '09:00', c: '21:00', u: '20:00', x: [1], d: 75, t: '9:00-21:00 (última entrada 20:00)', n: 'El palacio que cierra más tarde: bonito de noche.' },

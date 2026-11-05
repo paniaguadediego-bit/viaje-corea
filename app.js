@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v140';
+const VERSION = 'v141';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
