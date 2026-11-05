@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v137';
+const VERSION = 'v138';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1181,7 +1181,7 @@ const mpX = (lon, z) => (lon + 180) / 360 * MPT * 2 ** z;
 const mpY = (lat, z) => { const s = Math.sin(lat * Math.PI / 180); return (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * MPT * 2 ** z; };
 const mpLon = (x, z) => x / (MPT * 2 ** z) * 360 - 180;
 const mpLat = (y, z) => 180 / Math.PI * Math.atan(Math.sinh(Math.PI - 2 * Math.PI * y / (MPT * 2 ** z)));
-const MP_CAPAS = [['itin', 'Itinerario', '#cd2e3a'], ['sitios', '🏯 Puntos de interés', '#2c6e45'], ['comer', 'Comer', '#d97706'], ['planes', 'Miscelánea', '#7c3aed']];
+const MP_CAPAS = [['itin', 'Itinerario', '#cd2e3a'], ['sitios', '🏯 Puntos de interés', '#1f4e8c'], ['comer', 'Comer', '#d97706'], ['planes', 'Miscelánea', '#7c3aed']];
 let mpCapas = new Set(['itin', 'sitios', 'comer', 'planes']), mapaCiudad = false, mpCapasDia = new Set();
 const mapaDia = new Set();
 const recorta = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
@@ -1235,7 +1235,7 @@ function mpDibujar(el, m) {
   const orden = { comer: 0, planes: 1, sitios: 2, sug: 3, itin: 4, hotel: 5 };
   m.pts.map((p, i) => [p, i]).sort((a, b) => orden[a[0].capa] - orden[b[0].capa]).forEach(([p, i]) => {
     const [x, y] = P(p.c); if (x < -40 || y < -40 || x > W + 40 || y > H + 40) return;
-    h += `<button class="mp-pt c-${p.capa} ${p.hecho ? 'hecho' : ''} ${m.sel === i ? 'sel' : ''}" data-mpp="${i}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${p.num != null ? `<b>${esc(p.num)}</b>` : p.ic}</button>`;
+    h += `<button class="mp-pt c-${p.capa} ${p.hecho ? 'hecho' : p.pasado ? 'pasado' : ''} ${m.sel === i ? 'sel' : ''}" data-mpp="${i}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${p.num != null ? `<b>${esc(p.num)}</b>` : p.ic}</button>`;
   });
   if (m.yo) { const [x, y] = P(m.yo); h += `<span class="mp-yo" style="left:${x}px;top:${y}px"></span>`; }
   const capa = el.querySelector('.mp-capa'); capa.style.transform = ''; capa.innerHTML = h;
@@ -1309,7 +1309,7 @@ function puntosCiudad(k) {
   const add = (capa, l, extra) => { const c = coordsLugar(l); if (!c) return; cuenta[capa] = (cuenta[capa] || 0) + 1; todos.push({ capa, c, l, es: l.es || l.nombre, ko: l.ko, ...extra }); };
   sitiosCiudadObj(k).forEach(l => {
     const h = hKey(l), f = enDia.get(h), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
-    if (f) add('itin', l, { num: new Date(f + 'T12:00').getDate(), ic: icSitio(l.es), sub: `Día ${fmtCorto(f)}`, txt, lp: l.lp || l.top, hecho: hecho(l, k) });
+    if (f) add('itin', l, { num: new Date(f + 'T12:00').getDate(), pasado: f < todayISO(), ic: icSitio(l.es), sub: `Día ${fmtCorto(f)}`, txt, lp: l.lp || l.top, hecho: hecho(l, k) });
     else add('sitios', l, { ic: '🏯', sub: `${icSitio((l.tipo || '') + ' ' + l.es)} ${l.tipo || 'Punto de interés'}`, txt, lp: !!(LP[k] || []).find(x => hKey(x) === h), hecho: hecho(l, k) });
   });
   lugaresComer().filter(c => c.ciudad === k && !['descartado', 'cerrado'].includes(estadoDe(String(c.id)).estado)).forEach(c =>
@@ -1371,7 +1371,7 @@ function mapaDiaHTML(d, hot, orden, mini = false) {
   const pts = [];
   if (hot) pts.push({ capa: 'hotel', c: hot, es: 'Hotel', ic: '🛏️', sub: 'Salida' });
   let n = 0; orden.forEach(l => { const c = coordsLugar(l); if (!c) return; const h = hKey(l);
-    pts.push({ capa: 'itin', c, l, es: l.es, ko: l.ko, num: ++n, ic: icSitio(l.es), sub: `Parada ${n}`, txt: D[h.slice(2)] || D[h] || l.desc || l.nota || '', hecho: hecho(l, k) }); });
+    pts.push({ capa: 'itin', c, l, es: l.es, ko: l.ko, num: ++n, pasado: d.fecha < todayISO(), ic: icSitio(l.es), sub: `Parada ${n}`, txt: D[h.slice(2)] || D[h] || l.desc || l.nota || '', hecho: hecho(l, k) }); });
   const ruta = pts.map(p => p.c);
   // Lo que queda de paso y no tenéis: con asterisco y el número de la parada tras la que encaja.
   sugerenciasDe(d, orden, hot).forEach(g => pts.push({ capa: 'sug', c: g.c, l: g.l, es: g.l.es, ko: g.l.ko, num: g.etq, ic: icSitio(g.l.es), sub: textoEncaje(g),

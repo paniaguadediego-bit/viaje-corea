@@ -754,11 +754,15 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .mp-pt { position: absolute; transform: translate(-50%, -50%); width: 26px; height: 26px; min-height: 0; padding: 0; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; line-height: 1; box-shadow: 0 1px 4px rgba(0,0,0,.4); background: #fff; color: #fff; }
 .mp-pt b { font-size: 12px; }
 .mp-pt.c-itin { background: #cd2e3a; width: 28px; height: 28px; z-index: 3; }
-.mp-pt.c-sitios { background: #fff; border: 3px solid #2c6e45; font-size: 13px; z-index: 2; }
+.mp-pt.c-sitios { background: #fff; border: 3px solid #1f4e8c; font-size: 13px; z-index: 2; }
 .mp-pt.c-comer { background: #d97706; }
 .mp-pt.c-planes { background: #7c3aed; }
 .mp-pt.c-hotel { background: #111; width: 32px; height: 32px; font-size: 16px; z-index: 4; border-radius: 8px; }
-.mp-pt.hecho { opacity: .5; }
+/* v138: visitado = fondo verde con ✓ (mantiene su icono o número); día pasado sin visitar = medio transparente */
+.mp-pt.hecho { background: #1e8e3e !important; border: 2px solid #fff !important; color: #fff; opacity: 1; }
+.mp-pt.hecho::after { content: "✓"; position: absolute; right: -5px; top: -5px; width: 14px; height: 14px; border-radius: 50%; background: #fff; color: #1e8e3e;
+  font-size: 10px; font-weight: 900; line-height: 14px; text-align: center; box-shadow: 0 0 0 1px #1e8e3e; }
+.mp-pt.pasado { opacity: .45; }
 .mp-pt.sel { outline: 3px solid #ffd400; z-index: 5; transform: translate(-50%, -50%) scale(1.25); }
 .mp-yo { position: absolute; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: #1a73e8; border: 3px solid #fff; box-shadow: 0 0 0 6px rgba(26,115,232,.25); z-index: 6; }
 .mp-bot { position: absolute; right: 8px; top: 8px; display: flex; flex-direction: column; gap: 6px; z-index: 8; }

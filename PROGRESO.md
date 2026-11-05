@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v137
+Caché del service worker: corea-v138
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -189,6 +189,7 @@ Caché del service worker: corea-v137
 - v135: en los mapas, la capa "Más sitios" pasa a "🏯 Puntos de interés" (todos los de Qué ver fuera del itinerario) con marcador propio: 🏯 sobre blanco con borde verde (color de Qué ver); el tipo va en la ficha. Se enciende y apaga con su chip, igual que Comer y Planes.
 - v136: los traslados en autobús (traslados[].bus, mismos campos que tren: salida, llegada, numero, clase, precio, asientos, nota) se muestran igual que los de tren: horas y plazas en Ruta y Hoy, icono 🚌, aviso en "Antes de salir", hora en la tarjeta "Ahora" y en el horario del día ("Tras el autobús…"). Antes solo se leía tren. Billetes que faltaban rellenados en el trip.json privado.
 - v137: nombres nuevos en toda la app: la pestaña "Qué ver" pasa a "🏯 Planes" y su sección "⭐ Planes" (cosmética, LoL, curioso…) pasa a "🧩 Miscelánea" (también la capa del mapa y los botones "Ver en…"). El botón atrás del móvil vuelve a la pestaña anterior en el mismo punto de la pantalla (la pila guarda pestaña y scroll); "🏯 Ver en Planes" abre y lleva a la ficha del sitio.
+- v138: marcadores del mapa: lo visitado (itinerario, puntos de interés, Comer, Miscelánea) sale con fondo verde, su icono o número y un ✓ en la esquina (antes, medio transparente); las paradas del itinerario de días ya pasados sin visitar salen medio transparentes; los puntos de interés fuera del itinerario pasan de borde verde a azul (#1f4e8c) para no confundirse con lo visitado.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
