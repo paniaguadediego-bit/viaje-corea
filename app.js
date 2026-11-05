@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v129';
+const VERSION = 'v130';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -38,7 +38,7 @@ window.addEventListener('popstate', () => {
 let dayIdx = null;
 
 const TABS = [
-  ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '✈️'], ['ciudades', 'Qué ver', '🧭'], ['mapas', 'Mapas', '🗺️'], ['historia', 'Historia', '📜'], ['corea', 'Corea', '🇰🇷'],
+  ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '✈️'], ['ciudades', 'Qué ver', '🏯'], ['mapas', 'Mapas', '🗺️'], ['historia', 'Historia', '📜'], ['corea', 'Corea', '🇰🇷'],
   ['comer', 'Comer', '🍜'], ['mas', 'Más', '☰']
 ];
 // Secciones agrupadas dentro de "Más" (la barra no cabe con 9 pestañas).
@@ -942,8 +942,8 @@ function infoCompleta(l, desc) {
     ${gc ? `<div class="qv-bloque guia-cult-abierta"><b>🎎 Con ojos de guía</b><p class="gc-gancho">${esc(gc[0])}</p>${gc.slice(1).map(p => `<p class="${/^👀/.test(p) ? 'gc-mira' : /^💡/.test(p) ? 'gc-tip' : ''}">${resaltar(p, true)}</p>`).join('')}</div>` : ''}`;
 }
 // Enlace a la ficha del sitio en Qué ver (abierta); si no tiene ficha, al buscador de Qué ver.
-const irQV = (l, k) => enQueVer(l, k) ? `<button class="sec mini irqv" data-irqv="${esc(k)}" data-h="${esc(hKey(l))}">🧭 Ver en Qué ver</button>`
-  : `<button class="sec mini irqv" data-bcity="${esc(k)}" data-bq="${esc(l.es)}">🧭 Ver en Qué ver</button>`;
+const irQV = (l, k) => enQueVer(l, k) ? `<button class="sec mini irqv" data-irqv="${esc(k)}" data-h="${esc(hKey(l))}">🏯 Ver en Qué ver</button>`
+  : `<button class="sec mini irqv" data-bcity="${esc(k)}" data-bq="${esc(l.es)}">🏯 Ver en Qué ver</button>`;
 function fichaQV(l, k, { desc = '', extra = '', clase = '' } = {}) {
   const h = hKey(l), key = 'qv:' + h, w = l.wiki || wikiDe(l), ic = icSitio((l.tipo || '') + ' ' + l.es);
   return `<details class="qv ${clase} ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}>
@@ -1233,7 +1233,7 @@ function mpEnlace(p, m) {
   if (p.capa === 'hotel') return `<button class="mini" data-irhotel>🛏️ Ver el hotel</button>`;
   if (p.capa === 'comer') return `<button class="mini" data-ircomer="${esc(k)}" data-q="${esc(p.es)}">🍜 Ver en Comer</button>`;
   if (p.capa === 'planes') return `<button class="mini" data-irplan="${esc(k)}" data-cat="${esc((p.l && p.l.cat) || '')}">⭐ Ver en Planes</button>`;
-  return k ? (p.l && enQueVer(p.l, k) ? `<button class="mini" data-irqv="${esc(k)}" data-h="${esc(hKey(p.l))}">🧭 Ver en Qué ver</button>` : `<button class="mini" data-bcity="${esc(k)}" data-bq="${esc(p.es)}">🧭 Ver en Qué ver</button>`) : '';
+  return k ? (p.l && enQueVer(p.l, k) ? `<button class="mini" data-irqv="${esc(k)}" data-h="${esc(hKey(p.l))}">🏯 Ver en Qué ver</button>` : `<button class="mini" data-bcity="${esc(k)}" data-bq="${esc(p.es)}">🏯 Ver en Qué ver</button>`) : '';
 }
 function mpGestos(el, m) {
   const v = el.querySelector('.mp-vista'), capa = () => el.querySelector('.mp-capa');

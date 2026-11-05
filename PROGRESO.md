@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v129
+Caché del service worker: corea-v130
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -181,6 +181,7 @@ Caché del service worker: corea-v129
 - v127: nuevo apartado "🔤 Hangul" en Corea (hangul.js, precacheado). 📚 11 lecciones plegables (la idea, vocales básicas, con «y», con «w», consonantes básicas, con aire, dobles, cómo se monta una sílaba, 7 finales, reglas de lectura y truco de los préstamos del inglés): cada letra con sonido a la española, romanización oficial, truco para recordarla y ejemplo con pronunciación y 🔊; marca "✓ Lección leída". 🪧 46 carteles de la calle (salida, baños, metro, farmacia, abierto, tire/empuje…) descompuestos letra a letra. 🎯 Test de vocales, consonantes, todas o carteles; repite más lo fallado y guarda aciertos. 🔗 Fuentes gratuitas: Nuri-Sejong Hakdang, How to Study Korean (Unidad 0), cómic de Ryan Estrada, Talk To Me In Korean y Hunminjeongeum. Quitado el tema "Leer hangul en 10 minutos" de la Guía (lo sustituye). [Supuesto] Los trucos de memoria son propios (inspirados en el Hunminjeongeum y en Ryan Estrada).
 - v128: Qué ver → Puntos de interés: imprescindibles y lista de la Lonely se muestran enteros (fuera "Ver los X restantes"; la Lonely ya no repite los imprescindibles) como fichas plegadas con foto pequeña, nombre y una línea. Al abrirlas, toda la información a la vista: foto, Visitado, 📅, hangul y distancia, horario, descripción, "📖 Más de la Lonely" y "🎎 Con ojos de guía" sin desplegables dentro. Hoy → Ruta del día queda compacto (horario y una frase) con "🧭 Ver en Qué ver", que abre y lleva a la ficha; la ficha del mapa hace lo mismo.
 - v129: junto a cada botón de Naver, "📍 Google" (Google Maps, búsqueda con el mismo texto que Naver: dirección en hangul o nombre); en las tarjetas de Comer, un "📍 G" junto al 🗺️. Las fichas de Qué ver estrenan Naver y Google al abrirlas. Hoy ya estaba compacto con "🧭 Ver en Qué ver" (v128).
+- v130: icono de Qué ver 🧭 → 🏯 (palacio), también en los botones "🏯 Ver en Qué ver". 🧭 queda solo para las rutas de Naver.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
