@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v128';
+const VERSION = 'v129';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -98,10 +98,11 @@ function sumaDia(iso, n) {
   d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10);
 }
 
-// Botón para abrir un sitio en Naver Map (necesita conexión).
+// Botones para abrir un sitio en Naver Map y en Google Maps (necesitan conexión).
+const googleMaps = (q, t = 'Google') => q ? `<a class="btn sec mini" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}" target="_blank" rel="noopener">📍 ${t}</a>` : '';
 function naver(l) {
   const q = (l && (l.direccion_ko || l.ko || l.direccion_en || l.es || l.nombre)) || '';
-  return q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🗺️ Naver</a>` : '';
+  return q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🗺️ Naver</a>${googleMaps(q)}` : '';
 }
 
 // ---------- distancias al hotel (línea recta, sin conexión) ----------
@@ -949,7 +950,7 @@ function fichaQV(l, k, { desc = '', extra = '', clase = '' } = {}) {
     <summary>${w ? `<div class="foto mini qv-f" data-wiki="${esc(w)}"><span>${ic}</span></div>` : `<div class="foto mini qv-f vacia"><span>${ic}</span></div>`}
       <span class="qv-cab"><b>${hecho(l, k) ? '✅ ' : ''}${esc(l.es)}${lpPill(l)}</b><small>${esc(breve(desc || l.nota || l.desc))}</small></span></summary>
     <div class="qv-cuerpo">${w ? `<div class="foto" data-wiki="${esc(w)}"><span>📷</span></div><div class="credito" data-cred="${esc(w)}"></div>` : ''}
-      <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}</div>
+      <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}</div>
       <div class="ko-s">${esc(l.ko || '')}${distHotel(l, k)}</div>${extra}${horarioLinea(l)}
       ${infoCompleta(l, desc || l.nota || l.desc)}</div></details>`;
 }
@@ -2101,7 +2102,7 @@ function cardComer(l) {
     <div class="c2-acc">
       ${ESTADOS.map(([k, t]) => `<button class="c2-est ${e.estado === k ? 'on' : ''} e-${k}" data-est="${esc(id)}" data-v="${k}" title="${t}">${{ quiero: '⭐', visitado: '✅', descartado: '👎', cerrado: '🚫' }[k]}<small>${t}</small></button>`).join('')}
       <button class="mini" data-full="k:${esc(id)}">Enseñar</button>
-      ${q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🗺️</a>` : ''}
+      ${q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🗺️</a>${googleMaps((l.ko || l.nombre || '') + ' ' + ciudad, 'G')}` : ''}
     </div>
     <details class="c2-mas" data-key="cm:${esc(id)}" ${abierto('cm:' + id, false) ? 'open' : ''}><summary>Más detalles${e.nota ? ' · 📝' : ''}${Number(e.val) ? ' · ' + '★'.repeat(Number(e.val)) : ''}</summary>
       ${l.direccion ? `<div class="muted">📍 ${esc(l.direccion)}</div>` : ''}
