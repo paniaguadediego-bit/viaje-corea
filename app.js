@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v136';
+const VERSION = 'v137';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -24,7 +24,7 @@ let tab = 'hoy';
 const pila = [];
 function ir(t) {
   if (t === tab) return;
-  pila.push(tab); tab = t; comerCongelado = false; history.pushState({ t }, ''); window.scrollTo(0, 0);
+  pila.push({ t: tab, y: window.scrollY }); tab = t; comerCongelado = false; history.pushState({ t }, ''); window.scrollTo(0, 0);
 }
 function cerrarFull() {
   const cp = document.getElementById('conv-pop'); if (cp) { cp.remove(); return true; }
@@ -33,12 +33,12 @@ function cerrarFull() {
 }
 window.addEventListener('popstate', () => {
   if (cerrarFull()) return;
-  if (pila.length) { tab = pila.pop(); render(); window.scrollTo(0, 0); }
+  if (pila.length) { const a = pila.pop(); tab = a.t || a; render(); const y = a.y || 0; window.scrollTo(0, y); setTimeout(() => window.scrollTo(0, y), 60); }
 });
 let dayIdx = null;
 
 const TABS = [
-  ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '✈️'], ['ciudades', 'Qué ver', '🏯'], ['mapas', 'Mapas', '🗺️'], ['historia', 'Historia', '📜'], ['corea', 'Corea', '🇰🇷'],
+  ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '✈️'], ['ciudades', 'Planes', '🏯'], ['mapas', 'Mapas', '🗺️'], ['historia', 'Historia', '📜'], ['corea', 'Corea', '🇰🇷'],
   ['comer', 'Comer', '🍜'], ['mas', 'Más', '☰']
 ];
 // Secciones agrupadas dentro de "Más" (la barra no cabe con 9 pestañas).
@@ -945,8 +945,8 @@ function infoCompleta(l, desc) {
     ${gc ? `<div class="qv-bloque guia-cult-abierta"><b>🎎 Con ojos de guía</b><p class="gc-gancho">${esc(gc[0])}</p>${gc.slice(1).map(p => `<p class="${/^👀/.test(p) ? 'gc-mira' : /^💡/.test(p) ? 'gc-tip' : ''}">${resaltar(p, true)}</p>`).join('')}</div>` : ''}`;
 }
 // Enlace a la ficha del sitio en Qué ver (abierta); si no tiene ficha, al buscador de Qué ver.
-const irQV = (l, k) => enQueVer(l, k) ? `<button class="sec mini irqv" data-irqv="${esc(k)}" data-h="${esc(hKey(l))}">🏯 Ver en Qué ver</button>`
-  : `<button class="sec mini irqv" data-bcity="${esc(k)}" data-bq="${esc(l.es)}">🏯 Ver en Qué ver</button>`;
+const irQV = (l, k) => enQueVer(l, k) ? `<button class="sec mini irqv" data-irqv="${esc(k)}" data-h="${esc(hKey(l))}">🏯 Ver en Planes</button>`
+  : `<button class="sec mini irqv" data-bcity="${esc(k)}" data-bq="${esc(l.es)}">🏯 Ver en Planes</button>`;
 // Todos los puntos de interés de una ciudad, sin repetir: imprescindibles, Lonely y catálogo.
 function qvLista(k, c) {
   const vistos = new Set(), out = [], add = (l, desc) => { const h = hKey(l); if (!l || vistos.has(h)) return; vistos.add(h); out.push({ l, desc, plan: enPlan(l, k) }); };
@@ -1140,7 +1140,7 @@ function abrirAyuda() {
 // Ciudades: 5 botones; al tocar uno se despliega su ficha debajo. Por defecto, la ciudad del día.
 // Qué ver (antes Explorar y Ciudades): por ciudad, Puntos de interés y Planes. El mapa de cada ciudad va en la pestaña Mapas.
 let ciudadSel = null, historiaAbierta = false, exSub = 'puntos';
-const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['planes', '⭐ Planes']];
+const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['planes', '🧩 Miscelánea']];
 // Mapas: el mapa de cada ciudad (itinerario, más sitios, Comer, Planes y hotel). Al tocar un icono, su ficha enlaza con Qué ver o Comer.
 function viewMapas() {
   const botones = botonesCiudad(); if (!botones) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
@@ -1181,7 +1181,7 @@ const mpX = (lon, z) => (lon + 180) / 360 * MPT * 2 ** z;
 const mpY = (lat, z) => { const s = Math.sin(lat * Math.PI / 180); return (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * MPT * 2 ** z; };
 const mpLon = (x, z) => x / (MPT * 2 ** z) * 360 - 180;
 const mpLat = (y, z) => 180 / Math.PI * Math.atan(Math.sinh(Math.PI - 2 * Math.PI * y / (MPT * 2 ** z)));
-const MP_CAPAS = [['itin', 'Itinerario', '#cd2e3a'], ['sitios', '🏯 Puntos de interés', '#2c6e45'], ['comer', 'Comer', '#d97706'], ['planes', 'Planes', '#7c3aed']];
+const MP_CAPAS = [['itin', 'Itinerario', '#cd2e3a'], ['sitios', '🏯 Puntos de interés', '#2c6e45'], ['comer', 'Comer', '#d97706'], ['planes', 'Miscelánea', '#7c3aed']];
 let mpCapas = new Set(['itin', 'sitios', 'comer', 'planes']), mapaCiudad = false, mpCapasDia = new Set();
 const mapaDia = new Set();
 const recorta = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
@@ -1256,8 +1256,8 @@ function mpEnlace(p, m) {
   const k = ck((p.l && p.l.ciudad) || '') || m.k || '';
   if (p.capa === 'hotel') return `<button class="mini" data-irhotel>🛏️ Ver el hotel</button>`;
   if (p.capa === 'comer') return `<button class="mini" data-ircomer="${esc(k)}" data-q="${esc(p.es)}">🍜 Ver en Comer</button>`;
-  if (p.capa === 'planes') return `<button class="mini" data-irplan="${esc(k)}" data-cat="${esc((p.l && p.l.cat) || '')}">⭐ Ver en Planes</button>`;
-  return k ? (p.l && enQueVer(p.l, k) ? `<button class="mini" data-irqv="${esc(k)}" data-h="${esc(hKey(p.l))}">🏯 Ver en Qué ver</button>` : `<button class="mini" data-bcity="${esc(k)}" data-bq="${esc(p.es)}">🏯 Ver en Qué ver</button>`) : '';
+  if (p.capa === 'planes') return `<button class="mini" data-irplan="${esc(k)}" data-cat="${esc((p.l && p.l.cat) || '')}">🧩 Ver en Miscelánea</button>`;
+  return k ? (p.l && enQueVer(p.l, k) ? `<button class="mini" data-irqv="${esc(k)}" data-h="${esc(hKey(p.l))}">🏯 Ver en Planes</button>` : `<button class="mini" data-bcity="${esc(k)}" data-bq="${esc(p.es)}">🏯 Ver en Planes</button>`) : '';
 }
 function mpGestos(el, m) {
   const v = el.querySelector('.mp-vista'), capa = () => el.querySelector('.mp-capa');
@@ -1581,7 +1581,7 @@ function resCiudades(q) {
   if (!rs.length) return '<p class="muted centro">Nada con ese nombre. Prueba otra palabra o en hangul.</p>';
   return `<div class="muted centro">${rs.length} ${rs.length === 1 ? 'resultado' : 'resultados'}${rs.length > 20 ? ' (los 20 primeros)' : ''}</div>` + rs.slice(0, 20).map(({ l, k, txt, plan }) => `<div class="card bres">${miniFoto(l)}<div class="bres-c">
       <div><b>${plan ? icPlan(l) : icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span></div>
-      <div class="muted">${tema(k).ic} ${esc(nombreCiudad(k))}${plan ? ' · Planes' : ''}${distHotel(l, k)}</div>
+      <div class="muted">${tema(k).ic} ${esc(nombreCiudad(k))}${plan ? ' · Miscelánea' : ''}${distHotel(l, k)}</div>
       ${txt ? `<div class="muted">${resaltar(recorta(txt, 130), true)}</div>` : ''}
       ${plan ? '' : guiaCult(l, 'bus') + agendaBtn(l, k, 'bus')}
       <div class="acciones">${naver(l)}${plan ? '' : `<button class="sec mini" data-bcity="${esc(k)}">${tema(k).ic} Ver en la ciudad</button>`}</div></div></div>`).join('');

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v136
+Caché del service worker: corea-v137
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -188,6 +188,7 @@ Caché del service worker: corea-v136
 - v134: fotos para todos los sitios. (1) ARREGLO: algunos artículos venían ya codificados (%27, %26, %28) y se pedían mal; ahora se decodifican. (2) Si la Wikipedia inglesa no tiene el artículo o no tiene imagen, se busca en la coreana con el hangul del sitio (se saca de WIKI, IMPRES y PLANES). (3) Las fichas sin artículo conocido usan directamente la Wikipedia coreana con su hangul. (4) Se reintentan una vez las fotos que habían fallado (corea.fotosv = 2). No se pudo comprobar Wikipedia desde aquí (bloqueada): probado con respuestas simuladas.
 - v135: en los mapas, la capa "Más sitios" pasa a "🏯 Puntos de interés" (todos los de Qué ver fuera del itinerario) con marcador propio: 🏯 sobre blanco con borde verde (color de Qué ver); el tipo va en la ficha. Se enciende y apaga con su chip, igual que Comer y Planes.
 - v136: los traslados en autobús (traslados[].bus, mismos campos que tren: salida, llegada, numero, clase, precio, asientos, nota) se muestran igual que los de tren: horas y plazas en Ruta y Hoy, icono 🚌, aviso en "Antes de salir", hora en la tarjeta "Ahora" y en el horario del día ("Tras el autobús…"). Antes solo se leía tren. Billetes que faltaban rellenados en el trip.json privado.
+- v137: nombres nuevos en toda la app: la pestaña "Qué ver" pasa a "🏯 Planes" y su sección "⭐ Planes" (cosmética, LoL, curioso…) pasa a "🧩 Miscelánea" (también la capa del mapa y los botones "Ver en…"). El botón atrás del móvil vuelve a la pestaña anterior en el mismo punto de la pantalla (la pila guarda pestaña y scroll); "🏯 Ver en Planes" abre y lleva a la ficha del sitio.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
