@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v127';
+const VERSION = 'v128';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -772,7 +772,7 @@ function sitiosDia(d) {
     const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es, { hasta: l.es }) : '';
     if (c) { prev = c; prevN = l.ko || l.es; }
     return `${t}${extra ? encaje(l) : ''}<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</div>
-      ${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(txt, true)}</div>` : ''}${guiaCult(l, 'dia')}</div></div>`;
+      ${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${irQV(l, k)}</div></div>`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
   let extras = todos.filter(l => !auto.includes(l));
@@ -928,15 +928,34 @@ function masLP(l, ctx) {
     <p>${resaltar(txt, true)}${lp ? ' <span class="badge otro">LP 2016</span>' : ''}</p></details>`;
 }
 // Imprescindibles de una ciudad: foto (Wikipedia, se guarda para offline), descripción y ✓ hecho.
+// Qué ver: cada sitio es una ficha plegada (foto, nombre y una línea); al abrirla sale toda la información,
+// incluidas "Con ojos de guía" y lo que amplía la Lonely, sin más desplegables.
+const breve = t => { const x = String(t || '').replace(/\s+/g, ' ').trim(), m = x.match(/^.{25,}?[.!?](\s|$)/); return recorta(m ? m[0] : x, 120); };
+const enQueVer = (l, k) => { const h = hKey(l); return [...((typeof IMPRES !== 'undefined' && IMPRES[k]) || []), ...(LP[k] || [])].some(x => hKey(x) === h); };
+function infoCompleta(l, desc) {
+  const h = hKey(l), D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, I = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
+  const gc = typeof GUIA_CULT !== 'undefined' && GUIA_CULT[h.slice(2)], lp = D[h.slice(2)] || D[h], info = !lp && I[h.slice(2)];
+  return `${desc ? `<p>${resaltar(desc, true)}</p>` : ''}
+    ${lp && lp !== desc ? `<div class="qv-bloque"><b>📖 Más de la Lonely</b> <span class="badge otro">LP 2016</span><p>${resaltar(lp, true)}</p></div>` : ''}
+    ${info && info !== desc ? `<div class="qv-bloque"><b>ℹ️ Más info</b><p>${resaltar(info, true)}</p></div>` : ''}
+    ${gc ? `<div class="qv-bloque guia-cult-abierta"><b>🎎 Con ojos de guía</b><p class="gc-gancho">${esc(gc[0])}</p>${gc.slice(1).map(p => `<p class="${/^👀/.test(p) ? 'gc-mira' : /^💡/.test(p) ? 'gc-tip' : ''}">${resaltar(p, true)}</p>`).join('')}</div>` : ''}`;
+}
+// Enlace a la ficha del sitio en Qué ver (abierta); si no tiene ficha, al buscador de Qué ver.
+const irQV = (l, k) => enQueVer(l, k) ? `<button class="sec mini irqv" data-irqv="${esc(k)}" data-h="${esc(hKey(l))}">🧭 Ver en Qué ver</button>`
+  : `<button class="sec mini irqv" data-bcity="${esc(k)}" data-bq="${esc(l.es)}">🧭 Ver en Qué ver</button>`;
+function fichaQV(l, k, { desc = '', extra = '', clase = '' } = {}) {
+  const h = hKey(l), key = 'qv:' + h, w = l.wiki || wikiDe(l), ic = icSitio((l.tipo || '') + ' ' + l.es);
+  return `<details class="qv ${clase} ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}>
+    <summary>${w ? `<div class="foto mini qv-f" data-wiki="${esc(w)}"><span>${ic}</span></div>` : `<div class="foto mini qv-f vacia"><span>${ic}</span></div>`}
+      <span class="qv-cab"><b>${hecho(l, k) ? '✅ ' : ''}${esc(l.es)}${lpPill(l)}</b><small>${esc(breve(desc || l.nota || l.desc))}</small></span></summary>
+    <div class="qv-cuerpo">${w ? `<div class="foto" data-wiki="${esc(w)}"><span>📷</span></div><div class="credito" data-cred="${esc(w)}"></div>` : ''}
+      <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}</div>
+      <div class="ko-s">${esc(l.ko || '')}${distHotel(l, k)}</div>${extra}${horarioLinea(l)}
+      ${infoCompleta(l, desc || l.nota || l.desc)}</div></details>`;
+}
 function imprescindibles(k) {
   const ls = (typeof IMPRES !== 'undefined' && IMPRES[k]) || []; if (!ls.length) return '';
-  return `<div class="impres">${porPlan(ls, k).map(l => `<div class="imp ${hecho(l, k) ? 'hecho-card' : ''}">
-    <div class="foto" data-wiki="${esc(l.wiki)}"><span>📷</span></div>
-    <div class="imp-txt"><div class="imp-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)}</div>
-      <div class="ko-s">${esc(l.ko)}${distHotel(l, k)}</div>${horarioLinea(l)}${agendaBtn(l, k, 'imp')}
-      ${masLP(l, 'imp')}
-      <div class="muted">${resaltar(l.desc, true)}</div>
-      <div class="credito" data-cred="${esc(l.wiki)}"></div></div></div>`).join('')}</div>`;
+  return `<div class="impres">${porPlan(ls, k).map(l => fichaQV(l, k, { desc: l.desc })).join('')}</div>`;
 }
 // Foto principal del artículo de Wikipedia (necesita conexión la primera vez; el service worker la guarda).
 const FOTOS = load('corea.fotos', {});
@@ -1073,30 +1092,21 @@ function abrirAyuda() {
 }
 
 // Sección de la Lonely Planet: cabecera propia y una tarjeta por recomendación.
-let lpAbierta = true, lpTodos = false;
+let lpAbierta = true;
 function seccionLP(k) {
-  const ls = LP[k] || []; if (!ls.length) return '';
+  // Primero lo del plan, luego las ★ del autor, luego el resto. Sin repetir los imprescindibles.
+  const imp = new Set(((typeof IMPRES !== 'undefined' && IMPRES[k]) || []).map(hKey));
+  const ls = (LP[k] || []).filter(l => !imp.has(hKey(l))); if (!ls.length) return '';
   const tops = ls.filter(l => l.top).length;
+  const ord = porPlan(ls, k).map((l, i) => [l, i]).sort((a, b) => (enPlan(a[0], k) ? 0 : a[0].top ? 1 : 2) - (enPlan(b[0], k) ? 0 : b[0].top ? 1 : 2) || a[1] - b[1]).map(x => x[0]);
   return `<div class="lp">
     <button class="lp-cab" data-act="lp">
       <span class="lp-logo">LP</span>
       <span class="lp-tit"><b>Recomendado por Lonely Planet</b><small>${ls.length} sitios${tops ? ` · ${tops} ★ elección del autor` : ''} · edición 2016</small></span>
       <span class="lp-flecha">${lpAbierta ? '▾' : '▸'}</span>
     </button>
-    ${lpAbierta ? `<div class="lp-lista">${(() => {
-      // primero lo del plan, luego las ★ del autor, luego el resto
-      const ord = porPlan(ls, k).map((l, i) => [l, i]).sort((a, b) => (enPlan(a[0], k) ? 0 : a[0].top ? 1 : 2) - (enPlan(b[0], k) ? 0 : b[0].top ? 1 : 2) || a[1] - b[1]).map(x => x[0]);
-      return lpTodos ? ord : ord.slice(0, 8);
-    })().map(l => `<div class="lp-item ${hecho(l, k) ? 'hecho-card' : ''} ${l.top ? 'top' : ''}">
-      ${wikiDe(l) ? `<div class="foto lpf" data-wiki="${esc(wikiDe(l))}"><span>${icSitio(l.tipo + ' ' + l.es)}</span></div>` : `<div class="foto lpf vacia"><span>${icSitio(l.tipo + ' ' + l.es)}</span></div>`}
-      <div class="lp-txt">
-        <div class="lp-nom">${btnHecho(l, k)}<b>${esc(l.es)}</b>${lpPill(l)}</div>
-        <div class="lp-meta"><span class="lp-tipo">${esc(l.tipo)}</span>${l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(l)}</div>
-        <div class="lp-nota">${resaltar(l.nota, true)}</div>
-        <div class="lp-pie">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, k)}</div>${horarioLinea(l)}${agendaBtn(l, k, 'lp')}
-        ${masLP(l, 'lp')}
-      </div></div>`).join('')}
-      ${ls.length > 8 ? `<button class="sec lp-mas" data-act="lptodos">${lpTodos ? 'Ver menos' : `Ver los ${ls.length - 8} restantes`}</button>` : ''}</div>` : ''}
+    ${lpAbierta ? `<div class="lp-lista">${ord.map(l => fichaQV(l, k, { desc: l.nota, clase: l.top ? 'top' : '',
+        extra: `<div class="lp-meta"><span class="lp-tipo">${esc(l.tipo)}</span>${l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(l)}</div>` })).join('')}</div>` : ''}
   </div>`;
 }
 
@@ -1222,7 +1232,7 @@ function mpEnlace(p, m) {
   if (p.capa === 'hotel') return `<button class="mini" data-irhotel>🛏️ Ver el hotel</button>`;
   if (p.capa === 'comer') return `<button class="mini" data-ircomer="${esc(k)}" data-q="${esc(p.es)}">🍜 Ver en Comer</button>`;
   if (p.capa === 'planes') return `<button class="mini" data-irplan="${esc(k)}" data-cat="${esc((p.l && p.l.cat) || '')}">⭐ Ver en Planes</button>`;
-  return k ? `<button class="mini" data-bcity="${esc(k)}" data-bq="${esc(p.es)}">🧭 Ver en Qué ver</button>` : '';
+  return k ? (p.l && enQueVer(p.l, k) ? `<button class="mini" data-irqv="${esc(k)}" data-h="${esc(hKey(p.l))}">🧭 Ver en Qué ver</button>` : `<button class="mini" data-bcity="${esc(k)}" data-bq="${esc(p.es)}">🧭 Ver en Qué ver</button>`) : '';
 }
 function mpGestos(el, m) {
   const v = el.querySelector('.mp-vista'), capa = () => el.querySelector('.mp-capa');
@@ -2466,6 +2476,9 @@ document.addEventListener('click', e => {
   if (hsb) { histSub = hsb.dataset.hsub; histCap = null; render(); return; }
   const exs = e.target.closest('[data-exs]');
   if (exs) { exSub = exs.dataset.exs; render(); return; }
+  const iq = e.target.closest('[data-irqv]');
+  if (iq) { ciudadSel = iq.dataset.irqv; exSub = 'puntos'; qCiu = ''; lpAbierta = true; abiertos['qv:' + iq.dataset.h] = true; ir('ciudades'); render();
+    const el = document.querySelector(`details[data-key="${CSS.escape('qv:' + iq.dataset.h)}"]`); if (el) { el.scrollIntoView({ block: 'start' }); window.scrollBy(0, -80); } return; }
   const irc = e.target.closest('[data-ircomer],[data-irplan],[data-irhotel]');
   if (irc) {
     if (irc.hasAttribute('data-irhotel')) { hoySub = 'hotel'; ir('hoy'); }
@@ -2535,7 +2548,7 @@ document.addEventListener('click', e => {
   const pg = e.target.closest('[data-pg]');
   if (pg) { platoGrupo = +pg.dataset.pg; render(); return; }
   const cs = e.target.closest('[data-csel]');
-  if (cs) { ciudadSel = cs.dataset.csel; historiaAbierta = false; lpTodos = false; render(); return; }
+  if (cs) { ciudadSel = cs.dataset.csel; historiaAbierta = false; render(); return; }
   const df = e.target.closest('[data-diaf]');
   if (df) { const ds = arr(trip.dias).map(x => x.fecha).sort(); dayIdx = Math.max(0, ds.indexOf(df.dataset.diaf)); hoySub = 'diario'; ir('hoy'); render(); window.scrollTo(0, 0); return; }
   const dd = e.target.closest('[data-dia]');
@@ -2591,7 +2604,6 @@ document.addEventListener('click', e => {
     case 'cambio-auto': actualizarCambio(true); return;
     case 'lp': lpAbierta = !lpAbierta; break;
     case 'platos': verPlatos = !verPlatos; break;
-    case 'lptodos': lpTodos = !lpTodos; break;
     case 'preparar': prepararViaje(); return;
     case 'preparar-ir': masSub = 'datos'; ir('mas'); render(); window.scrollTo(0, 0); prepararViaje(); return;
     case 'ayuda': abrirAyuda(); return;
