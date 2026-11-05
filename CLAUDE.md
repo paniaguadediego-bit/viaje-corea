@@ -114,7 +114,7 @@ alojamientos[{id,nombre,ciudad,fechas,noches,coste_eur,pago,
 ciudades[{id,nombre,ko,desde,hasta,lat?,lon?,interes[]?}]
 traslados[{id,fecha,de,a,estado,pasos[],frase_ko,
  romanizacion,tren{salida,llegada,comprado,numero?,clase?,precio?,
- coche?,asientos?{nombre:asiento},nota?},verificar}]  (billete: privado)
+ coche?,asientos?{nombre:asiento},nota?},bus?{mismos campos que tren},verificar}]  (billete: privado)
 dias[{fecha,dia,ciudad,titulo,items[{hora?,texto}],llegada?(hh:mm a la 1ª parada),
  levantarse?(hh:mm)}]
 lugares[{id,es,ko,romanizacion,direccion_ko,direccion_en,

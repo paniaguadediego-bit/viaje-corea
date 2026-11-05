@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v135';
+const VERSION = 'v136';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -77,7 +77,9 @@ function resaltar(t, prosa = false) {
 }
 const NO_PROPIO = new Set('Fíjate Consejo Estado Gratis Según Tras Durante Desde Aquí Muy Hoy Cuenta El La Los Las Un Una En Con De Del Y O A Al Para Por Sin Si Se Su Sus Es Ver Ir Bajar Subir Cena Cenar Almuerzo Comer Comida Desayuno Merienda Paseo Pasear Llegada Llegar Salida Vuelo Visitas Visita Metro Bus Taxi Tren Alquiler Mañana Tarde Noche Retomar Atardecer Volver Vuelta Propuesta Ajustar Acostarse Comprobar Consejo Ojo Estar Pendiente Check-in Noche Hora Horario Entrada Gratis Cerrado Abre Plan Opción Objetivo Coger Madrugar Silencio Priorizar Tomar Si Asientos Asiento Cambio Primera Económica Danza Centro Coche Pasa Empezar Alternativa Cafés Café Mercado Playa Aldea Museo Barrio Prisión Historia Escuela Templo Palacio Santuario Acantilado Puente Puerta Mirador Calle Parque Observatorio Túmulos Isla Nacional'.split(' '));
 const isPend = t => /pendiente/i.test(t.estado || '');
-const isOk = t => /comprad/i.test(t.estado || '') || (t.tren && t.tren.comprado === true);
+// Billete del traslado: tren o autobús (mismos campos: salida, llegada, numero, coche, asientos, precio, nota).
+const billete = t => (t && (t.tren || t.bus)) || null;
+const isOk = t => /comprad/i.test(t.estado || '') || (billete(t) && billete(t).comprado === true);
 function estadoBadge(t) {
   if (isPend(t)) return `<span class="badge pend">${esc(t.estado)}</span>`;
   if (isOk(t)) return `<span class="badge ok">${esc(t.estado || 'COMPRADO')}</span>`;
@@ -370,9 +372,9 @@ function antesSalir(f, tr, al) {
   arr(trip.vuelos).forEach(v => { const x = arr(v.tramos).find(x => x.vuelo && String(x.salida || '').startsWith(f));
     if (x) add('v' + x.vuelo, `✈️ Vuelo ${x.vuelo} a las ${String(x.salida).slice(11)}: estar en el aeropuerto unas 3 h antes`); });
   tr.forEach(t => {
-    const r = t.tren || {};
+    const r = billete(t) || {}, icB = t.bus && !t.tren ? '🚌' : '🚆';
     if (isPend(t)) add('pend' + t.id, `⚠️ Billete ${lugarCorto(t.de)} → ${lugarCorto(t.a)} SIN COMPRAR`);
-    else if (r.salida) add('tren' + t.id, `🚆 ${r.numero || 'Tren'} a las ${r.salida}${r.coche ? ` · coche ${r.coche}` : ''}${r.asientos ? ` · asientos ${Object.values(r.asientos).join(' y ')}` : ''}: billete (QR) a mano`);
+    else if (r.salida) add('tren' + t.id, `${icB} ${r.numero || (t.bus ? 'Autobús' : 'Tren')} a las ${r.salida}${r.coche ? ` · coche ${r.coche}` : ''}${r.asientos ? ` · asientos ${Object.values(r.asientos).join(' y ')}` : ''}: billete (QR) a mano`);
   });
   if (/alojamiento|llegada|allí/i.test(al.sale.pago || '')) add('pago', `🏨 Pagar ${al.sale.nombre}${al.sale.coste_eur ? ` (${al.sale.coste_eur} €)` : ''}`);
   add('pas', '🛂 Pasaportes encima (no en la maleta facturada)');
@@ -420,7 +422,7 @@ function viewHoy() {
   const tr = arr(trip.traslados).filter(t => t.fecha === d.fecha), al = alojDe(d.fecha);
   const secs = [
     // El traslado va dentro de Sitios, como primer tramo de la ruta del día.
-    ['sitios', '📖 Sitios', (tr.length ? `<div class="tras-dia"><div class="tras-dia-tit">🚆 Primero, el traslado</div>${antesSalir(d.fecha, tr, al)}${tr.map(trasladoCard).join('')}</div>` : '') + sitiosDia(d)],
+    ['sitios', '📖 Sitios', (tr.length ? `<div class="tras-dia"><div class="tras-dia-tit">${medio(tr[0])[0]} Primero, el traslado</div>${antesSalir(d.fecha, tr, al)}${tr.map(trasladoCard).join('')}</div>` : '') + sitiosDia(d)],
     ['hotel', '🛏️ Hotel', (al.sale && al.sale !== al.noche ? alojCard(al.sale, true) : '') + (al.noche ? alojCard(al.noche, false) : '')],
     ['ciudad', '⭐ Ciudad', destacados(d.ciudad)],
     ['diario', `${diarioDe(d.fecha).cara || '📔'} Diario`, diarioCard(d)]
@@ -437,8 +439,8 @@ function eventosDe(fecha) {
   const d = arr(trip.dias).find(x => x.fecha === fecha), ev = [];
   arr(d && d.items).forEach(i => { const m = aMin(i.hora); if (m != null) ev.push({ m, hora: i.hora, txt: i.texto }); });
   arr(trip.traslados).filter(t => t.fecha === fecha).forEach(t => {
-    const m = aMin(t.tren && t.tren.salida);
-    if (m != null && !ev.some(e => e.m === m)) ev.push({ m, hora: t.tren.salida, txt: `🚆 ${t.de} → ${t.a}` });
+    const b = billete(t), m = aMin(b && b.salida);
+    if (m != null && !ev.some(e => e.m === m)) ev.push({ m, hora: b.salida, txt: `${medio(t)[0]} ${t.de} → ${t.a}` });
   });
   return [d, ev.sort((a, b) => a.m - b.m)];
 }
@@ -679,7 +681,7 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
   const extra = new Set(orden.slice(nAuto)), paradas = orden.filter(l => coordsLugar(l)); if (!paradas.length) return '';
   const ds = new Date(d.fecha + 'T12:00').getDay();
   let t0 = 9 * 60 + 15, inicio = 'normal';
-  const tr = arr(trip.traslados).filter(x => x.fecha === d.fecha), lleg = tr.map(x => aMinH(x.tren && x.tren.llegada)).find(x => x != null);
+  const tr = arr(trip.traslados).filter(x => x.fecha === d.fecha), lleg = tr.map(x => aMinH((billete(x) || {}).llegada)).find(x => x != null);
   const vuelo = arr(trip.vuelos).flatMap(v => arr(v.tramos)).find(x => x.a === 'ICN' && String(x.llegada || '').startsWith(d.fecha));
   if (vuelo) { t0 = aMinH(vuelo.llegada.slice(11)) + 150; inicio = 'vuelo'; }
   else if (lleg != null) { t0 = Math.max(t0, lleg + 45); inicio = 'tren'; }
@@ -703,7 +705,7 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
     if (inicio === 'normal') { const lev = levU != null && levU < t - 30 ? levU : t - 75, fuera = levU != null && t - lev >= 70;
       add(lev, '⏰', 'Levantarse'); add(Math.min(lev + 30, t - 30), '🥐', fuera ? 'Desayuno fuera, cerca del hotel' : 'Desayuno', fuera ? 'ideas en Comer → 📍 Cerca del hotel' : '', fuera ? t - 5 : t - 15, 'c');
       add(t, '🏨', fuera ? 'Salida hacia la 1ª parada' : 'Salida del hotel'); }
-    else add(t, inicio === 'vuelo' ? '✈️' : '🧳', inicio === 'vuelo' ? 'Tras el aeropuerto, el bus y dejar las maletas' : inicio === 'tren' ? 'Tras el tren y dejar las maletas' : 'Tras el traslado (hora aproximada: depende del billete)');
+    else add(t, inicio === 'vuelo' ? '✈️' : '🧳', inicio === 'vuelo' ? 'Tras el aeropuerto, el bus y dejar las maletas' : inicio === 'tren' ? `Tras el ${tr.some(x => x.bus && !x.tren) ? 'autobús' : 'tren'} y dejar las maletas` : 'Tras el traslado (hora aproximada: depende del billete)');
     let prev = hot, comido = t >= 15 * 60, cenado = false, avisos = 0;
     lista.forEach(l => {
       // Si la parada es un mercado o zona de comida, se come o cena allí en vez de parar antes.
@@ -805,15 +807,16 @@ function sitiosDia(d) {
 // Medio de transporte principal de un traslado (para el icono).
 function medio(t) {
   const x = [t.de, t.a, ...arr(t.pasos)].join(' ').toLowerCase();
+  if (t.bus && !t.tren) return ['🚌', 'Bus'];
   if (t.tren && (t.tren.salida || t.tren.comprado != null) || /ktx|tren|korail/.test(x)) return ['🚆', 'Tren'];
-  if (t.bus || /\bbus\b|autob|kobus/.test(x)) return ['🚌', 'Bus'];
+  if (/\bbus\b|autob|kobus/.test(x)) return ['🚌', 'Bus'];
   if (/aeropuerto|vuelo/.test(x)) return ['✈️', 'Aeropuerto'];
   return ['🚕', 'Taxi'];
 }
 // Qué "Paso a paso" están abiertos (lo controla la app, no el navegador).
 const pasosAb = {};
 function trasladoCard(t) {
-  const tren = t.tren || {}, [ic, nom] = medio(t), pend = isPend(t);
+  const tren = billete(t) || {}, [ic, nom] = medio(t), pend = isPend(t);
   const d = new Date(String(t.fecha) + 'T12:00:00');
   const dia = isNaN(d) ? esc(t.fecha || '') : `<b>${d.getDate()}</b><small>${d.toLocaleDateString('es-ES', { month: 'short' })}</small><small>${d.toLocaleDateString('es-ES', { weekday: 'short' })}</small>`;
   return `<div class="tl ${pend ? 'pend' : isOk(t) ? 'ok' : ''} ${t.fecha && t.fecha < todayISO() ? 'pasado' : ''}">
@@ -1898,7 +1901,7 @@ function worldsCard() {
     ${WORLDS.partidos.map(m => { const pas = m.f < hoy;
       // De madrugada seguís en la ciudad de la noche anterior.
       const d = dias.find(x => x.fecha === (parseInt(m.h) < 10 ? sumaDia(m.f, -1) : m.f));
-      const tr = arr(trip && trip.traslados).find(t => t.fecha === m.f), sal = tr && tr.tren && tr.tren.salida;
+      const tr = arr(trip && trip.traslados).find(t => t.fecha === m.f), sal = tr && billete(tr) && billete(tr).salida;
       const donde = !d ? '' : ck(d.ciudad) === 'espana' ? 'en el avión' : `en ${esc(d.ciudad.replace(/ \(.*\)/, ''))}`;
       const extra = donde === 'en el avión' ? donde : sal && sal <= m.h ? `en el tren a ${esc(String(tr.a).replace(/.*\((.*)\)/, '$1'))} (sale ${esc(sal)})` : donde + (tr ? ' · día de traslado' : '');
       return `<div class="w-fila ${pas ? 'pasado' : ''} ${m.f === hoy ? 'hoy' : ''} ${m.t1 || m.final ? 'top' : ''}"><span class="hora">${fmtCorto(m.f)} ${esc(m.h)}</span><span><b>${esc(m.fase)}</b> · ${esc(m.p)}${extra ? `<small class="muted"> · ${extra}</small>` : ''}</span></div>`; }).join('')}
