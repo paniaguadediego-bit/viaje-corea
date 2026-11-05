@@ -24,7 +24,9 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    ciudades (HISTORIA de cada ciudad) y 🇰🇷 Símbolos. Planes va dentro de Qué ver (calendario del Mundial de LoL plegado: WORLDS en contenido.js, hora de
    Corea y dónde estaréis; botones en orden alfabético Cosmética / Curioso (cafés de animales, postres famosos, tiendas raras) / Lavandería / LoL / Ropa (solo cerca del hotel) que muestran sus sitios debajo: PLANES en contenido.js,
    con distancia al hotel, "cerca", foto, 💰 precio aproximado y 👥 reseñas; lavandería y Olive Young en cada ciudad). Corea tiene apartados:
-   Guía (primero, con iconos por tema), Enseñar, Frases y Diccionario
+   Guía (primero, con iconos por tema), Enseñar, Frases, Diccionario y 🔤 Hangul (hangul.js: HG_LEC 11 lecciones esquematizadas con letras, sonido a la española,
+   romanización, ejemplo con 🔊, trucos y reglas de lectura, marca de leída en user.hgLeidas; 🪧 Carteles HG_CARTELES descompuestos letra a letra; 🎯 Practicar:
+   test de letras o carteles que repite lo fallado, user.hgTest; 🔗 Fuentes gratuitas HG_FUENTES)
    (la Historia, historia.js: 22 capítulos con marca de leído en user.leidos y diseño hanji/dancheong, pasó a su pestaña en v103). Más es una rejilla de iconos
    como la Guía (se toca y sale debajo): Maleta, Seguro,
    Verificar, Documentos (fotos/PDF), Notas, Escala Pekín (hora de Pekín, vuestras escalas desde trip.vuelos,

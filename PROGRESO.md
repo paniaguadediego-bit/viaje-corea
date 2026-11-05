@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v126
+Caché del service worker: corea-v127
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -178,6 +178,7 @@ Caché del service worker: corea-v126
 - v124: en Ruta, lo ya pasado sale atenuado y tachado: cada día al día siguiente; cada traslado al día siguiente de su fecha ("✓ hecho" y sin etiquetas de estado ni VERIFICAR); cada estancia desde el día en que se deja el hotel (nombre tachado con ✓); los vuelos ya se atenuaban y ahora también se tachan. Fecha según el reloj del móvil (todayISO).
 - v125: la hora de Canarias (con su bandera) pasa a la cabecera, entre 💱 y la versión; se quita la hora de Corea (la da el móvil) y el reloj de Hoy. En pantallas de 360 px el título se recorta un poco.
 - v126: botón 🔊 para escuchar el coreano con la voz del propio móvil (Web Speech API, ko-KR, velocidad 0,85; dos toques seguidos en 4 s: 0,5). En cada frase y palabra del diccionario y, grande ("🔊 Escuchar"), en toda pantalla completa con hangul (Frases, Diccionario, Enseñar, platos, Comer, Planes). Sin archivos de audio ni conexión: depende de que el móvil tenga instalada la voz coreana; si no, aviso con cómo instalarla en Android e iPhone.
+- v127: nuevo apartado "🔤 Hangul" en Corea (hangul.js, precacheado). 📚 11 lecciones plegables (la idea, vocales básicas, con «y», con «w», consonantes básicas, con aire, dobles, cómo se monta una sílaba, 7 finales, reglas de lectura y truco de los préstamos del inglés): cada letra con sonido a la española, romanización oficial, truco para recordarla y ejemplo con pronunciación y 🔊; marca "✓ Lección leída". 🪧 46 carteles de la calle (salida, baños, metro, farmacia, abierto, tire/empuje…) descompuestos letra a letra. 🎯 Test de vocales, consonantes, todas o carteles; repite más lo fallado y guarda aciertos. 🔗 Fuentes gratuitas: Nuri-Sejong Hakdang, How to Study Korean (Unidad 0), cómic de Ryan Estrada, Talk To Me In Korean y Hunminjeongeum. Quitado el tema "Leer hangul en 10 minutos" de la Guía (lo sustituye). [Supuesto] Los trucos de memoria son propios (inspirados en el Hunminjeongeum y en Ryan Estrada).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

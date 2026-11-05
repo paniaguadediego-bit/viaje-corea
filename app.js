@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v126';
+const VERSION = 'v127';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1746,12 +1746,83 @@ function viewHistoria() {
   } else cuerpo = `<div class="hist-simb">${HIST_SIMBOLOS.map(([ic, t, d]) => `<div class="hs-it"><span class="hs-ic">${ic}</span><span><b>${t}</b> ${esc(d)}</span></div>`).join('')}</div>`;
   return `<div class="hist-tema">${portada}${subs}${cuerpo}</div>`;
 }
+// ---------- Hangul: lecciones, carteles, test y fuentes (contenido en hangul.js) ----------
+let hgSub = 'lec', hgQ = null;
+const HG_CHO = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ', HG_JUNG = 'ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ';
+const HG_JONG = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+const hgMd = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+const hgLetras = () => (typeof HG_LEC !== 'undefined' ? HG_LEC : []).flatMap(l => (l.letras || []).map(x => ({ lec: l.id, x })));
+const hgSonido = j => { const e = hgLetras().find(o => o.x[0] === j); return e ? e.x[1] : ''; };
+// Un bloque letra a letra: 출 = ㅊ ch + ㅜ u + ㄹ l (la final con su sonido al cerrar sílaba).
+function hgDescompon(ko) {
+  return [...ko].map(ch => { const c = ch.charCodeAt(0) - 0xAC00; if (c < 0 || c >= 11172) return '';
+    const i = Math.floor(c / 588), v = Math.floor((c % 588) / 28), f = c % 28;
+    const ps = [[HG_CHO[i], i === 11 ? 'muda' : hgSonido(HG_CHO[i]).replace(/ \/.*/, '')], [HG_JUNG[v], hgSonido(HG_JUNG[v])]];
+    if (f) ps.push([HG_JONG[f], PR_FIN[f][0]]);
+    return `<span class="hg-sil"><b>${ch}</b><small>${ps.map(([j, s]) => `${j} <i>${esc(s)}</i>`).join(' + ')}</small></span>`; }).join('');
+}
+const hgEj = ko => `<span class="hg-ej"><b>${esc(ko)}</b> <span class="pron-mini">🗣️ ${esc(pronuncia(ko))}</span>${btnHabla(ko)}</span>`;
+function hgLeccion(l, n) {
+  const U = u(), leida = !!(U.hgLeidas || {})[l.id], k = 'hg:' + l.id;
+  const letras = l.letras ? `<div class="hg-rej">${l.letras.map(([j, s, rom, ej, sig, tr]) => `<div class="hg-letra">
+      <div class="hg-l">${j}</div><div class="hg-s"><b>${esc(s)}</b><small>romanización: ${esc(rom)}</small></div>
+      <div class="hg-tr">${esc(tr)}</div>
+      <div class="hg-pie">${hgEj(ej)}<span class="muted">${esc(sig)}</span></div></div>`).join('')}</div>` : '';
+  const reglas = l.reglas ? l.reglas.map(([t, d, ejs]) => `<div class="hg-regla"><b>${esc(t)}</b><div class="muted">${esc(d)}</div>
+      ${ejs.map(e => `<div class="hg-rej-ej">${hgEj(e)}</div>`).join('')}</div>`).join('') : '';
+  return `<details class="card hg-lec ${leida ? 'leida' : ''}" data-key="${k}" ${abierto(k, false) ? 'open' : ''}><summary><span class="hg-n">${leida ? '✓' : n}</span><span>${l.ic} ${esc(l.t)}</span></summary>
+    ${(l.puntos || []).length ? `<ul class="hg-puntos">${l.puntos.map(p => `<li>${hgMd(p)}</li>`).join('')}</ul>` : ''}${letras}${reglas}
+    ${(l.trucos || []).map(t => `<div class="hg-truco">💡 ${hgMd(t)}</div>`).join('')}${(l.ojo || []).map(t => `<div class="hg-ojo">⚠️ ${hgMd(t)}</div>`).join('')}
+    <button class="${leida ? 'sec ' : ''}mini" data-hgleida="${l.id}">${leida ? '↺ Marcar como no leída' : '✓ Lección leída'}</button></details>`;
+}
+// Test: letras (cómo suena) o carteles (qué significa). Repite más lo que se falla.
+const HG_NIVELES = [['vocales', '🅰️ Vocales'], ['consonantes', '🔤 Consonantes'], ['todo', '🔀 Todas las letras'], ['carteles', '🪧 Carteles']];
+function hgPregunta(nivel) {
+  const U = u(), T = U.hgTest = U.hgTest || { ok: 0, n: 0, f: {} };
+  const carteles = nivel === 'carteles';
+  const pool = carteles ? HG_CARTELES.map(c => ({ k: c[0], q: c[0], a: c[1] }))
+    : hgLetras().filter(o => nivel === 'todo' || (nivel === 'vocales' ? ['vocales', 'y', 'w'] : ['cons', 'aire', 'dobles']).includes(o.lec)).map(o => ({ k: o.x[0], q: o.x[0], a: o.x[1], ej: o.x[3] }));
+  const peso = p => 1 + 3 * (T.f[p.k] || 0) + (hgQ && hgQ.item && hgQ.item.k === p.k ? -1 : 0);
+  let r = Math.random() * pool.reduce((s, p) => s + Math.max(0.1, peso(p)), 0), item = pool[0];
+  for (const p of pool) { r -= Math.max(0.1, peso(p)); if (r <= 0) { item = p; break; } }
+  const otras = [...new Set(pool.map(p => p.a).filter(a => a !== item.a))].sort(() => Math.random() - 0.5).slice(0, 3);
+  return { nivel, item, ops: [item.a, ...otras].sort(() => Math.random() - 0.5), resp: null };
+}
+function hgTest() {
+  const U = u(), T = U.hgTest || { ok: 0, n: 0, f: {} };
+  if (!hgQ) hgQ = hgPregunta('vocales');
+  const { item, ops, resp, nivel } = hgQ, carteles = nivel === 'carteles', bien = resp != null && ops[resp] === item.a;
+  const repasar = Object.entries(T.f).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([k]) => k);
+  return `<div class="chips hg-niv">${HG_NIVELES.map(([k, t]) => `<button class="chip ${k === nivel ? 'on' : ''}" data-hgniv="${k}">${t}</button>`).join('')}</div>
+    <div class="card hg-q"><div class="muted">${carteles ? '¿Qué significa?' : '¿Cómo suena?'}</div>
+      <div class="hg-q-l ${carteles ? 'pal' : ''}">${esc(item.q)}</div>
+      <div class="hg-ops">${ops.map((o, i) => `<button class="hg-op ${resp == null ? '' : o === item.a ? 'ok' : i === resp ? 'mal' : 'off'}" data-hgr="${i}" ${resp == null ? '' : 'disabled'}>${esc(o)}</button>`).join('')}</div>
+      ${resp == null ? '' : `<div class="hg-res ${bien ? 'ok' : 'mal'}">${bien ? '✅ ¡Bien!' : `❌ Era «${esc(item.a)}»`}</div>
+        <div class="hg-desc">${carteles ? `${hgEj(item.q)}<div class="hg-silabas">${hgDescompon(item.q)}</div>` : item.ej ? `Ejemplo: ${hgEj(item.ej)}` : ''}</div>
+        <button data-hgsig>Siguiente →</button>`}</div>
+    <div class="muted centro">✅ ${T.ok} de ${T.n} aciertos${repasar.length ? ` · 🔁 Para repasar: ${repasar.map(esc).join(' ')}` : ''}</div>${T.n ? '<div class="centro"><button class="sec mini" data-hgreset>↺ Empezar de cero</button></div>' : ''}`;
+}
+function viewHangul() {
+  if (typeof HG_LEC === 'undefined') return '<p class="muted">Falta hangul.js.</p>';
+  const U = u(), n = HG_LEC.filter(l => (U.hgLeidas || {})[l.id]).length;
+  const subs = [['lec', `📚 Lecciones ${n}/${HG_LEC.length}`], ['carteles', '🪧 Carteles'], ['test', '🎯 Practicar'], ['fuentes', '🔗 Fuentes']];
+  let h = `<div class="chips hg-subs">${subs.map(([k, t]) => `<button class="chip ${k === hgSub ? 'on' : ''}" data-hgsub="${k}">${t}</button>`).join('')}</div>`;
+  if (hgSub === 'carteles') h += HG_CARTELES.map(([ko, es, ing]) => `<div class="card hg-cartel"><div class="hg-c-top"><span class="hg-c-ko">${esc(ko)}</span>${btnHabla(ko)}</div>
+      <div><b>${esc(es)}</b>${ing ? ' <span class="badge otro">del inglés</span>' : ''} · <span class="pron-mini">🗣️ ${esc(pronuncia(ko))}</span></div>
+      <div class="hg-silabas">${hgDescompon(ko)}</div></div>`).join('');
+  else if (hgSub === 'test') h += hgTest();
+  else if (hgSub === 'fuentes') h += `${HG_FUENTES.map(([t, url, d]) => `<div class="card hg-fuente"><a href="${esc(url)}" target="_blank" rel="noopener"><b>${esc(t)}</b></a><div class="muted">${esc(d)}</div></div>`).join('')}
+      <p class="muted">Los enlaces necesitan conexión. Los trucos para memorizar de las lecciones son propios, inspirados en el Hunminjeongeum y en el cómic de Ryan Estrada.</p>`;
+  else h += HG_LEC.map((l, i) => hgLeccion(l, i + 1)).join('');
+  return h;
+}
 function viewCorea() {
   if (coreaSub === 'historia') coreaSub = 'guia'; // Historia tiene pestaña propia desde v103
-  const seg = [['guia', '🧭 Guía'], ['ensenar', '🪧 Enseñar'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.']].map(([k, t]) =>
+  const seg = [['guia', '🧭 Guía'], ['ensenar', '🪧 Enseñar'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.'], ['hangul', '🔤 Hangul']].map(([k, t]) =>
     `<button class="${coreaSub === k ? '' : 'sec'}" data-sub="${k}">${t}</button>`).join('');
   let html = `<div class="row daynav seg5">${seg}</div>`;
   if (coreaSub === 'ensenar') html += viewEnsenar();
+  else if (coreaSub === 'hangul') html += viewHangul();
   else if (coreaSub === 'frases') {
     let off = 0; const grupos = FRASES_SIT.map(([t, fs]) => { const g = [t, fs, off]; off += fs.length; return g; });
     const g = grupos.find(x => x[0] === fraseSit) || grupos[0];
@@ -2277,7 +2348,7 @@ let tiraX = null, tabAnt = null;
 // ---------- render ----------
 // Guarda dónde está un botón en pantalla y devuelve la función que lo deja en el mismo sitio tras redibujar.
 function anclar(el) {
-  const at = [...el.attributes].find(x => /^data-(hk|est|val|verif|agtog|agdel|cara)$/.test(x.name)); if (!at) return () => {};
+  const at = [...el.attributes].find(x => /^data-(hgleida|hk|est|val|verif|agtog|agdel|cara)$/.test(x.name)); if (!at) return () => {};
   const sel = `[${at.name}="${CSS.escape(at.value)}"]`, i = [...document.querySelectorAll(sel)].indexOf(el), y = el.getBoundingClientRect().top;
   return () => { const n = document.querySelectorAll(sel)[i] || document.querySelector(sel); if (n) window.scrollBy(0, n.getBoundingClientRect().top - y); };
 }
@@ -2338,8 +2409,23 @@ document.addEventListener('click', e => {
   if (e.target.matches('input:not([type=checkbox]):not([type=radio]), textarea, select')) return;
   const hb = e.target.closest('[data-habla]');
   if (hb) { hablar(hb.dataset.habla); return; }
+  const hg = e.target.closest('[data-hgsub],[data-hgleida],[data-hgniv],[data-hgr],[data-hgsig],[data-hgreset]');
+  if (hg) {
+    const U = u(), d = hg.dataset;
+    if (d.hgsub) { hgSub = d.hgsub; render(); window.scrollTo(0, 0); return; }
+    if (d.hgleida) { U.hgLeidas = U.hgLeidas || {}; if (U.hgLeidas[d.hgleida]) delete U.hgLeidas[d.hgleida]; else U.hgLeidas[d.hgleida] = todayISO(); saveUser(); render(); return; }
+    if (d.hgniv) hgQ = hgPregunta(d.hgniv);
+    else if (d.hgsig != null) hgQ = hgPregunta(hgQ ? hgQ.nivel : 'vocales');
+    else if (d.hgreset != null) { if (!confirm('¿Borrar el progreso del test?')) return; U.hgTest = { ok: 0, n: 0, f: {} }; saveUser(); }
+    else if (d.hgr != null && hgQ && hgQ.resp == null) {
+      hgQ.resp = +d.hgr; const T = U.hgTest = U.hgTest || { ok: 0, n: 0, f: {} }, k = hgQ.item.k, bien = hgQ.ops[hgQ.resp] === hgQ.item.a;
+      T.n++; if (bien) { T.ok++; if (T.f[k]) T.f[k]--; if (!T.f[k]) delete T.f[k]; } else T.f[k] = (T.f[k] || 0) + 1; saveUser();
+      if (bien && hgQ.item.ej) hablar(hgQ.item.ej); else if (bien) hablar(hgQ.item.q);
+    }
+    render(); return;
+  }
   // Botones de marcar (visitado, valorar, estado…): tras redibujar, el botón tocado vuelve al mismo punto de la pantalla.
-  const mk = e.target.closest('button[data-hk],button[data-est],button[data-val],button[data-verif],button[data-agtog],button[data-agdel],button[data-cara]');
+  const mk = e.target.closest('button[data-hgleida],button[data-hk],button[data-est],button[data-val],button[data-verif],button[data-agtog],button[data-agdel],button[data-cara]');
   if (mk) queueMicrotask(anclar(mk));
   // Casillas: las marca la app (así no se pierde el toque si la pantalla se redibuja en el móvil).
   const lab = e.target.closest('label.check');

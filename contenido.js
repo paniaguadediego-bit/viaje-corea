@@ -167,13 +167,6 @@ const GUIA = [
   ['Entrada al país', [
     'K-ETA y tarjeta de llegada: comprobar si hacen falta para tu fecha. VERIFICAR en la web oficial.'
   ]],
-  ['Leer hangul en 10 minutos', [
-    'El hangul es un alfabeto, no ideogramas: 14 consonantes y 10 vocales básicas que se agrupan en bloques de sílaba (consonante + vocal + consonante final opcional).',
-    'Vocales verticales (a la derecha de la consonante): ㅏ a, ㅓ eo (una o abierta), ㅣ i. Horizontales (debajo): ㅗ o, ㅜ u, ㅡ eu (una u sin redondear).',
-    'Consonantes clave: ㄱ g/k, ㄴ n, ㄷ d/t, ㄹ r/l, ㅁ m, ㅂ b/p, ㅅ s, ㅇ muda al inicio y "ng" al final, ㅈ j, ㅎ h.',
-    'Ejemplos: 서울 = 서 (s+eo) + 울 (u+l) = Seo-ul. 부산 = Bu-san. 김치 = Kim-chi.',
-    'Truco: rótulos útiles que verás mucho: 출구 (salida), 입구 (entrada), 화장실 (baño), 역 (estación), 약국 (farmacia).'
-  ]],
   ['Metro y KTX', [
     'Cada línea tiene número y color. Las estaciones tienen número de salida (출구): Naver Map te dice cuál usar y ahorra muchos paseos.',
     'Los últimos metros salen hacia medianoche. VERIFICAR en Naver Map la víspera si volvéis tarde.',
