@@ -1145,3 +1145,9 @@ details.qv[open] > summary::after { transform: rotate(180deg); }
 .fav.on { color: #e3a008; border-color: #e3b23c; background: color-mix(in srgb, #e3b23c 14%, var(--card)) !important; }
 .hg-c-top .fila-acc { display: flex; gap: 6px; }
 .daynav.seg5 button { white-space: nowrap; font-size: .7rem; padding: 6px 1px; }
+/* v133: Qué ver con orden, filtro y casilla de visitado en la línea plegada */
+.qv-ctrl { margin: 8px 0 4px; } .qv-ctrl .chips { margin: 4px 0; }
+.qv-grupo { margin: 14px 2px 4px; font-weight: 800; font-size: .9rem; color: var(--acc2); border-bottom: 1px solid color-mix(in srgb, var(--acc2) 30%, transparent); padding-bottom: 2px; }
+details.qv > summary .qv-ck { margin-left: auto; flex: none; width: 30px !important; height: 30px; min-height: 30px !important; }
+details.qv > summary::after { margin-left: 4px !important; }
+.qv-dia { color: var(--acc2); font-weight: 700; }

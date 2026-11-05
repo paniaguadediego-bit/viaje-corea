@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v132';
+const VERSION = 'v133';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -932,7 +932,7 @@ function masLP(l, ctx) {
 // Qué ver: cada sitio es una ficha plegada (foto, nombre y una línea); al abrirla sale toda la información,
 // incluidas "Con ojos de guía" y lo que amplía la Lonely, sin más desplegables.
 const breve = t => { const x = String(t || '').replace(/\s+/g, ' ').trim(), m = x.match(/^.{25,}?[.!?](\s|$)/); return recorta(m ? m[0] : x, 120); };
-const enQueVer = (l, k) => { const h = hKey(l); return [...((typeof IMPRES !== 'undefined' && IMPRES[k]) || []), ...(LP[k] || [])].some(x => hKey(x) === h); };
+const enQueVer = (l, k) => { const h = hKey(l); return qvLista(k, ciudadesUnicas().find(c => ck(c.nombre) === k)).some(o => hKey(o.l) === h); };
 function infoCompleta(l, desc) {
   const h = hKey(l), D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, I = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
   const gc = typeof GUIA_CULT !== 'undefined' && GUIA_CULT[h.slice(2)], lp = D[h.slice(2)] || D[h], info = !lp && I[h.slice(2)];
@@ -944,19 +944,45 @@ function infoCompleta(l, desc) {
 // Enlace a la ficha del sitio en Qué ver (abierta); si no tiene ficha, al buscador de Qué ver.
 const irQV = (l, k) => enQueVer(l, k) ? `<button class="sec mini irqv" data-irqv="${esc(k)}" data-h="${esc(hKey(l))}">🏯 Ver en Qué ver</button>`
   : `<button class="sec mini irqv" data-bcity="${esc(k)}" data-bq="${esc(l.es)}">🏯 Ver en Qué ver</button>`;
-function fichaQV(l, k, { desc = '', extra = '', clase = '' } = {}) {
+// Todos los puntos de interés de una ciudad, sin repetir: imprescindibles, Lonely y catálogo.
+function qvLista(k, c) {
+  const vistos = new Set(), out = [], add = (l, desc) => { const h = hKey(l); if (!l || vistos.has(h)) return; vistos.add(h); out.push({ l, desc, plan: enPlan(l, k) }); };
+  ((typeof IMPRES !== 'undefined' && IMPRES[k]) || []).forEach(l => add(l, l.desc));
+  (LP[k] || []).forEach(l => add(l, l.nota));
+  const cat = CATALOGO[k] || []; (c ? interesDe(c) : cat.map(l => l.es)).map(x => cat.find(l => l.es === x)).filter(Boolean).forEach(l => add(l, l.desc || l.nota));
+  return out;
+}
+const QV_TIPOS = [[/palacio/i, '🏯 Palacios'], [/museo|biblioteca|prisión|memorial/i, '🏛️ Museos'], [/templo|santuario|pagoda|gruta|catedral|confuciana|academia|seowon/i, '🛕 Templos y santuarios'],
+  [/mercado|calle|plaza|coex|centro|square|dong$/i, '🛍️ Mercados, calles y barrios'], [/aldea|barrio|hanok|pueblo/i, '🏘️ Aldeas y hanok'], [/parque|monte|isla|playa|mirador|arroyo|torre|lago|estanque|puente|río|muralla|acantilado|túmulo/i, '🌳 Naturaleza y vistas']];
+const tipoQV = l => (QV_TIPOS.find(([re]) => re.test((l.tipo || '') + ' ' + l.es)) || [0, '✨ Otros'])[1];
+let qvOrden = 'itin', qvFiltro = 'todos';
+function qvPuntos(k, c) {
+  const todos = qvLista(k, c), U = u();
+  const F = { todos: () => true, itin: o => o.plan, lp: o => esLP(o.l), otros: o => !o.plan && !esLP(o.l) };
+  let ls = todos.filter(F[qvFiltro] || F.todos);
+  const cuenta = f => todos.filter(F[f]).length, vis = ls.filter(o => hecho(o.l, k)).length;
+  const chips = (v, op, attr) => op.map(([x, t]) => `<button class="chip ${v === x ? 'on' : ''}" data-${attr}="${x}">${t}</button>`).join('');
+  let grupos;
+  if (qvOrden === 'az') grupos = [['', ls.slice().sort((a, b) => a.l.es.localeCompare(b.l.es, 'es'))]];
+  else if (qvOrden === 'tipo') { const g = {}; ls.forEach(o => (g[tipoQV(o.l)] = g[tipoQV(o.l)] || []).push(o)); grupos = [...QV_TIPOS.map(x => x[1]), '✨ Otros'].filter(t => g[t]).map(t => [t, g[t].sort((a, b) => a.l.es.localeCompare(b.l.es, 'es'))]); }
+  else { const g = new Map(); ls.slice().sort((a, b) => ((a.plan || {}).n || 999) - ((b.plan || {}).n || 999) || (b.l.top ? 1 : 0) - (a.l.top ? 1 : 0))
+      .forEach(o => { const t = o.plan ? `📅 Día ${o.plan.n} · ${fmtCorto(o.plan.fecha)}` : '➕ Fuera del itinerario'; if (!g.has(t)) g.set(t, []); g.get(t).push(o); }); grupos = [...g]; }
+  return `<div class="qv-ctrl"><div class="chips">${chips(qvOrden, [['itin', '📅 Itinerario'], ['tipo', '🏷️ Tipo'], ['az', '🔤 A-Z']], 'qvo')}</div>
+      <div class="chips">${chips(qvFiltro, [['todos', `Todos ${todos.length}`], ['itin', `📅 Itinerario ${cuenta('itin')}`], ['lp', `LP ${cuenta('lp')}`], ['otros', `Otros ${cuenta('otros')}`]], 'qvf')}</div>
+      <div class="muted mini-nota">✅ ${vis} de ${ls.length} visitados</div></div>
+    ${ls.length ? grupos.map(([t, os]) => `${t ? `<div class="qv-grupo">${esc(t)}</div>` : ''}${os.map(o => fichaQV(o.l, k, { desc: o.desc, plan: o.plan, clase: o.l.top ? 'top' : '',
+      extra: o.l.tipo && esLP(o.l) ? `<div class="lp-meta"><span class="lp-tipo">${esc(o.l.tipo)}</span>${o.l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(o.l)}</div>` : '' })).join('')}`).join('') : '<p class="muted">Nada con este filtro.</p>'}`;
+}
+function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) {
   const h = hKey(l), key = 'qv:' + h, w = l.wiki || wikiDe(l), ic = icSitio((l.tipo || '') + ' ' + l.es);
   return `<details class="qv ${clase} ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}>
     <summary>${w ? `<div class="foto mini qv-f" data-wiki="${esc(w)}"><span>${ic}</span></div>` : `<div class="foto mini qv-f vacia"><span>${ic}</span></div>`}
-      <span class="qv-cab"><b>${hecho(l, k) ? '✅ ' : ''}${esc(l.es)}${lpPill(l)}</b><small>${esc(breve(desc || l.nota || l.desc))}</small></span></summary>
+      <span class="qv-cab"><b>${esc(l.es)}${lpPill(l)}</b><small>${plan ? `<span class="qv-dia">📅 ${fmtCorto(plan.fecha)}</span> ` : ''}${esc(breve(desc || l.nota || l.desc))}</small></span>
+      <button class="hd-ck qv-ck ${hecho(l, k) ? 'on' : ''}" data-hk="${esc(hKey(l))}" data-v="${hecho(l, k) ? 0 : 1}" aria-label="Visitado">${hecho(l, k) ? '✓' : ''}</button></summary>
     <div class="qv-cuerpo">${w ? `<div class="foto" data-wiki="${esc(w)}"><span>📷</span></div><div class="credito" data-cred="${esc(w)}"></div>` : ''}
       <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}</div>
       <div class="ko-s">${esc(l.ko || '')}${distHotel(l, k)}</div>${extra}${horarioLinea(l)}
       ${infoCompleta(l, desc || l.nota || l.desc)}</div></details>`;
-}
-function imprescindibles(k) {
-  const ls = (typeof IMPRES !== 'undefined' && IMPRES[k]) || []; if (!ls.length) return '';
-  return `<div class="impres">${porPlan(ls, k).map(l => fichaQV(l, k, { desc: l.desc })).join('')}</div>`;
 }
 // Foto principal del artículo de Wikipedia (necesita conexión la primera vez; el service worker la guarda).
 const FOTOS = load('corea.fotos', {});
@@ -1093,24 +1119,6 @@ function abrirAyuda() {
 }
 
 // Sección de la Lonely Planet: cabecera propia y una tarjeta por recomendación.
-let lpAbierta = true;
-function seccionLP(k) {
-  // Primero lo del plan, luego las ★ del autor, luego el resto. Sin repetir los imprescindibles.
-  const imp = new Set(((typeof IMPRES !== 'undefined' && IMPRES[k]) || []).map(hKey));
-  const ls = (LP[k] || []).filter(l => !imp.has(hKey(l))); if (!ls.length) return '';
-  const tops = ls.filter(l => l.top).length;
-  const ord = porPlan(ls, k).map((l, i) => [l, i]).sort((a, b) => (enPlan(a[0], k) ? 0 : a[0].top ? 1 : 2) - (enPlan(b[0], k) ? 0 : b[0].top ? 1 : 2) || a[1] - b[1]).map(x => x[0]);
-  return `<div class="lp">
-    <button class="lp-cab" data-act="lp">
-      <span class="lp-logo">LP</span>
-      <span class="lp-tit"><b>Recomendado por Lonely Planet</b><small>${ls.length} sitios${tops ? ` · ${tops} ★ elección del autor` : ''} · edición 2016</small></span>
-      <span class="lp-flecha">${lpAbierta ? '▾' : '▸'}</span>
-    </button>
-    ${lpAbierta ? `<div class="lp-lista">${ord.map(l => fichaQV(l, k, { desc: l.nota, clase: l.top ? 'top' : '',
-        extra: `<div class="lp-meta"><span class="lp-tipo">${esc(l.tipo)}</span>${l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(l)}</div>` })).join('')}</div>` : ''}
-  </div>`;
-}
-
 // Ciudades: 5 botones; al tocar uno se despliega su ficha debajo. Por defecto, la ciudad del día.
 // Qué ver (antes Explorar y Ciudades): por ciudad, Puntos de interés y Planes. El mapa de cada ciudad va en la pestaña Mapas.
 let ciudadSel = null, historiaAbierta = false, exSub = 'puntos';
@@ -1142,9 +1150,7 @@ function viewCiudades() {
     ${exSub !== 'puntos' ? '</div>' : ''}${exSub === 'puntos' ? `
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
       ${INTRO_LP[k].plan ? `<details data-key="lp:${k}" ${abierto("lp:" + k, false) ? "open" : ""}><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
-    ${imprescindibles(k)}
-    ${interesDe(c).length ? `<ul class="hlist">${porPlan(interesDe(c).map(x => (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x), ck(c.nombre)).map(o => typeof o === 'string' ? o : o.es).filter(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return !((typeof IMPRES !== 'undefined' && IMPRES[ck(c.nombre)]) || []).some(m => hKey(m) === hKey(o)); }).map(x => { const o = (CATALOGO[ck(c.nombre)] || []).find(l => l.es === x) || x; return `<li class="${hecho(o, ck(c.nombre)) ? 'tachado' : ''}">${btnHecho(o, ck(c.nombre))}${miniFoto(o)}<span><span class="ics">${icSitio(x)}</span> ${esc(x)}${agendaBtn(o, ck(c.nombre), 'cat')}${masLP(o, 'cat')}</span></li>`; }).join('')}</ul>` : ''}
-    ${seccionLP(k)}</div>` : ''}`;
+    ${qvPuntos(k, c)}</div>` : ''}`;
 }
 
 
@@ -2473,7 +2479,7 @@ document.addEventListener('click', e => {
   const hix = e.target.closest('[data-hdini-x]');
   if (hix) { const U = u(); ['hdIni', 'hdLev'].forEach(c => { if (U[c]) delete U[c][hix.dataset.hdiniX]; }); saveUser(); render(); return; }
   const hk = e.target.closest('button[data-hk]');
-  if (hk) { marcarHecho(hk.dataset.hk, hk.dataset.v === '1'); render(); return; }
+  if (hk) { e.preventDefault(); marcarHecho(hk.dataset.hk, hk.dataset.v === '1'); render(); return; }
   const vf = e.target.closest('[data-verif]');
   if (vf) {
     const U = u(), k = vf.dataset.verif;
@@ -2494,8 +2500,10 @@ document.addEventListener('click', e => {
   if (hsb) { histSub = hsb.dataset.hsub; histCap = null; render(); return; }
   const exs = e.target.closest('[data-exs]');
   if (exs) { exSub = exs.dataset.exs; render(); return; }
+  const qo = e.target.closest('[data-qvo],[data-qvf]');
+  if (qo) { if (qo.dataset.qvo) qvOrden = qo.dataset.qvo; else qvFiltro = qo.dataset.qvf; render(); return; }
   const iq = e.target.closest('[data-irqv]');
-  if (iq) { ciudadSel = iq.dataset.irqv; exSub = 'puntos'; qCiu = ''; lpAbierta = true; abiertos['qv:' + iq.dataset.h] = true; ir('ciudades'); render();
+  if (iq) { ciudadSel = iq.dataset.irqv; exSub = 'puntos'; qCiu = ''; qvFiltro = 'todos'; abiertos['qv:' + iq.dataset.h] = true; ir('ciudades'); render();
     const el = document.querySelector(`details[data-key="${CSS.escape('qv:' + iq.dataset.h)}"]`); if (el) { el.scrollIntoView({ block: 'start' }); window.scrollBy(0, -80); } return; }
   const irc = e.target.closest('[data-ircomer],[data-irplan],[data-irhotel]');
   if (irc) {
@@ -2620,7 +2628,6 @@ document.addEventListener('click', e => {
     case 'foto': $('#fotofile').click(); return;
     case 'comer-nuevo': comerForm = true; break;
     case 'cambio-auto': actualizarCambio(true); return;
-    case 'lp': lpAbierta = !lpAbierta; break;
     case 'platos': verPlatos = !verPlatos; break;
     case 'preparar': prepararViaje(); return;
     case 'preparar-ir': masSub = 'datos'; ir('mas'); render(); window.scrollTo(0, 0); prepararViaje(); return;

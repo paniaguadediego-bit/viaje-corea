@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v132
+Caché del service worker: corea-v133
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -184,6 +184,7 @@ Caché del service worker: corea-v132
 - v130: icono de Qué ver 🧭 → 🏯 (palacio), también en los botones "🏯 Ver en Qué ver". 🧭 queda solo para las rutas de Naver.
 - v131: ⭐ favoritas. Botón ☆/★ en cada frase, palabra del diccionario y cartel de Hangul; nuevo botón "⭐ n" en Corea con todas, agrupadas (Frases, Palabras, Carteles), con 🔊 y pantalla completa. Se guardan en el móvil (user.favs, van en la copia).
 - v132: ARREGLO: en los mapas, los restaurantes solo salían apagados si se marcaban ✅ en Comer; ahora usan la marca común de visitado (hecho), igual que Hoy, Qué ver y Enseñar (caso Isaac Toast). Los iconos de Planes también se apagan al marcarlos visitados.
+- v133: Qué ver → Puntos de interés en una sola lista con el mismo formato (antes: imprescindibles, lista de la Lonely con cabecera y lista simple del catálogo). Orden: 📅 Itinerario (agrupado por día y "Fuera del itinerario"), 🏷️ Tipo (palacios, museos, templos, mercados y calles, aldeas, naturaleza, otros) o 🔤 A-Z. Filtro: Todos / 📅 Itinerario / LP / Otros, con recuento. Casilla ☐/✓ de visitado en la línea plegada (no abre la ficha) y contador "✅ n de m visitados". [Supuesto] "Marcar como visitado todos" = que todos los sitios tengan su casilla a la vista, no un botón que marque todos de golpe.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
