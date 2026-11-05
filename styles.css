@@ -1155,3 +1155,11 @@ details.qv[open] > summary::after { transform: rotate(180deg); }
 details.qv > summary .qv-ck { margin-left: auto; flex: none; width: 30px !important; height: 30px; min-height: 30px !important; }
 details.qv > summary::after { margin-left: 4px !important; }
 .qv-dia { color: var(--acc2); font-weight: 700; }
+/* v139: botones pequeños (Naver, Google, Enseñar, Visitado, 📅…) más compactos */
+button.mini, a.btn.mini { min-height: 28px !important; padding: 3px 8px !important; font-size: .78rem !important; border-radius: 8px; line-height: 1.2; }
+.acciones, .qv-acc, .c2-acc { gap: 4px !important; }
+.c2-acc > .mini, .c2-acc > a.btn.mini { min-height: 28px !important; }
+.hk { height: 26px; font-size: .7rem; }
+.pcbang ul { margin: 6px 0 0; padding-left: 18px; font-size: .88rem; line-height: 1.45; }
+.c2-est { min-height: 30px !important; font-size: .85rem; }
+.c2-est small { font-size: .52rem; margin-top: 0; }

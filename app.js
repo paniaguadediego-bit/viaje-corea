@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v138';
+const VERSION = 'v139';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1894,6 +1894,13 @@ let planesCat = 'cosme';
 // Orden alfabético (Cosmética es además la que se abre por defecto).
 const PCATS = [['cosme', '💄 Cosmética'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🎮 LoL'], ['ropa', '👕 Ropa']];
 // Calendario del Mundial de LoL con la ciudad donde estaréis cada día.
+// Cibercafés coreanos (PC bang, PC방): cómo usarlos siendo turista.
+const PCBANG = `<details class="card pcbang" data-key="pcbang"><summary><b>🖥️ Cibercafés (PC bang, PC방): cómo jugar</b></summary><ul>
+  <li>Hay en casi cada esquina, muchos abiertos 24 h. Buscad <b>PC방</b> en Naver Map.</li>
+  <li>Sin tarjeta de socio, elegid <b>«비회원» (no socio)</b> en la máquina de la entrada y pagad por adelantado.</li>
+  <li>Precio orientativo: <b>1.000-2.000 ₩ la hora</b>; más en zonas premium y en los temáticos como el T1 Base Camp. VERIFICAR en cada sitio.</li>
+  <li>LoL viene instalado: entráis con vuestra cuenta de Riot. Ojo: vuestra cuenta es del servidor europeo (EUW), así que jugaréis con mucho ping. Crear cuenta en el servidor coreano suele pedir verificación coreana (VERIFICAR).</li>
+  <li>Se pide comida desde el ordenador (ramen, tteokbokki…) y os la traen al sitio.</li></ul></details>`;
 function worldsCard() {
   if (typeof WORLDS === 'undefined') return '';
   const hoy = todayISO(), dias = arr(trip && trip.dias);
@@ -1937,7 +1944,7 @@ function planesDe(k) {
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
   return `<p class="muted">Horarios de webs (nov 2026): compruébalos antes de ir.</p>
     ${worldsCard()}${(() => { const cats = PCATS.filter(([c]) => P.some(p => p.ciudad === k && p.cat === c)); if (!cats.some(([c]) => c === planesCat)) planesCat = (cats[0] || [])[0];
-      return `<div class="row daynav pcats">${cats.map(([c, t]) => `<button class="${c === planesCat ? '' : 'sec'}" data-pcat="${c}">${t}</button>`).join('')}</div>` + grupo(planesCat, ''); })()}`;
+      return `<div class="row daynav pcats">${cats.map(([c, t]) => `<button class="${c === planesCat ? '' : 'sec'}" data-pcat="${c}">${t}</button>`).join('')}</div>` + (planesCat === 'lol' ? PCBANG : '') + grupo(planesCat, ''); })()}`;
 }
 
 // ---------- Seguro ----------
