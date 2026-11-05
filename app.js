@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v125';
+const VERSION = 'v126';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1586,7 +1586,8 @@ function ajustarTexto(div) {
 function full(html) {
   const div = document.createElement('div');
   div.id = 'full';
-  div.innerHTML = '<button class="sec cerrar" data-close>✕ Cerrar</button>' + html;
+  const ko = (html.match(/<div class="enorme">([^<]*)<\/div>/) || [])[1] || '';
+  div.innerHTML = '<button class="sec cerrar" data-close>✕ Cerrar</button>' + html + btnHabla(ko.replace(/&amp;/g, '&'), true);
   document.body.appendChild(div);
   ajustarTexto(div);
   history.pushState({ full: 1 }, '');
@@ -1631,7 +1632,20 @@ function showFull(key) {
 // ---------- Corea (frases, diccionario, guía) ----------
 let coreaSub = 'guia', guiaSel = null, fraseSit = 'Básicas';
 const sinTildes = t => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-const dFila = (e, key, conPron = false) => `<div class="card lugar" data-full="${key}"><div><div>${esc(e[0])}${e[3] ? ' <span class="ver">VERIFICAR</span>' : ''}</div>
+// 🔊 Pronunciación con la voz coreana del móvil (sin conexión si el móvil la tiene instalada). Dos toques seguidos: más despacio.
+let hablaUlt = { t: '', ms: 0 };
+function hablar(t) {
+  if (!('speechSynthesis' in window)) { alert('Este navegador no puede leer en voz alta.'); return; }
+  const voces = speechSynthesis.getVoices(), v = voces.find(x => /^ko/i.test(x.lang));
+  if (voces.length && !v) { alert('Tu móvil no tiene voz en coreano. Instálala: Android → Ajustes → Idioma y entrada → Salida de texto a voz (Google) → Instalar datos de voz → Coreano. iPhone → Ajustes → Accesibilidad → Contenido leído → Voces → Coreano.'); return; }
+  const ahora = Date.now(), lento = hablaUlt.t === t && ahora - hablaUlt.ms < 4000; hablaUlt = { t, ms: ahora };
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(t); u.lang = 'ko-KR'; u.rate = lento ? 0.5 : 0.85; if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+if ('speechSynthesis' in window) speechSynthesis.getVoices(); // en Android la lista de voces llega tarde
+const btnHabla = (ko, grande = false) => /[가-힣]/.test(ko || '') ? `<button class="habla ${grande ? 'grande' : ''}" data-habla="${esc(ko)}" aria-label="Escuchar en coreano">🔊${grande ? ' Escuchar' : ''}</button>` : '';
+const dFila = (e, key, conPron = false) => `<div class="card lugar" data-full="${key}">${btnHabla(e[1])}<div><div>${esc(e[0])}${e[3] ? ' <span class="ver">VERIFICAR</span>' : ''}</div>
   <div class="ko">${esc(e[1])}</div>${conPron ? pronHTML(e[1]) : ''}<div class="muted ${conPron ? 'rom' : ''}">${esc(e[2])}</div></div></div>`;
 
 function dResultados(q) {
@@ -2322,6 +2336,8 @@ document.addEventListener('click', e => {
 document.addEventListener('click', e => {
   // Campos de texto: el toque es para escribir; nunca debe redibujar nada.
   if (e.target.matches('input:not([type=checkbox]):not([type=radio]), textarea, select')) return;
+  const hb = e.target.closest('[data-habla]');
+  if (hb) { hablar(hb.dataset.habla); return; }
   // Botones de marcar (visitado, valorar, estado…): tras redibujar, el botón tocado vuelve al mismo punto de la pantalla.
   const mk = e.target.closest('button[data-hk],button[data-est],button[data-val],button[data-verif],button[data-agtog],button[data-agdel],button[data-cara]');
   if (mk) queueMicrotask(anclar(mk));

@@ -1074,3 +1074,9 @@ nav#tabs button.on { color: var(--acc2); } nav#tabs button.on span { background:
 header #reloj { margin-left: auto; flex: none; font-size: .8rem; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; }
 header #reloj .bandera { width: 18px; height: 12px; }
 header #version { margin-left: 8px; }
+/* v126: botón 🔊 para escuchar en coreano */
+.habla { float: right; width: 40px !important; height: 40px; min-height: 40px !important; padding: 0 !important; margin: 0 0 4px 8px; border-radius: 50% !important;
+  background: color-mix(in srgb, var(--acc) 12%, var(--card)) !important; color: inherit; border: 1px solid var(--line); box-shadow: none; font-size: 1.15rem; line-height: 1; }
+.habla.grande { float: none; display: block; width: auto !important; height: auto; padding: 12px 22px !important; margin: 18px auto 0; border-radius: 999px !important; font-size: 1.2rem; font-weight: 700; }
+.card.lugar > .habla { order: 2; float: none; flex: none; align-self: center; margin: 0 0 0 8px; }
+.card.lugar > .habla + div { flex: 1; min-width: 0; }

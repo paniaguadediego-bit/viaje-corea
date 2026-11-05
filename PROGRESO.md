@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v125
+Caché del service worker: corea-v126
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -177,6 +177,7 @@ Caché del service worker: corea-v125
 - v123: quitadas las notas de ayuda obvias: "Toca… para…" (Enseñar, Frases, Guía, platos, mapa de Corea), "se guarda en este móvil" (Documentos, Diario, Añadir lugar), explicación de la Ruta del día, de "Todo el día en Naver", del mapa de ciudad, de "Preparar para viajar", del cambio, de Verificar y de la copia; "(en el mapa con *)", "Podéis pasarlos a otro día con 📅", "(por defecto…)" del horario y la nota general del horario (queda solo "Visitas algo más cortas…" cuando se acortan). Se mantienen: avisos VERIFICAR, aviso de la Lonely 2016 (regla S3), "Horarios de webs: compruébalos" en Planes, aviso de la escala y el crédito "Metro de Seúl © OpenStreetMap (ODbL)" (lo exige la licencia).
 - v124: en Ruta, lo ya pasado sale atenuado y tachado: cada día al día siguiente; cada traslado al día siguiente de su fecha ("✓ hecho" y sin etiquetas de estado ni VERIFICAR); cada estancia desde el día en que se deja el hotel (nombre tachado con ✓); los vuelos ya se atenuaban y ahora también se tachan. Fecha según el reloj del móvil (todayISO).
 - v125: la hora de Canarias (con su bandera) pasa a la cabecera, entre 💱 y la versión; se quita la hora de Corea (la da el móvil) y el reloj de Hoy. En pantallas de 360 px el título se recorta un poco.
+- v126: botón 🔊 para escuchar el coreano con la voz del propio móvil (Web Speech API, ko-KR, velocidad 0,85; dos toques seguidos en 4 s: 0,5). En cada frase y palabra del diccionario y, grande ("🔊 Escuchar"), en toda pantalla completa con hangul (Frases, Diccionario, Enseñar, platos, Comer, Planes). Sin archivos de audio ni conexión: depende de que el móvil tenga instalada la voz coreana; si no, aviso con cómo instalarla en Android e iPhone.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
