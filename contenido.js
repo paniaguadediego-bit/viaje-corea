@@ -51,6 +51,8 @@ const CATALOGO = {
     { es: 'Mercado Jagalchi', ko: '자갈치시장', romanizacion: 'Jagalchi Sijang' },
     { es: 'Mercado Gukje', ko: '국제시장', romanizacion: 'Gukje Sijang' },
     { es: 'Templo Haedong Yonggungsa', ko: '해동용궁사', romanizacion: 'Haedong Yonggungsa' },
+    { es: 'Aldea cultural Huinnyeoul', ko: '흰여울문화마을', romanizacion: 'Huinnyeoul Munhwa Maeul' },
+    { es: 'Sky Capsule de Blueline (y tren de la playa)', ko: '해운대 블루라인파크', romanizacion: 'Beullurain' },
     { es: 'Estación de Busan', ko: '부산역', romanizacion: 'Busan-yeok' }
   ],
   jeonju: [
@@ -408,7 +410,7 @@ const WIKI = {
   '미포 선착장': 'Haeundae_Blueline_Park',
   '동백섬': 'Dongbaekseom',
   '송도해수욕장': 'Songdo_Beach',
-  '청사포': 'Cheongsapo',
+  '청사포': 'Cheongsapo', '해운대 블루라인파크': 'Haeundae_Blueline_Park', '흰여울문화마을': 'Huinnyeoul_Culture_Village',
   'BIFF광장': 'BIFF_Square',
   '전통술박물관': 'Makgeolli',
   '자만마을': 'Jaman_Mural_Village',
@@ -655,6 +657,8 @@ const DIA_LP = {
   '석불사': 'Ermita difícil de alcanzar con budas enormes tallados en la piedra: de los que hacen exclamar "¡guau!". El camino más corto empieza en el teleférico de Geumgang.',
   '부산시립미술관': 'Galería modesta, no imprescindible, pero buena opción si llueve. Gratis.',
   '부산시티투어버스': 'Bus turístico con seis rutas de día (sube y baja todo el día con el billete Loop) y tres de noche hacia Haeundae y el puente Gwangan. Salen de Busan Station.',
+  '흰여울문화마을': 'El «Santorini de Busan»: casas blancas colgadas del acantilado de Yeongdo sobre el mar, con callejones, murales, miradores y cafés; abajo, el paseo costero Jeoryeong (3 km). Muy valorado por viajeros; mejor de día (los cafés cierran pronto). Calles empinadas y con escaleras; es zona residencial, en silencio. Desde el metro Nampo (salida 6), bus 6, 7, 70, 71 o 508 a la parada «흰여울문화마을» o «백련사» (VERIFICAR la línea en Naver). Os pilla cerca del día 13 (Jagalchi y Gukje).',
+  '해운대블루라인파크': 'La antigua vía del tren de la costa convertida en paseo: el tren de la playa (Beach Train) va de Mipo, junto a Haeundae, a Songjeong por Cheongsapo, y el Sky Capsule, una cabina para 2-4 personas por un raíl elevado, de Mipo a Cheongsapo. Vistas al mar todo el rato. Sirve también de transporte sin taxi entre Haeundae y Cheongsapo.',
   '미포선착장': 'Pequeño muelle al este de la playa de Haeundae con paseos de 50 minutos a las islas Oryukdo y al puente Gwangan.',
   '전동성당': 'Iglesia de ladrillo rojo (1908-1914) levantada donde se ejecutó a católicos coreanos en 1781 y 1801; mezcla estilos asiático, bizantino y románico. Solo abre en misa: dentro, vidrieras con los primeros mártires. El cercano Monte de los Mártires es el mejor atardecer de Jeonju.',
   '전통술박물관': 'En una bonita hanok: un alambique tradicional (gosori), paneles sobre cómo se hacen los licores tradicionales y una tiendecita. Gratis.',
@@ -864,6 +868,8 @@ const WORLDS = {
 const HORARIOS = {
   '국립민속박물관': { a: '09:00', c: '17:00', u: '16:00', d: 60, t: '9:00-17:00 en invierno (de marzo a octubre, hasta las 18:00; última entrada 1 h antes)', n: 'Gratis. Dentro del recinto de Gyeongbokgung, a la salida del palacio.', v: true },
   '세종문화회관': { a: '10:00', c: '18:30', x: [1], d: 40, t: 'Exposición «Sejong y Chungmugong» (bajo la plaza): 10:00-18:30 · cierra los lunes', n: 'Gratis. Entrada detrás de la estatua del rey Sejong o por el sótano del Centro Cultural.', v: true },
+  '흰여울문화마을': { d: 75, t: 'Barrio abierto; los cafés cierran a media tarde' },
+  '해운대블루라인파크': { a: '09:00', c: '19:00', d: 60, t: 'Tren de la playa 09:00-19:00 y Sky Capsule hasta las 18:00 (horario de noviembre, 2026)', n: 'Tren: 10.000 ₩ desde Mipo o Songjeong, 8.000 ₩ desde Cheongsapo. Sky Capsule (Mipo↔Cheongsapo): 50.000 ₩ la cabina de 2. Reservad en bluelinepark.com.', v: true },
   '경복궁': { a: '09:00', c: '17:00', u: '16:00', x: [2], d: 120, t: '9:00-17:00 (última entrada 16:00)', n: 'Gratis con hanbok. Cambio de guardia en Gwanghwamun.' },
   '창덕궁': { a: '09:00', c: '17:30', u: '16:30', x: [1], d: 120, t: '9:00-17:30 (última entrada 16:30)', n: 'Jardín secreto aparte: visitas en grupo, 10:00-16:30; reservar.' },
   '덕수궁': { a: '09:00', c: '21:00', u: '20:00', x: [1], d: 75, t: '9:00-21:00 (última entrada 20:00)', n: 'El palacio que cierra más tarde: bonito de noche.' },
@@ -908,3 +914,20 @@ const HORARIOS = {
   '전주한옥마을': { d: 120, t: 'Aldea abierta; tiendas unas 10:00-20:00' }, '풍남문': { d: 15, t: 'Puerta, exterior' }, '오목대': { d: 30, t: 'Mirador abierto' },
   '자만마을': { d: 45, t: 'Barrio abierto' }, '이화벽화마을': { d: 45, t: 'Barrio residencial: en silencio' }, '낙산공원': { d: 45, t: 'Parque abierto; precioso al atardecer' }
 };
+
+// Cómo llegar sin taxi a los sitios lejanos (datos de webs y blogs coreanos 2019-2026: VERIFICAR la línea y el horario en Naver la víspera).
+// Clave = hangul sin espacios del destino. Sale en la Ruta del día cuando el tramo es en taxi.
+const SIN_TAXI = {
+  '안동하회마을': 'Bus 246 desde la terminal de autobuses de Andong (junto a la estación de tren) hasta Hahoe (하회마을), unos 50 min. Pasa pocas veces (12 idas y vueltas al día en 2019): mirad el horario la víspera.',
+  '월영교': 'Bus 246 de vuelta de Hahoe a la terminal de Andong (~50 min) y de allí taxi corto o bus 3 hasta Woryeonggyo.',
+  '도산서원': 'Bus 567 desde el centro de Andong (solo unas 4 veces al día en 2019) o el bus turístico que sale de la terminal (en 2023: 8:20, 11:20 y 14:40, de martes a domingo).',
+  '봉정사': 'No hay bus directo desde Dosan Seowon: volver al centro de Andong y bus 351 a Bongjeongsa (pocas veces al día). Si vais justos de tiempo, aquí compensa el taxi.',
+  '불국사': 'Bus 10 u 11 desde la terminal de autobuses de Gyeongju (al lado del hotel) hasta Bulguksa, que es final de línea: ~40-50 min y pasan a menudo.',
+  '석굴암': 'Bus 12 desde la parada frente a la taquilla de Bulguksa hasta Seokguram (~15 min). Pasa poco (hay viajeros que esperaron más de 1 h): mirad la hora. Andando por el sendero del bosque, ~1 h de subida. Para volver, bus 12 a Bulguksa y allí el 10 o el 11.',
+  '감천문화마을': 'Metro L2 de Haeundae a Seomyeon, cambio a la L1 hasta Toseong (토성), salida 6; frente al centro oncológico del hospital, bus de barrio Saha 1-1, Seogu 2 o Seogu 2-2 hasta Gamcheon (~10 min de cuesta). En total, ~1 h 15.',
+  '해동용궁사': 'Bus 181 o 1001 (el que más pasa) desde el metro Haeundae (L2), salida 7, hasta la parada «용궁사·국립수산과학원» (~27 min) y 10-15 min a pie. Otra opción: tren Donghae hasta Osiria y bus 139 o 1001 (4 min).',
+  '청사포': 'Bus 181 o 1001 hacia Haeundae hasta Songjeong (송정) y, desde allí, el tren de la playa (Blueline Park) hasta Cheongsapo por la costa. Para volver al hotel: tren o Sky Capsule de Cheongsapo a Mipo, al lado del hotel.',
+  '해운대블루라인파크': 'Desde el templo: bus 181 o 1001 hacia Haeundae hasta el metro Haeundae y ~10 min a pie hacia el este, hasta la estación de Mipo del Blueline Park (al final de la playa).',
+  '흰여울문화마을': 'Metro L1 hasta Nampo, salida 6, y bus 6, 7, 70, 71 o 508 hacia Yeongdo hasta «흰여울문화마을» o «백련사».'
+};
+

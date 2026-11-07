@@ -1908,5 +1908,73 @@
 "nota": "Varias guías de 2024-2025; teléfono 02-330-4998 según una de ellas.",
 "fuente": "https://koreatravelpost.com/?p=14357"
 }
-}
+},
+{
+  "id": "bs-geumsu-bokguk",
+  "ciudad": "busan",
+  "nombre": "Geumsu Bokguk (sopa de pez globo)",
+  "ko": "금수복국 해운대본점",
+  "tipo": "restaurante",
+  "plato": "bokguk (sopa de pez globo), sashimi y bokkas",
+  "direccion": "Haeundae, cerca de la playa · ubicación aproximada: buscad «금수복국 해운대본점» en Naver",
+  "horario": "24 h todos los días (según Siksin): VERIFICAR",
+  "precio": null,
+  "fuente": "guia",
+  "url": "https://www.siksinhot.com/P/256515",
+  "nota": "Clásico de Haeundae para la resaca y el desayuno: la sopa de pez globo (pez preparado por cocineros con licencia, es seguro). Citado en la Guía Michelin Busan 2025. Suele haber cola a mediodía.",
+  "opiniones": {
+   "v": 3.9,
+   "n": 72,
+   "fuente": "Siksin",
+   "fecha": "2026-11"
+  },
+  "guias": [
+   {
+    "g": "michelin",
+    "d": "Seleccionado",
+    "anio": 2025,
+    "verificar": true
+   }
+  ]
+ },
+ {
+  "id": "bs-halmae-gukbap",
+  "ciudad": "busan",
+  "nombre": "Haeundae Wonjo Halmae Gukbap",
+  "ko": "해운대원조할매국밥",
+  "tipo": "restaurante",
+  "plato": "gukbap de ternera (sopa de arroz) y de morcilla (seonji)",
+  "direccion": "33, Gunam-ro 21beon-gil, Haeundae-gu (junto al mercado de Haeundae)",
+  "horario": "VERIFICAR",
+  "precio": "Barato (6.000-6.500 ₩ según una reseña; VERIFICAR)",
+  "fuente": "guia",
+  "url": "https://polle.com/place/2EjEt3/",
+  "nota": "Casa de comidas de toda la vida (unos 60 años) a dos calles del hotel. Ojo: es gukbap de ternera, no el de cerdo (dwaeji gukbap) típico de Busan. Opiniones de usuarios divididas.",
+  "opiniones": {
+   "v": 3.9,
+   "n": 62,
+   "fuente": "Siksin",
+   "fecha": "2026-11"
+  }
+ },
+ {
+  "id": "ad-kkachigumeong",
+  "ciudad": "andong",
+  "nombre": "Kkachigumeongjip (heotjesabap)",
+  "ko": "까치구멍집",
+  "tipo": "restaurante",
+  "plato": "heotjesabap: el «falso banquete de ofrenda» de los yangban de Andong (arroz con verduras, tortitas de pescado y caballa)",
+  "direccion": "203, Seokju-ro, Andong-si (junto al puente Woryeonggyo)",
+  "horario": "09:30-20:30 (descanso 15:00-16:00; último pedido 19:30); abre todos los días (web de turismo, 2025)",
+  "precio": null,
+  "fuente": "guia",
+  "url": "https://www.ktriptips.com/kor/food/403857",
+  "nota": "El plato típico de Andong menos conocido fuera; perfecto para cenar al acabar en el puente Woryeonggyo (día 8). Cierra los pedidos a las 19:30.",
+  "opiniones": {
+   "v": 4.0,
+   "n": null,
+   "fuente": "Siksin",
+   "fecha": "2026-11"
+  }
+ }
 ]

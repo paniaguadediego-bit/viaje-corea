@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v142';
+const VERSION = 'v143';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -604,12 +604,15 @@ function tramo(o, dst, nO, nD, op = {}) {
   const url = `nmap://route/${c.modo === 'pie' ? 'walk' : 'public'}?dlat=${dst[0]}&dlng=${dst[1]}&dname=${encodeURIComponent(nD)}&appname=viajecorea`;
   const txt = c.modo === 'pie' ? `🚶 ${fmtDist(c.k)} · ~${c.m} min a pie`
     : c.modo === 'metro' ? `${fmtDist(c.k)} · 🚇 ~${r.min} min en metro · 🚕 ~${c.taxi} min en taxi`
-    : `${fmtDist(c.k)} · 🚕 mejor taxi, ~${c.taxi} min${r ? '' : ' (o bus: miradlo en Naver)'}`;
+    : `${fmtDist(c.k)} · 🚕 taxi ~${c.taxi} min${r || (op.aK && typeof SIN_TAXI !== 'undefined' && SIN_TAXI[op.aK.slice(2)]) ? '' : ' (o bus: miradlo en Naver)'}`;
+  // Sin taxi: bus o tren a los sitios lejanos (SIN_TAXI en contenido.js), a la vista cuando el tramo sale en taxi.
+  const st = c.modo === 'taxi' && op.aK && typeof SIN_TAXI !== 'undefined' && SIN_TAXI[op.aK.slice(2)];
+  const sinTaxi = st ? `<div class="sin-taxi">🚌 <b>Sin taxi:</b> ${resaltar(st, true)} <span class="ver">VERIFICAR</span></div>` : '';
   const pasos = !r ? '' : c.modo === 'metro' ? pasosMetro(r) : `<details class="alt-metro" data-key="am:${o.join()}>${dst.join()}" ${abierto(`am:${o.join()}>${dst.join()}`, false) ? 'open' : ''}><summary>🚇 Alternativa en metro (~${r.min} min)</summary>${pasosMetro(r)}</details>`;
   const fila = `<div class="tramo-ir"><span>${op.prefijo || ''}${txt}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>`;
   if (op.sinPasos) return fila;
   // Franja propia entre sitio y sitio, con el destino, para que no parezca parte del sitio anterior.
-  return `<div class="tramo tramo-${c.modo}">${op.hasta ? `<div class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b></div>` : ''}${fila}${pasos}</div>`;
+  return `<div class="tramo tramo-${c.modo}">${op.hasta ? `<div class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b></div>` : ''}${fila}${sinTaxi}${pasos}</div>`;
 }
 // Todo el día en Naver Map: hotel → paradas → hotel. Naver admite hasta 5 paradas intermedias por enlace
 // (documentado para la ruta en coche), así que con más paradas se parte en tramos.
@@ -772,7 +775,7 @@ function sitiosDia(d) {
   let prev = hot ? [Number(hot.lat), Number(hot.lon)] : null, prevN = hot ? hot.nombre : '';
   const fila = (l, extra) => {
     const h = hKey(l), mas = D[h.slice(2)] || D[h], txt = mas || l.desc || l.nota || G[h.slice(2)] || '', c = coordsLugar(l);
-    const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es, { hasta: l.es }) : '';
+    const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es, { hasta: l.es, aK: hKey(l) }) : '';
     if (c) { prev = c; prevN = l.ko || l.es; }
     return `${t}${extra ? encaje(l) : ''}<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</div>
       ${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${irQV(l, k)}</div></div>`;

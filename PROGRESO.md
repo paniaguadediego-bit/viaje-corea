@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v142
+Caché del service worker: corea-v143
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -194,6 +194,7 @@ Caché del service worker: corea-v142
 - v140: en los mapas, los marcadores que se pisan (muchos sitios comparten coordenadas: barrio y sus cafés, mercado en Planes y en Comer, calle del jjimdak…) se separan solos al dibujar: cada pareja a menos de 28 px se empuja hasta no taparse, con un muelle suave hacia su sitio; hotel e itinerario se mueven menos. Un hilo y un puntito negro marcan el lugar real. Comprobado: todos los marcadores visibles se pueden tocar en Seúl, Andong y Gyeongju a zoom 13-17.
 - v141: horarios en HORARIOS para el Museo Nacional del Folclore (9:00-17:00 en invierno, VERIFICAR) y el Centro Cultural Sejong (exposición «Sejong y Chungmugong» bajo la plaza: 10:00-18:30, cierra los lunes, gratis; VERIFICAR). En el trip.json privado, el día 6 incluye ambos en su sitio del itinerario (tras el palacio y tras la plaza).
 - v142: el horario del día propone "🍜 comer aquí" en un mercado o zona de comida si se llega desde las 11:30 (antes, desde las 12:00), para no poner la comida aparte justo después. En el trip.json privado: Jeonju Hyanggyo pasa al día 15 (el lunes 16 cierra) y el mercado Nambu al 16 a mediodía (el domingo 15 no hay mercado nocturno).
+- v143: (1) SIN_TAXI en contenido.js: cómo llegar en bus o tren a los sitios lejanos del día 8 en adelante (Hahoe 246, Woryeonggyo, Dosan Seowon 567 o bus turístico, Bongjeongsa 351, Bulguksa 10/11, Seokguram 12, Gamcheon metro + bus de barrio, Haedong Yonggungsa 181/1001 o tren Donghae + 139, Cheongsapo con el tren de la playa, Blueline Park, Huinnyeoul); en la Ruta del día sale "🚌 Sin taxi:" bajo los tramos en taxi, con VERIFICAR (datos de blogs y prensa coreana 2019-2026). (2) Nuevos sitios en Busan: Aldea cultural Huinnyeoul y Sky Capsule de Blueline (con horario y precios de 2026; se reconoce en el día 14). (3) Comer: Geumsu Bokguk (pez globo, Haeundae, 24 h, Michelin 2025 VERIFICAR, Siksin 3,9), Haeundae Wonjo Halmae Gukbap (Siksin 3,9; opiniones divididas) y Kkachigumeongjip (heotjesabap junto a Woryeonggyo, Andong). [Supuesto] Reddit y Google Maps no se pueden consultar desde aquí: las valoraciones son de Siksin y Polle, y los sitios con nota baja (p. ej. Gyori Gimbap, 3,4) no se añaden.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

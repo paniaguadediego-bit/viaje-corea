@@ -1167,3 +1167,5 @@ button.mini, a.btn.mini { min-height: 28px !important; padding: 3px 8px !importa
 .mp-hilo { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
 .mp-hilo line { stroke: rgba(40,40,40,.55); stroke-width: 1.5; }
 .mp-ancla { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: #333; border: 2px solid #fff; transform: translate(-50%, -50%); pointer-events: none; z-index: 1; }
+/* v143: alternativa sin taxi (bus o tren) en los tramos largos */
+.sin-taxi { margin: 6px 0 0; padding: 6px 8px; border-radius: 8px; background: color-mix(in srgb, #0b6e78 9%, var(--card)); font-size: .84rem; line-height: 1.4; }
