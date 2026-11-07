@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v143';
+const VERSION = 'v144';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -987,7 +987,7 @@ function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) 
       <button class="hd-ck qv-ck ${hecho(l, k) ? 'on' : ''}" data-hk="${esc(hKey(l))}" data-v="${hecho(l, k) ? 0 : 1}" aria-label="Visitado">${hecho(l, k) ? '✓' : ''}</button></summary>
     <div class="qv-cuerpo">${w ? `<div class="foto" data-wiki="${esc(w)}"><span>📷</span></div><div class="credito" data-cred="${esc(w)}"></div>` : ''}
       <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}</div>
-      <div class="ko-s">${esc(l.ko || '')}${distHotel(l, k)}</div>${extra}${horarioLinea(l)}
+      <div class="ko-s">${esc(l.ko || '')}${distHotel(l, k)}</div>${extra}${ojoLinea(ojoDe(null, l.ko))}${horarioLinea(l)}
       ${infoCompleta(l, desc || l.nota || l.desc)}</div></details>`;
 }
 // Foto principal del artículo de Wikipedia (necesita conexión la primera vez; el service worker la guarda).
@@ -2084,6 +2084,14 @@ let comerCiudad = null, comerTipo = 'todos', comerForm = false, comerEstado = 't
 const lugaresComer = () => [...DATOS_COMER, ...arr(u().comerPropios)].filter(l => l && typeof l === 'object');
 const estadoDe = id => (u().comer && user.comer[id]) || {};
 
+// ⚠️ Mucho ojo con…: aviso en la tarjeta o ficha del sitio y desplegable con todos los de la ciudad.
+const ojoDe = (id, ko) => (typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).find(o => (id && o.ids.includes(String(id))) || (ko && String(ko).replace(/\s+/g, '') === o.ko));
+const ojoLinea = o => o ? `<div class="ojo">⚠️ <b>Mucho ojo:</b> ${esc(o.txt)}</div>` : '';
+function muchoOjo(ciudad) {
+  const os = (typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).filter(o => !ciudad || ciudad === 'todas' || o.ciudad === ciudad); if (!os.length) return '';
+  return `<details class="card ojo-card" data-key="ojo:${esc(ciudad || '')}" ${abierto('ojo:' + (ciudad || ''), false) ? 'open' : ''}><summary><b>⚠️ Mucho ojo con… (${os.length})</b> <span class="muted">famosos con quejas</span></summary>
+    ${os.map(o => `<div class="ojo-item"><b>${esc(o.es)}</b><p>${esc(o.txt)}</p><div class="muted">Fuentes: ${o.fuentes.map(([t, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join(' · ')}</div></div>`).join('')}</details>`;
+}
 function viewComer() {
   if (comerCiudad === null) {
     const k = ck(ciudadActual());
@@ -2109,6 +2117,7 @@ function viewComer() {
     <div class="chips tipos-c">${chip('data-ct', 'todos', `🍽️ Todo (${lugaresComer().filter(enC).length})`, comerTipo === 'todos')}${tipos.map(([t, nt]) => chip('data-ct', t, `${IC_COMER[t] || ''} ${t[0].toUpperCase() + t.slice(1)} (${nt})`, comerTipo === t)).join('')}</div>
     <div class="chips estados-c">${chip('data-ce', 'todos', 'Todos', comerEstado === 'todos')}${chip('data-ce', 'cerca', `📍 Cerca del hotel (${base.filter(l => distKm(l) <= 1.2).length})`, comerEstado === 'cerca')}${chip('data-ce', 'quiero', `⭐ ${n('quiero')}`, comerEstado === 'quiero')}${chip('data-ce', 'visitado', `✅ ${n('visitado')}`, comerEstado === 'visitado')}${chip('data-ce', 'pendiente', 'Sin marcar', comerEstado === 'pendiente')}</div>
     ${glosario}
+    ${muchoOjo(comerCiudad)}
     <div class="c2-cuenta"><span class="muted">${lista.length} lugares</span><button class="chip orden-btn" data-co="${sigOrd[comerOrden] || 'rec'}">↕ ${ord[comerOrden] || ord.rec}</button></div>
     ${lista.map(cardComer).join('') || '<p class="muted">No hay lugares con este filtro.</p>'}
     ${comerForm ? formComer() : '<button class="sec" data-act="comer-nuevo">＋ Añadir lugar</button>'}`;
@@ -2159,7 +2168,7 @@ function cardComer(l) {
       <div class="c2-txt">
         <div class="c2-nom"><b>${esc(l.nombre || 'Sin nombre')}</b>${lpPill(l)}</div>
         <div class="c2-sub">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, l.ciudad)}</div>
-        ${meta.length ? `<div class="c2-meta">${meta.map(esc).join(' · ')}</div>` : ''}
+        ${meta.length ? `<div class="c2-meta">${meta.map(esc).join(' · ')}</div>` : ''}${ojoLinea(ojoDe(l.id))}
         ${arr(l.guias).map(g => `<span class="c2-guia ${g.g}" title="${g.g === 'michelin' ? 'Guía Michelin Seúl y Busan' : 'Blue Ribbon Survey'}">${g.g === 'michelin' ? '🔴 Michelin' : '🎗️ Blue Ribbon'} ${esc(g.d)}${g.anio ? ' ' + esc(g.anio) : ''}${g.verificar ? ' <span class="ver">VERIFICAR</span>' : ''}</span>`).join('')}
         ${(o => o ? `<span class="c2-op" title="${esc(o.fuente || '')}${o.fecha ? ', ' + esc(o.fecha) : ''}">👥 ★${Number(o.v).toLocaleString('es-ES')}${o.n ? ` · ${fmtN(o.n)} reseñas` : ''}${o.fuente ? ` · ${esc(String(o.fuente).split(' (')[0])}` : ''}</span>` : '')(opinionDe(l))}${planBadge(l)}${comp ? `<span class="c2-comp">${comp}</span>` : ''}
       </div>

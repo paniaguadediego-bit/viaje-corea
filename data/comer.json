@@ -1976,5 +1976,25 @@
    "fuente": "Siksin",
    "fecha": "2026-11"
   }
+ },
+{
+ "id": "gj-gyori-gimbap",
+ "ciudad": "gyeongju",
+ "nombre": "Gyori Gimbap (⚠️ mucho ojo)",
+ "ko": "교리김밥 본점",
+ "tipo": "restaurante",
+ "plato": "kimbap de huevo y fideos",
+ "direccion": "2, Tapri 3-gil, Gyeongju (cerca de la aldea Gyochon) · ubicación aproximada",
+ "horario": "VERIFICAR",
+ "precio": null,
+ "fuente": "guia",
+ "url": "https://polle.com/jd7485/posts/23",
+ "nota": "Famoso, pero con notas bajas de usuarios: ver «Mucho ojo con…».",
+ "opiniones": {
+  "v": 3.4,
+  "n": 76,
+  "fuente": "Polle",
+  "fecha": "2026-11"
  }
+}
 ]

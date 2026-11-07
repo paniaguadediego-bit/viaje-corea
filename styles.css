@@ -1169,3 +1169,7 @@ button.mini, a.btn.mini { min-height: 28px !important; padding: 3px 8px !importa
 .mp-ancla { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: #333; border: 2px solid #fff; transform: translate(-50%, -50%); pointer-events: none; z-index: 1; }
 /* v143: alternativa sin taxi (bus o tren) en los tramos largos */
 .sin-taxi { margin: 6px 0 0; padding: 6px 8px; border-radius: 8px; background: color-mix(in srgb, #0b6e78 9%, var(--card)); font-size: .84rem; line-height: 1.4; }
+/* v144: ⚠️ Mucho ojo con… */
+.ojo { margin: 6px 0; padding: 6px 8px; border-radius: 8px; background: color-mix(in srgb, #cd2e3a 9%, var(--card)); border-left: 3px solid #cd2e3a; font-size: .82rem; line-height: 1.4; }
+.ojo-card { border-left: 4px solid #cd2e3a !important; }
+.ojo-item { padding: 8px 0; border-top: 1px dashed var(--line); } .ojo-item p { margin: 4px 0; font-size: .88rem; line-height: 1.4; }

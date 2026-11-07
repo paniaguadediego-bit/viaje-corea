@@ -931,3 +931,19 @@ const SIN_TAXI = {
   '흰여울문화마을': 'Metro L1 hasta Nampo, salida 6, y bus 6, 7, 70, 71 o 508 hacia Yeongdo hasta «흰여울문화마을» o «백련사».'
 };
 
+// ⚠️ Mucho ojo con…: sitios famosos con quejas documentadas (prensa o notas bajas de usuarios). ids = comer.json; ko = sitio de Planes.
+const MUCHO_OJO = [
+  { ciudad: 'seul', ids: ['lp-gwangjang-market'], ko: '광장시장', es: 'Mercado Gwangjang (puestos de comida)',
+    txt: 'Quejas repetidas de 2023 a 2025 por cobrar de más a turistas: raciones pequeñas de tortitas variadas a 15.000 ₩, insistir en que pidas más, solo efectivo, y un puesto sancionado 10 días por cobrar 10.000 ₩ un sundae marcado a 8.000. Seúl obliga ahora a poner la cantidad en el menú. Consejo: elegid puestos con precio y ración a la vista y pagad lo que pone.',
+    fuentes: [['Hankyung (2025)', 'https://www.hankyung.com/article/2025110686207'], ['Daum (2025)', 'https://v.daum.net/v/XqATf3DgoU']] },
+  { ciudad: 'seul', ids: ['myeongdong-street'], ko: '명동', es: 'Puestos callejeros de Myeongdong',
+    txt: 'Tienen precio a la vista, pero según la prensa salen un 15-40 % más caros que la media y 1,5-2 veces más que en el mercado Namdaemun; varios pinchos sueltos pasan de 20.000 ₩. Para probar, bien; para cenar barato, Namdaemun o una casa de comidas.',
+    fuentes: [['Dailian (2024)', 'https://www.dailian.co.kr/news/view/1318274/']] },
+  { ciudad: 'busan', ids: ['jagalchi'], ko: '자갈치시장', es: 'Mercado Jagalchi (marisco «a precio de mercado»)',
+    txt: 'En 2025 se denunció un plato con 2-3 pepinos de mar a 70.000 ₩ marcado solo como «시가» (precio de mercado); hubo multa por no poner precios. Consejo: preguntad el precio y el peso ANTES de pedir y desconfiad de los carteles «시가».',
+    fuentes: [['Dailian (2025)', 'https://www.dailian.co.kr/news/view/1543606/'], ['YTN (2025)', 'https://www.ytn.co.kr/_ln/0103_202509011641439636']] },
+  { ciudad: 'gyeongju', ids: ['gj-gyori-gimbap'], ko: '교리김밥', es: 'Gyori Gimbap',
+    txt: 'Muy famoso por su kimbap con mucho huevo, pero los usuarios le dan solo un 3,4 en Polle (76 reseñas): caro, salado y con colas de más de una hora en fin de semana; para comer dentro hay que pedir un plato de fideos por persona. Si os pilla al lado, para llevar; si no, no merece la espera.',
+    fuentes: [['Polle', 'https://polle.com/jd7485/posts/23']] }
+];
+
