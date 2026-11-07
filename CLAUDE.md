@@ -22,8 +22,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    ⏳ Línea del tiempo (HIST_EVENTOS en historia.js, unas 35 fechas que abren su capítulo), 📚 Capítulos (cada uno con
    época y años, "En 30 segundos", fechas clave y "📍 Dónde lo veréis" con enlace a Planes; HIST_META), 🏯 Vuestras
    ciudades (HISTORIA de cada ciudad) y 🇰🇷 Símbolos. Miscelánea (antes Planes) va dentro de Planes (calendario del Mundial de LoL plegado: WORLDS en contenido.js, hora de
-   Corea y dónde estaréis; botones en orden alfabético Cosmética / Curioso (cafés de animales, postres famosos, tiendas raras) / Lavandería / LoL (con consejos de PC bang y T1 HQ Shop) / Ropa (cerca del hotel o en barrios del itinerario; Musinsa Standard y galerías subterráneas, lo que recomiendan los viajeros) que muestran sus sitios debajo: PLANES en contenido.js,
-   con distancia al hotel, "cerca", foto, 💰 precio aproximado y 👥 reseñas; lavandería y Olive Young en cada ciudad). Corea tiene apartados:
+   Corea y dónde estaréis; botones en orden alfabético Curioso (cafés de animales, postres famosos, tiendas raras) / Lavandería / LoL (con consejos de PC bang y T1 HQ Shop) / Ropa (cerca del hotel o en barrios del itinerario; Musinsa Standard y galerías subterráneas, lo que recomiendan los viajeros) que muestran sus sitios debajo: PLANES en contenido.js,
+   con distancia al hotel, "cerca", foto, 💰 precio aproximado y 👥 reseñas; lavandería en cada ciudad; sin Cosmética desde v146: hay tiendas por todas partes). Corea tiene apartados:
    Guía (primero, con iconos por tema), Enseñar, Frases, Diccionario y 🔤 Hangul (hangul.js: HG_LEC 11 lecciones esquematizadas con letras, sonido a la española,
    romanización, ejemplo con 🔊, trucos y reglas de lectura, marca de leída en user.hgLeidas; 🪧 Carteles HG_CARTELES descompuestos letra a letra; 🎯 Practicar:
    test de letras o carteles que repite lo fallado, user.hgTest; 🔗 Fuentes gratuitas HG_FUENTES) y ⭐ Favoritas (☆ en cada frase, palabra y cartel; user.favs; agrupadas en Frases, Palabras y Carteles)

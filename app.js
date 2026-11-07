@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v145';
+const VERSION = 'v146';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -2020,9 +2020,9 @@ function viewCorea() {
 
 
 // ---------- Planes: League of Legends y cosmética ----------
-let planesCat = 'cosme';
-// Orden alfabético (Cosmética es además la que se abre por defecto).
-const PCATS = [['cosme', '💄 Cosmética'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🎮 LoL'], ['ropa', '👕 Ropa']];
+let planesCat = 'curioso';
+// Orden alfabético (Curioso es además la que se abre por defecto).
+const PCATS = [['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🎮 LoL'], ['ropa', '👕 Ropa']];
 // Calendario del Mundial de LoL con la ciudad donde estaréis cada día.
 // Cibercafés coreanos (PC bang, PC방): cómo usarlos siendo turista.
 const PCBANG = `<details class="card pcbang" data-key="pcbang"><summary><b>🖥️ Cibercafés (PC bang, PC방): cómo jugar</b></summary><ul>
@@ -2045,7 +2045,7 @@ function worldsCard() {
     <div class="muted">${esc(WORLDS.nota)} <span class="ver">VERIFICAR</span></div>
     <div class="muted">Dónde verlo en grupo: T1 Base Camp (Hongdae, Gangnam y Busan, 24 h) y LoL Park en Seúl. Final: el T1 Base Camp de Busan está a unos 300 m del hotel.</div></details>`;
 }
-const icPlan = p => p.ic || ({ lol: '🎮', cosme: '💄', servicio: '🧺', curioso: '✨', ropa: '👕' })[p.cat] || '⭐';
+const icPlan = p => p.ic || ({ lol: '🎮', servicio: '🧺', curioso: '✨', ropa: '👕' })[p.cat] || '⭐';
 function planesDe(k) {
   const P = typeof PLANES !== 'undefined' ? PLANES : [];
   if (!P.some(p => p.ciudad === k)) return `${worldsCard()}<p class="muted">No hay planes guardados en esta ciudad.</p>`;
