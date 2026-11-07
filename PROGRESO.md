@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v153
+Caché del service worker: corea-v154
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -205,6 +205,7 @@ Caché del service worker: corea-v153
 - v151: "⚠️ Mucho ojo con…" también en Planes (arriba de cada ciudad, sitios famosos con pegas) y más avisos en Comer, con fuentes (prensa coreana, Polle, blogs y foros; Reddit no accesible desde aquí). Planes: Bukchon (horario 10-17 y multa), cosmética con «guía» en Myeongdong, taxis al aeropuerto y en Busan, recuerdos de Insadong, Starfield Library, gente en Haedong Yonggungsa, masificación de Gamcheon, aldea Hanok de Jeonju, precios de Hwangridan-gil. Comer: callejón del pescado de Namdaemun, centro de pescado de Millak, gomjangeo de Haeundae, puestos de la aldea Hanok y bibimbap de las casas famosas de Jeonju. Andong: no se encontró nada documentado. Descartados por no tener quejas claras: N Seoul Tower, Tosokchon, jjimdak de Andong y hotteok de BIFF.
 - v152: Resumen (texto, Word y PDF) sin "Imprescindibles" ni "No merece tanto la pena" a petición del usuario. Nuevo "✅ Planes realizados": por ciudad (en orden de ruta, Seúl de ida y vuelta juntas), numerados, primero los del itinerario en su orden y luego el resto de Planes y Miscelánea, con las estrellas al lado si se valoraron. El Día a día ya no repite las estrellas.
 - v153: vuelve "⭐ Imprescindibles", solo con lo de 5 estrellas (sitios y Comer). En Más → Resumen del viaje, "✅ Planes realizados" es una lista por ciudad, numerada, con 5 estrellas para tocar en cada sitio (sin que se mueva la pantalla); el texto, el Word y el PDF salen de ella.
+- v154: quitado "Ritmo tranquilo" de los Consejos prácticos del Resumen (texto, Word y PDF), a petición del usuario.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v153';
+const VERSION = 'v154';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -357,8 +357,7 @@ const CARA_TXT = { '😍': 'genial', '🙂': 'bien', '😐': 'normal', '😴': '
 const CONSEJOS_RES = ['Apps: Naver Map o Kakao Map (Google Maps no da rutas a pie ni en coche en Corea), Kakao T para taxis y Papago para traducir.',
   'Tarjeta T-money para metro y bus (se recarga en tiendas 24 h y en las máquinas del metro).',
   'Trenes KTX con Korail o Trip.com; autobuses entre ciudades con Kobus o Klook.',
-  'Tax Free con el pasaporte en tiendas con el logo (cosmética y ropa).',
-  'Ritmo tranquilo: pocas paradas al día y cenar hacia las 19:30.'];
+  'Tax Free con el pasaporte en tiendas con el logo (cosmética y ropa).'];
 function datosResumen() {
   const U = u(), NS = { ...(U.estrellas || {}) }, una = t => String(t || '').replace(/\n+/g, ' ').trim();
   const usa = k => { const x = NS[k]; return x ? Number(x.v) || 0 : 0; };
