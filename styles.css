@@ -1239,3 +1239,8 @@ body.con-doc { overflow: hidden; }
 }
 .dx-planes { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0 8px; }
 .dx-planes ol { margin: 4px 0 0; padding-left: 22px; } .dx-planes li { margin: 2px 0; }
+.res-ciudad ol { margin: 6px 0 0; padding-left: 24px; }
+.res-ciudad li { margin: 2px 0; }
+.res-fila { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.res-ciudad .estrellas { margin-top: 0; flex: none; }
+.res-ciudad .star { font-size: 1.05rem; min-height: 26px; padding: 0 2px; }

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v152
+Caché del service worker: corea-v153
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -204,6 +204,7 @@ Caché del service worker: corea-v152
 - v150: "📝 Nuestra nota" (v148) cambiada por estrellas de 1 a 5 a petición del usuario: más fácil de calificar. Mismos sitios (Planes, Miscelánea, hoteles, traslados), user.estrellas; en el Resumen, Word y PDF salen junto a cada sitio, hotel y traslado; 4-5 ★ van a Imprescindibles y 1-2 ★ a No merece tanto la pena. Comer mantiene sus estrellas y su nota.
 - v151: "⚠️ Mucho ojo con…" también en Planes (arriba de cada ciudad, sitios famosos con pegas) y más avisos en Comer, con fuentes (prensa coreana, Polle, blogs y foros; Reddit no accesible desde aquí). Planes: Bukchon (horario 10-17 y multa), cosmética con «guía» en Myeongdong, taxis al aeropuerto y en Busan, recuerdos de Insadong, Starfield Library, gente en Haedong Yonggungsa, masificación de Gamcheon, aldea Hanok de Jeonju, precios de Hwangridan-gil. Comer: callejón del pescado de Namdaemun, centro de pescado de Millak, gomjangeo de Haeundae, puestos de la aldea Hanok y bibimbap de las casas famosas de Jeonju. Andong: no se encontró nada documentado. Descartados por no tener quejas claras: N Seoul Tower, Tosokchon, jjimdak de Andong y hotteok de BIFF.
 - v152: Resumen (texto, Word y PDF) sin "Imprescindibles" ni "No merece tanto la pena" a petición del usuario. Nuevo "✅ Planes realizados": por ciudad (en orden de ruta, Seúl de ida y vuelta juntas), numerados, primero los del itinerario en su orden y luego el resto de Planes y Miscelánea, con las estrellas al lado si se valoraron. El Día a día ya no repite las estrellas.
+- v153: vuelve "⭐ Imprescindibles", solo con lo de 5 estrellas (sitios y Comer). En Más → Resumen del viaje, "✅ Planes realizados" es una lista por ciudad, numerada, con 5 estrellas para tocar en cada sitio (sin que se mueva la pantalla); el texto, el Word y el PDF salen de ella.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

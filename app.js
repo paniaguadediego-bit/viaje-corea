@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v152';
+const VERSION = 'v153';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -378,10 +378,12 @@ function datosResumen() {
     .map(c => ({ ciudad: cn(c), nombre: c.nombre, ko: c.ko || '', plato: c.plato || '', val: Number(est(c).val) || 0, nota: una(est(c).nota), wiki: wikiDe(c) }));
   // ✅ Planes realizados por ciudad: los del itinerario en su orden y después el resto (Planes y Miscelánea), con sus estrellas.
   D.planes = ciudadesUnicas().filter(c => !/espa/i.test(c.nombre)).map(c => { const k = ck(c.nombre), vistos = new Set(), items = [];
-    const add = l => { const h = hKey(l); if (!l || vistos.has(h) || !hecho(l, k)) return; vistos.add(h); items.push({ es: l.es, v: usa(h) }); };
+    const add = l => { const h = hKey(l); if (!l || vistos.has(h) || !hecho(l, k)) return; vistos.add(h); items.push({ es: l.es, v: usa(h), h }); };
     dias.filter(d => ck(d.ciudad) === k).forEach(d => listaDia(d).forEach(add));
     qvLista(k, c).forEach(o => add(o.l)); (typeof PLANES !== 'undefined' ? PLANES : []).filter(p => p.ciudad === k).forEach(add);
     return { ciudad: nombreCiudad(k), items }; }).filter(g => g.items.length);
+  // ⭐ Imprescindibles: solo lo de 5 estrellas (sitios y Comer).
+  D.top = [...D.planes.flatMap(g => g.items.filter(x => x.v === 5).map(x => ({ nombre: x.es, ciudad: g.ciudad }))), ...D.comidos.filter(c => c.val === 5).map(c => ({ nombre: '🍜 ' + c.nombre, ciudad: c.ciudad }))];
   D.consejos = CONSEJOS_RES;
   return D;
 }
@@ -398,17 +400,21 @@ function textoResumen() {
     if (d.diario) L.push(`   📔 ${d.diario}`); });
   if (D.comidos.length) { L.push('', '🍜 DÓNDE COMIMOS');
     D.comidos.forEach(c => L.push(`• ${c.ciudad} · ${c.nombre}${c.ko ? ` (${c.ko})` : ''}${c.plato ? ' — ' + c.plato : ''}${c.val ? ' ' + '★'.repeat(c.val) : ''}${c.nota ? ' · ' + c.nota : ''}`)); }
+  if (D.top.length) { L.push('', '⭐ IMPRESCINDIBLES (5 ESTRELLAS)'); D.top.forEach(c => L.push(`• ${c.nombre} (${c.ciudad})`)); }
   if (D.planes.length) { L.push('', '✅ PLANES REALIZADOS'); D.planes.forEach(g => { L.push(g.ciudad.toUpperCase()); g.items.forEach((x, i) => L.push(`  ${i + 1}. ${x.es}${x.v ? ' ' + estrTxt(x.v) : ''}`)); }); }
   L.push('', '💡 CONSEJOS PRÁCTICOS', ...D.consejos.map(c => '• ' + c));
   return L.join('\n');
 }
 function viewResumen() {
-  const t = textoResumen();
+  const t = textoResumen(), D = datosResumen();
+  const lista = D.planes.length ? `<h2>✅ Planes realizados</h2><p class="muted">Toca las estrellas para valorarlos (5 ★ = Imprescindibles).</p>
+    ${D.planes.map(g => `<div class="card res-ciudad"><b>${esc(g.ciudad)}</b><ol>${g.items.map(x => `<li><div class="res-fila"><span>${esc(x.es)}</span><span class="estrellas">${[1, 2, 3, 4, 5].map(n => `<button class="star ${x.v >= n ? 'on' : ''}" data-stk="${esc(x.h)}" data-stn="${esc(x.es)}" data-sv="${n}" aria-label="${n} estrellas">★</button>`).join('')}</span></div></li>`).join('')}</ol></div>`).join('')}`
+    : '<p class="muted">Cuando marquéis sitios como visitados (☐ Visitado en Planes u Hoy), saldrán aquí por ciudad para ponerles estrellas.</p>';
   return `<h2>📖 Resumen del viaje</h2>
     <p class="muted">Se genera con lo que habéis marcado: visitados y sus ⭐ (Planes realizados por ciudad), hoteles y traslados, caritas y notas del diario y Comer (✅, estrellas y notas). Ideal para pasárselo a quien prepare su viaje.</p>
     <div class="acciones"><button data-resumen="word">📘 Word con fotos</button><button data-resumen="pdf">📕 PDF con fotos</button></div>
     <div class="acciones"><button data-resumen="copiar">📋 Copiar</button><button class="sec" data-resumen="compartir">📤 Compartir</button><button class="sec" data-resumen="txt">⬇️ Descargar .txt</button></div>
-    <pre class="resumen">${esc(t)}</pre>`;
+    ${lista}<h2>📄 Texto</h2><pre class="resumen">${esc(t)}</pre>`;
 }
 // ☔ Plan B si llueve: si el pronóstico del día marca lluvia, sitios a cubierto de la ciudad (los del día, primero).
 function planLluvia(d) {
@@ -2577,7 +2583,7 @@ let tiraX = null, tabAnt = null;
 // ---------- render ----------
 // Guarda dónde está un botón en pantalla y devuelve la función que lo deja en el mismo sitio tras redibujar.
 function anclar(el) {
-  const at = [...el.attributes].find(x => /^data-(fav|hgleida|hk|est|val|verif|agtog|agdel|cara)$/.test(x.name)); if (!at) return () => {};
+  const at = [...el.attributes].find(x => /^data-(stk|fav|hgleida|hk|est|val|verif|agtog|agdel|cara)$/.test(x.name)); if (!at) return () => {};
   const sel = `[${at.name}="${CSS.escape(at.value)}"]`, i = [...document.querySelectorAll(sel)].indexOf(el), y = el.getBoundingClientRect().top;
   return () => { const n = document.querySelectorAll(sel)[i] || document.querySelector(sel); if (n) window.scrollBy(0, n.getBoundingClientRect().top - y); };
 }
