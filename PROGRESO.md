@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v149
+Caché del service worker: corea-v150
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -201,6 +201,7 @@ Caché del service worker: corea-v149
 - v147: Regalos con "✍️ Lo apunta": cada móvil escribe su nombre una vez (corea.yo, solo en ese móvil, no va en trip.json ni en el repo) y cada regalo nuevo lo lleva; viaja al pasar marcas y hay filtro Todos / por nombre cuando apuntan dos. [Supuesto] Los regalos antiguos quedan sin autor.
 - v148: "📝 Nuestra nota" en cada ficha de Planes (puntos de interés y Miscelánea), en cada hotel (Hoy → Hotel) y en cada traslado (Ruta). Se guarda sola al escribir (user.notasSitio), se une al pasar marcas y sale en el Resumen: hoteles bajo la Ruta, traslados bajo cada trayecto, sitios bajo su día y el resto en "Más notas nuestras". Comer sigue con su nota propia.
 - v149: Resumen del viaje en 📘 Word (.docx) y 📕 PDF con portada, franja dancheong, color de cada pestaña por apartado, una foto por día (la del primer sitio visitado o del plan, recortada en banda 2:1) y fotos en Comer. Nuevo exportar.js sin librerías (zip sin comprimir hecho a mano; PDF con la vista a pantalla completa y window.print). El service worker guarda ahora las fotos de Wikipedia con CORS (las antiguas se renuevan con conexión) para poder leerlas. [Supuesto] Las fotos que solo estén guardadas a la antigua no entran sin conexión: exportar con wifi para que salgan todas.
+- v150: "📝 Nuestra nota" (v148) cambiada por estrellas de 1 a 5 a petición del usuario: más fácil de calificar. Mismos sitios (Planes, Miscelánea, hoteles, traslados), user.estrellas; en el Resumen, Word y PDF salen junto a cada sitio, hotel y traslado; 4-5 ★ van a Imprescindibles y 1-2 ★ a No merece tanto la pena. Comer mantiene sus estrellas y su nota.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

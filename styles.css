@@ -1184,7 +1184,6 @@ pre.resumen { white-space: pre-wrap; word-break: break-word; font: inherit; font
 .plan-b li [data-irqv] { padding: 2px 8px; font-size: .82em; margin-left: 4px; vertical-align: middle; }
 .rg-yo { display: flex; align-items: center; gap: 8px; font-size: .9em; }
 .rg-yo input { flex: 1; }
-textarea.nota-sitio { min-height: 34px; margin-top: 6px; padding: 5px 8px; font-size: .9rem; }
 /* v149: Word y PDF del Resumen. Vista del documento a pantalla completa (se imprime solo ella). */
 #doc-vista { position: fixed; inset: 0; z-index: 9999; overflow-y: auto; background: #efe8da; padding: 0 0 40px; color: #2b2b2b; }
 body.con-doc { overflow: hidden; }
@@ -1238,3 +1237,4 @@ body.con-doc { overflow: hidden; }
   .dx-franja { margin: 0 -4mm; }
   .dx-salto { break-before: page; }
 }
+.dx-chips i.dx-est { font-style: normal; font-size: .8em; }

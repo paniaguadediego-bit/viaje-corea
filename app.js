@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v149';
+const VERSION = 'v150';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -312,7 +312,7 @@ async function compartirArchivo(nombre, texto, tipo) {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 // Marcas: lo que cada uno apunta en su móvil. Se pasan en un archivo y se UNEN (nunca se borra nada).
-const MARCAS = ['hecho', 'notasSitio', 'favs', 'diario', 'comer', 'agenda', 'hgLeidas', 'leidos', 'regalos', 'hdIni', 'hdLev', 'checklist'];
+const MARCAS = ['hecho', 'estrellas', 'favs', 'diario', 'comer', 'agenda', 'hgLeidas', 'leidos', 'regalos', 'hdIni', 'hdLev', 'checklist'];
 function exportMarcas() {
   const U = u(), m = {}; MARCAS.forEach(k => { if (U[k] != null) m[k] = U[k]; });
   compartirArchivo(`corea-marcas-${todayISO()}.json`, JSON.stringify({ tipo: 'corea-marcas', fecha: new Date().toISOString(), user: m }), 'application/json');
@@ -331,8 +331,7 @@ function fundirMarcas(o) {
     m.add = [...new Set([...arr(m.add), ...arr(a.add)])]; m.del = [...new Set([...arr(m.del), ...arr(a.del)])]; });
   ['hgLeidas', 'leidos', 'hdIni', 'hdLev'].forEach(k => { U[k] = U[k] || {}; Object.entries(o[k] || {}).forEach(([a, b]) => { if (b && !U[k][a]) U[k][a] = b; }); });
   U.regalos = arr(U.regalos); arr(o.regalos).forEach(r => { const x = U.regalos.find(x => x.id === r.id); if (!x) { U.regalos.push(r); n.regalos++; } else x.ok = x.ok || r.ok; });
-  U.notasSitio = U.notasSitio || {}; Object.entries(o.notasSitio || {}).forEach(([k, x]) => { if (!x || !x.t) return; const m = U.notasSitio[k], t = junta(m && m.t, x.t);
-    if (!m || t !== m.t) { U.notasSitio[k] = { n: (m && m.n) || x.n, t }; n.notas = (n.notas || 0) + 1; } });
+  U.estrellas = U.estrellas || {}; Object.entries(o.estrellas || {}).forEach(([k, x]) => { if (x && Number(x.v) > 0 && !U.estrellas[k]) { U.estrellas[k] = x; n.estrellas = (n.estrellas || 0) + 1; } });
   U.checklist = U.checklist || {}; Object.entries(o.checklist || {}).forEach(([a, b]) => { if (b) U.checklist[a] = b; });
   saveUser(); return n;
 }
@@ -361,26 +360,27 @@ const CONSEJOS_RES = ['Apps: Naver Map o Kakao Map (Google Maps no da rutas a pi
   'Tax Free con el pasaporte en tiendas con el logo (cosmética y ropa).',
   'Ritmo tranquilo: pocas paradas al día y cenar hacia las 19:30.'];
 function datosResumen() {
-  const U = u(), NS = { ...(U.notasSitio || {}) }, una = t => String(t || '').replace(/\n+/g, ' ').trim();
-  const usa = k => { const x = NS[k]; delete NS[k]; return x && x.t ? una(x.t) : ''; };
+  const U = u(), NS = { ...(U.estrellas || {}) }, una = t => String(t || '').replace(/\n+/g, ' ').trim();
+  const usa = k => { const x = NS[k]; delete NS[k]; return x ? Number(x.v) || 0 : 0; };
   const dias = arr(trip.dias).filter(d => d.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha));
   const D = { titulo: (trip.meta && trip.meta.titulo) || 'Viaje a Corea del Sur', desde: dias[0] && dias[0].fecha, hasta: dias.length ? dias[dias.length - 1].fecha : '', nDias: dias.length };
   D.ruta = arr(trip.ciudades).filter(c => c && c.desde && !/espa/i.test(c.nombre)).map(c => { const k = ck(c.nombre), no = c.hasta ? Math.round((new Date(c.hasta) - new Date(c.desde)) / 864e5) : 0;
     const h = arr(trip.alojamientos).find(a => ck(a.ciudad) === k && String(a.fechas || '').startsWith(c.desde)) || arr(trip.alojamientos).find(a => ck(a.ciudad) === k);
-    return { ciudad: c.nombre, ko: c.ko || '', desde: c.desde, hasta: c.hasta || '', noches: no, hotel: h ? h.nombre : '', nota: h ? usa('h:' + (h.id || h.nombre)) : '' }; });
-  D.notasHotel = arr(trip.alojamientos).map(a => ({ es: a.nombre, t: usa('h:' + (a.id || a.nombre)) })).filter(x => x.t);
+    return { ciudad: c.nombre, ko: c.ko || '', desde: c.desde, hasta: c.hasta || '', noches: no, hotel: h ? h.nombre : '', val: h ? usa('h:' + (h.id || h.nombre)) : 0 }; });
   D.traslados = arr(trip.traslados).filter(t => t && t.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha)).map(t => { const b = billete(t) || {}, [ic, nom] = medio(t);
-    return { fecha: t.fecha, de: lugarCorto(t.de), a: lugarCorto(t.a), ic, nom, numero: b.numero || '', horas: b.salida ? `${b.salida}-${b.llegada || '?'}` : '', precio: b.precio || '', nota: usa('t:' + (t.id || t.fecha + t.de)) }; });
+    return { fecha: t.fecha, de: lugarCorto(t.de), a: lugarCorto(t.a), ic, nom, numero: b.numero || '', horas: b.salida ? `${b.salida}-${b.llegada || '?'}` : '', precio: b.precio || '', val: usa('t:' + (t.id || t.fecha + t.de)) }; });
+  const val = [];
   D.dias = dias.map((d, i) => { const k = ck(d.ciudad), ls = listaDia(d), vis = ls.filter(l => hecho(l, k)), di = diarioDe(d.fecha), base = vis.length ? vis : ls;
     return { n: i + 1, fecha: d.fecha, ciudad: d.ciudad, titulo: d.titulo || '', cara: di.cara || '', diario: una(di.nota), visto: vis.length > 0,
-      sitios: base.map(l => l.es), notas: ls.map(l => ({ es: l.es, t: usa(hKey(l)) })).filter(x => x.t), wiki: (base.map(l => wikiDe(l)).find(Boolean)) || '' }; });
+      sitios: base.map(l => { const v = usa(hKey(l)); if (v) val.push({ es: l.es, ciudad: d.ciudad, v }); return l.es + (v ? ' ' + estrTxt(v) : ''); }), wiki: (base.map(l => wikiDe(l)).find(Boolean)) || '' }; });
   const lc = lugaresComer(), est = c => estadoDe(String(c.id)), cn = c => (CIUDADES_COMER.find(x => x[0] === c.ciudad) || [])[1] || c.ciudad;
   D.comidos = lc.filter(c => est(c).estado === 'visitado' || Number(est(c).val) > 0 || hecho(c, c.ciudad))
     .sort((a, b) => (Number(est(b).val) || 0) - (Number(est(a).val) || 0))
     .map(c => ({ ciudad: cn(c), nombre: c.nombre, ko: c.ko || '', plato: c.plato || '', val: Number(est(c).val) || 0, nota: una(est(c).nota), wiki: wikiDe(c) }));
-  D.top = D.comidos.filter(c => c.val >= 4);
-  D.malos = [...lc.filter(c => est(c).estado === 'descartado').map(c => `${c.nombre} (${cn(c)})`), ...(typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).map(o => o.es + ' (ojo con los precios o las colas)')];
-  D.resto = Object.values(NS).filter(x => x && x.t).map(x => ({ es: x.n || 'Sitio', t: una(x.t) }));
+  Object.values(NS).forEach(x => { if (x && Number(x.v) > 0) val.push({ es: x.n || 'Sitio', ciudad: '', v: Number(x.v) }); });
+  D.valorados = val.sort((a, b) => b.v - a.v);
+  D.top = [...D.comidos.filter(c => c.val >= 4), ...val.filter(x => x.v >= 4).map(x => ({ nombre: x.es, ciudad: x.ciudad, val: x.v }))];
+  D.malos = [...val.filter(x => x.v <= 2).map(x => `${x.es}${x.ciudad ? ` (${x.ciudad})` : ''} ${estrTxt(x.v)}`), ...lc.filter(c => est(c).estado === 'descartado').map(c => `${c.nombre} (${cn(c)})`), ...(typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).map(o => o.es + ' (ojo con los precios o las colas)')];
   D.consejos = CONSEJOS_RES;
   return D;
 }
@@ -388,18 +388,16 @@ function textoResumen() {
   const D = datosResumen(), L = [`🇰🇷 ${D.titulo}`];
   if (D.nDias) L.push(`${fmtCorto(D.desde)} → ${fmtCorto(D.hasta)} · ${D.nDias} días`);
   if (D.ruta.length) { L.push('', '🗺️ RUTA');
-    D.ruta.forEach(r => { L.push(`• ${r.ciudad}: ${fmtCorto(r.desde)}${r.hasta ? ' → ' + fmtCorto(r.hasta) : ''}${r.noches ? ` (${r.noches} noche${r.noches > 1 ? 's' : ''})` : ''}${r.hotel ? ' · 🛏️ ' + r.hotel : ''}`); if (r.nota) L.push(`   📝 ${r.nota}`); });
-    D.notasHotel.forEach(x => L.push(`   📝 ${x.es}: ${x.t}`)); }
+    D.ruta.forEach(r => { L.push(`• ${r.ciudad}: ${fmtCorto(r.desde)}${r.hasta ? ' → ' + fmtCorto(r.hasta) : ''}${r.noches ? ` (${r.noches} noche${r.noches > 1 ? 's' : ''})` : ''}${r.hotel ? ' · 🛏️ ' + r.hotel + (r.val ? ' ' + estrTxt(r.val) : '') : ''}`); }); }
   if (D.traslados.length) { L.push('', '🚆 CÓMO NOS MOVIMOS');
-    D.traslados.forEach(t => { L.push(`• ${fmtCorto(t.fecha)} ${t.de} → ${t.a}: ${t.ic} ${t.nom}${t.numero ? ' ' + t.numero : ''}${t.horas ? ` (${t.horas})` : ''}${t.precio ? ' · ' + t.precio : ''}`); if (t.nota) L.push(`   📝 ${t.nota}`); }); }
+    D.traslados.forEach(t => { L.push(`• ${fmtCorto(t.fecha)} ${t.de} → ${t.a}: ${t.ic} ${t.nom}${t.numero ? ' ' + t.numero : ''}${t.horas ? ` (${t.horas})` : ''}${t.precio ? ' · ' + t.precio : ''}${t.val ? ' ' + estrTxt(t.val) : ''}`); }); }
   L.push('', '📅 DÍA A DÍA');
   D.dias.forEach(d => { L.push(`Día ${d.n} · ${fmtCorto(d.fecha)} · ${d.ciudad}${d.titulo ? ' — ' + d.titulo : ''}${d.cara ? ` ${d.cara}${CARA_TXT[d.cara] ? ' (' + CARA_TXT[d.cara] + ')' : ''}` : ''}`);
     if (d.sitios.length) L.push(`   ${d.visto ? '✅' : '📍 Plan:'} ${d.sitios.join(', ')}`);
-    d.notas.forEach(x => L.push(`   📝 ${x.es}: ${x.t}`)); if (d.diario) L.push(`   📔 ${d.diario}`); });
+    if (d.diario) L.push(`   📔 ${d.diario}`); });
   if (D.comidos.length) { L.push('', '🍜 DÓNDE COMIMOS');
     D.comidos.forEach(c => L.push(`• ${c.ciudad} · ${c.nombre}${c.ko ? ` (${c.ko})` : ''}${c.plato ? ' — ' + c.plato : ''}${c.val ? ' ' + '★'.repeat(c.val) : ''}${c.nota ? ' · ' + c.nota : ''}`)); }
-  if (D.resto.length) { L.push('', '📝 MÁS NOTAS NUESTRAS'); D.resto.forEach(x => L.push(`• ${x.es}: ${x.t}`)); }
-  if (D.top.length) { L.push('', '⭐ IMPRESCINDIBLES PARA NOSOTROS'); D.top.forEach(c => L.push(`• ${c.nombre} (${c.ciudad})`)); }
+  if (D.top.length) { L.push('', '⭐ IMPRESCINDIBLES PARA NOSOTROS'); D.top.forEach(c => L.push(`• ${c.nombre}${c.ciudad ? ` (${c.ciudad})` : ''}${c.val ? ' ' + estrTxt(c.val) : ''}`)); }
   if (D.malos.length) { L.push('', '👎 NO MERECE TANTO LA PENA'); D.malos.forEach(m => L.push('• ' + m)); }
   L.push('', '💡 CONSEJOS PRÁCTICOS', ...D.consejos.map(c => '• ' + c));
   return L.join('\n');
@@ -407,7 +405,7 @@ function textoResumen() {
 function viewResumen() {
   const t = textoResumen();
   return `<h2>📖 Resumen del viaje</h2>
-    <p class="muted">Se genera con lo que habéis marcado: visitados, 📝 notas de sitios, hoteles y traslados, caritas y notas del diario, Comer (✅, estrellas y notas) y descartados. Ideal para pasárselo a quien prepare su viaje.</p>
+    <p class="muted">Se genera con lo que habéis marcado: visitados, ⭐ valoraciones de sitios, hoteles y traslados, caritas y notas del diario, Comer (✅, estrellas y notas) y descartados. Ideal para pasárselo a quien prepare su viaje.</p>
     <div class="acciones"><button data-resumen="word">📘 Word con fotos</button><button data-resumen="pdf">📕 PDF con fotos</button></div>
     <div class="acciones"><button data-resumen="copiar">📋 Copiar</button><button class="sec" data-resumen="compartir">📤 Compartir</button><button class="sec" data-resumen="txt">⬇️ Descargar .txt</button></div>
     <pre class="resumen">${esc(t)}</pre>`;
@@ -471,16 +469,17 @@ function alojDe(f) {
   const r = arr(trip.alojamientos).map(a => { const [ini, fin] = String(a.fechas || '').split(' a ').map(x => x.trim()); return { a, ini, fin: fin || (ini ? sumaDia(ini, Number(a.noches) || 1) : '') }; });
   return { noche: (r.find(x => x.ini && x.ini <= f && f < x.fin) || {}).a, sale: (r.find(x => x.fin === f) || {}).a };
 }
-// 📝 Nota propia en cualquier ficha (sitio, plan, hotel, traslado): user.notasSitio[clave] = {n: nombre, t: texto}. Sale en el Resumen.
-const notaDe = k => ((u().notasSitio || {})[k] || {}).t || '';
-const notaBox = (k, nombre) => `<textarea class="nota-sitio" data-nsk="${esc(k)}" data-nsn="${esc(nombre || '')}" rows="1" placeholder="📝 Nuestra nota (se guarda sola)">${esc(notaDe(k))}</textarea>`;
+// ⭐ Valoración propia (1-5) en sitios, planes, hoteles y traslados: user.estrellas[clave] = {n: nombre, v}. Sale en el Resumen.
+const estrDe = k => Number(((u().estrellas || {})[k] || {}).v) || 0;
+const estrTxt = v => v ? '★'.repeat(v) + '☆'.repeat(5 - v) : '';
+const estrBox = (k, nombre) => { const v = estrDe(k); return `<div class="estrellas">Nuestra valoración: ${[1, 2, 3, 4, 5].map(n => `<button class="star ${v >= n ? 'on' : ''}" data-stk="${esc(k)}" data-stn="${esc(nombre || '')}" data-sv="${n}" aria-label="${n} estrellas">★</button>`).join('')}</div>`; };
 const alojCard = (a, sale) => `<div class="card aloj">
     <div class="big">🛏️ ${esc(a.nombre)} ${ver(a)}</div>${sale ? '<div class="badge pend">Hoy dejáis este alojamiento</div>' : ''}
     ${a.ko ? `<div class="ko">${esc(a.ko)}</div>` : ''}
     ${a.direccion_ko ? `<div>${esc(a.direccion_ko)}</div>` : ''}
     ${a.direccion_en ? `<div class="muted">${esc(a.direccion_en)}</div>` : ''}
     ${a.nota ? `<div class="muted">${esc(a.nota)}</div>` : ''}
-    <div class="acciones">${naver(a)}</div>${notaBox('h:' + (a.id || a.nombre), '🛏️ ' + a.nombre)}</div>`;
+    <div class="acciones">${naver(a)}</div>${estrBox('h:' + (a.id || a.nombre), '🛏️ ' + a.nombre)}</div>`;
 // ---------- Diario: carita y nota de cada día (solo en el móvil; va en "Exportar copia") ----------
 const CARAS = [['😍', 'Genial'], ['🙂', 'Bien'], ['😐', 'Normal'], ['😩', 'Duro']];
 const diarioDe = f => (u().diario || {})[f] || {};
@@ -971,7 +970,7 @@ function trasladoCard(t) {
         ${ab ? `<ol>${arr(t.pasos).map(p => `<li>${resaltar(p)}</li>`).join('')}</ol>` : ''}</div>`; })() : ''}
       ${t.frase_ko ? `<div class="ko">${esc(t.frase_ko)}</div>` : ''}
       ${t.romanizacion ? `<div class="muted">${esc(t.romanizacion)}</div>` : ''}
-      ${notaBox('t:' + (t.id || t.fecha + t.de), `🚆 ${fmtCorto(t.fecha)} ${lugarCorto(t.de)} → ${lugarCorto(t.a)}`)}
+      ${estrBox('t:' + (t.id || t.fecha + t.de), `🚆 ${fmtCorto(t.fecha)} ${lugarCorto(t.de)} → ${lugarCorto(t.a)}`)}
     </div>
   </div>`;
 }
@@ -1123,7 +1122,7 @@ function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) 
       <span class="qv-cab"><b>${esc(l.es)}${lpPill(l)}</b><small>${plan ? `<span class="qv-dia">📅 ${fmtCorto(plan.fecha)}</span> ` : ''}${esc(breve(desc || l.nota || l.desc))}</small></span>
       <button class="hd-ck qv-ck ${hecho(l, k) ? 'on' : ''}" data-hk="${esc(hKey(l))}" data-v="${hecho(l, k) ? 0 : 1}" aria-label="Visitado">${hecho(l, k) ? '✓' : ''}</button></summary>
     <div class="qv-cuerpo">${w ? `<div class="foto" data-wiki="${esc(w)}"><span>📷</span></div><div class="credito" data-cred="${esc(w)}"></div>` : ''}
-      <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}</div>${notaBox(hKey(l), l.es)}
+      <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}</div>${estrBox(hKey(l), l.es)}
       <div class="ko-s">${esc(l.ko || '')}${distHotel(l, k)}</div>${extra}${ojoLinea(ojoDe(null, l.ko))}${horarioLinea(l)}
       ${infoCompleta(l, desc || l.nota || l.desc)}</div></details>`;
 }
@@ -2096,7 +2095,7 @@ function planesDe(k) {
       ${otros.length || plan.length ? `<details class="pl-cerca" data-key="plc:${esc(p.id)}" ${abierto('plc:' + p.id, false) ? 'open' : ''}><summary>📍 Cerca${otros.length ? `: ${otros.length} ${otros.length === 1 ? 'plan' : 'planes'}` : ''}${plan.length ? ` · 📅 ${plan.length} de vuestro plan` : ''}</summary>
         ${otros.length ? `<div class="cerca">${otros.map(([o, d]) => `${icPlan(o)} ${esc(o.es)} <span class="muted">${fmtDist(d)}</span>`).join(' · ')}</div>` : ''}
         ${plan.length ? `<div class="cerca">📅 ${plan.map(([l, d, e]) => `${esc(l.es)} <span class="muted">(día ${e.n}, ${fmtDist(d)})</span>`).join(' · ')}</div>` : ''}</details>` : ''}
-      <div class="acciones">${naver(p)}<button class="mini" data-full="pl:${i}">Enseñar</button></div>${notaBox(hKey(p), icPlan(p) + ' ' + p.es)}</div>`;
+      <div class="acciones">${naver(p)}<button class="mini" data-full="pl:${i}">Enseñar</button></div>${estrBox(hKey(p), icPlan(p) + ' ' + p.es)}</div>`;
   };
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
@@ -2671,8 +2670,11 @@ document.addEventListener('click', e => {
     render(); return;
   }
   // Botones de marcar (visitado, valorar, estado…): tras redibujar, el botón tocado vuelve al mismo punto de la pantalla.
-  const mk = e.target.closest('button[data-fav],button[data-hgleida],button[data-hk],button[data-est],button[data-val],button[data-verif],button[data-agtog],button[data-agdel],button[data-cara]');
+  const mk = e.target.closest('button[data-stk],button[data-fav],button[data-hgleida],button[data-hk],button[data-est],button[data-val],button[data-verif],button[data-agtog],button[data-agdel],button[data-cara]');
   if (mk) queueMicrotask(anclar(mk));
+  const stb = e.target.closest('button[data-stk]');
+  if (stb) { e.preventDefault(); const U = u(), es = U.estrellas = U.estrellas || {}, k = stb.dataset.stk, v = Number(stb.dataset.sv);
+    if (estrDe(k) === v) delete es[k]; else es[k] = { n: stb.dataset.stn, v }; saveUser(); render(); return; }
   // Casillas: las marca la app (así no se pierde el toque si la pantalla se redibuja en el móvil).
   const lab = e.target.closest('label.check');
   if (lab && !e.target.closest('a, button')) {
@@ -2867,7 +2869,6 @@ document.addEventListener('input', e => {
     otro.value = !t.value || !c ? '' : t.dataset.conv === 'KRW' ? (v / c).toFixed(2) : Math.round(v * c);
   }
   else if (t.dataset.notas !== undefined) { u().notas = t.value; saveUser(); }
-  else if (t.dataset.nsk) { const U = u(), ns = U.notasSitio = U.notasSitio || {}; if (t.value.trim()) ns[t.dataset.nsk] = { n: t.dataset.nsn, t: t.value }; else delete ns[t.dataset.nsk]; saveUser(); }
   else if (t.dataset.diario) { const U = u(); U.diario = U.diario || {}; (U.diario[t.dataset.diario] = U.diario[t.dataset.diario] || {}).nota = t.value; saveUser(); }
   else if (t.dataset.cnota) { const U = u(); U.comer = U.comer || {}; (U.comer[t.dataset.cnota] = U.comer[t.dataset.cnota] || {}).nota = t.value; saveUser(); }
 });

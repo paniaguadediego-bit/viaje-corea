@@ -59,13 +59,10 @@ function docxXML(D, fotos) {
   B.push(wp(wr('Nuestro resumen para quien prepare su viaje: ruta, traslados, lo que vimos cada día, dónde comimos y lo que aprendimos.', { i: true, c: '6B6255' }), { al: 'center' }), wFranja(), wSalto);
   // Ruta
   if (D.ruta.length) { B.push(wTitulo('✈️', 'Ruta', EX_COL.ruta));
-    D.ruta.forEach(r => { B.push(wp(wr(r.ciudad + ' ', { b: true, sz: 13, c: EX_COL.ruta }) + (r.ko ? wr(r.ko + '  ', { c: '8A8070' }) : '') + wr(`${fmtCorto(r.desde)}${r.hasta ? ' → ' + fmtCorto(r.hasta) : ''}${r.noches ? ` · ${r.noches} noche${r.noches > 1 ? 's' : ''}` : ''}`, { c: '6B6255' }), { borde: EX_COL.ruta, fondo: 'F4F8F8', despues: r.hotel || r.nota ? 0 : 100 }));
-      if (r.hotel) B.push(wp(wr('🛏️ ' + r.hotel), { borde: EX_COL.ruta, fondo: 'F4F8F8', despues: r.nota ? 0 : 100 }));
-      if (r.nota) B.push(wp(wr('📝 ' + r.nota, { i: true }), { borde: EX_COL.ruta, fondo: 'F4F8F8' })); });
-    D.notasHotel.forEach(x => B.push(wp(wr('📝 ' + x.es + ': ', { b: true }) + wr(x.t, { i: true })))); }
+    D.ruta.forEach(r => { B.push(wp(wr(r.ciudad + ' ', { b: true, sz: 13, c: EX_COL.ruta }) + (r.ko ? wr(r.ko + '  ', { c: '8A8070' }) : '') + wr(`${fmtCorto(r.desde)}${r.hasta ? ' → ' + fmtCorto(r.hasta) : ''}${r.noches ? ` · ${r.noches} noche${r.noches > 1 ? 's' : ''}` : ''}`, { c: '6B6255' }), { borde: EX_COL.ruta, fondo: 'F4F8F8', despues: r.hotel ? 0 : 100 }));
+      if (r.hotel) B.push(wp(wr('🛏️ ' + r.hotel + '  ') + (r.val ? wr(estrTxt(r.val), { c: EX_COL.oro }) : ''), { borde: EX_COL.ruta, fondo: 'F4F8F8' })); }); }
   if (D.traslados.length) { B.push(wTitulo('🚆', 'Cómo nos movimos', EX_COL.ruta));
-    D.traslados.forEach(t => { B.push(wp(wr(`${t.ic}  ${fmtCorto(t.fecha)}  `, { b: true }) + wr(`${t.de} → ${t.a}`, { b: true, c: EX_COL.ruta }) + wr(`  ${t.nom}${t.numero ? ' ' + t.numero : ''}${t.horas ? ` · ${t.horas}` : ''}${t.precio ? ' · ' + t.precio : ''}`, { c: '6B6255' }), { despues: t.nota ? 0 : 80 }));
-      if (t.nota) B.push(wp(wr('📝 ' + t.nota, { i: true }), { despues: 80 })); }); }
+    D.traslados.forEach(t => { B.push(wp(wr(`${t.ic}  ${fmtCorto(t.fecha)}  `, { b: true }) + wr(`${t.de} → ${t.a}`, { b: true, c: EX_COL.ruta }) + wr(`  ${t.nom}${t.numero ? ' ' + t.numero : ''}${t.horas ? ` · ${t.horas}` : ''}${t.precio ? ' · ' + t.precio : ''}  `, { c: '6B6255' }) + (t.val ? wr(estrTxt(t.val), { c: EX_COL.oro }) : ''), { despues: 80 })); }); }
   // Día a día
   B.push(wSalto, wTitulo('📅', 'Día a día', EX_COL.hoy));
   D.dias.forEach(d => {
@@ -73,15 +70,13 @@ function docxXML(D, fotos) {
     if (fotos[d.wiki]) B.push(img(d.wiki));
     if (d.titulo) B.push(wp(wr(d.titulo, { b: true, sz: 14, f: 'Georgia', c: '1B2230' }), { keep: true, despues: 60 }));
     if (d.sitios.length) B.push(wp(wr(d.visto ? '✅ Vimos: ' : '📍 Plan: ', { b: true, c: d.visto ? '2E7D4F' : '8A5A14' }) + wr(d.sitios.join(' · '))));
-    d.notas.forEach(x => B.push(wp(wr('📝 ' + x.es + ': ', { b: true }) + wr(x.t, { i: true }), { borde: EX_COL.oro, fondo: 'FBF5E6' })));
     if (d.diario) B.push(wp(wr('📔 ', {}) + wr(d.diario, { i: true }), { borde: EX_COL.mas, fondo: 'F5F0FA' }));
   });
   // Comer
   if (D.comidos.length) { B.push(wSalto, wTitulo('🍜', 'Dónde comimos', EX_COL.comer));
     D.comidos.forEach(c => { B.push(wp(wr(c.nombre + ' ', { b: true, sz: 12, c: EX_COL.comer }) + (c.ko ? wr(c.ko + '  ', { c: '8A8070' }) : '') + (c.val ? wr('★'.repeat(c.val) + '☆'.repeat(5 - c.val), { c: EX_COL.oro }) : ''), { borde: EX_COL.comer, fondo: 'FDF6EE', despues: 0, keep: true }));
       B.push(wp(wr(`${c.ciudad}${c.plato ? ' · ' + c.plato : ''}`, { c: '6B6255' }) + (c.nota ? wr('  📝 ' + c.nota, { i: true }) : ''), { borde: EX_COL.comer, fondo: 'FDF6EE' })); }); }
-  if (D.top.length) { B.push(wTitulo('⭐', 'Imprescindibles para nosotros', EX_COL.oro)); D.top.forEach(c => B.push(wp(wr('⭐ ' + c.nombre, { b: true }) + wr(` (${c.ciudad})`, { c: '6B6255' })))); }
-  if (D.resto.length) { B.push(wTitulo('📝', 'Más notas nuestras', EX_COL.mas)); D.resto.forEach(x => B.push(wp(wr(x.es + ': ', { b: true }) + wr(x.t, { i: true })))); }
+  if (D.top.length) { B.push(wTitulo('⭐', 'Imprescindibles para nosotros', EX_COL.oro)); D.top.forEach(c => B.push(wp(wr('⭐ ' + c.nombre, { b: true }) + wr(c.ciudad ? ` (${c.ciudad})  ` : '  ', { c: '6B6255' }) + (c.val ? wr(estrTxt(c.val), { c: EX_COL.oro }) : '')))); }
   if (D.malos.length) { B.push(wTitulo('👎', 'No merece tanto la pena', EX_COL.historia)); D.malos.forEach(m => B.push(wp(wr('• ' + m)))); }
   B.push(wTitulo('💡', 'Consejos prácticos', EX_COL.planes), ...D.consejos.map(c => wp(wr('• ' + c))), wFranja());
   const doc = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -139,18 +134,16 @@ function docHTML(D, fotos) {
     <div class="dx-cifras">${exCifras(D).map(([ic, t]) => `<span>${ic} <b>${e(t)}</b></span>`).join('')}</div>
     <p class="dx-lema">Nuestro resumen para quien prepare su viaje: ruta, traslados, lo que vimos cada día, dónde comimos y lo que aprendimos.</p></div>
   ${D.ruta.length ? sec('✈️', 'Ruta', EX_COL.ruta, `<div class="dx-ruta">${D.ruta.map(r => `<div class="dx-card"><b class="dx-c">${e(r.ciudad)}</b> <span class="dx-mut">${e(r.ko)}</span>
-      <div class="dx-mut">${e(fmtCorto(r.desde))}${r.hasta ? ' → ' + e(fmtCorto(r.hasta)) : ''}${r.noches ? ` · ${r.noches} noche${r.noches > 1 ? 's' : ''}` : ''}</div>${r.hotel ? `<div>🛏️ ${e(r.hotel)}</div>` : ''}${r.nota ? `<div class="dx-nota">📝 ${e(r.nota)}</div>` : ''}</div>`).join('')}</div>
-      ${D.notasHotel.map(x => `<div class="dx-nota">📝 <b>${e(x.es)}:</b> ${e(x.t)}</div>`).join('')}`, true) : ''}
+      <div class="dx-mut">${e(fmtCorto(r.desde))}${r.hasta ? ' → ' + e(fmtCorto(r.hasta)) : ''}${r.noches ? ` · ${r.noches} noche${r.noches > 1 ? 's' : ''}` : ''}</div>${r.hotel ? `<div>🛏️ ${e(r.hotel)}${r.val ? ` <span class="dx-est">${estrTxt(r.val)}</span>` : ''}</div>` : ''}</div>`).join('')}</div>`, true) : ''}
   ${D.traslados.length ? sec('🚆', 'Cómo nos movimos', EX_COL.ruta, D.traslados.map(t => `<div class="dx-tras"><span class="dx-ic">${t.ic}</span><div><b>${e(fmtCorto(t.fecha))} · ${e(t.de)} → ${e(t.a)}</b>
-      <div class="dx-mut">${e(t.nom)}${t.numero ? ' ' + e(t.numero) : ''}${t.horas ? ' · ' + e(t.horas) : ''}${t.precio ? ' · ' + e(t.precio) : ''}</div>${t.nota ? `<div class="dx-nota">📝 ${e(t.nota)}</div>` : ''}</div></div>`).join('')) : ''}
+      <div class="dx-mut">${e(t.nom)}${t.numero ? ' ' + e(t.numero) : ''}${t.horas ? ' · ' + e(t.horas) : ''}${t.precio ? ' · ' + e(t.precio) : ''}${t.val ? ` <span class="dx-est">${estrTxt(t.val)}</span>` : ''}</div></div></div>`).join('')) : ''}
   ${sec('📅', 'Día a día', EX_COL.hoy, D.dias.map(d => `<article class="dx-dia"><div class="dx-dcab"><span>DÍA ${d.n}</span>${e(exFecha(d.fecha))} · ${e(d.ciudad)}${d.cara ? `<i>${d.cara}</i>` : ''}</div>
       ${ft(d.wiki)}<div class="dx-dcuerpo">${d.titulo ? `<h3>${e(d.titulo)}</h3>` : ''}
-      ${d.sitios.length ? `<div class="dx-chips"><b class="${d.visto ? 'ok' : ''}">${d.visto ? '✅ Vimos' : '📍 Plan'}</b>${d.sitios.map(s => `<span>${e(s)}</span>`).join('')}</div>` : ''}
-      ${d.notas.map(x => `<div class="dx-nota">📝 <b>${e(x.es)}:</b> ${e(x.t)}</div>`).join('')}${d.diario ? `<div class="dx-diario">📔 ${e(d.diario)}</div>` : ''}</div></article>`).join(''), true)}
+      ${d.sitios.length ? `<div class="dx-chips"><b class="${d.visto ? 'ok' : ''}">${d.visto ? '✅ Vimos' : '📍 Plan'}</b>${d.sitios.map(s => { const m = s.match(/^(.*?) ([★☆]{5})$/); return m ? `<span>${e(m[1])} <i class="dx-est">${m[2]}</i></span>` : `<span>${e(s)}</span>`; }).join('')}</div>` : ''}
+      ${d.diario ? `<div class="dx-diario">📔 ${e(d.diario)}</div>` : ''}</div></article>`).join(''), true)}
   ${D.comidos.length ? sec('🍜', 'Dónde comimos', EX_COL.comer, `<div class="dx-comer">${D.comidos.map(c => `<div class="dx-card">${ft(c.wiki, 'dx-mini')}<b class="dx-c">${e(c.nombre)}</b> <span class="dx-mut">${e(c.ko)}</span>
       ${c.val ? `<div class="dx-est">${'★'.repeat(c.val)}<span>${'☆'.repeat(5 - c.val)}</span></div>` : ''}<div class="dx-mut">${e(c.ciudad)}${c.plato ? ' · ' + e(c.plato) : ''}</div>${c.nota ? `<div class="dx-nota">📝 ${e(c.nota)}</div>` : ''}</div>`).join('')}</div>`, true) : ''}
-  ${D.top.length ? sec('⭐', 'Imprescindibles para nosotros', EX_COL.oro, `<ul>${D.top.map(c => `<li><b>${e(c.nombre)}</b> <span class="dx-mut">(${e(c.ciudad)})</span></li>`).join('')}</ul>`) : ''}
-  ${D.resto.length ? sec('📝', 'Más notas nuestras', EX_COL.mas, `<ul>${D.resto.map(x => `<li><b>${e(x.es)}:</b> ${e(x.t)}</li>`).join('')}</ul>`) : ''}
+  ${D.top.length ? sec('⭐', 'Imprescindibles para nosotros', EX_COL.oro, `<ul>${D.top.map(c => `<li><b>${e(c.nombre)}</b>${c.ciudad ? ` <span class="dx-mut">(${e(c.ciudad)})</span>` : ''}${c.val ? ` <span class="dx-est">${estrTxt(c.val)}</span>` : ''}</li>`).join('')}</ul>`) : ''}
   ${D.malos.length ? sec('👎', 'No merece tanto la pena', EX_COL.historia, `<ul>${D.malos.map(m => `<li>${e(m)}</li>`).join('')}</ul>`) : ''}
   ${sec('💡', 'Consejos prácticos', EX_COL.planes, `<ul>${D.consejos.map(c => `<li>${e(c)}</li>`).join('')}</ul>`)}
   <div class="dx-franja"></div>`;
