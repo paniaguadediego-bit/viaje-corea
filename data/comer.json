@@ -1996,5 +1996,25 @@
   "fuente": "Polle",
   "fecha": "2026-11"
  }
+},
+{
+ "id": "se-kampungku",
+ "ciudad": "seul",
+ "nombre": "Kampungku (malasio, halal)",
+ "ko": "캄풍쿠 레스토랑",
+ "tipo": "restaurante",
+ "plato": "nasi lemak (chef malasio)",
+ "direccion": "16-4 Namsan-dong 2-ga, Jung-gu · a 5 min de la salida 2 del metro Myeongdong",
+ "horario": "11:00-21:00 VERIFICAR",
+ "precio": "10.000-20.000 ₩",
+ "fuente": "propio",
+ "url": "https://mapthemeal.com/seoul/myeongdong/kampungku-restaurant",
+ "nota": "Nos encantó: merece la pena. Comida malasia halal; el nasi lemak es lo más recomendado (a veces se acaba).",
+ "opiniones": {
+  "v": 4.7,
+  "n": 4065,
+  "fuente": "Google (captura)",
+  "fecha": "2026-11"
+ }
 }
 ]

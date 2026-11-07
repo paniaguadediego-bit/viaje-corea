@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v144
+Caché del service worker: corea-v145
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -196,6 +196,7 @@ Caché del service worker: corea-v144
 - v142: el horario del día propone "🍜 comer aquí" en un mercado o zona de comida si se llega desde las 11:30 (antes, desde las 12:00), para no poner la comida aparte justo después. En el trip.json privado: Jeonju Hyanggyo pasa al día 15 (el lunes 16 cierra) y el mercado Nambu al 16 a mediodía (el domingo 15 no hay mercado nocturno).
 - v143: (1) SIN_TAXI en contenido.js: cómo llegar en bus o tren a los sitios lejanos del día 8 en adelante (Hahoe 246, Woryeonggyo, Dosan Seowon 567 o bus turístico, Bongjeongsa 351, Bulguksa 10/11, Seokguram 12, Gamcheon metro + bus de barrio, Haedong Yonggungsa 181/1001 o tren Donghae + 139, Cheongsapo con el tren de la playa, Blueline Park, Huinnyeoul); en la Ruta del día sale "🚌 Sin taxi:" bajo los tramos en taxi, con VERIFICAR (datos de blogs y prensa coreana 2019-2026). (2) Nuevos sitios en Busan: Aldea cultural Huinnyeoul y Sky Capsule de Blueline (con horario y precios de 2026; se reconoce en el día 14). (3) Comer: Geumsu Bokguk (pez globo, Haeundae, 24 h, Michelin 2025 VERIFICAR, Siksin 3,9), Haeundae Wonjo Halmae Gukbap (Siksin 3,9; opiniones divididas) y Kkachigumeongjip (heotjesabap junto a Woryeonggyo, Andong). [Supuesto] Reddit y Google Maps no se pueden consultar desde aquí: las valoraciones son de Siksin y Polle, y los sitios con nota baja (p. ej. Gyori Gimbap, 3,4) no se añaden.
 - v144: "⚠️ Mucho ojo con…" (MUCHO_OJO en contenido.js): desplegable en Comer por ciudad y aviso en la tarjeta de Comer y en la ficha de Planes. Casos con fuente: cobros abusivos en el mercado Gwangjang (2023-2025), precios de los puestos de Myeongdong (15-40 % sobre la media), marisco «a precio de mercado» en Jagalchi (multa en 2025) y Gyori Gimbap (famoso, Polle 3,4; añadido a Comer). En el trip.json privado, cada traslado lleva cómo ir de la estación al hotel sin taxi (Andong, Gyeongju, Busan, Jeonju, Yongsan → Myeongdong por la línea 4 desde Sinyongsan).
+- v145: ideas aprobadas por el usuario. (1) Más → Datos y app → "📤 Pasar mis marcas": archivo corea-marcas que se comparte (WhatsApp…) y en el otro móvil se abre con "Importar viaje"; se UNEN visitados, favoritas, diario, Comer, agenda, Hangul, Historia, horas del día, regalos y checklist (nunca se borra nada). (2) Tax free y último día: tema de la Guía ampliado y en "Antes de salir" del día del vuelo de vuelta: devolver saldo T-money, quiosco Tax Free y gastar wones. (3) ☔ Plan B si llueve en Sitios de Hoy (pronóstico ≥60 % o código de lluvia): hasta 5 sitios a cubierto de la ciudad por cercanía al hotel. (4) Aviso de último metro si la vuelta al hotel en metro pasa de las 23:00. (5) Más → 🎁 Regalos (para quién, qué, dónde, casilla de comprado; user.regalos). (6) Más → 📖 Resumen del viaje: texto con ruta, traslados, día a día (visitados, carita y nota), dónde comimos con estrellas, imprescindibles, lo que no merece tanto y consejos; copiar, compartir o .txt. Comer: Kampungku (Seúl, malasio halal, Google 4,7 con 4.065 reseñas según captura del usuario; horario VERIFICAR; coordenadas aproximadas).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
@@ -251,7 +252,7 @@ Recomendadas antes de salir (1, 2 y 3). Hechas en v75: 1 y 2. La 3 descartada po
 3. Exportar a calendario (.ics): vuelos, trenes, check-ins y reservas (Sky Capsule), con alarmas del móvil que funcionan sin la app y sin conexión. Necesita el trip.json.
 Durante el viaje (4 y 8 hechas en v77):
 4. Diario del día en Hoy (nota, foto, carita).
-5. Compartir marcas con Cristina (pasar visitados, notas, añadidos y valoraciones a su móvil).
+5. (Hecho en v145) Compartir marcas con Cristina (pasar visitados, notas, añadidos y valoraciones a su móvil).
 6. "Antes de salir" en días de traslado (pasaporte, cargadores, T-money, pagar hotel, hora del tren).
 Retoques (6 hecha en v83; 7 descartada: 7 pestañas van bien):
 7. Menos pestañas en la barra (juntar Planes con Ciudades o Comer).

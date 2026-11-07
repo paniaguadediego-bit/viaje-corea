@@ -29,9 +29,9 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    test de letras o carteles que repite lo fallado, user.hgTest; 🔗 Fuentes gratuitas HG_FUENTES) y ⭐ Favoritas (☆ en cada frase, palabra y cartel; user.favs; agrupadas en Frases, Palabras y Carteles)
    (la Historia, historia.js: 22 capítulos con marca de leído en user.leidos y diseño hanji/dancheong, pasó a su pestaña en v103). Más es una rejilla de iconos
    como la Guía (se toca y sale debajo): Maleta, Seguro,
-   Verificar, Documentos (fotos/PDF), Notas, Escala Pekín (hora de Pekín, vuestras escalas desde trip.vuelos,
+   Verificar, Documentos (fotos/PDF), Notas, 🎁 Regalos (user.regalos: para quién, qué, dónde, comprado), 📖 Resumen del viaje (texto con lo marcado: copiar, compartir, .txt), Escala Pekín (hora de Pekín, vuestras escalas desde trip.vuelos,
    tránsito, equipaje, internet, baterías, dinero y frases en chino a pantalla completa) y Datos y app (importar,
-   exportar, "Preparar para viajar" (con wifi: app offline, fotos, mapas, tiempo,
+   exportar, "📤 Pasar mis marcas" (archivo corea-marcas que al importarlo en el otro móvil se UNE, sin borrar nada), "Preparar para viajar" (con wifi: app offline, fotos, mapas, tiempo,
    cambio y aviso de copia), actualizar, borrar). En Hoy, botón rojo "🆘 Ayuda"
    a pantalla completa: hotel de esta noche en hangul grande, 112/119/1330,
    seguro y Embajada de España (urgencia consular VERIFICAR). El conversor ₩/€
@@ -73,7 +73,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    primer sitio, fecha, título y tiempo), etiquetas con los sitios del día
    y nombres propios en negrita, y botones Sitios / Hotel / Ciudad / Diario bajo la tarjeta del día (Mañana quitado en v88;
    el traslado va dentro de Sitios, al principio, desde v89) (hotel por fechas, no por ciudad),
-   "🧳 Antes de salir" (plegable) al principio de Sitios los días que se deja hotel (vuelo, tren, pagar hotel, pasaportes…; casillas por fecha),
+   "☔ Plan B" a cubierto si el pronóstico marca lluvia, aviso de último metro si la vuelta en metro pasa de las 23:00, "🧳 Antes de salir" (plegable; el día del vuelo de vuelta: saldo T-money, quiosco Tax Free y wones) al principio de Sitios los días que se deja hotel (vuelo, tren, pagar hotel, pasaportes…; casillas por fecha),
    "📔 Diario" (carita y nota por día en user.diario; resumen en Más → Notas;
    en viaje, días pasados atenuados, avisos solo en días con traslado y sin avisos de compras pasadas), tarjeta "Ahora" (lo próximo con hora o cuenta
    atrás) en Hoy, 🔊 escuchar en coreano (voz del móvil, speechSynthesis ko-KR; dos toques = despacio) en Frases, Diccionario y toda pantalla completa con hangul, hora de Canarias en la cabecera (entre 💱 y la versión; la de Corea no: la da el móvil), frases por situación en Corea, fotos y PDF de

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v144';
+const VERSION = 'v145';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -277,6 +277,10 @@ function importFile(file) {
     try {
       const obj = JSON.parse(r.result);
       if (!obj || typeof obj !== 'object' || Array.isArray(obj)) throw new Error();
+      if (obj.tipo === 'corea-marcas' && obj.user) { // marcas del otro móvil: se unen a las mías
+        const n = fundirMarcas(obj.user); render();
+        alert(`Marcas unidas: ${n.hecho} visitados, ${n.favs} favoritas, ${n.diario} días del diario, ${n.comer} sitios de Comer y ${n.regalos} regalos nuevos. No se ha borrado nada.`); return;
+      }
       if (obj.trip && obj.user) { // copia exportada por esta app
         trip = obj.trip; user = obj.user; save(K_USER, user);
         if (Array.isArray(obj.fotos)) {
@@ -296,6 +300,107 @@ function importFile(file) {
     }
   };
   r.readAsText(file);
+}
+// ---------- Compartir marcas entre móviles, regalos y resumen del viaje ----------
+// Guarda o comparte un archivo (en el móvil abre el menú de compartir: WhatsApp, correo…).
+async function compartirArchivo(nombre, texto, tipo) {
+  const blob = new Blob([texto], { type: tipo });
+  try { const file = new File([blob], nombre, { type: tipo });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: nombre }); return; } }
+  catch (e) { if (e && e.name === 'AbortError') return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nombre; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+// Marcas: lo que cada uno apunta en su móvil. Se pasan en un archivo y se UNEN (nunca se borra nada).
+const MARCAS = ['hecho', 'favs', 'diario', 'comer', 'agenda', 'hgLeidas', 'leidos', 'regalos', 'hdIni', 'hdLev', 'checklist'];
+function exportMarcas() {
+  const U = u(), m = {}; MARCAS.forEach(k => { if (U[k] != null) m[k] = U[k]; });
+  compartirArchivo(`corea-marcas-${todayISO()}.json`, JSON.stringify({ tipo: 'corea-marcas', fecha: new Date().toISOString(), user: m }), 'application/json');
+}
+function fundirMarcas(o) {
+  const U = u(), n = { hecho: 0, favs: 0, diario: 0, comer: 0, regalos: 0 };
+  const junta = (a, b) => !a ? b : !b || a === b || a.includes(b) ? a : a + '\n— ' + b;
+  U.hecho = U.hecho || {}; Object.entries(o.hecho || {}).forEach(([k, v]) => { if (v && !U.hecho[k]) { U.hecho[k] = v; n.hecho++; } });
+  U.favs = arr(U.favs); arr(o.favs).forEach(f => { if (f && !U.favs.some(x => x.k === f.k)) { U.favs.push(f); n.favs++; } });
+  U.diario = U.diario || {}; Object.entries(o.diario || {}).forEach(([f, d]) => { const m = U.diario[f] = U.diario[f] || {}, antes = JSON.stringify(m);
+    if (!m.cara && d.cara) m.cara = d.cara; const nt = junta(m.nota, d.nota); if (nt) m.nota = nt; if (JSON.stringify(m) !== antes) n.diario++; });
+  U.comer = U.comer || {}; Object.entries(o.comer || {}).forEach(([id, c]) => { const m = U.comer[id] = U.comer[id] || {}, antes = JSON.stringify(m);
+    if (!m.estado && c.estado) m.estado = c.estado; if (Number(c.val) > 0 && !(Number(m.val) > 0)) m.val = c.val;
+    const nt = junta(m.nota, c.nota); if (nt) m.nota = nt; if (!m.op && c.op) m.op = c.op; if (JSON.stringify(m) !== antes) n.comer++; });
+  U.agenda = U.agenda || {}; Object.entries(o.agenda || {}).forEach(([f, a]) => { const m = U.agenda[f] = U.agenda[f] || { add: [], del: [], orden: null };
+    m.add = [...new Set([...arr(m.add), ...arr(a.add)])]; m.del = [...new Set([...arr(m.del), ...arr(a.del)])]; });
+  ['hgLeidas', 'leidos', 'hdIni', 'hdLev'].forEach(k => { U[k] = U[k] || {}; Object.entries(o[k] || {}).forEach(([a, b]) => { if (b && !U[k][a]) U[k][a] = b; }); });
+  U.regalos = arr(U.regalos); arr(o.regalos).forEach(r => { const x = U.regalos.find(x => x.id === r.id); if (!x) { U.regalos.push(r); n.regalos++; } else x.ok = x.ok || r.ok; });
+  U.checklist = U.checklist || {}; Object.entries(o.checklist || {}).forEach(([a, b]) => { if (b) U.checklist[a] = b; });
+  saveUser(); return n;
+}
+// 🎁 Regalos y souvenirs: para quién, qué y dónde; casilla de comprado.
+function viewRegalos() {
+  const rs = arr(u().regalos), hechos = rs.filter(r => r.ok).length;
+  return `<h2>🎁 Regalos y souvenirs</h2>
+    <div class="card rg-form"><input id="rg-para" placeholder="Para quién (p. ej. mamá)" autocomplete="off"><input id="rg-que" placeholder="Qué (p. ej. mascarillas)" autocomplete="off">
+      <input id="rg-donde" placeholder="Dónde (opcional: Olive Young, Insadong…)" autocomplete="off"><button data-rgadd>＋ Añadir</button></div>
+    ${rs.length ? `<p class="muted">${hechos} de ${rs.length} comprados</p>${rs.map(r => `<div class="card rg ${r.ok ? 'ok' : ''}"><button class="hd-ck ${r.ok ? 'on' : ''}" data-rgok="${esc(r.id)}" aria-label="Comprado">${r.ok ? '✓' : ''}</button>
+      <div class="rg-t"><b>${esc(r.que)}</b><small>${esc(r.para)}${r.donde ? ' · 📍 ' + esc(r.donde) : ''}</small></div><button class="sec mini" data-rgdel="${esc(r.id)}" aria-label="Quitar">✕</button></div>`).join('')}`
+      : '<p class="muted">Apunta aquí lo que queréis traer y a quién; al comprarlo, marca la casilla.</p>'}`;
+}
+// 📖 Resumen del viaje: lo que hicisteis, para guardarlo o pasárselo a quien prepare su viaje.
+function textoResumen() {
+  const U = u(), L = [], dias = arr(trip.dias).filter(d => d.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha));
+  const CARA = { '😍': 'genial', '🙂': 'bien', '😐': 'normal', '😴': 'cansado', '😩': 'duro' };
+  L.push(`🇰🇷 ${(trip.meta && trip.meta.titulo) || 'Viaje a Corea del Sur'}`);
+  if (dias.length) L.push(`${fmtCorto(dias[0].fecha)} → ${fmtCorto(dias[dias.length - 1].fecha)} · ${dias.length} días`);
+  const cs = arr(trip.ciudades).filter(c => c && c.desde && !/espa/i.test(c.nombre));
+  if (cs.length) { L.push('', '🗺️ RUTA');
+    cs.forEach(c => { const k = ck(c.nombre), no = c.hasta ? Math.round((new Date(c.hasta) - new Date(c.desde)) / 864e5) : 0;
+      const h = arr(trip.alojamientos).find(a => ck(a.ciudad) === k && String(a.fechas || '').startsWith(c.desde)) || arr(trip.alojamientos).find(a => ck(a.ciudad) === k);
+      L.push(`• ${c.nombre}: ${fmtCorto(c.desde)}${c.hasta ? ' → ' + fmtCorto(c.hasta) : ''}${no ? ` (${no} noche${no > 1 ? 's' : ''})` : ''}${h ? ' · 🛏️ ' + h.nombre : ''}`); }); }
+  const tr = arr(trip.traslados).filter(t => t && t.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha));
+  if (tr.length) { L.push('', '🚆 CÓMO NOS MOVIMOS');
+    tr.forEach(t => { const b = billete(t) || {}, [ic, nom] = medio(t);
+      L.push(`• ${fmtCorto(t.fecha)} ${lugarCorto(t.de)} → ${lugarCorto(t.a)}: ${ic} ${nom}${b.numero ? ' ' + b.numero : ''}${b.salida ? ` (${b.salida}-${b.llegada || '?'})` : ''}${b.precio ? ' · ' + b.precio : ''}`); }); }
+  L.push('', '📅 DÍA A DÍA');
+  dias.forEach((d, i) => { const k = ck(d.ciudad), ls = listaDia(d), vis = ls.filter(l => hecho(l, k)), di = diarioDe(d.fecha);
+    L.push(`Día ${i + 1} · ${fmtCorto(d.fecha)} · ${d.ciudad}${d.titulo ? ' — ' + d.titulo : ''}${di.cara ? ` ${di.cara}${CARA[di.cara] ? ' (' + CARA[di.cara] + ')' : ''}` : ''}`);
+    if (vis.length) L.push(`   ✅ ${vis.map(l => l.es).join(', ')}`); else if (ls.length) L.push(`   📍 Plan: ${ls.map(l => l.es).join(', ')}`);
+    if (di.nota) L.push(`   📔 ${String(di.nota).replace(/\n+/g, ' ')}`); });
+  const lc = lugaresComer(), est = c => estadoDe(String(c.id)), cn = c => (CIUDADES_COMER.find(x => x[0] === c.ciudad) || [])[1] || c.ciudad;
+  const comidos = lc.filter(c => est(c).estado === 'visitado' || Number(est(c).val) > 0 || hecho(c, c.ciudad));
+  if (comidos.length) { L.push('', '🍜 DÓNDE COMIMOS');
+    comidos.sort((a, b) => (Number(est(b).val) || 0) - (Number(est(a).val) || 0)).forEach(c => { const e = est(c);
+      L.push(`• ${cn(c)} · ${c.nombre}${c.ko ? ` (${c.ko})` : ''}${c.plato ? ' — ' + c.plato : ''}${Number(e.val) > 0 ? ' ' + '★'.repeat(Number(e.val)) : ''}${e.nota ? ' · ' + String(e.nota).replace(/\n+/g, ' ') : ''}`); }); }
+  const top = comidos.filter(c => Number(est(c).val) >= 4);
+  if (top.length) { L.push('', '⭐ IMPRESCINDIBLES PARA NOSOTROS'); top.forEach(c => L.push(`• ${c.nombre} (${cn(c)})`)); }
+  const malos = [...lc.filter(c => est(c).estado === 'descartado').map(c => `${c.nombre} (${cn(c)})`), ...(typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).map(o => o.es + ' (ojo con los precios o las colas)')];
+  if (malos.length) { L.push('', '👎 NO MERECE TANTO LA PENA'); malos.forEach(m => L.push('• ' + m)); }
+  L.push('', '💡 CONSEJOS PRÁCTICOS',
+    '• Apps: Naver Map o Kakao Map (Google Maps no da rutas a pie ni en coche en Corea), Kakao T para taxis y Papago para traducir.',
+    '• Tarjeta T-money para metro y bus (se recarga en tiendas 24 h y en las máquinas del metro).',
+    '• Trenes KTX con Korail o Trip.com; autobuses entre ciudades con Kobus o Klook.',
+    '• Tax Free con el pasaporte en tiendas con el logo (cosmética y ropa).',
+    '• Ritmo tranquilo: pocas paradas al día y cenar hacia las 19:30.');
+  return L.join('\n');
+}
+function viewResumen() {
+  const t = textoResumen();
+  return `<h2>📖 Resumen del viaje</h2>
+    <p class="muted">Se genera con lo que habéis marcado: visitados, caritas y notas del diario, Comer (✅, estrellas y notas) y descartados. Ideal para pasárselo a quien prepare su viaje.</p>
+    <div class="acciones"><button data-resumen="copiar">📋 Copiar</button><button class="sec" data-resumen="compartir">📤 Compartir</button><button class="sec" data-resumen="txt">⬇️ Descargar .txt</button></div>
+    <pre class="resumen">${esc(t)}</pre>`;
+}
+// ☔ Plan B si llueve: si el pronóstico del día marca lluvia, sitios a cubierto de la ciudad (los del día, primero).
+function planLluvia(d) {
+  const k = ck(d.ciudad), w = TIEMPO && TIEMPO.c && TIEMPO.c[k] && TIEMPO.c[k][d.fecha]; if (!w) return '';
+  const [code, , , prob] = w, lluvia = Number(prob) >= 60 || [51, 53, 55, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99].includes(Number(code));
+  if (!lluvia) return '';
+  const c = ciudadesUnicas().find(x => ck(x.nombre) === k), cub = /museo|mercado|biblioteca|spa|coex|starfield|prisi|memorial|exposici|centro cultural|teatro|galer|dragon hill|jjimjil/i;
+  const hc = hotelDe(k), ls = qvLista(k, c).filter(o => cub.test((o.l.tipo || '') + ' ' + o.l.es) && !hecho(o.l, k))
+    .sort((a, b) => (hc && coordsLugar(a.l) && coordsLugar(b.l) ? km(hc, coordsLugar(a.l)) - km(hc, coordsLugar(b.l)) : 0)).slice(0, 5);
+  const txt = arr(d.items).filter(i => /llueve|lluvia/i.test(i.texto || '')).map(i => i.texto);
+  if (!ls.length && !txt.length) return '';
+  return `<div class="card plan-b"><b>☔ Previsión de lluvia${prob != null ? ` (${prob} %)` : ''}: plan B a cubierto</b>
+    ${txt.map(t => `<div class="muted">${resaltar(t, true)}</div>`).join('')}
+    <ul>${ls.map(o => `<li>${icSitio(o.l.es)} ${esc(o.l.es)}${hc && coordsLugar(o.l) ? ` <span class="muted">${fmtDist(km(hc, coordsLugar(o.l)))}</span>` : ''} ${irQV(o.l, k)}</li>`).join('')}</ul></div>`;
 }
 async function exportCopy() {
   await cargarFotos();
@@ -381,7 +486,10 @@ function antesSalir(f, tr, al) {
   add('carg', '🔌 Cargadores, batería externa y adaptador');
   add('rev', '🧺 Revisar armario, baño, enchufes y caja fuerte');
   add('llave', '🔑 Devolver la llave o tarjeta de la habitación');
-  add('tm', '💳 T-money con saldo');
+  const vueloHoy = arr(trip.vuelos).some(v => v.tipo === 'vuelta' && arr(v.tramos).some(x => x.vuelo && String(x.salida || '').startsWith(f)));
+  if (vueloHoy) { add('tmref', '💳 Recuperar el saldo de la T-money en una tienda 24 h (hasta 20.000 ₩, 500 ₩ de comisión: VERIFICAR)');
+    add('tax', '🧾 Tax Free: tickets y pasaporte a mano para el quiosco de devolución de Incheon'); add('won', '💴 Gastar los wones que sobren (en el aeropuerto el cambio es peor)'); }
+  else add('tm', '💳 T-money con saldo');
   if (al.noche && al.noche !== al.sale && !/espana/.test(ck(al.noche.ciudad))) add('sig', `📍 Próximo hotel: ${al.noche.nombre} (dirección en 🆘 Ayuda para el taxi)`);
   const U = u(), sc = 'antes:' + f, tot = it.length + arr(U.extra[sc]).length, hechos = Object.keys(U.checklist).filter(k => k.startsWith(sc + '|') && U.checklist[k]).length;
   return `<details class="card antes" data-key="${sc}" ${abierto(sc, false) ? 'open' : ''}><summary><b>🧳 Antes de salir</b> <span class="muted">(${hechos} de ${tot})</span></summary>${checks(sc, it)}</details>`;
@@ -736,7 +844,8 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
     if (!comido) { const cm = Math.max(t, 13 * 60 + 30); add(cm, '🍜', 'Comida', '1 h', cm + 60, 'c'); t = cm + 60; }
     let fin = t;
     if (!cenado) { if (t < 19 * 60 + 30) add(t, '☕', 'Tiempo libre, café o compras'); const cena = Math.max(t, 19 * 60 + 30); add(cena, '🍽️', 'Cena', 'hacia las ' + hhmm(cena), cena + 75, 'c'); fin = cena + 75; }
-    if (hot && prev) { const v = minutosTramo(prev, hot); add(fin + v.m, '🛏️', 'Vuelta al hotel', `${v.modo} ~${v.m} min`); }
+    if (hot && prev) { const v = minutosTramo(prev, hot), tarde = v.modo === '🚇' && fin + v.m > 23 * 60;
+      add(fin + v.m, '🛏️', 'Vuelta al hotel', `${v.modo} ~${v.m} min${tarde ? ' · ⚠️ el último metro sale hacia medianoche: VERIFICAR en Naver' : ''}`); }
     return { L, fin, avisos };
   };
   // 1) Todo tal cual; 2) visitas más cortas; 3) quitar sitios del final (primero los añadidos; nunca los de hora fija).
@@ -797,7 +906,7 @@ function sitiosDia(d) {
     const alFinal = km(puntos[puntos.length - 1].c, c);
     return best && best.dv < alFinal - 0.2 ? `<div class="encaje">💡 Os pilla de paso entre ${esc(best.a)} y ${esc(best.b)} (desvío ~${fmtDist(best.dv)}).</div>` : ''; };
   const hc = hot ? [Number(hot.lat), Number(hot.lon)] : null, conMapa = [...auto, ...extras].some(l => coordsLugar(l));
-  return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${horarioDia(d, hc, [...auto, ...extras], auto.length)}<b>📖 Ruta del día</b>
+  return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${horarioDia(d, hc, [...auto, ...extras], auto.length)}${planLluvia(d)}<b>📖 Ruta del día</b>
     ${naverDia(hc, hot && (hot.ko || hot.nombre), [...auto, ...extras])}
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>` : ''}
     ${auto.map(l => fila(l, false)).join('')}
@@ -2334,7 +2443,7 @@ function viewVerificar() {
 // Más con rejilla de iconos, como la Guía de Corea: se toca un tema y sale debajo.
 let masSub = 'maleta';
 const MAS_SUB = [['maleta', 'Maleta', '🧳'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'],
-  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️']];
+  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['resumen', 'Resumen del viaje', '📖'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️']];
 function viewMas() {
   const pend = trip ? pendientesVerificar().reduce((a, [, ls]) => a + ls.filter(x => !verificado(x.key)).length, 0) : 0;
   const subs = trip ? MAS_SUB : MAS_SUB.filter(([k]) => k === 'datos');
@@ -2346,10 +2455,15 @@ function viewMas() {
   else if (masSub === 'verificar') c = viewVerificar();
   else if (masSub === 'docs') c = viewFotos();
   else if (masSub === 'escala') c = viewEscala();
+  else if (masSub === 'regalos') c = viewRegalos();
+  else if (masSub === 'resumen') c = viewResumen();
   else if (masSub === 'notas') c = `<h2>📝 Notas</h2><textarea data-notas rows="10" placeholder="Escribe aquí… (se guarda solo)">${esc(u().notas)}</textarea>${diarioResumen()}`;
   else c = `<h2>Datos del viaje</h2>
     <button data-act="import">📂 Importar viaje</button>
     <button class="sec" data-act="export">💾 Exportar copia</button>
+    <h2>Con el otro móvil</h2>
+    <button class="sec" data-act="marcas">📤 Pasar mis marcas</button>
+    <p class="muted">Manda por WhatsApp un archivo con visitados, favoritas, diario, Comer y regalos. En el otro móvil: 📂 Importar viaje y elegirlo; se unen a las suyas sin borrar nada.</p>
     <p class="muted">Última copia: <b>${esc(localStorage.getItem('corea.ultimaCopia') || 'nunca')}</b></p>
     <h2>App</h2>
     ${prepCard()}
@@ -2495,6 +2609,17 @@ document.addEventListener('click', e => {
   const fv = e.target.closest('[data-fav]');
   if (fv) { const U = u(), d = fv.dataset; U.favs = arr(U.favs);
     if (U.favs.some(f => f.k === d.fav)) U.favs = U.favs.filter(f => f.k !== d.fav); else U.favs.unshift({ k: d.fav, es: d.es, ko: d.ko, rom: d.rom });
+    saveUser(); render(); return; }
+  const rg = e.target.closest('[data-rgadd],[data-rgok],[data-rgdel],[data-resumen]');
+  if (rg) { const U = u(), d = rg.dataset; U.regalos = arr(U.regalos);
+    if (d.rgadd != null) { const v = id => (document.getElementById(id) || {}).value || '', que = v('rg-que').trim(); if (!que) { alert('Escribe qué quieres comprar.'); return; }
+      U.regalos.push({ id: 'r' + Date.now(), para: v('rg-para').trim() || 'Sin asignar', que, donde: v('rg-donde').trim(), ok: false }); }
+    else if (d.rgok) { const r = U.regalos.find(x => x.id === d.rgok); if (r) r.ok = !r.ok; }
+    else if (d.rgdel) { if (!confirm('¿Quitar este regalo?')) return; U.regalos = U.regalos.filter(x => x.id !== d.rgdel); }
+    else if (d.resumen) { const t = textoResumen();
+      if (d.resumen === 'copiar') { (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => alert('Resumen copiado.'), () => alert('No se pudo copiar: usa Descargar.')); return; }
+      if (d.resumen === 'compartir' && navigator.share) { navigator.share({ title: 'Nuestro viaje a Corea', text: t }).catch(() => {}); return; }
+      compartirArchivo(`viaje-corea-resumen-${todayISO()}.txt`, t, 'text/plain'); return; }
     saveUser(); render(); return; }
   const hb = e.target.closest('[data-habla]');
   if (hb) { hablar(hb.dataset.habla); return; }
@@ -2673,6 +2798,7 @@ document.addEventListener('click', e => {
   else switch (b.dataset.act) {
     case 'import': $('#file').click(); return;
     case 'export': exportCopy(); return;
+    case 'marcas': exportMarcas(); return;
     case 'update':
       // Quita el service worker y la caché (no toca viaje, gastos, notas ni fotos) y recarga.
       Promise.all([

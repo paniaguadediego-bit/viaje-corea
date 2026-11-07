@@ -193,9 +193,12 @@ const GUIA = [
     'Wifi gratis en metro, cafés y muchas calles; aun así, la eSIM con datos es muy útil para Naver Map y Papago.',
     'Algunas apps coreanas piden número coreano para registrarse: tenedlas probadas antes del viaje.'
   ]],
-  ['Compras y tax free', [
-    'En tiendas con el cartel "Tax Free" se puede pedir la devolución del IVA con el pasaporte; en muchas te lo descuentan en el momento.',
-    'El importe mínimo y el límite cambian: VERIFICAR en la tienda. Guarda los recibos; en el aeropuerto hay quioscos de devolución.'
+  ['Compras, tax free y último día', [
+    'En tiendas con el cartel "Tax Free" se pide la devolución del IVA con el pasaporte (llevadlo encima al comprar).',
+    'Mínimo unos 15.000 ₩ por recibo. Descuento en el momento en la tienda hasta 1.000.000 ₩ por compra y 5.000.000 ₩ por viaje. VERIFICAR.',
+    'Lo que no os descuenten en tienda: guardad los recibos y pasad por los quioscos de devolución del aeropuerto antes del control (con los productos sin abrir, por si los piden).',
+    'Último día: devolved el saldo de la T-money en una tienda 24 h (GS25, CU, 7-Eleven), hasta 20.000 ₩ y unos 500 ₩ de comisión. VERIFICAR. La tarjeta no se devuelve.',
+    'Gastad los wones sueltos (las monedas no se cambian en España) y recoged en el aeropuerto lo comprado en duty free online.'
   ]],
   ['Salud y farmacias', [
     'Farmacia = 약국 (yakguk). Hay muchas, pero cierran pronto y algunos domingos; en zonas turísticas suele haber alguna abierta.',
