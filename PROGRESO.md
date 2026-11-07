@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v147
+Caché del service worker: corea-v148
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -199,6 +199,7 @@ Caché del service worker: corea-v147
 - v145: ideas aprobadas por el usuario. (1) Más → Datos y app → "📤 Pasar mis marcas": archivo corea-marcas que se comparte (WhatsApp…) y en el otro móvil se abre con "Importar viaje"; se UNEN visitados, favoritas, diario, Comer, agenda, Hangul, Historia, horas del día, regalos y checklist (nunca se borra nada). (2) Tax free y último día: tema de la Guía ampliado y en "Antes de salir" del día del vuelo de vuelta: devolver saldo T-money, quiosco Tax Free y gastar wones. (3) ☔ Plan B si llueve en Sitios de Hoy (pronóstico ≥60 % o código de lluvia): hasta 5 sitios a cubierto de la ciudad por cercanía al hotel. (4) Aviso de último metro si la vuelta al hotel en metro pasa de las 23:00. (5) Más → 🎁 Regalos (para quién, qué, dónde, casilla de comprado; user.regalos). (6) Más → 📖 Resumen del viaje: texto con ruta, traslados, día a día (visitados, carita y nota), dónde comimos con estrellas, imprescindibles, lo que no merece tanto y consejos; copiar, compartir o .txt. Comer: Kampungku (Seúl, malasio halal, Google 4,7 con 4.065 reseñas según captura del usuario; horario VERIFICAR; coordenadas aproximadas).
 - v146: quitada Cosmética de Miscelánea (Olive Young, Daiso y grandes almacenes) a petición del usuario: hay cientos de tiendas cerca y no hace falta apuntar ninguna. Miscelánea abre en Curioso.
 - v147: Regalos con "✍️ Lo apunta": cada móvil escribe su nombre una vez (corea.yo, solo en ese móvil, no va en trip.json ni en el repo) y cada regalo nuevo lo lleva; viaja al pasar marcas y hay filtro Todos / por nombre cuando apuntan dos. [Supuesto] Los regalos antiguos quedan sin autor.
+- v148: "📝 Nuestra nota" en cada ficha de Planes (puntos de interés y Miscelánea), en cada hotel (Hoy → Hotel) y en cada traslado (Ruta). Se guarda sola al escribir (user.notasSitio), se une al pasar marcas y sale en el Resumen: hoteles bajo la Ruta, traslados bajo cada trayecto, sitios bajo su día y el resto en "Más notas nuestras". Comer sigue con su nota propia.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

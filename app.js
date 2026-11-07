@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v147';
+const VERSION = 'v148';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -312,7 +312,7 @@ async function compartirArchivo(nombre, texto, tipo) {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 // Marcas: lo que cada uno apunta en su móvil. Se pasan en un archivo y se UNEN (nunca se borra nada).
-const MARCAS = ['hecho', 'favs', 'diario', 'comer', 'agenda', 'hgLeidas', 'leidos', 'regalos', 'hdIni', 'hdLev', 'checklist'];
+const MARCAS = ['hecho', 'notasSitio', 'favs', 'diario', 'comer', 'agenda', 'hgLeidas', 'leidos', 'regalos', 'hdIni', 'hdLev', 'checklist'];
 function exportMarcas() {
   const U = u(), m = {}; MARCAS.forEach(k => { if (U[k] != null) m[k] = U[k]; });
   compartirArchivo(`corea-marcas-${todayISO()}.json`, JSON.stringify({ tipo: 'corea-marcas', fecha: new Date().toISOString(), user: m }), 'application/json');
@@ -331,6 +331,8 @@ function fundirMarcas(o) {
     m.add = [...new Set([...arr(m.add), ...arr(a.add)])]; m.del = [...new Set([...arr(m.del), ...arr(a.del)])]; });
   ['hgLeidas', 'leidos', 'hdIni', 'hdLev'].forEach(k => { U[k] = U[k] || {}; Object.entries(o[k] || {}).forEach(([a, b]) => { if (b && !U[k][a]) U[k][a] = b; }); });
   U.regalos = arr(U.regalos); arr(o.regalos).forEach(r => { const x = U.regalos.find(x => x.id === r.id); if (!x) { U.regalos.push(r); n.regalos++; } else x.ok = x.ok || r.ok; });
+  U.notasSitio = U.notasSitio || {}; Object.entries(o.notasSitio || {}).forEach(([k, x]) => { if (!x || !x.t) return; const m = U.notasSitio[k], t = junta(m && m.t, x.t);
+    if (!m || t !== m.t) { U.notasSitio[k] = { n: (m && m.n) || x.n, t }; n.notas = (n.notas || 0) + 1; } });
   U.checklist = U.checklist || {}; Object.entries(o.checklist || {}).forEach(([a, b]) => { if (b) U.checklist[a] = b; });
   saveUser(); return n;
 }
@@ -361,20 +363,26 @@ function textoResumen() {
     cs.forEach(c => { const k = ck(c.nombre), no = c.hasta ? Math.round((new Date(c.hasta) - new Date(c.desde)) / 864e5) : 0;
       const h = arr(trip.alojamientos).find(a => ck(a.ciudad) === k && String(a.fechas || '').startsWith(c.desde)) || arr(trip.alojamientos).find(a => ck(a.ciudad) === k);
       L.push(`• ${c.nombre}: ${fmtCorto(c.desde)}${c.hasta ? ' → ' + fmtCorto(c.hasta) : ''}${no ? ` (${no} noche${no > 1 ? 's' : ''})` : ''}${h ? ' · 🛏️ ' + h.nombre : ''}`); }); }
+  const NS = { ...(U.notasSitio || {}) }, usa = k => { const x = NS[k]; delete NS[k]; return x && x.t ? String(x.t).replace(/\n+/g, ' ') : ''; };
+  arr(trip.alojamientos).forEach(a => { const t = usa('h:' + (a.id || a.nombre)); if (t) L.push(`   📝 ${a.nombre}: ${t}`); });
   const tr = arr(trip.traslados).filter(t => t && t.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha));
   if (tr.length) { L.push('', '🚆 CÓMO NOS MOVIMOS');
     tr.forEach(t => { const b = billete(t) || {}, [ic, nom] = medio(t);
-      L.push(`• ${fmtCorto(t.fecha)} ${lugarCorto(t.de)} → ${lugarCorto(t.a)}: ${ic} ${nom}${b.numero ? ' ' + b.numero : ''}${b.salida ? ` (${b.salida}-${b.llegada || '?'})` : ''}${b.precio ? ' · ' + b.precio : ''}`); }); }
+      L.push(`• ${fmtCorto(t.fecha)} ${lugarCorto(t.de)} → ${lugarCorto(t.a)}: ${ic} ${nom}${b.numero ? ' ' + b.numero : ''}${b.salida ? ` (${b.salida}-${b.llegada || '?'})` : ''}${b.precio ? ' · ' + b.precio : ''}`);
+      const nt = usa('t:' + (t.id || t.fecha + t.de)); if (nt) L.push(`   📝 ${nt}`); }); }
   L.push('', '📅 DÍA A DÍA');
   dias.forEach((d, i) => { const k = ck(d.ciudad), ls = listaDia(d), vis = ls.filter(l => hecho(l, k)), di = diarioDe(d.fecha);
     L.push(`Día ${i + 1} · ${fmtCorto(d.fecha)} · ${d.ciudad}${d.titulo ? ' — ' + d.titulo : ''}${di.cara ? ` ${di.cara}${CARA[di.cara] ? ' (' + CARA[di.cara] + ')' : ''}` : ''}`);
     if (vis.length) L.push(`   ✅ ${vis.map(l => l.es).join(', ')}`); else if (ls.length) L.push(`   📍 Plan: ${ls.map(l => l.es).join(', ')}`);
+    ls.forEach(l => { const t = usa(hKey(l)); if (t) L.push(`   📝 ${l.es}: ${t}`); });
     if (di.nota) L.push(`   📔 ${String(di.nota).replace(/\n+/g, ' ')}`); });
   const lc = lugaresComer(), est = c => estadoDe(String(c.id)), cn = c => (CIUDADES_COMER.find(x => x[0] === c.ciudad) || [])[1] || c.ciudad;
   const comidos = lc.filter(c => est(c).estado === 'visitado' || Number(est(c).val) > 0 || hecho(c, c.ciudad));
   if (comidos.length) { L.push('', '🍜 DÓNDE COMIMOS');
     comidos.sort((a, b) => (Number(est(b).val) || 0) - (Number(est(a).val) || 0)).forEach(c => { const e = est(c);
       L.push(`• ${cn(c)} · ${c.nombre}${c.ko ? ` (${c.ko})` : ''}${c.plato ? ' — ' + c.plato : ''}${Number(e.val) > 0 ? ' ' + '★'.repeat(Number(e.val)) : ''}${e.nota ? ' · ' + String(e.nota).replace(/\n+/g, ' ') : ''}`); }); }
+  const resto = Object.values(NS).filter(x => x && x.t);
+  if (resto.length) { L.push('', '📝 MÁS NOTAS NUESTRAS'); resto.forEach(x => L.push(`• ${x.n || 'Sitio'}: ${String(x.t).replace(/\n+/g, ' ')}`)); }
   const top = comidos.filter(c => Number(est(c).val) >= 4);
   if (top.length) { L.push('', '⭐ IMPRESCINDIBLES PARA NOSOTROS'); top.forEach(c => L.push(`• ${c.nombre} (${cn(c)})`)); }
   const malos = [...lc.filter(c => est(c).estado === 'descartado').map(c => `${c.nombre} (${cn(c)})`), ...(typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).map(o => o.es + ' (ojo con los precios o las colas)')];
@@ -390,7 +398,7 @@ function textoResumen() {
 function viewResumen() {
   const t = textoResumen();
   return `<h2>📖 Resumen del viaje</h2>
-    <p class="muted">Se genera con lo que habéis marcado: visitados, caritas y notas del diario, Comer (✅, estrellas y notas) y descartados. Ideal para pasárselo a quien prepare su viaje.</p>
+    <p class="muted">Se genera con lo que habéis marcado: visitados, 📝 notas de sitios, hoteles y traslados, caritas y notas del diario, Comer (✅, estrellas y notas) y descartados. Ideal para pasárselo a quien prepare su viaje.</p>
     <div class="acciones"><button data-resumen="copiar">📋 Copiar</button><button class="sec" data-resumen="compartir">📤 Compartir</button><button class="sec" data-resumen="txt">⬇️ Descargar .txt</button></div>
     <pre class="resumen">${esc(t)}</pre>`;
 }
@@ -453,13 +461,16 @@ function alojDe(f) {
   const r = arr(trip.alojamientos).map(a => { const [ini, fin] = String(a.fechas || '').split(' a ').map(x => x.trim()); return { a, ini, fin: fin || (ini ? sumaDia(ini, Number(a.noches) || 1) : '') }; });
   return { noche: (r.find(x => x.ini && x.ini <= f && f < x.fin) || {}).a, sale: (r.find(x => x.fin === f) || {}).a };
 }
+// 📝 Nota propia en cualquier ficha (sitio, plan, hotel, traslado): user.notasSitio[clave] = {n: nombre, t: texto}. Sale en el Resumen.
+const notaDe = k => ((u().notasSitio || {})[k] || {}).t || '';
+const notaBox = (k, nombre) => `<textarea class="nota-sitio" data-nsk="${esc(k)}" data-nsn="${esc(nombre || '')}" rows="1" placeholder="📝 Nuestra nota (se guarda sola)">${esc(notaDe(k))}</textarea>`;
 const alojCard = (a, sale) => `<div class="card aloj">
     <div class="big">🛏️ ${esc(a.nombre)} ${ver(a)}</div>${sale ? '<div class="badge pend">Hoy dejáis este alojamiento</div>' : ''}
     ${a.ko ? `<div class="ko">${esc(a.ko)}</div>` : ''}
     ${a.direccion_ko ? `<div>${esc(a.direccion_ko)}</div>` : ''}
     ${a.direccion_en ? `<div class="muted">${esc(a.direccion_en)}</div>` : ''}
     ${a.nota ? `<div class="muted">${esc(a.nota)}</div>` : ''}
-    <div class="acciones">${naver(a)}</div></div>`;
+    <div class="acciones">${naver(a)}</div>${notaBox('h:' + (a.id || a.nombre), '🛏️ ' + a.nombre)}</div>`;
 // ---------- Diario: carita y nota de cada día (solo en el móvil; va en "Exportar copia") ----------
 const CARAS = [['😍', 'Genial'], ['🙂', 'Bien'], ['😐', 'Normal'], ['😩', 'Duro']];
 const diarioDe = f => (u().diario || {})[f] || {};
@@ -950,6 +961,7 @@ function trasladoCard(t) {
         ${ab ? `<ol>${arr(t.pasos).map(p => `<li>${resaltar(p)}</li>`).join('')}</ol>` : ''}</div>`; })() : ''}
       ${t.frase_ko ? `<div class="ko">${esc(t.frase_ko)}</div>` : ''}
       ${t.romanizacion ? `<div class="muted">${esc(t.romanizacion)}</div>` : ''}
+      ${notaBox('t:' + (t.id || t.fecha + t.de), `🚆 ${fmtCorto(t.fecha)} ${lugarCorto(t.de)} → ${lugarCorto(t.a)}`)}
     </div>
   </div>`;
 }
@@ -1101,7 +1113,7 @@ function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) 
       <span class="qv-cab"><b>${esc(l.es)}${lpPill(l)}</b><small>${plan ? `<span class="qv-dia">📅 ${fmtCorto(plan.fecha)}</span> ` : ''}${esc(breve(desc || l.nota || l.desc))}</small></span>
       <button class="hd-ck qv-ck ${hecho(l, k) ? 'on' : ''}" data-hk="${esc(hKey(l))}" data-v="${hecho(l, k) ? 0 : 1}" aria-label="Visitado">${hecho(l, k) ? '✓' : ''}</button></summary>
     <div class="qv-cuerpo">${w ? `<div class="foto" data-wiki="${esc(w)}"><span>📷</span></div><div class="credito" data-cred="${esc(w)}"></div>` : ''}
-      <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}</div>
+      <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}</div>${notaBox(hKey(l), l.es)}
       <div class="ko-s">${esc(l.ko || '')}${distHotel(l, k)}</div>${extra}${ojoLinea(ojoDe(null, l.ko))}${horarioLinea(l)}
       ${infoCompleta(l, desc || l.nota || l.desc)}</div></details>`;
 }
@@ -2074,7 +2086,7 @@ function planesDe(k) {
       ${otros.length || plan.length ? `<details class="pl-cerca" data-key="plc:${esc(p.id)}" ${abierto('plc:' + p.id, false) ? 'open' : ''}><summary>📍 Cerca${otros.length ? `: ${otros.length} ${otros.length === 1 ? 'plan' : 'planes'}` : ''}${plan.length ? ` · 📅 ${plan.length} de vuestro plan` : ''}</summary>
         ${otros.length ? `<div class="cerca">${otros.map(([o, d]) => `${icPlan(o)} ${esc(o.es)} <span class="muted">${fmtDist(d)}</span>`).join(' · ')}</div>` : ''}
         ${plan.length ? `<div class="cerca">📅 ${plan.map(([l, d, e]) => `${esc(l.es)} <span class="muted">(día ${e.n}, ${fmtDist(d)})</span>`).join(' · ')}</div>` : ''}</details>` : ''}
-      <div class="acciones">${naver(p)}<button class="mini" data-full="pl:${i}">Enseñar</button></div></div>`;
+      <div class="acciones">${naver(p)}<button class="mini" data-full="pl:${i}">Enseñar</button></div>${notaBox(hKey(p), icPlan(p) + ' ' + p.es)}</div>`;
   };
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
@@ -2843,6 +2855,7 @@ document.addEventListener('input', e => {
     otro.value = !t.value || !c ? '' : t.dataset.conv === 'KRW' ? (v / c).toFixed(2) : Math.round(v * c);
   }
   else if (t.dataset.notas !== undefined) { u().notas = t.value; saveUser(); }
+  else if (t.dataset.nsk) { const U = u(), ns = U.notasSitio = U.notasSitio || {}; if (t.value.trim()) ns[t.dataset.nsk] = { n: t.dataset.nsn, t: t.value }; else delete ns[t.dataset.nsk]; saveUser(); }
   else if (t.dataset.diario) { const U = u(); U.diario = U.diario || {}; (U.diario[t.dataset.diario] = U.diario[t.dataset.diario] || {}).nota = t.value; saveUser(); }
   else if (t.dataset.cnota) { const U = u(); U.comer = U.comer || {}; (U.comer[t.dataset.cnota] = U.comer[t.dataset.cnota] || {}).nota = t.value; saveUser(); }
 });
