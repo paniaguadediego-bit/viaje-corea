@@ -29,7 +29,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    test de letras o carteles que repite lo fallado, user.hgTest; 🔗 Fuentes gratuitas HG_FUENTES) y ⭐ Favoritas (☆ en cada frase, palabra y cartel; user.favs; agrupadas en Frases, Palabras y Carteles)
    (la Historia, historia.js: 22 capítulos con marca de leído en user.leidos y diseño hanji/dancheong, pasó a su pestaña en v103). Más es una rejilla de iconos
    como la Guía (se toca y sale debajo): Maleta, Seguro,
-   Verificar, Documentos (fotos/PDF), Notas, 🎁 Regalos (user.regalos: para quién, qué, dónde, comprado), 📖 Resumen del viaje (texto con lo marcado: copiar, compartir, .txt), Escala Pekín (hora de Pekín, vuestras escalas desde trip.vuelos,
+   Verificar, Documentos (fotos/PDF), Notas, 🎁 Regalos (user.regalos: para quién, qué, dónde, ✍️ quién lo apunta (nombre en localStorage corea.yo, solo en ese móvil; filtro por autor si hay dos), comprado), 📖 Resumen del viaje (texto con lo marcado: copiar, compartir, .txt), Escala Pekín (hora de Pekín, vuestras escalas desde trip.vuelos,
    tránsito, equipaje, internet, baterías, dinero y frases en chino a pantalla completa) y Datos y app (importar,
    exportar, "📤 Pasar mis marcas" (archivo corea-marcas que al importarlo en el otro móvil se UNE, sin borrar nada), "Preparar para viajar" (con wifi: app offline, fotos, mapas, tiempo,
    cambio y aviso de copia), actualizar, borrar). En Hoy, botón rojo "🆘 Ayuda"

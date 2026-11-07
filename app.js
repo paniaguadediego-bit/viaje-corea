@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v146';
+const VERSION = 'v147';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -334,14 +334,20 @@ function fundirMarcas(o) {
   U.checklist = U.checklist || {}; Object.entries(o.checklist || {}).forEach(([a, b]) => { if (b) U.checklist[a] = b; });
   saveUser(); return n;
 }
-// 🎁 Regalos y souvenirs: para quién, qué y dónde; casilla de comprado.
+// 🎁 Regalos y souvenirs: para quién, qué y dónde; quién lo apuntó (nombre guardado solo en este móvil); casilla de comprado.
+const K_YO = 'corea.yo'; let rgDe = '';
+const yoNombre = () => { try { return localStorage.getItem(K_YO) || ''; } catch { return ''; } };
 function viewRegalos() {
-  const rs = arr(u().regalos), hechos = rs.filter(r => r.ok).length;
+  const todos = arr(u().regalos), autores = [...new Set(todos.map(r => r.de).filter(Boolean))].sort();
+  if (rgDe && !autores.includes(rgDe)) rgDe = '';
+  const rs = rgDe ? todos.filter(r => r.de === rgDe) : todos, hechos = rs.filter(r => r.ok).length;
   return `<h2>🎁 Regalos y souvenirs</h2>
-    <div class="card rg-form"><input id="rg-para" placeholder="Para quién (p. ej. mamá)" autocomplete="off"><input id="rg-que" placeholder="Qué (p. ej. mascarillas)" autocomplete="off">
-      <input id="rg-donde" placeholder="Dónde (opcional: Olive Young, Insadong…)" autocomplete="off"><button data-rgadd>＋ Añadir</button></div>
+    <div class="card rg-form"><label class="rg-yo">✍️ Lo apunta <input id="rg-yo" value="${esc(yoNombre())}" placeholder="tu nombre" autocomplete="off"></label>
+      <input id="rg-para" placeholder="Para quién (p. ej. mamá)" autocomplete="off"><input id="rg-que" placeholder="Qué (p. ej. mascarillas)" autocomplete="off">
+      <input id="rg-donde" placeholder="Dónde (opcional: Insadong, mercado…)" autocomplete="off"><button data-rgadd>＋ Añadir</button></div>
+    ${autores.length > 1 ? `<div class="chips">${['', ...autores].map(a => `<button class="chip ${a === rgDe ? 'on' : ''}" data-rgde="${esc(a)}">${a ? '✍️ ' + esc(a) : 'Todos'}</button>`).join('')}</div>` : ''}
     ${rs.length ? `<p class="muted">${hechos} de ${rs.length} comprados</p>${rs.map(r => `<div class="card rg ${r.ok ? 'ok' : ''}"><button class="hd-ck ${r.ok ? 'on' : ''}" data-rgok="${esc(r.id)}" aria-label="Comprado">${r.ok ? '✓' : ''}</button>
-      <div class="rg-t"><b>${esc(r.que)}</b><small>${esc(r.para)}${r.donde ? ' · 📍 ' + esc(r.donde) : ''}</small></div><button class="sec mini" data-rgdel="${esc(r.id)}" aria-label="Quitar">✕</button></div>`).join('')}`
+      <div class="rg-t"><b>${esc(r.que)}</b><small>${esc(r.para)}${r.donde ? ' · 📍 ' + esc(r.donde) : ''}${r.de ? ' · ✍️ ' + esc(r.de) : ''}</small></div><button class="sec mini" data-rgdel="${esc(r.id)}" aria-label="Quitar">✕</button></div>`).join('')}`
       : '<p class="muted">Apunta aquí lo que queréis traer y a quién; al comprarlo, marca la casilla.</p>'}`;
 }
 // 📖 Resumen del viaje: lo que hicisteis, para guardarlo o pasárselo a quien prepare su viaje.
@@ -2610,10 +2616,12 @@ document.addEventListener('click', e => {
   if (fv) { const U = u(), d = fv.dataset; U.favs = arr(U.favs);
     if (U.favs.some(f => f.k === d.fav)) U.favs = U.favs.filter(f => f.k !== d.fav); else U.favs.unshift({ k: d.fav, es: d.es, ko: d.ko, rom: d.rom });
     saveUser(); render(); return; }
+  const rgd = e.target.closest('[data-rgde]'); if (rgd) { rgDe = rgd.dataset.rgde; render(); return; }
   const rg = e.target.closest('[data-rgadd],[data-rgok],[data-rgdel],[data-resumen]');
   if (rg) { const U = u(), d = rg.dataset; U.regalos = arr(U.regalos);
     if (d.rgadd != null) { const v = id => (document.getElementById(id) || {}).value || '', que = v('rg-que').trim(); if (!que) { alert('Escribe qué quieres comprar.'); return; }
-      U.regalos.push({ id: 'r' + Date.now(), para: v('rg-para').trim() || 'Sin asignar', que, donde: v('rg-donde').trim(), ok: false }); }
+      const de = v('rg-yo').trim(); try { localStorage.setItem(K_YO, de); } catch {}
+      U.regalos.push({ id: 'r' + Date.now(), para: v('rg-para').trim() || 'Sin asignar', que, donde: v('rg-donde').trim(), de, ok: false }); }
     else if (d.rgok) { const r = U.regalos.find(x => x.id === d.rgok); if (r) r.ok = !r.ok; }
     else if (d.rgdel) { if (!confirm('¿Quitar este regalo?')) return; U.regalos = U.regalos.filter(x => x.id !== d.rgdel); }
     else if (d.resumen) { const t = textoResumen();
