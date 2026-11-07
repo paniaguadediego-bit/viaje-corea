@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v148';
+const VERSION = 'v149';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -353,52 +353,62 @@ function viewRegalos() {
       : '<p class="muted">Apunta aquí lo que queréis traer y a quién; al comprarlo, marca la casilla.</p>'}`;
 }
 // 📖 Resumen del viaje: lo que hicisteis, para guardarlo o pasárselo a quien prepare su viaje.
-function textoResumen() {
-  const U = u(), L = [], dias = arr(trip.dias).filter(d => d.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha));
-  const CARA = { '😍': 'genial', '🙂': 'bien', '😐': 'normal', '😴': 'cansado', '😩': 'duro' };
-  L.push(`🇰🇷 ${(trip.meta && trip.meta.titulo) || 'Viaje a Corea del Sur'}`);
-  if (dias.length) L.push(`${fmtCorto(dias[0].fecha)} → ${fmtCorto(dias[dias.length - 1].fecha)} · ${dias.length} días`);
-  const cs = arr(trip.ciudades).filter(c => c && c.desde && !/espa/i.test(c.nombre));
-  if (cs.length) { L.push('', '🗺️ RUTA');
-    cs.forEach(c => { const k = ck(c.nombre), no = c.hasta ? Math.round((new Date(c.hasta) - new Date(c.desde)) / 864e5) : 0;
-      const h = arr(trip.alojamientos).find(a => ck(a.ciudad) === k && String(a.fechas || '').startsWith(c.desde)) || arr(trip.alojamientos).find(a => ck(a.ciudad) === k);
-      L.push(`• ${c.nombre}: ${fmtCorto(c.desde)}${c.hasta ? ' → ' + fmtCorto(c.hasta) : ''}${no ? ` (${no} noche${no > 1 ? 's' : ''})` : ''}${h ? ' · 🛏️ ' + h.nombre : ''}`); }); }
-  const NS = { ...(U.notasSitio || {}) }, usa = k => { const x = NS[k]; delete NS[k]; return x && x.t ? String(x.t).replace(/\n+/g, ' ') : ''; };
-  arr(trip.alojamientos).forEach(a => { const t = usa('h:' + (a.id || a.nombre)); if (t) L.push(`   📝 ${a.nombre}: ${t}`); });
-  const tr = arr(trip.traslados).filter(t => t && t.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha));
-  if (tr.length) { L.push('', '🚆 CÓMO NOS MOVIMOS');
-    tr.forEach(t => { const b = billete(t) || {}, [ic, nom] = medio(t);
-      L.push(`• ${fmtCorto(t.fecha)} ${lugarCorto(t.de)} → ${lugarCorto(t.a)}: ${ic} ${nom}${b.numero ? ' ' + b.numero : ''}${b.salida ? ` (${b.salida}-${b.llegada || '?'})` : ''}${b.precio ? ' · ' + b.precio : ''}`);
-      const nt = usa('t:' + (t.id || t.fecha + t.de)); if (nt) L.push(`   📝 ${nt}`); }); }
-  L.push('', '📅 DÍA A DÍA');
-  dias.forEach((d, i) => { const k = ck(d.ciudad), ls = listaDia(d), vis = ls.filter(l => hecho(l, k)), di = diarioDe(d.fecha);
-    L.push(`Día ${i + 1} · ${fmtCorto(d.fecha)} · ${d.ciudad}${d.titulo ? ' — ' + d.titulo : ''}${di.cara ? ` ${di.cara}${CARA[di.cara] ? ' (' + CARA[di.cara] + ')' : ''}` : ''}`);
-    if (vis.length) L.push(`   ✅ ${vis.map(l => l.es).join(', ')}`); else if (ls.length) L.push(`   📍 Plan: ${ls.map(l => l.es).join(', ')}`);
-    ls.forEach(l => { const t = usa(hKey(l)); if (t) L.push(`   📝 ${l.es}: ${t}`); });
-    if (di.nota) L.push(`   📔 ${String(di.nota).replace(/\n+/g, ' ')}`); });
+// datosResumen() reúne todo; el texto, el Word y el PDF (exportar.js) se hacen a partir de él.
+const CARA_TXT = { '😍': 'genial', '🙂': 'bien', '😐': 'normal', '😴': 'cansado', '😩': 'duro' };
+const CONSEJOS_RES = ['Apps: Naver Map o Kakao Map (Google Maps no da rutas a pie ni en coche en Corea), Kakao T para taxis y Papago para traducir.',
+  'Tarjeta T-money para metro y bus (se recarga en tiendas 24 h y en las máquinas del metro).',
+  'Trenes KTX con Korail o Trip.com; autobuses entre ciudades con Kobus o Klook.',
+  'Tax Free con el pasaporte en tiendas con el logo (cosmética y ropa).',
+  'Ritmo tranquilo: pocas paradas al día y cenar hacia las 19:30.'];
+function datosResumen() {
+  const U = u(), NS = { ...(U.notasSitio || {}) }, una = t => String(t || '').replace(/\n+/g, ' ').trim();
+  const usa = k => { const x = NS[k]; delete NS[k]; return x && x.t ? una(x.t) : ''; };
+  const dias = arr(trip.dias).filter(d => d.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha));
+  const D = { titulo: (trip.meta && trip.meta.titulo) || 'Viaje a Corea del Sur', desde: dias[0] && dias[0].fecha, hasta: dias.length ? dias[dias.length - 1].fecha : '', nDias: dias.length };
+  D.ruta = arr(trip.ciudades).filter(c => c && c.desde && !/espa/i.test(c.nombre)).map(c => { const k = ck(c.nombre), no = c.hasta ? Math.round((new Date(c.hasta) - new Date(c.desde)) / 864e5) : 0;
+    const h = arr(trip.alojamientos).find(a => ck(a.ciudad) === k && String(a.fechas || '').startsWith(c.desde)) || arr(trip.alojamientos).find(a => ck(a.ciudad) === k);
+    return { ciudad: c.nombre, ko: c.ko || '', desde: c.desde, hasta: c.hasta || '', noches: no, hotel: h ? h.nombre : '', nota: h ? usa('h:' + (h.id || h.nombre)) : '' }; });
+  D.notasHotel = arr(trip.alojamientos).map(a => ({ es: a.nombre, t: usa('h:' + (a.id || a.nombre)) })).filter(x => x.t);
+  D.traslados = arr(trip.traslados).filter(t => t && t.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha)).map(t => { const b = billete(t) || {}, [ic, nom] = medio(t);
+    return { fecha: t.fecha, de: lugarCorto(t.de), a: lugarCorto(t.a), ic, nom, numero: b.numero || '', horas: b.salida ? `${b.salida}-${b.llegada || '?'}` : '', precio: b.precio || '', nota: usa('t:' + (t.id || t.fecha + t.de)) }; });
+  D.dias = dias.map((d, i) => { const k = ck(d.ciudad), ls = listaDia(d), vis = ls.filter(l => hecho(l, k)), di = diarioDe(d.fecha), base = vis.length ? vis : ls;
+    return { n: i + 1, fecha: d.fecha, ciudad: d.ciudad, titulo: d.titulo || '', cara: di.cara || '', diario: una(di.nota), visto: vis.length > 0,
+      sitios: base.map(l => l.es), notas: ls.map(l => ({ es: l.es, t: usa(hKey(l)) })).filter(x => x.t), wiki: (base.map(l => wikiDe(l)).find(Boolean)) || '' }; });
   const lc = lugaresComer(), est = c => estadoDe(String(c.id)), cn = c => (CIUDADES_COMER.find(x => x[0] === c.ciudad) || [])[1] || c.ciudad;
-  const comidos = lc.filter(c => est(c).estado === 'visitado' || Number(est(c).val) > 0 || hecho(c, c.ciudad));
-  if (comidos.length) { L.push('', '🍜 DÓNDE COMIMOS');
-    comidos.sort((a, b) => (Number(est(b).val) || 0) - (Number(est(a).val) || 0)).forEach(c => { const e = est(c);
-      L.push(`• ${cn(c)} · ${c.nombre}${c.ko ? ` (${c.ko})` : ''}${c.plato ? ' — ' + c.plato : ''}${Number(e.val) > 0 ? ' ' + '★'.repeat(Number(e.val)) : ''}${e.nota ? ' · ' + String(e.nota).replace(/\n+/g, ' ') : ''}`); }); }
-  const resto = Object.values(NS).filter(x => x && x.t);
-  if (resto.length) { L.push('', '📝 MÁS NOTAS NUESTRAS'); resto.forEach(x => L.push(`• ${x.n || 'Sitio'}: ${String(x.t).replace(/\n+/g, ' ')}`)); }
-  const top = comidos.filter(c => Number(est(c).val) >= 4);
-  if (top.length) { L.push('', '⭐ IMPRESCINDIBLES PARA NOSOTROS'); top.forEach(c => L.push(`• ${c.nombre} (${cn(c)})`)); }
-  const malos = [...lc.filter(c => est(c).estado === 'descartado').map(c => `${c.nombre} (${cn(c)})`), ...(typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).map(o => o.es + ' (ojo con los precios o las colas)')];
-  if (malos.length) { L.push('', '👎 NO MERECE TANTO LA PENA'); malos.forEach(m => L.push('• ' + m)); }
-  L.push('', '💡 CONSEJOS PRÁCTICOS',
-    '• Apps: Naver Map o Kakao Map (Google Maps no da rutas a pie ni en coche en Corea), Kakao T para taxis y Papago para traducir.',
-    '• Tarjeta T-money para metro y bus (se recarga en tiendas 24 h y en las máquinas del metro).',
-    '• Trenes KTX con Korail o Trip.com; autobuses entre ciudades con Kobus o Klook.',
-    '• Tax Free con el pasaporte en tiendas con el logo (cosmética y ropa).',
-    '• Ritmo tranquilo: pocas paradas al día y cenar hacia las 19:30.');
+  D.comidos = lc.filter(c => est(c).estado === 'visitado' || Number(est(c).val) > 0 || hecho(c, c.ciudad))
+    .sort((a, b) => (Number(est(b).val) || 0) - (Number(est(a).val) || 0))
+    .map(c => ({ ciudad: cn(c), nombre: c.nombre, ko: c.ko || '', plato: c.plato || '', val: Number(est(c).val) || 0, nota: una(est(c).nota), wiki: wikiDe(c) }));
+  D.top = D.comidos.filter(c => c.val >= 4);
+  D.malos = [...lc.filter(c => est(c).estado === 'descartado').map(c => `${c.nombre} (${cn(c)})`), ...(typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).map(o => o.es + ' (ojo con los precios o las colas)')];
+  D.resto = Object.values(NS).filter(x => x && x.t).map(x => ({ es: x.n || 'Sitio', t: una(x.t) }));
+  D.consejos = CONSEJOS_RES;
+  return D;
+}
+function textoResumen() {
+  const D = datosResumen(), L = [`🇰🇷 ${D.titulo}`];
+  if (D.nDias) L.push(`${fmtCorto(D.desde)} → ${fmtCorto(D.hasta)} · ${D.nDias} días`);
+  if (D.ruta.length) { L.push('', '🗺️ RUTA');
+    D.ruta.forEach(r => { L.push(`• ${r.ciudad}: ${fmtCorto(r.desde)}${r.hasta ? ' → ' + fmtCorto(r.hasta) : ''}${r.noches ? ` (${r.noches} noche${r.noches > 1 ? 's' : ''})` : ''}${r.hotel ? ' · 🛏️ ' + r.hotel : ''}`); if (r.nota) L.push(`   📝 ${r.nota}`); });
+    D.notasHotel.forEach(x => L.push(`   📝 ${x.es}: ${x.t}`)); }
+  if (D.traslados.length) { L.push('', '🚆 CÓMO NOS MOVIMOS');
+    D.traslados.forEach(t => { L.push(`• ${fmtCorto(t.fecha)} ${t.de} → ${t.a}: ${t.ic} ${t.nom}${t.numero ? ' ' + t.numero : ''}${t.horas ? ` (${t.horas})` : ''}${t.precio ? ' · ' + t.precio : ''}`); if (t.nota) L.push(`   📝 ${t.nota}`); }); }
+  L.push('', '📅 DÍA A DÍA');
+  D.dias.forEach(d => { L.push(`Día ${d.n} · ${fmtCorto(d.fecha)} · ${d.ciudad}${d.titulo ? ' — ' + d.titulo : ''}${d.cara ? ` ${d.cara}${CARA_TXT[d.cara] ? ' (' + CARA_TXT[d.cara] + ')' : ''}` : ''}`);
+    if (d.sitios.length) L.push(`   ${d.visto ? '✅' : '📍 Plan:'} ${d.sitios.join(', ')}`);
+    d.notas.forEach(x => L.push(`   📝 ${x.es}: ${x.t}`)); if (d.diario) L.push(`   📔 ${d.diario}`); });
+  if (D.comidos.length) { L.push('', '🍜 DÓNDE COMIMOS');
+    D.comidos.forEach(c => L.push(`• ${c.ciudad} · ${c.nombre}${c.ko ? ` (${c.ko})` : ''}${c.plato ? ' — ' + c.plato : ''}${c.val ? ' ' + '★'.repeat(c.val) : ''}${c.nota ? ' · ' + c.nota : ''}`)); }
+  if (D.resto.length) { L.push('', '📝 MÁS NOTAS NUESTRAS'); D.resto.forEach(x => L.push(`• ${x.es}: ${x.t}`)); }
+  if (D.top.length) { L.push('', '⭐ IMPRESCINDIBLES PARA NOSOTROS'); D.top.forEach(c => L.push(`• ${c.nombre} (${c.ciudad})`)); }
+  if (D.malos.length) { L.push('', '👎 NO MERECE TANTO LA PENA'); D.malos.forEach(m => L.push('• ' + m)); }
+  L.push('', '💡 CONSEJOS PRÁCTICOS', ...D.consejos.map(c => '• ' + c));
   return L.join('\n');
 }
 function viewResumen() {
   const t = textoResumen();
   return `<h2>📖 Resumen del viaje</h2>
     <p class="muted">Se genera con lo que habéis marcado: visitados, 📝 notas de sitios, hoteles y traslados, caritas y notas del diario, Comer (✅, estrellas y notas) y descartados. Ideal para pasárselo a quien prepare su viaje.</p>
+    <div class="acciones"><button data-resumen="word">📘 Word con fotos</button><button data-resumen="pdf">📕 PDF con fotos</button></div>
     <div class="acciones"><button data-resumen="copiar">📋 Copiar</button><button class="sec" data-resumen="compartir">📤 Compartir</button><button class="sec" data-resumen="txt">⬇️ Descargar .txt</button></div>
     <pre class="resumen">${esc(t)}</pre>`;
 }
@@ -2636,6 +2646,8 @@ document.addEventListener('click', e => {
       U.regalos.push({ id: 'r' + Date.now(), para: v('rg-para').trim() || 'Sin asignar', que, donde: v('rg-donde').trim(), de, ok: false }); }
     else if (d.rgok) { const r = U.regalos.find(x => x.id === d.rgok); if (r) r.ok = !r.ok; }
     else if (d.rgdel) { if (!confirm('¿Quitar este regalo?')) return; U.regalos = U.regalos.filter(x => x.id !== d.rgdel); }
+    else if (d.resumen === 'word') { exportarWord(rg); return; }
+    else if (d.resumen === 'pdf') { verPDF(rg); return; }
     else if (d.resumen) { const t = textoResumen();
       if (d.resumen === 'copiar') { (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => alert('Resumen copiado.'), () => alert('No se pudo copiar: usa Descargar.')); return; }
       if (d.resumen === 'compartir' && navigator.share) { navigator.share({ title: 'Nuestro viaje a Corea', text: t }).catch(() => {}); return; }

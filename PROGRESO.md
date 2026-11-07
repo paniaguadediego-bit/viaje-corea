@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v148
+Caché del service worker: corea-v149
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -200,6 +200,7 @@ Caché del service worker: corea-v148
 - v146: quitada Cosmética de Miscelánea (Olive Young, Daiso y grandes almacenes) a petición del usuario: hay cientos de tiendas cerca y no hace falta apuntar ninguna. Miscelánea abre en Curioso.
 - v147: Regalos con "✍️ Lo apunta": cada móvil escribe su nombre una vez (corea.yo, solo en ese móvil, no va en trip.json ni en el repo) y cada regalo nuevo lo lleva; viaja al pasar marcas y hay filtro Todos / por nombre cuando apuntan dos. [Supuesto] Los regalos antiguos quedan sin autor.
 - v148: "📝 Nuestra nota" en cada ficha de Planes (puntos de interés y Miscelánea), en cada hotel (Hoy → Hotel) y en cada traslado (Ruta). Se guarda sola al escribir (user.notasSitio), se une al pasar marcas y sale en el Resumen: hoteles bajo la Ruta, traslados bajo cada trayecto, sitios bajo su día y el resto en "Más notas nuestras". Comer sigue con su nota propia.
+- v149: Resumen del viaje en 📘 Word (.docx) y 📕 PDF con portada, franja dancheong, color de cada pestaña por apartado, una foto por día (la del primer sitio visitado o del plan, recortada en banda 2:1) y fotos en Comer. Nuevo exportar.js sin librerías (zip sin comprimir hecho a mano; PDF con la vista a pantalla completa y window.print). El service worker guarda ahora las fotos de Wikipedia con CORS (las antiguas se renuevan con conexión) para poder leerlas. [Supuesto] Las fotos que solo estén guardadas a la antigua no entran sin conexión: exportar con wifi para que salgan todas.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

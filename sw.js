@@ -1,11 +1,11 @@
 // Sube CACHE en cada sesión (y VERSION en app.js) para que el móvil coja la versión nueva.
-const CACHE = 'corea-v148';
+const CACHE = 'corea-v149';
 // Fotos de Wikipedia: caché aparte que no se borra al actualizar la app.
 const FOTOS = 'corea-fotos';
 // Calles del mapa (OpenStreetMap): solo las zonas que se han visto; tampoco se borra al actualizar.
 const MAPA = 'corea-mapa';
 const FILES = [
-  './', './index.html', './styles.css', './app.js', './contenido.js', './diccionario.js', './historia.js', './cultura.js', './hangul.js', './manifest.json',
+  './', './index.html', './styles.css', './app.js', './contenido.js', './diccionario.js', './historia.js', './cultura.js', './hangul.js', './exportar.js', './manifest.json',
   './example.trip.json', './data/comer.json', './data/coords.json', './data/metro.json', './icons/icon.svg', './icons/icon-192.png',
   './icons/icon-512.png', './icons/apple-touch-icon.png'
 ];
@@ -31,9 +31,12 @@ self.addEventListener('fetch', e => {
   const host = new URL(req.url).hostname;
   // Fotos y resúmenes de Wikipedia: primero lo guardado; si no, red y se guarda.
   if (/(^|\.)(wikipedia|wikimedia)\.org$/.test(host)) {
+    // Se piden con CORS para que el Word y el PDF del resumen puedan leer la foto; las guardadas antes "opacas" se renuevan con conexión.
     e.respondWith(caches.open(FOTOS).then(async c => {
-      const g = await c.match(req); if (g) return g;
-      const r = await fetch(req); if (r.ok || r.type === 'opaque') c.put(req, r.clone()); return r;
+      const g = await c.match(req.url); if (g && g.type !== 'opaque') return g;
+      try { const r = await fetch(req.url, { mode: 'cors', credentials: 'omit' }); if (r.ok) { c.put(req.url, r.clone()); return r; } } catch {}
+      if (g && req.mode !== 'cors') return g;
+      const r = await fetch(req); if (r.ok || r.type === 'opaque') c.put(req.url, r.clone()); return r;
     }));
     return;
   }
