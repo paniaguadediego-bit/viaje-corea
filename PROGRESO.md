@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v151
+Caché del service worker: corea-v152
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -203,6 +203,7 @@ Caché del service worker: corea-v151
 - v149: Resumen del viaje en 📘 Word (.docx) y 📕 PDF con portada, franja dancheong, color de cada pestaña por apartado, una foto por día (la del primer sitio visitado o del plan, recortada en banda 2:1) y fotos en Comer. Nuevo exportar.js sin librerías (zip sin comprimir hecho a mano; PDF con la vista a pantalla completa y window.print). El service worker guarda ahora las fotos de Wikipedia con CORS (las antiguas se renuevan con conexión) para poder leerlas. [Supuesto] Las fotos que solo estén guardadas a la antigua no entran sin conexión: exportar con wifi para que salgan todas.
 - v150: "📝 Nuestra nota" (v148) cambiada por estrellas de 1 a 5 a petición del usuario: más fácil de calificar. Mismos sitios (Planes, Miscelánea, hoteles, traslados), user.estrellas; en el Resumen, Word y PDF salen junto a cada sitio, hotel y traslado; 4-5 ★ van a Imprescindibles y 1-2 ★ a No merece tanto la pena. Comer mantiene sus estrellas y su nota.
 - v151: "⚠️ Mucho ojo con…" también en Planes (arriba de cada ciudad, sitios famosos con pegas) y más avisos en Comer, con fuentes (prensa coreana, Polle, blogs y foros; Reddit no accesible desde aquí). Planes: Bukchon (horario 10-17 y multa), cosmética con «guía» en Myeongdong, taxis al aeropuerto y en Busan, recuerdos de Insadong, Starfield Library, gente en Haedong Yonggungsa, masificación de Gamcheon, aldea Hanok de Jeonju, precios de Hwangridan-gil. Comer: callejón del pescado de Namdaemun, centro de pescado de Millak, gomjangeo de Haeundae, puestos de la aldea Hanok y bibimbap de las casas famosas de Jeonju. Andong: no se encontró nada documentado. Descartados por no tener quejas claras: N Seoul Tower, Tosokchon, jjimdak de Andong y hotteok de BIFF.
+- v152: Resumen (texto, Word y PDF) sin "Imprescindibles" ni "No merece tanto la pena" a petición del usuario. Nuevo "✅ Planes realizados": por ciudad (en orden de ruta, Seúl de ida y vuelta juntas), numerados, primero los del itinerario en su orden y luego el resto de Planes y Miscelánea, con las estrellas al lado si se valoraron. El Día a día ya no repite las estrellas.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

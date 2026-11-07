@@ -1237,4 +1237,5 @@ body.con-doc { overflow: hidden; }
   .dx-franja { margin: 0 -4mm; }
   .dx-salto { break-before: page; }
 }
-.dx-chips i.dx-est { font-style: normal; font-size: .8em; }
+.dx-planes { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0 8px; }
+.dx-planes ol { margin: 4px 0 0; padding-left: 22px; } .dx-planes li { margin: 2px 0; }

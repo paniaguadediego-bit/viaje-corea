@@ -76,8 +76,9 @@ function docxXML(D, fotos) {
   if (D.comidos.length) { B.push(wSalto, wTitulo('🍜', 'Dónde comimos', EX_COL.comer));
     D.comidos.forEach(c => { B.push(wp(wr(c.nombre + ' ', { b: true, sz: 12, c: EX_COL.comer }) + (c.ko ? wr(c.ko + '  ', { c: '8A8070' }) : '') + (c.val ? wr('★'.repeat(c.val) + '☆'.repeat(5 - c.val), { c: EX_COL.oro }) : ''), { borde: EX_COL.comer, fondo: 'FDF6EE', despues: 0, keep: true }));
       B.push(wp(wr(`${c.ciudad}${c.plato ? ' · ' + c.plato : ''}`, { c: '6B6255' }) + (c.nota ? wr('  📝 ' + c.nota, { i: true }) : ''), { borde: EX_COL.comer, fondo: 'FDF6EE' })); }); }
-  if (D.top.length) { B.push(wTitulo('⭐', 'Imprescindibles para nosotros', EX_COL.oro)); D.top.forEach(c => B.push(wp(wr('⭐ ' + c.nombre, { b: true }) + wr(c.ciudad ? ` (${c.ciudad})  ` : '  ', { c: '6B6255' }) + (c.val ? wr(estrTxt(c.val), { c: EX_COL.oro }) : '')))); }
-  if (D.malos.length) { B.push(wTitulo('👎', 'No merece tanto la pena', EX_COL.historia)); D.malos.forEach(m => B.push(wp(wr('• ' + m)))); }
+  if (D.planes.length) { B.push(wSalto, wTitulo('✅', 'Planes realizados', EX_COL.planes));
+    D.planes.forEach(g => { B.push(wp(wr(g.ciudad, { b: true, sz: 13, c: EX_COL.planes, f: 'Georgia' }), { keep: true, antes: 160, despues: 60 }));
+      g.items.forEach((x, i) => B.push(wp(wr(`${i + 1}.  `, { b: true, c: EX_COL.planes }) + wr(x.es + '  ') + (x.v ? wr(estrTxt(x.v), { c: EX_COL.oro }) : ''), { despues: 40 }))); }); }
   B.push(wTitulo('💡', 'Consejos prácticos', EX_COL.planes), ...D.consejos.map(c => wp(wr('• ' + c))), wFranja());
   const doc = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">
@@ -139,12 +140,12 @@ function docHTML(D, fotos) {
       <div class="dx-mut">${e(t.nom)}${t.numero ? ' ' + e(t.numero) : ''}${t.horas ? ' · ' + e(t.horas) : ''}${t.precio ? ' · ' + e(t.precio) : ''}${t.val ? ` <span class="dx-est">${estrTxt(t.val)}</span>` : ''}</div></div></div>`).join('')) : ''}
   ${sec('📅', 'Día a día', EX_COL.hoy, D.dias.map(d => `<article class="dx-dia"><div class="dx-dcab"><span>DÍA ${d.n}</span>${e(exFecha(d.fecha))} · ${e(d.ciudad)}${d.cara ? `<i>${d.cara}</i>` : ''}</div>
       ${ft(d.wiki)}<div class="dx-dcuerpo">${d.titulo ? `<h3>${e(d.titulo)}</h3>` : ''}
-      ${d.sitios.length ? `<div class="dx-chips"><b class="${d.visto ? 'ok' : ''}">${d.visto ? '✅ Vimos' : '📍 Plan'}</b>${d.sitios.map(s => { const m = s.match(/^(.*?) ([★☆]{5})$/); return m ? `<span>${e(m[1])} <i class="dx-est">${m[2]}</i></span>` : `<span>${e(s)}</span>`; }).join('')}</div>` : ''}
+      ${d.sitios.length ? `<div class="dx-chips"><b class="${d.visto ? 'ok' : ''}">${d.visto ? '✅ Vimos' : '📍 Plan'}</b>${d.sitios.map(s => `<span>${e(s)}</span>`).join('')}</div>` : ''}
       ${d.diario ? `<div class="dx-diario">📔 ${e(d.diario)}</div>` : ''}</div></article>`).join(''), true)}
   ${D.comidos.length ? sec('🍜', 'Dónde comimos', EX_COL.comer, `<div class="dx-comer">${D.comidos.map(c => `<div class="dx-card">${ft(c.wiki, 'dx-mini')}<b class="dx-c">${e(c.nombre)}</b> <span class="dx-mut">${e(c.ko)}</span>
       ${c.val ? `<div class="dx-est">${'★'.repeat(c.val)}<span>${'☆'.repeat(5 - c.val)}</span></div>` : ''}<div class="dx-mut">${e(c.ciudad)}${c.plato ? ' · ' + e(c.plato) : ''}</div>${c.nota ? `<div class="dx-nota">📝 ${e(c.nota)}</div>` : ''}</div>`).join('')}</div>`, true) : ''}
-  ${D.top.length ? sec('⭐', 'Imprescindibles para nosotros', EX_COL.oro, `<ul>${D.top.map(c => `<li><b>${e(c.nombre)}</b>${c.ciudad ? ` <span class="dx-mut">(${e(c.ciudad)})</span>` : ''}${c.val ? ` <span class="dx-est">${estrTxt(c.val)}</span>` : ''}</li>`).join('')}</ul>`) : ''}
-  ${D.malos.length ? sec('👎', 'No merece tanto la pena', EX_COL.historia, `<ul>${D.malos.map(m => `<li>${e(m)}</li>`).join('')}</ul>`) : ''}
+  ${D.planes.length ? sec('✅', 'Planes realizados', EX_COL.planes, `<div class="dx-planes">${D.planes.map(g => `<div class="dx-card"><b class="dx-c">${e(g.ciudad)}</b>
+      <ol>${g.items.map(x => `<li>${e(x.es)}${x.v ? ` <span class="dx-est">${estrTxt(x.v)}</span>` : ''}</li>`).join('')}</ol></div>`).join('')}</div>`, true) : ''}
   ${sec('💡', 'Consejos prácticos', EX_COL.planes, `<ul>${D.consejos.map(c => `<li>${e(c)}</li>`).join('')}</ul>`)}
   <div class="dx-franja"></div>`;
 }

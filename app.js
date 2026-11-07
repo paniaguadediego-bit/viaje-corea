@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v151';
+const VERSION = 'v152';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -361,7 +361,7 @@ const CONSEJOS_RES = ['Apps: Naver Map o Kakao Map (Google Maps no da rutas a pi
   'Ritmo tranquilo: pocas paradas al día y cenar hacia las 19:30.'];
 function datosResumen() {
   const U = u(), NS = { ...(U.estrellas || {}) }, una = t => String(t || '').replace(/\n+/g, ' ').trim();
-  const usa = k => { const x = NS[k]; delete NS[k]; return x ? Number(x.v) || 0 : 0; };
+  const usa = k => { const x = NS[k]; return x ? Number(x.v) || 0 : 0; };
   const dias = arr(trip.dias).filter(d => d.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha));
   const D = { titulo: (trip.meta && trip.meta.titulo) || 'Viaje a Corea del Sur', desde: dias[0] && dias[0].fecha, hasta: dias.length ? dias[dias.length - 1].fecha : '', nDias: dias.length };
   D.ruta = arr(trip.ciudades).filter(c => c && c.desde && !/espa/i.test(c.nombre)).map(c => { const k = ck(c.nombre), no = c.hasta ? Math.round((new Date(c.hasta) - new Date(c.desde)) / 864e5) : 0;
@@ -369,18 +369,19 @@ function datosResumen() {
     return { ciudad: c.nombre, ko: c.ko || '', desde: c.desde, hasta: c.hasta || '', noches: no, hotel: h ? h.nombre : '', val: h ? usa('h:' + (h.id || h.nombre)) : 0 }; });
   D.traslados = arr(trip.traslados).filter(t => t && t.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha)).map(t => { const b = billete(t) || {}, [ic, nom] = medio(t);
     return { fecha: t.fecha, de: lugarCorto(t.de), a: lugarCorto(t.a), ic, nom, numero: b.numero || '', horas: b.salida ? `${b.salida}-${b.llegada || '?'}` : '', precio: b.precio || '', val: usa('t:' + (t.id || t.fecha + t.de)) }; });
-  const val = [];
   D.dias = dias.map((d, i) => { const k = ck(d.ciudad), ls = listaDia(d), vis = ls.filter(l => hecho(l, k)), di = diarioDe(d.fecha), base = vis.length ? vis : ls;
     return { n: i + 1, fecha: d.fecha, ciudad: d.ciudad, titulo: d.titulo || '', cara: di.cara || '', diario: una(di.nota), visto: vis.length > 0,
-      sitios: base.map(l => { const v = usa(hKey(l)); if (v) val.push({ es: l.es, ciudad: d.ciudad, v }); return l.es + (v ? ' ' + estrTxt(v) : ''); }), wiki: (base.map(l => wikiDe(l)).find(Boolean)) || '' }; });
+      sitios: base.map(l => l.es), wiki: (base.map(l => wikiDe(l)).find(Boolean)) || '' }; });
   const lc = lugaresComer(), est = c => estadoDe(String(c.id)), cn = c => (CIUDADES_COMER.find(x => x[0] === c.ciudad) || [])[1] || c.ciudad;
   D.comidos = lc.filter(c => est(c).estado === 'visitado' || Number(est(c).val) > 0 || hecho(c, c.ciudad))
     .sort((a, b) => (Number(est(b).val) || 0) - (Number(est(a).val) || 0))
     .map(c => ({ ciudad: cn(c), nombre: c.nombre, ko: c.ko || '', plato: c.plato || '', val: Number(est(c).val) || 0, nota: una(est(c).nota), wiki: wikiDe(c) }));
-  Object.values(NS).forEach(x => { if (x && Number(x.v) > 0) val.push({ es: x.n || 'Sitio', ciudad: '', v: Number(x.v) }); });
-  D.valorados = val.sort((a, b) => b.v - a.v);
-  D.top = [...D.comidos.filter(c => c.val >= 4), ...val.filter(x => x.v >= 4).map(x => ({ nombre: x.es, ciudad: x.ciudad, val: x.v }))];
-  D.malos = [...val.filter(x => x.v <= 2).map(x => `${x.es}${x.ciudad ? ` (${x.ciudad})` : ''} ${estrTxt(x.v)}`), ...lc.filter(c => est(c).estado === 'descartado').map(c => `${c.nombre} (${cn(c)})`), ...(typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).filter(o => !o.consejo).map(o => o.es)];
+  // ✅ Planes realizados por ciudad: los del itinerario en su orden y después el resto (Planes y Miscelánea), con sus estrellas.
+  D.planes = ciudadesUnicas().filter(c => !/espa/i.test(c.nombre)).map(c => { const k = ck(c.nombre), vistos = new Set(), items = [];
+    const add = l => { const h = hKey(l); if (!l || vistos.has(h) || !hecho(l, k)) return; vistos.add(h); items.push({ es: l.es, v: usa(h) }); };
+    dias.filter(d => ck(d.ciudad) === k).forEach(d => listaDia(d).forEach(add));
+    qvLista(k, c).forEach(o => add(o.l)); (typeof PLANES !== 'undefined' ? PLANES : []).filter(p => p.ciudad === k).forEach(add);
+    return { ciudad: nombreCiudad(k), items }; }).filter(g => g.items.length);
   D.consejos = CONSEJOS_RES;
   return D;
 }
@@ -397,15 +398,14 @@ function textoResumen() {
     if (d.diario) L.push(`   📔 ${d.diario}`); });
   if (D.comidos.length) { L.push('', '🍜 DÓNDE COMIMOS');
     D.comidos.forEach(c => L.push(`• ${c.ciudad} · ${c.nombre}${c.ko ? ` (${c.ko})` : ''}${c.plato ? ' — ' + c.plato : ''}${c.val ? ' ' + '★'.repeat(c.val) : ''}${c.nota ? ' · ' + c.nota : ''}`)); }
-  if (D.top.length) { L.push('', '⭐ IMPRESCINDIBLES PARA NOSOTROS'); D.top.forEach(c => L.push(`• ${c.nombre}${c.ciudad ? ` (${c.ciudad})` : ''}${c.val ? ' ' + estrTxt(c.val) : ''}`)); }
-  if (D.malos.length) { L.push('', '👎 NO MERECE TANTO LA PENA'); D.malos.forEach(m => L.push('• ' + m)); }
+  if (D.planes.length) { L.push('', '✅ PLANES REALIZADOS'); D.planes.forEach(g => { L.push(g.ciudad.toUpperCase()); g.items.forEach((x, i) => L.push(`  ${i + 1}. ${x.es}${x.v ? ' ' + estrTxt(x.v) : ''}`)); }); }
   L.push('', '💡 CONSEJOS PRÁCTICOS', ...D.consejos.map(c => '• ' + c));
   return L.join('\n');
 }
 function viewResumen() {
   const t = textoResumen();
   return `<h2>📖 Resumen del viaje</h2>
-    <p class="muted">Se genera con lo que habéis marcado: visitados, ⭐ valoraciones de sitios, hoteles y traslados, caritas y notas del diario, Comer (✅, estrellas y notas) y descartados. Ideal para pasárselo a quien prepare su viaje.</p>
+    <p class="muted">Se genera con lo que habéis marcado: visitados y sus ⭐ (Planes realizados por ciudad), hoteles y traslados, caritas y notas del diario y Comer (✅, estrellas y notas). Ideal para pasárselo a quien prepare su viaje.</p>
     <div class="acciones"><button data-resumen="word">📘 Word con fotos</button><button data-resumen="pdf">📕 PDF con fotos</button></div>
     <div class="acciones"><button data-resumen="copiar">📋 Copiar</button><button class="sec" data-resumen="compartir">📤 Compartir</button><button class="sec" data-resumen="txt">⬇️ Descargar .txt</button></div>
     <pre class="resumen">${esc(t)}</pre>`;
