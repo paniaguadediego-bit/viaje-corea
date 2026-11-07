@@ -208,7 +208,7 @@ SX Comer (independiente): data/comer.json precacheado; pestaña
    como Ciudades, chips de tipo con recuento, chips de estado (con "📍 Cerca del hotel" ≤1,2 km), orden con
    un botón; tarjeta con foto o icono, nombre, hangul, distancia y una
    línea de datos; botones ⭐ ✅ 👎 🚫, Enseñar y Naver; el resto en
-   "Más detalles". Desplegable "⚠️ Mucho ojo con…" (MUCHO_OJO en contenido.js: famosos con quejas documentadas en prensa o notas bajas; aviso también en la tarjeta y en la ficha de Planes). (El botón "Comer en <ciudad>" de Hoy
+   "Más detalles". Desplegable "⚠️ Mucho ojo con…" (MUCHO_OJO en contenido.js: famosos con quejas documentadas en prensa o notas bajas, siempre con fuentes; tipo "planes" sale arriba de cada ciudad en Planes y el resto en Comer; consejo: true = aviso práctico que no va a "No merece tanto la pena" del Resumen; aviso también en la tarjeta de Comer y en la ficha de Planes si coincide el id o el hangul). (El botón "Comer en <ciudad>" de Hoy
    se quitó: Comer ya filtra por la ciudad del día.)
 
 ## Pruebas mínimas por sesión

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v150';
+const VERSION = 'v151';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -380,7 +380,7 @@ function datosResumen() {
   Object.values(NS).forEach(x => { if (x && Number(x.v) > 0) val.push({ es: x.n || 'Sitio', ciudad: '', v: Number(x.v) }); });
   D.valorados = val.sort((a, b) => b.v - a.v);
   D.top = [...D.comidos.filter(c => c.val >= 4), ...val.filter(x => x.v >= 4).map(x => ({ nombre: x.es, ciudad: x.ciudad, val: x.v }))];
-  D.malos = [...val.filter(x => x.v <= 2).map(x => `${x.es}${x.ciudad ? ` (${x.ciudad})` : ''} ${estrTxt(x.v)}`), ...lc.filter(c => est(c).estado === 'descartado').map(c => `${c.nombre} (${cn(c)})`), ...(typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).map(o => o.es + ' (ojo con los precios o las colas)')];
+  D.malos = [...val.filter(x => x.v <= 2).map(x => `${x.es}${x.ciudad ? ` (${x.ciudad})` : ''} ${estrTxt(x.v)}`), ...lc.filter(c => est(c).estado === 'descartado').map(c => `${c.nombre} (${cn(c)})`), ...(typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).filter(o => !o.consejo).map(o => o.es)];
   D.consejos = CONSEJOS_RES;
   return D;
 }
@@ -1303,6 +1303,7 @@ function viewCiudades() {
       <div class="ciudad-fechas">${fechas}</div>
     </div>
     <div class="row daynav exsubs">${EX_SUBS.filter(([x]) => x !== 'historia' || h).map(([x, tt]) => `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}">${tt}</button>`).join('')}</div>
+    ${muchoOjo(k, 'planes')}
     ${exSub === 'planes' ? planesDe(k) : ''}
     ${exSub !== 'puntos' ? '</div>' : ''}${exSub === 'puntos' ? `
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
@@ -2223,9 +2224,11 @@ const estadoDe = id => (u().comer && user.comer[id]) || {};
 // ⚠️ Mucho ojo con…: aviso en la tarjeta o ficha del sitio y desplegable con todos los de la ciudad.
 const ojoDe = (id, ko) => (typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).find(o => (id && o.ids.includes(String(id))) || (ko && String(ko).replace(/\s+/g, '') === o.ko));
 const ojoLinea = o => o ? `<div class="ojo">⚠️ <b>Mucho ojo:</b> ${esc(o.txt)}</div>` : '';
-function muchoOjo(ciudad) {
-  const os = (typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).filter(o => !ciudad || ciudad === 'todas' || o.ciudad === ciudad); if (!os.length) return '';
-  return `<details class="card ojo-card" data-key="ojo:${esc(ciudad || '')}" ${abierto('ojo:' + (ciudad || ''), false) ? 'open' : ''}><summary><b>⚠️ Mucho ojo con… (${os.length})</b> <span class="muted">famosos con quejas</span></summary>
+// tipo: 'comer' (por defecto, en Comer) o 'planes' (en Planes, arriba de cada ciudad).
+function muchoOjo(ciudad, tipo = 'comer') {
+  const os = (typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).filter(o => (o.tipo || 'comer') === tipo && (!ciudad || ciudad === 'todas' || o.ciudad === ciudad)); if (!os.length) return '';
+  const key = 'ojo:' + tipo + ':' + (ciudad || '');
+  return `<details class="card ojo-card" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}><summary><b>⚠️ Mucho ojo con… (${os.length})</b> <span class="muted">${tipo === 'planes' ? 'famosos con pegas' : 'famosos con quejas'}</span></summary>
     ${os.map(o => `<div class="ojo-item"><b>${esc(o.es)}</b><p>${esc(o.txt)}</p><div class="muted">Fuentes: ${o.fuentes.map(([t, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join(' · ')}</div></div>`).join('')}</details>`;
 }
 function viewComer() {
