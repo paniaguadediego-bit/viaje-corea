@@ -143,7 +143,7 @@
 "tipo": "café",
 "plato": "pan de queso crema",
 "direccion": "34 Munhwagwangjang-gil, Andong",
-"horario": null,
+"horario": "08:30-22:00 (guía en papel, p. 195; VERIFICAR)",
 "precio": null,
 "fuente": "itinerario",
 "url": null,
@@ -1107,7 +1107,7 @@
 "tipo": "restaurante",
 "plato": "galbi de cerdo y bulgogi",
 "direccion": "Centro de Andong, junto a la calle de las costillas (galbi), según la Lonely · ubicación aproximada",
-"horario": "10am-11pm (LP 2016)",
+"horario": "11:00-21:30, de miércoles a lunes (cierra los martes) según la guía en papel, p. 195; VERIFICAR",
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
@@ -2016,5 +2016,33 @@
   "fuente": "Google (captura)",
   "fecha": "2026-11"
  }
+},
+{
+ "id": "ad-andong-gwan",
+ "ciudad": "andong",
+ "nombre": "Andong-Gwan",
+ "ko": null,
+ "tipo": "restaurante",
+ "plato": "bulgogi, bibimbap y mandu hervidos, con soju o makgeolli",
+ "direccion": "Andong (restaurante tradicional «en una esquina», según la guía) · dirección VERIFICAR",
+ "horario": "11:00-20:00 (guía en papel; VERIFICAR)",
+ "precio": "₩ barato (guía en papel)",
+ "fuente": "guia",
+ "url": null,
+ "nota": "Recomendado en vuestra guía en papel (p. 195). No he encontrado su hangul en la web: buscadlo en Naver por el nombre. VERIFICAR que sigue abierto."
+},
+{
+ "id": "ad-sinseon-jjimdak",
+ "ciudad": "andong",
+ "nombre": "Sinseon Jjimdak",
+ "ko": null,
+ "tipo": "restaurante",
+ "plato": "Andong jjimdak (pollo guisado con fideos)",
+ "direccion": "Callejón del jjimdak, dentro del mercado tradicional de Andong (안동구시장)",
+ "horario": "10:00-22:00 (guía en papel; VERIFICAR)",
+ "precio": "₩₩ medio (guía en papel)",
+ "fuente": "guia",
+ "url": null,
+ "nota": "Recomendado en vuestra guía en papel (p. 195). En la web no aparece con ese nombre (hay un 신세계찜닭 en el mismo callejón: VERIFICAR si es el mismo). Las reseñas dicen que en el callejón todos se parecen mucho."
 }
 ]

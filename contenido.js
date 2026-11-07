@@ -295,8 +295,12 @@ const LP = {
   ],
   andong: [
     R('Aldea Hahoe', '안동 하회마을', 'Aldea', 'Lo mejor de la zona (Unesco). Ve temprano por la mañana.', { top: true }),
-    R('Museo de Máscaras de Hahoe', '', 'Museo', 'Máscaras tradicionales coreanas y del mundo, a 2 km de la aldea.', { wiki: 'Hahoetal', buscar: ['museo de mascaras'] }),
-    R('Academia Byeongsan Seowon', '병산서원', 'Academia', 'Antigua escuela confuciana (1572) junto al río.'),
+    R('Museo de Máscaras de Hahoe', '하회세계탈박물관', 'Museo', 'Máscaras tradicionales coreanas y del mundo, junto a la taquilla de la aldea (antes de coger la lanzadera). Indispensable según vuestra guía en papel.', { wiki: 'Hahoetal', buscar: ['museo de mascaras'] }),
+    R('Talnori: danza de máscaras de Hahoe', '하회별신굿탈놀이', 'Espectáculo', 'Byeolsingut talnori: danza de máscaras de origen ritual, con personajes que se burlan de nobles y monjes. Función de martes a domingo a las 14:00 (de marzo a diciembre; dura 1 h), en la sala junto a la entrada de la aldea. Indispensable según vuestra guía. VERIFICAR (054-854-3664).', { lp: false, buscar: ['danza de mascaras', 'talnori'] }),
+    R('Hahoe Jangteo (mercado junto a la taquilla)', '하회장터', 'Mercado', 'Zona de restaurantes y tiendas junto a la taquilla: jjimdak, caballa salada y otros platos de Andong, y recuerdos con máscaras. Indispensable según vuestra guía. Ubicación aproximada.', { lp: false }),
+    R('Pinar de Mansongjeong', '만송정', 'Parque', 'Bosque de pinos plantado como cortavientos en la orilla del Nakdong (monumento natural 473), frente al acantilado Buyongdae. Indispensable según vuestra guía. Ubicación aproximada.', { lp: false }),
+    R('Árbol de la Diosa Samsin (Samsindang)', '삼신당', 'Santuario', 'Zelkova de unos 600 años en el punto más alto del centro de la aldea: se le piden hijos y salud atando papelitos con deseos. Indispensable según vuestra guía. Ubicación aproximada.', { lp: false, buscar: ['samsin', 'arbol de la diosa'] }),
+    R('Academia Byeongsan Seowon', '병산서원', 'Academia', 'Antigua escuela confuciana (1572) junto al río, a unos 10 min en coche de Hahoe por una carretera de tierra; sin bus fijo: taxi. Indispensable según vuestra guía.'),
     R('Aldea folclórica de Andong', '안동민속촌', 'Aldea', 'Casas tradicionales trasladadas, en una ladera sobre la ciudad.'),
     R('Museo del Folclore de Andong', '안동 민속박물관', 'Museo', 'Vida y costumbres tradicionales de la región.'),
     R('Museo del Soju', '소주 박물관', 'Museo', 'Sobre el soju de Andong (45 %), patrimonio cultural.'),
@@ -847,6 +851,10 @@ const HORARIOS = {
   '동궁과월지': { a: '09:00', c: '22:00', u: '21:30', x: [], d: 60, t: '9:00-22:00 (mejor al anochecer, iluminado)' },
   '첨성대': { d: 20, t: 'Exterior, siempre visible; iluminado de noche' },
   '안동하회마을': { a: '09:00', c: '17:00', u: '16:30', x: [], d: 150, t: '9:00-17:00 de octubre a marzo (última entrada 16:30)', v: true },
+  '하회별신굿탈놀이': { a: '14:00', c: '15:00', x: [1], d: 60, t: 'Función a las 14:00 de martes a domingo (marzo-diciembre; enero-febrero solo fines de semana); 1 h', v: true },
+  '삼신당': { d: 15, t: 'Dentro de la aldea (abierta 9:00-17:00 de octubre a marzo)' },
+  '만송정': { d: 20, t: 'Dentro de la aldea, junto al río' },
+  '하회장터': { d: 35, t: 'Restaurantes y tiendas junto a la taquilla; horario de cada local VERIFICAR', v: true },
   'museodemascarasdehahoe': { a: '09:30', c: '18:00', x: [], d: 45, t: '9:30-18:00', v: true, n: 'Gratis según una web.' },
   '도산서원': { a: '09:00', c: '17:00', x: [], d: 60, t: 'unas 9:00-17:00 en invierno', v: true },
   '봉정사': { d: 60, t: 'Templo: de día (sin horario fijo publicado)', v: true },
@@ -881,7 +889,7 @@ const HORARIOS = {
 // Cómo llegar sin taxi a los sitios lejanos (datos de webs y blogs coreanos 2019-2026: VERIFICAR la línea y el horario en Naver la víspera).
 // Clave = hangul sin espacios del destino. Sale en la Ruta del día cuando el tramo es en taxi.
 const SIN_TAXI = {
-  '안동하회마을': 'Bus 246 desde la terminal de autobuses de Andong (junto a la estación de tren) hasta Hahoe (하회마을), unos 50 min. Pasa pocas veces (12 idas y vueltas al día en 2019): mirad el horario la víspera.',
+  '안동하회마을': 'Bus 246 desde la terminal de autobuses de Andong (junto a la estación de tren) hasta Hahoe (하회마을), unos 50 min. Pasa pocas veces (12 idas y vueltas al día en 2019): mirad el horario la víspera. Algunas guías lo llaman bus 210 (número antiguo). Último bus de vuelta hacia las 19:10 según una guía: VERIFICAR. Del bus a la aldea, lanzadera gratis desde la taquilla cada 10-15 min (1 km).',
   '월영교': 'Bus 246 de vuelta de Hahoe a la terminal de Andong (~50 min) y de allí taxi corto o bus 3 hasta Woryeonggyo.',
   '도산서원': 'Bus 567 desde el centro de Andong (solo unas 4 veces al día en 2019) o el bus turístico que sale de la terminal (en 2023: 8:20, 11:20 y 14:40, de martes a domingo).',
   '봉정사': 'No hay bus directo desde Dosan Seowon: volver al centro de Andong y bus 351 a Bongjeongsa (pocas veces al día). Si vais justos de tiempo, aquí compensa el taxi.',

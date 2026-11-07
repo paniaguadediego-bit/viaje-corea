@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v154';
+const VERSION = 'v155';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -154,7 +154,7 @@ const IC_COMER = { restaurante: '🍲', 'café': '☕', mercado: '🧺', plato: 
 const tipoClase = t => 'tipo-' + norm(t || 'otro');
 
 // ---------- ¿Está en nuestro itinerario? (y qué día) ----------
-const STOP = new Set('sauna palacio templo mercado aldea barrio calle parque museo nacional gruta observatorio tumulos playa estanque santuario catedral cafe restaurante hanok village puerta mirador academia escuela torre puente plaza estacion aeropuerto cultural tradicional folclorica comida callejera puestos desayuno platos probar seul seoul andong gyeongju busan jeonju incheon corea hotel seowon square market para con los las del una tumbas reales hall center centro comercial historia moderna arte murales teleferico tour city turistico bus cafes wonjo halmae gukbap milmyeon jjimdak bibimbap samgyeopsal bakery calle viejo rocas yongsan'.split(' '));
+const STOP = new Set('hahoe sauna palacio templo mercado aldea barrio calle parque museo nacional gruta observatorio tumulos playa estanque santuario catedral cafe restaurante hanok village puerta mirador academia escuela torre puente plaza estacion aeropuerto cultural tradicional folclorica comida callejera puestos desayuno platos probar seul seoul andong gyeongju busan jeonju incheon corea hotel seowon square market para con los las del una tumbas reales hall center centro comercial historia moderna arte murales teleferico tour city turistico bus cafes wonjo halmae gukbap milmyeon jjimdak bibimbap samgyeopsal bakery calle viejo rocas yongsan'.split(' '));
 let _plan = null, _planTrip = null;
 function planIdx() {
   if (_plan && _planTrip === trip) return _plan;
@@ -836,8 +836,11 @@ function horarioDia(d, hot, orden, nAuto = orden.length) {
   // Hora de levantarse elegida (user.hdLev[fecha]); con más de 1 h 10 hasta salir, el desayuno es fuera, cerca del hotel.
   const levU = inicio === 'normal' ? aMinH(levM || d.levantarse) : null;
   // Horas fijas del itinerario ("09:00 Palacio…").
+  // La hora va al sitio que más coincide con la línea (más palabras y, si empatan, la más larga), no a todos los que se nombran.
   const fijas = {}; arr(d.items).forEach(i => { const m = aMinH(i.hora); if (m == null) return; const txt = ' ' + norm(i.texto) + ' ';
-    paradas.forEach(l => { if (tokensDe(l).some(tk => txt.includes(norm(tk.trim())))) fijas[hKey(l)] = fijas[hKey(l)] ?? m; }); });
+    const pt = l => { const ts = tokensDe(l).map(tk => norm(tk.trim())).filter(tk => tk && txt.includes(tk)); return ts.length * 100 + Math.max(0, ...ts.map(x => x.length)); };
+    const mejor = paradas.map(l => [l, pt(l)]).filter(([, p]) => p > 0).sort((a, b) => b[1] - a[1])[0];
+    if (mejor) fijas[hKey(mejor[0])] = fijas[hKey(mejor[0])] ?? m; });
   // Sitios donde se puede comer o cenar (mercados y zonas de comida).
   const ZONA_COMIDA = /mercado|myeongdong|gwangjang|jagalchi|nambu|biff|hongdae|insadong|hwangridan/i;
   // Simula el día con las paradas dadas y las visitas multiplicadas por k.
