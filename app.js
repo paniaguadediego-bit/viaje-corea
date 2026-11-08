@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v159';
+const VERSION = 'v160';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -109,7 +109,9 @@ function naver(l) {
 
 // ---------- distancias al hotel (línea recta, sin conexión) ----------
 let COORDS_LUGARES = {};
-fetch('data/coords.json').then(r => r.json()).then(d => { COORDS_LUGARES = d || {}; if (['ciudades', 'comer', 'corea', 'mas'].includes(tab)) renderLuego(); }).catch(() => {});
+// Datos fijos: si la red va lenta o falla, se reintenta, y al llegar se redibuja SIEMPRE (antes, en Hoy no: salía sin mapa, números ni tramos).
+function cargaDatos(url, ok, n = 4) { fetch(url).then(r => r.json()).then(d => { ok(d); renderLuego(); }).catch(() => { if (n > 0) setTimeout(() => cargaDatos(url, ok, n - 1), 2500); }); }
+cargaDatos('data/coords.json', d => { COORDS_LUGARES = d || {}; });
 const coordsLugar = l => {
   if (!l) return null;
   if (l.lat != null && l.lon != null) return [Number(l.lat), Number(l.lon)];
@@ -677,13 +679,12 @@ function agendaToggle(h, f) {
 
 // ---------- Metro: qué líneas coger (Seúl: datos de OpenStreetMap; Busan: hecho a mano, VERIFICAR) ----------
 let METRO = null;
-fetch('data/metro.json').then(r => r.json()).then(d => {
+cargaDatos('data/metro.json', d => {
   const est = {}; d.est.forEach(([id, en, ls, la, lo]) => { est[id] = { id, ko: id.replace(/^b:/, ''), en, ls, c: la != null ? [la, lo] : null }; });
   const ady = {}; d.tramos.forEach(([a, b, l]) => { (ady[a + '|' + l] = ady[a + '|' + l] || []).push(b); (ady[b + '|' + l] = ady[b + '|' + l] || []).push(a); });
   Object.values(est).forEach(e => { e.en = e.en.replace(/(\d)\([a-z]+\)/g, '$1'); });
   METRO = { est, ady, lin: d.lineas, conC: Object.values(est).filter(e => e.c) };
-  if (['hoy', 'ciudades', 'mapas'].includes(tab)) renderLuego();
-}).catch(() => {});
+});
 const MIN_PARADA = 2.2, MIN_CAMBIO = 6, minPie = k => k * 1.3 / 4.5 * 60;
 const rutasMetro = {};
 // Mejor combinación: estación cercana al origen (≤1,2 km a pie) → líneas y transbordos → estación cercana al destino.
@@ -2253,7 +2254,7 @@ const btnHecho = (l, k) => `<button class="hk ${hecho(l, k) ? 'on' : ''}" data-h
 
 // ---------- Comer (data/comer.json + lugares propios) ----------
 let DATOS_COMER = [];
-fetch('data/comer.json').then(r => r.json()).then(d => { DATOS_COMER = arr(d); if (['comer', 'hoy', 'verificar', 'mas'].includes(tab)) renderLuego(); }).catch(() => {});
+cargaDatos('data/comer.json', d => { DATOS_COMER = arr(d); });
 const CIUDADES_COMER = [['seul', 'Seúl'], ['andong', 'Andong'], ['gyeongju', 'Gyeongju'], ['busan', 'Busan'], ['jeonju', 'Jeonju']];
 const TIPOS = ['todos', 'restaurante', 'café', 'mercado', 'plato', 'bar'];
 const ESTADOS = [['quiero', 'Quiero'], ['visitado', 'Visitado'], ['descartado', 'Descartado'], ['cerrado', 'Cerrado']];

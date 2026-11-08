@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v159
+Caché del service worker: corea-v160
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -211,6 +211,7 @@ Caché del service worker: corea-v159
 - v157: Hoy → Sitios más limpio: plan B de lluvia plegado; cada parada es una ficha plegable con un tono suave propio y la miniatura arriba a la derecha (texto siempre alineado a la izquierda), que se pliega sola al marcarla visitada (también en Planes); si «Día en Naver» se parte, cada tramo sale tras la parada desde la que empieza; «Primero, el traslado» se marca como hecho y se pliega; los traslados ya no tienen estrellas; los avisos se tachan con una casilla (user.avisosOk, va al pasar marcas) y el número solo cuenta los pendientes.
 - v158: Hoy: el itinerario de la tarjeta del día pasa a esquema (hora, icono y título corto) con el texto completo plegado; sin botones Sitios/Hotel/Ciudad/Diario (el usuario no los usaba): Sitios siempre, y Hotel y Diario plegados al final; Ciudad (destacados) borrado. Fichas de los sitios con más tono y filo del color de la pestaña; los tramos, sin fondo. Ruta: estancias y traslados plegables, plegados solos cuando ya pasaron o el traslado se marcó hecho.
 - v159: en Ruta, los vuelos también se pliegan (resumen: ida o vuelta, fecha y aeropuertos) y salen plegados y tachados con ✓ cuando ya pasó su último tramo.
+- v160: arreglo: al volver a abrir la app tras un rato, con red lenta, Hoy salía sin mapa, horario, números de parada, tramos ni Naver, porque coords.json llegaba después de dibujar y Hoy no se redibujaba. Ahora coords, comer y metro se reintentan si fallan (hasta 4 veces) y, al llegar, la pantalla se redibuja siempre.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
