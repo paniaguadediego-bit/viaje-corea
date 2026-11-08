@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v156';
+const VERSION = 'v157';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -312,7 +312,7 @@ async function compartirArchivo(nombre, texto, tipo) {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 // Marcas: lo que cada uno apunta en su móvil. Se pasan en un archivo y se UNEN (nunca se borra nada).
-const MARCAS = ['hecho', 'estrellas', 'favs', 'diario', 'comer', 'agenda', 'hgLeidas', 'leidos', 'regalos', 'hdIni', 'hdLev', 'checklist'];
+const MARCAS = ['hecho', 'estrellas', 'avisosOk', 'favs', 'diario', 'comer', 'agenda', 'hgLeidas', 'leidos', 'regalos', 'hdIni', 'hdLev', 'checklist'];
 function exportMarcas() {
   const U = u(), m = {}; MARCAS.forEach(k => { if (U[k] != null) m[k] = U[k]; });
   compartirArchivo(`corea-marcas-${todayISO()}.json`, JSON.stringify({ tipo: 'corea-marcas', fecha: new Date().toISOString(), user: m }), 'application/json');
@@ -332,6 +332,7 @@ function fundirMarcas(o) {
   ['hgLeidas', 'leidos', 'hdIni', 'hdLev'].forEach(k => { U[k] = U[k] || {}; Object.entries(o[k] || {}).forEach(([a, b]) => { if (b && !U[k][a]) U[k][a] = b; }); });
   U.regalos = arr(U.regalos); arr(o.regalos).forEach(r => { const x = U.regalos.find(x => x.id === r.id); if (!x) { U.regalos.push(r); n.regalos++; } else x.ok = x.ok || r.ok; });
   U.estrellas = U.estrellas || {}; Object.entries(o.estrellas || {}).forEach(([k, x]) => { if (x && Number(x.v) > 0 && !U.estrellas[k]) { U.estrellas[k] = x; n.estrellas = (n.estrellas || 0) + 1; } });
+  U.avisosOk = U.avisosOk || {}; Object.entries(o.avisosOk || {}).forEach(([a, b]) => { if (b && !U.avisosOk[a]) U.avisosOk[a] = b; });
   U.checklist = U.checklist || {}; Object.entries(o.checklist || {}).forEach(([a, b]) => { if (b) U.checklist[a] = b; });
   saveUser(); return n;
 }
@@ -425,9 +426,10 @@ function planLluvia(d) {
     .sort((a, b) => (hc && coordsLugar(a.l) && coordsLugar(b.l) ? km(hc, coordsLugar(a.l)) - km(hc, coordsLugar(b.l)) : 0)).slice(0, 5);
   const txt = arr(d.items).filter(i => /llueve|lluvia/i.test(i.texto || '')).map(i => i.texto);
   if (!ls.length && !txt.length) return '';
-  return `<div class="card plan-b"><b>☔ Previsión de lluvia${prob != null ? ` (${prob} %)` : ''}: plan B a cubierto</b>
+  const key = 'planb:' + d.fecha;
+  return `<details class="card plan-b" data-key="${key}" ${abierto(key, false) ? 'open' : ''}><summary><b>☔ Previsión de lluvia${prob != null ? ` (${prob} %)` : ''}: plan B a cubierto</b></summary>
     ${txt.map(t => `<div class="muted">${resaltar(t, true)}</div>`).join('')}
-    <ul>${ls.map(o => `<li>${icSitio(o.l.es)} ${esc(o.l.es)}${hc && coordsLugar(o.l) ? ` <span class="muted">${fmtDist(km(hc, coordsLugar(o.l)))}</span>` : ''} ${irQV(o.l, k)}</li>`).join('')}</ul></div>`;
+    <ul>${ls.map(o => `<li>${icSitio(o.l.es)} ${esc(o.l.es)}${hc && coordsLugar(o.l) ? ` <span class="muted">${fmtDist(km(hc, coordsLugar(o.l)))}</span>` : ''} ${irQV(o.l, k)}</li>`).join('')}</ul></details>`;
 }
 async function exportCopy() {
   await cargarFotos();
@@ -530,7 +532,9 @@ function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   let html = `<div class="hoy-top"><button class="sos" data-act="ayuda">🆘 Ayuda</button></div>` + ahora() + pendingAlert();
   const avisos = arr(trip.avisos);
-  const avisosHTML = () => `<details class="card avisos" data-key="avisos" ${abierto("avisos", false) ? "open" : ""}><summary><b>⚠️ Avisos (${avisos.length})</b></summary><ul>${avisos.map(a => `<li>${esc(a)}</li>`).join('')}</ul></details>`;
+  // Avisos: se tachan con la casilla (user.avisosOk, por texto) y el número solo cuenta los pendientes.
+  const avOk = u().avisosOk || {}, pend = avisos.filter(a => !avOk[a]);
+  const avisosHTML = () => `<details class="card avisos" data-key="avisos" ${abierto("avisos", false) ? "open" : ""}><summary><b>⚠️ Avisos (${pend.length}${pend.length < avisos.length ? ' de ' + avisos.length : ''})</b></summary><ul>${[...pend, ...avisos.filter(a => avOk[a])].map(a => `<li class="${avOk[a] ? 'tachado' : ''}"><button class="hd-ck ${avOk[a] ? 'on' : ''}" data-avok="${esc(a)}" aria-label="Hecho">${avOk[a] ? '✓' : ''}</button><span>${esc(a)}</span></li>`).join('')}</ul></details>`;
   if (!dias.length) return html + '<p class="muted">El viaje no tiene días (clave "dias").</p>';
 
   if (dayIdx === null) {
@@ -561,7 +565,8 @@ function viewHoy() {
   const tr = arr(trip.traslados).filter(t => t.fecha === d.fecha), al = alojDe(d.fecha);
   const secs = [
     // El traslado va dentro de Sitios, como primer tramo de la ruta del día.
-    ['sitios', '📖 Sitios', (tr.length ? `<div class="tras-dia"><div class="tras-dia-tit">${medio(tr[0])[0]} Primero, el traslado</div>${antesSalir(d.fecha, tr, al)}${tr.map(trasladoCard).join('')}</div>` : '') + sitiosDia(d)],
+    ['sitios', '📖 Sitios', (tr.length ? (() => { const hk = 'tras:' + (tr[0].id || d.fecha), ok = !!u().hecho[hk], key = 'trd:' + d.fecha, ab = abierto(key, !ok);
+      return `<details class="tras-dia ${ok ? 'hecho-card' : ''}" data-key="${key}" ${ab ? 'open' : ''}><summary class="tras-dia-tit"><button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hk)}" data-v="${ok ? 0 : 1}" aria-label="Hecho">${ok ? '✓' : ''}</button>${medio(tr[0])[0]} Primero, el traslado</summary>${antesSalir(d.fecha, tr, al)}${tr.map(trasladoCard).join('')}</details>`; })() : '') + sitiosDia(d)],
     ['hotel', '🛏️ Hotel', (al.sale && al.sale !== al.noche ? alojCard(al.sale, true) : '') + (al.noche ? alojCard(al.noche, false) : '')],
     ['ciudad', '⭐ Ciudad', destacados(d.ciudad)],
     ['diario', `${diarioDe(d.fecha).cara || '📔'} Diario`, diarioCard(d)]
@@ -760,13 +765,14 @@ function tramo(o, dst, nO, nD, op = {}) {
 function naverDia(hc, hotN, lista) {
   const pts = lista.filter(l => coordsLugar(l)).map(l => [coordsLugar(l), l.ko || l.es]);
   if (hc) { pts.unshift([hc, hotN || 'Hotel']); pts.push([hc, hotN || 'Hotel']); }
-  if (pts.length < 3) return '';
+  if (pts.length < 3) return [];
   // Tramos repartidos a partes iguales (cada uno empieza donde acaba el anterior).
   const n = pts.length - 1, paso = Math.ceil(n / Math.ceil(n / 6)), partes = [];
   for (let i = 0; i < n; i += paso) partes.push(pts.slice(i, i + paso + 1));
   const q = (p, c) => `${p}lat=${c[0][0]}&${p}lng=${c[0][1]}&${p}name=${encodeURIComponent(c[1])}`;
   const url = P => `nmap://route/car?${q('s', P[0])}&${P.slice(1, -1).map((c, i) => q('v' + (i + 1), c) + '&').join('')}${q('d', P[P.length - 1])}&appname=viajecorea`;
-  return `<div class="naver-dia">${partes.map((P, i) => `<a class="btn mini" href="${url(P)}">🧭 ${partes.length > 1 ? `Día en Naver (${i + 1}/${partes.length})` : 'Todo el día en Naver'}</a>`).join('')}</div>`;
+  // Cada tramo sale donde empieza: el 1.º arriba y los demás tras la parada desde la que salen (inicio = nº de esa parada).
+  return partes.map((P, i) => ({ inicio: i * paso + (hc ? 0 : 1), html: `<div class="naver-dia"><a class="btn mini" href="${url(P)}">🧭 ${partes.length > 1 ? `Día en Naver (${i + 1}/${partes.length})` : 'Todo el día en Naver'}</a></div>` }));
 }
 // Sitios recomendados que no están en ningún día del plan y quedan a ≤900 m de la ruta de ese día.
 // Sitios recomendados que no están en ningún día y quedan a ≤900 m de la ruta, con dónde encajan
@@ -917,14 +923,16 @@ function sitiosDia(d) {
   const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}; const G = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
   const al = alojDe(d.fecha), hot = al.noche && al.noche.lat != null && ck(al.noche.ciudad) === k ? al.noche : (al.sale && al.sale.lat != null && ck(al.sale.ciudad) === k ? al.sale : null);
   let prev = hot ? [Number(hot.lat), Number(hot.lon)] : null, prevN = hot ? hot.nombre : '';
-  const num = {}; // número de cada parada, el mismo que en el mapa del día
+  const num = {}, naverTras = {}; // número de cada parada (el del mapa) y tramos de Naver que salen tras ella
   const fila = (l, extra) => {
     const h = hKey(l), mas = D[h.slice(2)] || D[h], txt = mas || l.desc || l.nota || G[h.slice(2)] || '', c = coordsLugar(l);
     const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es, { hasta: l.es, aK: hKey(l), key: d.fecha + '|' + h, hecho: hecho(l, k) }) : '';
     if (c) { prev = c; prevN = l.ko || l.es; }
     const n = num[h];
-    return `${t}${extra ? encaje(l) : ''}<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</div>
-      ${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${irQV(l, k)}</div></div>`;
+    // Ficha plegable: se pliega sola al marcarla como visitada (y la foto, a la derecha, arriba).
+    const key = 'sd:' + d.fecha + '|' + h, ab = abierto(key, !hecho(l, k));
+    return `${t}${extra ? encaje(l) : ''}<details class="sd ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}${btnHecho(l, k)}<b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
+      <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${irQV(l, k)}</div>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}</details>`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
   let extras = todos.filter(l => !auto.includes(l));
@@ -944,10 +952,11 @@ function sitiosDia(d) {
     return best && best.dv < alFinal - 0.2 ? `<div class="encaje">💡 Os pilla de paso entre ${esc(best.a)} y ${esc(best.b)} (desvío ~${fmtDist(best.dv)}).</div>` : ''; };
   const hc = hot ? [Number(hot.lat), Number(hot.lon)] : null, conMapa = [...auto, ...extras].some(l => coordsLugar(l));
   { let n = 0; [...auto, ...extras].forEach(l => { if (coordsLugar(l)) num[hKey(l)] = ++n; }); }
+  const nvP = naverDia(hc, hot && (hot.ko || hot.nombre), [...auto, ...extras]); nvP.slice(1).forEach(x => { naverTras[x.inicio] = x.html; });
   // Sugerencias "cerca y no lo tenéis", plegadas e intercaladas tras la parada donde encajan (H* = tras el hotel).
   const sugs = sugerenciasDe(d, [...auto, ...extras], hc), sugTras = n => sugs.filter(g => g.tras.n === n).map(g => sugPlegada(g, d)).join('');
   return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${horarioDia(d, hc, [...auto, ...extras], auto.length)}${planLluvia(d)}<b>📖 Ruta del día</b>
-    ${naverDia(hc, hot && (hot.ko || hot.nombre), [...auto, ...extras])}
+    ${(nvP[0] || {}).html || ''}
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>${sugTras(0)}` : ''}
     ${auto.map(l => fila(l, false) + sugTras(num[hKey(l)])).join('')}
     ${extras.length ? `<div class="sd-anadidos">➕ Añadidos desde Ciudades</div>${extras.map(l => fila(l, true) + sugTras(num[hKey(l)])).join('')}` : ''}
@@ -983,7 +992,6 @@ function trasladoCard(t) {
         ${ab ? `<ol>${arr(t.pasos).map(p => `<li>${resaltar(p)}</li>`).join('')}</ol>` : ''}</div>`; })() : ''}
       ${t.frase_ko ? `<div class="ko">${esc(t.frase_ko)}</div>` : ''}
       ${t.romanizacion ? `<div class="muted">${esc(t.romanizacion)}</div>` : ''}
-      ${estrBox('t:' + (t.id || t.fecha + t.de), `🚆 ${fmtCorto(t.fecha)} ${lugarCorto(t.de)} → ${lugarCorto(t.a)}`)}
     </div>
   </div>`;
 }
@@ -2604,7 +2612,9 @@ let tiraX = null, tabAnt = null;
 // ---------- render ----------
 // Guarda dónde está un botón en pantalla y devuelve la función que lo deja en el mismo sitio tras redibujar.
 function anclar(el) {
-  const at = [...el.attributes].find(x => /^data-(stk|fav|hgleida|hk|est|val|verif|agtog|agdel|cara)$/.test(x.name)); if (!at) return () => {};
+  const at = [...el.attributes].find(x => /^data-(avok|stk|fav|hgleida|hk|est|val|verif|agtog|agdel|cara)$/.test(x.name)); if (!at) return () => {};
+  const dt = el.closest('details[data-key]:not(.horario-dia)');
+  if (dt) { const sd = `details[data-key="${CSS.escape(dt.dataset.key)}"]`, yd = dt.getBoundingClientRect().top; return () => { const n = document.querySelector(sd); if (n) window.scrollBy(0, n.getBoundingClientRect().top - yd); }; }
   const sel = `[${at.name}="${CSS.escape(at.value)}"]`, i = [...document.querySelectorAll(sel)].indexOf(el), y = el.getBoundingClientRect().top;
   return () => { const n = document.querySelectorAll(sel)[i] || document.querySelector(sel); if (n) window.scrollBy(0, n.getBoundingClientRect().top - y); };
 }
@@ -2700,7 +2710,7 @@ document.addEventListener('click', e => {
     render(); return;
   }
   // Botones de marcar (visitado, valorar, estado…): tras redibujar, el botón tocado vuelve al mismo punto de la pantalla.
-  const mk = e.target.closest('button[data-stk],button[data-fav],button[data-hgleida],button[data-hk],button[data-est],button[data-val],button[data-verif],button[data-agtog],button[data-agdel],button[data-cara]');
+  const mk = e.target.closest('button[data-avok],button[data-stk],button[data-fav],button[data-hgleida],button[data-hk],button[data-est],button[data-val],button[data-verif],button[data-agtog],button[data-agdel],button[data-cara]');
   if (mk) queueMicrotask(anclar(mk));
   const stb = e.target.closest('button[data-stk]');
   if (stb) { e.preventDefault(); const U = u(), es = U.estrellas = U.estrellas || {}, k = stb.dataset.stk, v = Number(stb.dataset.sv);
@@ -2722,8 +2732,12 @@ document.addEventListener('click', e => {
   }
   const hix = e.target.closest('[data-hdini-x]');
   if (hix) { const U = u(); ['hdIni', 'hdLev'].forEach(c => { if (U[c]) delete U[c][hix.dataset.hdiniX]; }); saveUser(); render(); return; }
+  const avb = e.target.closest('button[data-avok]');
+  if (avb) { e.preventDefault(); const U = u(), o = U.avisosOk = U.avisosOk || {}, a = avb.dataset.avok; if (o[a]) delete o[a]; else o[a] = todayISO(); saveUser(); render(); return; }
   const hk = e.target.closest('button[data-hk]');
-  if (hk) { e.preventDefault(); marcarHecho(hk.dataset.hk, hk.dataset.v === '1'); render(); return; }
+  if (hk) { e.preventDefault(); const h = hk.dataset.hk, v = hk.dataset.v === '1'; marcarHecho(h, v);
+    if (v) Object.keys(abiertos).concat('qv:' + h).forEach(k => { if (k === 'qv:' + h || k.endsWith('|' + h) || (h.startsWith('tras:') && k.startsWith('trd:'))) abiertos[k] = false; });
+    render(); return; }
   const vf = e.target.closest('[data-verif]');
   if (vf) {
     const U = u(), k = vf.dataset.verif;

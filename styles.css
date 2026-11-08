@@ -1262,3 +1262,27 @@ details.sug-pl .sug { border-top: 0; }
 .guia-txt.pais h3 { font-size: .95rem; margin: 12px 0 4px; color: var(--acc); }
 .guia-txt.pais .pais-intro { margin: 6px 0; font-style: italic; }
 .pais-fuentes { margin-top: 10px; font-size: .78rem; line-height: 1.5; }
+/* v157: fichas de la Ruta del día plegables, foto arriba a la derecha y tono propio */
+.sitios-dia details.sd { display: block; padding: 8px 10px; margin: 6px 0; border: 1px solid var(--line); border-radius: 12px;
+  background: color-mix(in srgb, var(--acc) 4%, var(--card)); }
+.sitios-dia details.sd > summary { list-style: none; cursor: pointer; }
+.sitios-dia details.sd > summary::-webkit-details-marker { display: none; }
+.sitios-dia details.sd > summary { display: block; }
+.sitios-dia details.sd > summary > * { vertical-align: middle; margin-right: 4px; }
+.sitios-dia details.sd > summary .foto.mini { float: right; margin: 0 0 4px 8px; }
+.sitios-dia details.sd > summary::after { display: none; }
+.sitios-dia details.sd::after { content: ''; display: block; clear: both; }
+.sitios-dia details.sd:not([open]) { padding: 5px 10px; }
+.sitios-dia details.sd:not([open]) .foto.mini { width: 32px; height: 32px; }
+.sitios-dia details.sd .sd-cuerpo { margin-top: 4px; }
+.sitios-dia details.sd .naver-dia { margin-top: 8px; }
+.sitios-dia .sug { flex-direction: row-reverse; }
+details.tras-dia > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+details.tras-dia > summary::-webkit-details-marker { display: none; }
+details.tras-dia > summary::after { content: '▾'; margin-left: auto; color: var(--muted); font-weight: 400; }
+details.tras-dia:not([open]) > summary::after { content: '▸'; }
+details.tras-dia.hecho-card > summary { opacity: .7; }
+details.plan-b > summary { cursor: pointer; }
+.avisos li { display: flex; gap: 8px; align-items: flex-start; list-style: none; margin: 4px 0; }
+.avisos ul { padding-left: 0; }
+.avisos li.tachado span { text-decoration: line-through; opacity: .55; }
