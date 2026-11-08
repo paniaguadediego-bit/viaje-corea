@@ -1310,3 +1310,7 @@ details.vuelo-pl { margin: 8px 0; }
 details.vuelo-pl > summary { cursor: pointer; font-weight: 700; padding: 8px 12px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); }
 details.vuelo-pl[open] > summary { margin-bottom: 6px; }
 details.vuelo-pl.pasado > summary { text-decoration: line-through; opacity: .6; font-weight: 600; }
+/* v161: pestaña Idioma y bloques de la Guía */
+body[data-pest="idioma"] { --acc: #8e3a6d; }
+h2.guia-bloque { margin: 18px 4px 6px; }
+h2.guia-bloque:first-child { margin-top: 4px; }

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v160
+Caché del service worker: corea-v161
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -212,6 +212,7 @@ Caché del service worker: corea-v160
 - v158: Hoy: el itinerario de la tarjeta del día pasa a esquema (hora, icono y título corto) con el texto completo plegado; sin botones Sitios/Hotel/Ciudad/Diario (el usuario no los usaba): Sitios siempre, y Hotel y Diario plegados al final; Ciudad (destacados) borrado. Fichas de los sitios con más tono y filo del color de la pestaña; los tramos, sin fondo. Ruta: estancias y traslados plegables, plegados solos cuando ya pasaron o el traslado se marcó hecho.
 - v159: en Ruta, los vuelos también se pliegan (resumen: ida o vuelta, fecha y aeropuertos) y salen plegados y tachados con ✓ cuando ya pasó su último tramo.
 - v160: arreglo: al volver a abrir la app tras un rato, con red lenta, Hoy salía sin mapa, horario, números de parada, tramos ni Naver, porque coords.json llegaba después de dibujar y Hoy no se redibujaba. Ahora coords, comer y metro se reintentan si fallan (hasta 4 veces) y, al llegar, la pantalla se redibuja siempre.
+- v161: reorganización pedida por el usuario. Comer pasa a Planes (botón 🍜 Comer de cada ciudad, entre Puntos de interés y Miscelánea; los enlaces del mapa llevan allí). Nueva pestaña 🔤 Idioma en la barra (Hangul, Frases, Diccionario, Enseñar y Favoritas) en lugar de Comer. Corea se queda solo con la Guía, en bloques: Moverse, Dinero y compras, Comida (con los Platos típicos, que salen de Comer), Costumbres y cultura, Salud, seguridad y práctico, y País. [Supuesto] Clima, enchufes, qué llevar y lo básico de la Lonely van en «Salud, seguridad y práctico».
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

@@ -17,14 +17,13 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    la raíz): start_url "./index.html" (sin id ni scope:
    así se instala en el Xiaomi del usuario), service worker con ruta
    relativa, iconos relativos.
-5. Pestañas (barra inferior, 8 desde v122; nombres de v137): Hoy, Ruta (✈️), Planes (🏯; antes Planes/Explorar/Ciudades; id interno 'ciudades'; por ciudad, botones
-   📍 Puntos de interés / 🧩 Miscelánea), Mapas (🗺️, mapa de cada ciudad con botones de ciudad; la ficha de cada icono enlaza con Planes, Comer, Miscelánea u Hoy → Hotel), Historia, Corea, Comer y Más. Historia (pestaña propia): portada,
+5. Pestañas (barra inferior, 8; desde v161): Hoy, Ruta (✈️), Planes (🏯; antes Planes/Explorar/Ciudades; id interno 'ciudades'; por ciudad, botones
+   📍 Puntos de interés / 🍜 Comer (lo que era la pestaña Comer, filtrado por esa ciudad; el antiguo tab 'comer' redirige aquí) / 🧩 Miscelánea), Mapas (🗺️, mapa de cada ciudad con botones de ciudad; la ficha de cada icono enlaza con Planes, Comer, Miscelánea u Hoy → Hotel), Historia, Corea (🇰🇷 solo la Guía), Idioma (🔤) y Más. Historia (pestaña propia): portada,
    ⏳ Línea del tiempo (HIST_EVENTOS en historia.js, unas 35 fechas que abren su capítulo), 📚 Capítulos (cada uno con
    época y años, "En 30 segundos", fechas clave y "📍 Dónde lo veréis" con enlace a Planes; HIST_META), 🏯 Vuestras
    ciudades (HISTORIA de cada ciudad) y 🇰🇷 Símbolos. Miscelánea (antes Planes) va dentro de Planes (calendario del Mundial de LoL plegado: WORLDS en contenido.js, hora de
    Corea y dónde estaréis; botones en orden alfabético Curioso (cafés de animales, postres famosos, tiendas raras) / Lavandería / LoL (con consejos de PC bang y T1 HQ Shop) / Ropa (cerca del hotel o en barrios del itinerario; Musinsa Standard y galerías subterráneas, lo que recomiendan los viajeros) que muestran sus sitios debajo: PLANES en contenido.js,
-   con distancia al hotel, "cerca", foto, 💰 precio aproximado y 👥 reseñas; lavandería en cada ciudad; sin Cosmética desde v146: hay tiendas por todas partes). Corea tiene apartados:
-   Guía (primero, con iconos por tema), 🏛️ País (sociedad.js: PAIS con Política, Educación, Ser médico, Sueldos y trabajo y Población; rejilla como la Guía, cada tema con fuentes y fecha de búsqueda; POBLACION = habitantes bajo el nombre de cada ciudad en Planes, con hangul, 🗣️ pronunciación y 🔊), Enseñar, Frases, Diccionario y 🔤 Hangul (hangul.js: HG_LEC 11 lecciones esquematizadas con letras, sonido a la española,
+   con distancia al hotel, "cerca", foto, 💰 precio aproximado y 👥 reseñas; lavandería en cada ciudad; sin Cosmética desde v146: hay tiendas por todas partes). Corea es la Guía en bloques temáticos (GUIA_BLOQUES: 🚇 Moverse, 💳 Dinero y compras, 🍜 Comida (con 🥢 Platos típicos, PLATOS, que salió de Comer), 🙇 Costumbres y cultura, 🚨 Salud, seguridad y práctico, y 🏛️ País: sociedad.js, PAIS con Política, Educación, Ser médico, Sueldos y trabajo y Población, cada tema con fuentes y fecha de búsqueda; POBLACION = habitantes bajo el nombre de cada ciudad en Planes, con hangul, 🗣️ pronunciación y 🔊; el tema abierto sale bajo su bloque). Idioma tiene apartados: 🔤 Hangul (primero), Frases, Diccionario, Enseñar y ⭐ Favoritas. 🔤 Hangul (hangul.js: HG_LEC 11 lecciones esquematizadas con letras, sonido a la española,
    romanización, ejemplo con 🔊, trucos y reglas de lectura, marca de leída en user.hgLeidas; 🪧 Carteles HG_CARTELES descompuestos letra a letra; 🎯 Practicar:
    test de letras o carteles que repite lo fallado, user.hgTest; 🔗 Fuentes gratuitas HG_FUENTES) y ⭐ Favoritas (☆ en cada frase, palabra y cartel; user.favs; agrupadas en Frases, Palabras y Carteles)
    (la Historia, historia.js: 22 capítulos con marca de leído en user.leidos y diseño hanji/dancheong, pasó a su pestaña en v103). Más es una rejilla de iconos
@@ -199,8 +198,7 @@ S5 Más (Maleta/Documentos desde checklist_documentos, y Notas),
    categoría, total por ciudad, presupuesto de referencia).
 S6 Pulido, prueba completa en modo avión e instalación en
    pantalla de inicio.
-SX Comer (independiente): data/comer.json precacheado; pestaña
-   Comer con filtro por ciudad (por defecto la del día) y tipo;
+SX Comer (independiente): data/comer.json precacheado; desde v161 va en Planes → 🍜 Comer de cada ciudad (sin botones de ciudad propios ni glosario de platos), con filtro por tipo;
    tarjeta con hangul, precio, horario, fuente y "VERIFICAR que
    sigue abierto"; Copiar coreano, Enseñar, Naver; estado y nota
    por lugar; "Añadir lugar". Diseño compacto (v69): botones de ciudad

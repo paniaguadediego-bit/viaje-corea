@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v160';
+const VERSION = 'v161';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -39,7 +39,7 @@ let dayIdx = null;
 
 const TABS = [
   ['hoy', 'Hoy', '📅'], ['ruta', 'Ruta', '✈️'], ['ciudades', 'Planes', '🏯'], ['mapas', 'Mapas', '🗺️'], ['historia', 'Historia', '📜'], ['corea', 'Corea', '🇰🇷'],
-  ['comer', 'Comer', '🍜'], ['mas', 'Más', '☰']
+  ['idioma', 'Idioma', '🔤'], ['mas', 'Más', '☰']
 ];
 // Secciones agrupadas dentro de "Más" (la barra no cabe con 9 pestañas).
 const EN_MAS = [['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎']];
@@ -1308,7 +1308,7 @@ function abrirAyuda() {
 // Ciudades: 5 botones; al tocar uno se despliega su ficha debajo. Por defecto, la ciudad del día.
 // Qué ver (antes Explorar y Ciudades): por ciudad, Puntos de interés y Planes. El mapa de cada ciudad va en la pestaña Mapas.
 let ciudadSel = null, historiaAbierta = false, exSub = 'puntos';
-const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['planes', '🧩 Miscelánea']];
+const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['planes', '🧩 Miscelánea']];
 // Mapas: el mapa de cada ciudad (itinerario, más sitios, Comer, Planes y hotel). Al tocar un icono, su ficha enlaza con Qué ver o Comer.
 function viewMapas() {
   const botones = botonesCiudad(); if (!botones) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
@@ -1334,8 +1334,8 @@ function viewCiudades() {
       <div class="ciudad-fechas">${fechas}</div>
     </div>
     <div class="row daynav exsubs">${EX_SUBS.filter(([x]) => x !== 'historia' || h).map(([x, tt]) => `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}">${tt}</button>`).join('')}</div>
-    ${muchoOjo(k, 'planes')}
-    ${exSub === 'planes' ? planesDe(k) : ''}
+    ${exSub === 'comer' ? '' : muchoOjo(k, 'planes')}
+    ${exSub === 'planes' ? planesDe(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
     ${exSub !== 'puntos' ? '</div>' : ''}${exSub === 'puntos' ? `
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
       ${INTRO_LP[k].plan ? `<details data-key="lp:${k}" ${abierto("lp:" + k, false) ? "open" : ""}><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
@@ -2055,22 +2055,21 @@ function viewHangul() {
 // 🏛️ País: política, educación, ser médico, sueldos y población (PAIS en sociedad.js). Rejilla como la Guía.
 let paisSel = null;
 const negritas = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>');
-function viewPais() {
+function viewPais(soloDetalle = false) {
   const P = typeof PAIS !== 'undefined' ? PAIS : [], g = P.find(x => x.id === paisSel);
-  return `<div class="guia-rej">${P.map(x => `<button class="guia-t ${x.id === paisSel ? 'on' : ''}" data-pais="${x.id}"><span>${x.ic}</span>${esc(x.t)}</button>`).join('')}</div>
+  return `${soloDetalle ? '' : `<div class="guia-rej">${P.map(x => `<button class="guia-t ${x.id === paisSel ? 'on' : ''}" data-pais="${x.id}"><span>${x.ic}</span>${esc(x.t)}</button>`).join('')}</div>`}
     ${g ? `<div class="card guia-txt pais"><b>${g.ic} ${esc(g.t)}</b><p class="pais-intro">${negritas(g.intro)}</p>
       ${g.bloques.map(([h, xs]) => `<h3>${esc(h)}</h3><ul>${xs.map(x => `<li>${negritas(x)}</li>`).join('')}</ul>`).join('')}
       <div class="muted pais-fuentes">Fuentes (noviembre de 2026): ${g.fuentes.map(([t, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join(' · ')}</div></div>`
     : '<p class="muted centro">Toca un tema. Datos buscados en noviembre de 2026, con fuentes.</p>'}`;
 }
-function viewCorea() {
-  if (coreaSub === 'historia') coreaSub = 'guia'; // Historia tiene pestaña propia desde v103
-  const seg = [['guia', '🧭 Guía'], ['pais', '🏛️ País'], ['ensenar', '🪧 Enseñar'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.'], ['hangul', '🔤 Hangul'], ['favs', `⭐${arr(u().favs).length ? ' ' + arr(u().favs).length : ''}`]].map(([k, t]) =>
+// 🔤 Idioma (pestaña propia desde v161): Hangul, Frases, Diccionario, Enseñar y Favoritas.
+function viewIdioma() {
+  if (!['hangul', 'frases', 'dicc', 'ensenar', 'favs'].includes(coreaSub)) coreaSub = 'hangul';
+  const seg = [['hangul', '🔤 Hangul'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.'], ['ensenar', '🪧 Enseñar'], ['favs', `⭐${arr(u().favs).length ? ' ' + arr(u().favs).length : ''}`]].map(([k, t]) =>
     `<button class="${coreaSub === k ? '' : 'sec'}" data-sub="${k}">${t}</button>`).join('');
   let html = `<div class="row daynav seg5">${seg}</div>`;
-  if (coreaSub === 'pais') html += viewPais();
-  else if (coreaSub === 'ensenar') html += viewEnsenar();
-  else if (coreaSub === 'hangul') html += viewHangul();
+  if (coreaSub === 'ensenar') html += viewEnsenar();
   else if (coreaSub === 'favs') html += viewFavs();
   else if (coreaSub === 'frases') {
     let off = 0; const grupos = FRASES_SIT.map(([t, fs]) => { const g = [t, fs, off]; off += fs.length; return g; });
@@ -2080,13 +2079,41 @@ function viewCorea() {
   // La búsqueda se recuerda: si la pantalla se redibuja (p. ej. al cerrar el teclado), no se pierde.
   else if (coreaSub === 'dicc') html += `<input id="q" type="search" placeholder="Buscar (español, coreano o romanización)" autocomplete="off" enterkeyhint="search" value="${esc(qDic)}">
     <div id="dres">${dResultados(qDic)}</div>`;
-  else {
-    const g = GUIA.find(([t]) => t === guiaSel);
-    html += `<div class="guia-rej">${GUIA.map(([t]) => `<button class="guia-t ${t === guiaSel ? 'on' : ''}" data-guia="${esc(t)}"><span>${icGuia(t)}</span>${esc(t.replace(/ \(Lonely Planet\)/, ''))}${/Lonely/.test(t) ? '<small>LP</small>' : ''}</button>`).join('')}</div>
-      ${g ? `<div class="card guia-txt"><b>${icGuia(g[0])} ${esc(g[0])}</b><ul>${g[1].map(x => `<li>${resaltar(x, true)}</li>`).join('')}${g[0] === 'Dinero y pagos' ? pagoAlli() : ''}</ul></div>` : ''}
-      <p class="muted centro">La Lonely Planet (2016) solo vale para cultura: precios y apps, verificarlos.</p>`;
-  }
+  else html += viewHangul();
   return html;
+}
+// 🇰🇷 Corea: la Guía por bloques temáticos; País (sociedad.js) y los platos típicos van dentro. Lo que no esté en un bloque, al último.
+const GUIA_BLOQUES = [
+  ['🚇 Moverse', ['T-money y transporte', 'Metro y KTX', 'Taxis', 'Apps', 'Internet y móvil', 'Entrada al país']],
+  ['💳 Dinero y compras', ['Dinero y pagos', 'Compras, tax free y último día', 'Propinas', 'Tiendas 24 h']],
+  ['🍜 Comida', ['Comida', 'platos', 'En la mesa (Lonely Planet)', 'Beber a la coreana']],
+  ['🙇 Costumbres y cultura', ['Etiqueta', 'Saber estar (Lonely Planet)', 'Zapatos', 'Templos', 'Fechas de vuestro viaje']],
+  ['🚨 Salud, seguridad y práctico', ['Seguridad y emergencias', 'Salud y farmacias', 'Baños', 'Enchufes', 'Clima en noviembre', 'Qué llevar (Lonely Planet)', 'Lo básico (Lonely Planet)', 'Consejos de la Lonely Planet']],
+  ['🏛️ País', 'pais']
+];
+function glosarioPlatos() {
+  if (typeof PLATOS === 'undefined') return '';
+  return `<div class="card guia-txt"><b>🥢 Platos típicos ${lpPill({ lp: 1 })}</b><div class="chips">${PLATOS.map(([t], gi) => `<button class="chip ${gi === platoGrupo ? 'on' : ''}" data-pg="${gi}">${esc(t)}</button>`).join('')}</div>
+    ${(PLATOS[platoGrupo] || PLATOS[0])[1].map((p, i) => `<div class="card plato" data-full="p:${platoGrupo}:${i}"><div><b>${esc(p[0])}</b><div class="muted">${esc(p[2])}</div></div><div class="ko">${esc(p[1])}</div></div>`).join('')}</div>`;
+}
+function viewCorea() {
+  const usados = new Set(GUIA_BLOQUES.flatMap(([, ts]) => Array.isArray(ts) ? ts : [])), P = typeof PAIS !== 'undefined' ? PAIS : [];
+  const resto = GUIA.map(([t]) => t).filter(t => !usados.has(t));
+  const btn = (k, ic, t, lp) => `<button class="guia-t ${k === guiaSel ? 'on' : ''}" data-guia="${esc(k)}"><span>${ic}</span>${esc(t)}${lp ? '<small>LP</small>' : ''}</button>`;
+  const detalle = k => {
+    if (k === 'platos') return glosarioPlatos();
+    if (k.startsWith('pais:')) { paisSel = k.slice(5); return viewPais(true); }
+    const g = GUIA.find(([t]) => t === k); if (!g) return '';
+    return `<div class="card guia-txt"><b>${icGuia(g[0])} ${esc(g[0])}</b><ul>${g[1].map(x => `<li>${resaltar(x, true)}</li>`).join('')}${g[0] === 'Dinero y pagos' ? pagoAlli() : ''}</ul></div>`;
+  };
+  return GUIA_BLOQUES.map(([tit, ts], bi) => {
+    const items = ts === 'pais' ? P.map(x => ['pais:' + x.id, x.ic, x.t])
+      : [...ts, ...(bi === GUIA_BLOQUES.length - 2 ? resto : [])].filter(t => t === 'platos' || GUIA.some(([g]) => g === t))
+        .map(t => t === 'platos' ? ['platos', '🥢', 'Platos típicos'] : [t, icGuia(t), t.replace(/ \(Lonely Planet\)/, ''), /Lonely/.test(t)]);
+    if (!items.length) return '';
+    const abierto = items.some(([k]) => k === guiaSel);
+    return `<h2 class="guia-bloque">${esc(tit)}</h2><div class="guia-rej">${items.map(([k, ic, t, lp]) => btn(k, ic, t, lp)).join('')}</div>${abierto ? detalle(guiaSel) : ''}`;
+  }).join('') + '<p class="muted centro">La Lonely Planet (2016) solo vale para cultura: precios y apps, verificarlos.</p>';
 }
 
 
@@ -2259,7 +2286,7 @@ const CIUDADES_COMER = [['seul', 'Seúl'], ['andong', 'Andong'], ['gyeongju', 'G
 const TIPOS = ['todos', 'restaurante', 'café', 'mercado', 'plato', 'bar'];
 const ESTADOS = [['quiero', 'Quiero'], ['visitado', 'Visitado'], ['descartado', 'Descartado'], ['cerrado', 'Cerrado']];
 const FUENTES = { itinerario: 'Itinerario', guia: 'Guía web (no verificado)', lonely: 'Lonely Planet 2016', propio: 'Propio' };
-let verPlatos = false, platoGrupo = 0;
+let platoGrupo = 0;
 let comerCiudad = null, comerTipo = 'todos', comerForm = false, comerEstado = 'todos', comerOrden = 'rec';
 const lugaresComer = () => [...DATOS_COMER, ...arr(u().comerPropios)].filter(l => l && typeof l === 'object');
 const estadoDe = id => (u().comer && user.comer[id]) || {};
@@ -2274,7 +2301,7 @@ function muchoOjo(ciudad, tipo = 'comer') {
   return `<details class="card ojo-card" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}><summary><b>⚠️ Mucho ojo con… (${os.length})</b> <span class="muted">${tipo === 'planes' ? 'famosos con pegas' : 'famosos con quejas'}</span></summary>
     ${os.map(o => `<div class="ojo-item"><b>${esc(o.es)}</b><p>${esc(o.txt)}</p><div class="muted">Fuentes: ${o.fuentes.map(([t, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join(' · ')}</div></div>`).join('')}</details>`;
 }
-function viewComer() {
+function viewComer(dentro = false) {
   if (comerCiudad === null) {
     const k = ck(ciudadActual());
     comerCiudad = CIUDADES_COMER.some(c => c[0] === k) ? k : 'todas';
@@ -2286,19 +2313,13 @@ function viewComer() {
   lista = ordenarComer(lista);
   const chip = (attr, v, t, on) => `<button class="chip ${on ? 'on' : ''}" ${attr}="${esc(v)}">${esc(t)}</button>`;
   const opt = (v, t, on) => `<option value="${esc(v)}" ${on ? 'selected' : ''}>${esc(t)}</option>`;
-  const glosario = typeof PLATOS === 'undefined' ? '' : `<div class="glosario">
-      <button class="sec glos-btn" data-act="platos">📖 Glosario de platos ${lpPill({ lp: 1 })} ${verPlatos ? '▾' : '▸'}</button>
-      ${verPlatos ? `<div class="chips">${PLATOS.map(([t], gi) => `<button class="chip ${gi === platoGrupo ? 'on' : ''}" data-pg="${gi}">${esc(t)}</button>`).join('')}</div>
-        ${(PLATOS[platoGrupo] || PLATOS[0])[1].map((p, i) => `<div class="card plato" data-full="p:${platoGrupo}:${i}"><div><b>${esc(p[0])}</b><div class="muted">${esc(p[2])}</div></div><div class="ko">${esc(p[1])}</div></div>`).join('')}` : ''}
-    </div>`;
   const enC = l => comerCiudad === 'todas' || l.ciudad === comerCiudad;
   const tipos = TIPOS.slice(1).map(t => [t, lugaresComer().filter(l => enC(l) && l.tipo === t).length]).filter(([t, nt]) => nt || comerTipo === t);
   const ord = { rec: '⭐ Recomendado', nota: '👥 Mejor valorados', dist: '📍 Cerca del hotel', val: '★ Mi valoración' }, sigOrd = { rec: 'nota', nota: 'dist', dist: 'val', val: 'rec' };
-  return buscadorHTML('qcm', qCom, 'Buscar sitio para comer (nombre, plato…)', resComer(qCom)) + `<div class="cc-row">${[['todas', 'Todas', '🗺️'], ...CIUDADES_COMER.map(([k, t]) => [k, t, tema(k).ic])].map(([k, t, ic]) =>
-      `<button class="cbtn ${comerCiudad === k ? 'on' : ''}" ${k !== 'todas' ? `style="${varsTema(k)}"` : ''} data-cc="${k}"><span>${ic}</span>${esc(t)}</button>`).join('')}</div>
+  return buscadorHTML('qcm', qCom, 'Buscar sitio para comer (nombre, plato…)', resComer(qCom)) + (dentro ? '' : `<div class="cc-row">${[['todas', 'Todas', '🗺️'], ...CIUDADES_COMER.map(([k, t]) => [k, t, tema(k).ic])].map(([k, t, ic]) =>
+      `<button class="cbtn ${comerCiudad === k ? 'on' : ''}" ${k !== 'todas' ? `style="${varsTema(k)}"` : ''} data-cc="${k}"><span>${ic}</span>${esc(t)}</button>`).join('')}</div>`) + `
     <div class="chips tipos-c">${chip('data-ct', 'todos', `🍽️ Todo (${lugaresComer().filter(enC).length})`, comerTipo === 'todos')}${tipos.map(([t, nt]) => chip('data-ct', t, `${IC_COMER[t] || ''} ${t[0].toUpperCase() + t.slice(1)} (${nt})`, comerTipo === t)).join('')}</div>
     <div class="chips estados-c">${chip('data-ce', 'todos', 'Todos', comerEstado === 'todos')}${chip('data-ce', 'cerca', `📍 Cerca del hotel (${base.filter(l => distKm(l) <= 1.2).length})`, comerEstado === 'cerca')}${chip('data-ce', 'quiero', `⭐ ${n('quiero')}`, comerEstado === 'quiero')}${chip('data-ce', 'visitado', `✅ ${n('visitado')}`, comerEstado === 'visitado')}${chip('data-ce', 'pendiente', 'Sin marcar', comerEstado === 'pendiente')}</div>
-    ${glosario}
     ${muchoOjo(comerCiudad)}
     <div class="c2-cuenta"><span class="muted">${lista.length} lugares</span><button class="chip orden-btn" data-co="${sigOrd[comerOrden] || 'rec'}">↕ ${ord[comerOrden] || ord.rec}</button></div>
     ${lista.map(cardComer).join('') || '<p class="muted">No hay lugares con este filtro.</p>'}
@@ -2636,12 +2657,15 @@ function render() {
   if (tab === 'checklist') { masSub = 'maleta'; tab = 'mas'; }
   if (tab === 'planes') { exSub = 'planes'; tab = 'ciudades'; } // Planes vive dentro de Qué ver desde v102
   if (['seguro', 'verificar'].includes(tab)) { masSub = tab; tab = 'mas'; }
+  // Comer vive dentro de Planes (botón 🍜 Comer de cada ciudad) desde v161.
+  if (tab === 'comer') { if (comerCiudad && comerCiudad !== 'todas') ciudadSel = comerCiudad; exSub = 'comer'; tab = 'ciudades'; }
   let html;
   if (!trip && tab !== 'mas' && tab !== 'conv') html = viewWelcome();
   else switch (tab) {
     case 'hoy': html = viewHoy(); break;
     case 'ruta': html = viewRuta(); break;
-    case 'ensenar': coreaSub = 'ensenar'; html = viewCorea(); break;
+    case 'ensenar': coreaSub = 'ensenar'; tab = 'idioma'; html = viewIdioma(); break;
+    case 'idioma': html = viewIdioma(); break;
     case 'seguro': html = viewSeguro(); break;
     case 'historia': html = viewHistoria(); break;
     case 'corea': html = viewCorea(); break;
@@ -2649,7 +2673,6 @@ function render() {
     case 'mapas': html = viewMapas(); break;
     case 'conv': html = viewConv(); break;
     case 'verificar': html = viewVerificar(); break;
-    case 'comer': html = viewComer(); break;
     default: html = viewMas();
   }
   const tiraAnt = document.getElementById('tira'); tiraX = tiraAnt ? tiraAnt.scrollLeft : null;
@@ -2661,7 +2684,7 @@ function render() {
   $('#view').innerHTML = html; tabAnt = tab;
   if (cambia) { const v = $('#view'); v.classList.remove('entra'); void v.offsetWidth; v.classList.add('entra'); } // fundido suave al cambiar de pestaña
   filas($('#view')).forEach((f, i) => { if (posX[i]) { f.style.scrollBehavior = 'auto'; f.scrollLeft = posX[i]; f.style.scrollBehavior = ''; } });
-  if (['ciudades', 'hoy', 'comer', 'corea', 'historia'].includes(tab)) pintarFotos();
+  if (['ciudades', 'hoy', 'corea', 'historia'].includes(tab)) pintarFotos();
   if (['ciudades', 'hoy', 'mapas'].includes(tab)) pintarMapas();
   const ch = tab === 'hoy' && document.querySelector('#tira .dchip.on');
   if (ch) { const t = ch.parentElement, obj = ch.offsetLeft - t.clientWidth / 2 + ch.offsetWidth / 2; t.style.scrollBehavior = 'auto'; t.scrollLeft = tiraX != null ? tiraX : obj; if (tiraX != null) requestAnimationFrame(() => { t.style.scrollBehavior = 'smooth'; t.scrollLeft = obj; }); }
@@ -2774,7 +2797,7 @@ document.addEventListener('click', e => {
   const irc = e.target.closest('[data-ircomer],[data-irplan],[data-irhotel]');
   if (irc) {
     if (irc.hasAttribute('data-irhotel')) { hoySub = 'hotel'; ir('hoy'); }
-    else if (irc.dataset.ircomer != null) { if (irc.dataset.ircomer) comerCiudad = irc.dataset.ircomer; comerTipo = 'todos'; comerEstado = 'todos'; qCom = irc.dataset.q || ''; ir('comer'); }
+    else if (irc.dataset.ircomer != null) { if (irc.dataset.ircomer) comerCiudad = irc.dataset.ircomer; comerTipo = 'todos'; comerEstado = 'todos'; qCom = irc.dataset.q || ''; if (irc.dataset.ircomer) ciudadSel = irc.dataset.ircomer; exSub = 'comer'; ir('ciudades'); }
     else { if (irc.dataset.irplan) ciudadSel = irc.dataset.irplan; exSub = 'planes'; if (irc.dataset.cat) planesCat = irc.dataset.cat; ir('ciudades'); }
     render(); window.scrollTo(0, 0); return;
   }
@@ -2897,7 +2920,6 @@ document.addEventListener('click', e => {
     case 'foto': $('#fotofile').click(); return;
     case 'comer-nuevo': comerForm = true; break;
     case 'cambio-auto': actualizarCambio(true); return;
-    case 'platos': verPlatos = !verPlatos; break;
     case 'preparar': prepararViaje(); return;
     case 'preparar-ir': masSub = 'datos'; ir('mas'); render(); window.scrollTo(0, 0); prepararViaje(); return;
     case 'ayuda': abrirAyuda(); return;
