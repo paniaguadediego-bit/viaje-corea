@@ -1286,3 +1286,22 @@ details.plan-b > summary { cursor: pointer; }
 .avisos li { display: flex; gap: 8px; align-items: flex-start; list-style: none; margin: 4px 0; }
 .avisos ul { padding-left: 0; }
 .avisos li.tachado span { text-decoration: line-through; opacity: .55; }
+/* v158: tramos sin fondo (solo filo discontinuo) para distinguirlos de las fichas */
+.sitios-dia details.tramo-pl, .sitios-dia .tramo { background: transparent; border-color: color-mix(in srgb, var(--muted) 45%, transparent); box-shadow: none; }
+.sitios-dia details.sd { background: color-mix(in srgb, var(--acc) 9%, var(--card)); border-left: 4px solid var(--acc); box-shadow: var(--sombra); }
+/* Itinerario en esquema */
+.esquema { list-style: none; margin: 8px 0 4px; padding: 0 0 0 4px; text-align: left; }
+.esquema li { display: grid; grid-template-columns: 3.1em 1.6em 1fr; align-items: baseline; gap: 4px; padding: 4px 0; position: relative; }
+.esquema li + li { border-top: 1px dashed var(--line); }
+.esquema .es-h { color: var(--acc); font-weight: 700; font-size: .85em; }
+.esquema .es-t { font-size: .92em; line-height: 1.3; }
+details.items-pl { margin-top: 4px; font-size: .85em; }
+details.items-pl > summary { color: var(--muted); cursor: pointer; }
+/* Hotel y Diario plegados al final de Hoy */
+details.card.plg { padding: 8px 12px; margin-top: 10px; }
+details.card.plg > summary { cursor: pointer; }
+details.card.plg .card { box-shadow: none; margin: 8px 0 0; }
+/* Ruta: estancias y traslados plegables */
+details.estancia > summary, details.tl-pl > summary { list-style: none; cursor: pointer; }
+details.estancia > summary::-webkit-details-marker, details.tl-pl > summary::-webkit-details-marker { display: none; }
+details.estancia:not([open]) > summary::after, details.tl-pl:not([open]) > summary::after { content: '▸ ver'; font-size: .75rem; color: var(--muted); }

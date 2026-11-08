@@ -38,7 +38,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    es el botón 💱 junto al título y se abre en una ventana. Gastos: quitado (el usuario usa
    otra app). No añadir
    nada que no esté aquí. Ruta: vuelos, mapa y línea de tiempo con cada estancia (ciudad,
-   noches, hotel y una línea por día) intercalada con los traslados. Incluye un mapa esquemático de
+   noches, hotel y una línea por día) intercalada con los traslados; estancias y traslados plegables, plegados solos cuando ya pasaron (o el traslado se marcó hecho en Hoy). Incluye un mapa esquemático de
    Corea (SVG propio, offline) con ciudades, traslados y sitios
    (las fichas de ciudad con sitios van en Planes: buscador arriba (todas las ciudades, sin tildes y en hangul;
    también en Comer), 5 botones, se despliega la ciudad elegida con sus botones; cada sitio tiene
@@ -47,7 +47,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    itinerario en orden fijo (orden del texto) → "Añadidos desde Ciudades"
    al final (se quitan con ✕), ordenados por el camino más corto desde el
    último sitio y con aviso "💡 Os pilla de paso entre A y B (desvío)"
-   si encajan mejor dentro del itinerario. Cada parada lleva su número (el mismo que en el mapa del día) y es una ficha plegable con tono propio y la foto arriba a la derecha (se pliega sola al marcarla visitada). Entre cada dos puntos, en su propia franja plegable ("⬇️ Hasta <sitio>"; se pliega sola si el destino ya está visitado), distancia, tiempo
+   si encajan mejor dentro del itinerario. Cada parada lleva su número (el mismo que en el mapa del día) y es una ficha plegable con tono del color de la pestaña y filo izquierdo (los tramos, sin fondo) y la foto arriba a la derecha (se pliega sola al marcarla visitada). Entre cada dos puntos, en su propia franja plegable ("⬇️ Hasta <sitio>"; se pliega sola si el destino ya está visitado), distancia, tiempo
    aproximado (a pie ≤1,6 km; si no, líneas de metro concretas con data/metro.json:
    Seúl © OpenStreetMap ODbL, Busan L1/L2 a mano con VERIFICAR; o taxi; si sale taxi y hay alternativa, "🚌 Sin taxi:" con bus o tren de SIN_TAXI en contenido.js, clave = hangul del destino, VERIFICAR) y "🧭 Ruta" que abre
    la app de Naver Map (nmap://route, sin origen: sale desde la ubicación del móvil; si gana el taxi, el metro va plegado como alternativa; misma decisión en el horario). Botón "🧭 Todo el día en Naver" (ruta en coche con hasta 5 paradas intermedias por enlace; si hay más, tramos: cada uno sale tras la parada desde la que empieza). Encima, banner "🕘 Horario del día"
@@ -71,8 +71,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    abre en 1,5 s, la web móvil m.map.naver.com; igual con Kakao Map; requiere conexión) y junto a él "📍 Google" (Google Maps, búsqueda por hangul o dirección),
    Hoy con tira deslizable de días, tarjeta del día con banner (foto del
    primer sitio, fecha, título y tiempo), etiquetas con los sitios del día
-   y nombres propios en negrita, y botones Sitios / Hotel / Ciudad / Diario bajo la tarjeta del día (Mañana quitado en v88;
-   el traslado va dentro de Sitios, al principio, desde v89) (hotel por fechas, no por ciudad),
+   y nombres propios en negrita, itinerario del día en esquema (hora, icono y título corto; texto completo plegado). Desde v158 sin botones: debajo va siempre Sitios (el traslado al principio) y al final, plegados, 🛏️ Hotel (por fechas, no por ciudad; los días de cambio, el que se deja y el de esa noche) y 📔 Diario; "Ciudad" quitado,
    "☔ Plan B" a cubierto si el pronóstico marca lluvia (plegado), avisos de trip.avisos tachables (user.avisosOk; el número cuenta solo los pendientes), "Primero, el traslado" con casilla de hecho y plegable (sin estrellas en los traslados), aviso de último metro si la vuelta en metro pasa de las 23:00, "🧳 Antes de salir" (plegable; el día del vuelo de vuelta: saldo T-money, quiosco Tax Free y wones) al principio de Sitios los días que se deja hotel (vuelo, tren, pagar hotel, pasaportes…; casillas por fecha),
    "📔 Diario" (carita y nota por día en user.diario; resumen en Más → Notas;
    en viaje, días pasados atenuados, avisos solo en días con traslado y sin avisos de compras pasadas), tarjeta "Ahora" (lo próximo con hora o cuenta

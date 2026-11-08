@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v157';
+const VERSION = 'v158';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -528,6 +528,21 @@ function antesSalir(f, tr, al) {
   return `<details class="card antes" data-key="${sc}" ${abierto(sc, false) ? 'open' : ''}><summary><b>🧳 Antes de salir</b> <span class="muted">(${hechos} de ${tot})</span></summary>${checks(sc, it)}</details>`;
 }
 let hoySub = null;
+// Itinerario del día en esquema (hora, icono y título corto); el texto completo, plegado debajo.
+const icItem = t => [[/si os da tiempo/i, '⏭️'], [/^\s*(atardecer|puesta de sol)/i, '🌅'], [/^\s*(almuerzo|comida|cena|desayuno)/i, '🍜'], [/ktx|tren|srt/i, '🚆'], [/vuelo|aeropuerto/i, '✈️'], [/\bbus\b|autob/i, '🚌'], [/taxi/i, '🚕'],
+  [/almuerzo|comida|comer|cena|desayun|jjimdak|gukbap|bibimbap/i, '🍜'], [/danza|espect|función|concierto/i, '🎭'], [/museo/i, '🏛️'], [/palacio/i, '🏯'],
+  [/templo|santuario|seowon|academia/i, '🛕'], [/atardecer|puesta de sol|noche/i, '🌅'], [/mercado|compras|tienda/i, '🛍️'], [/playa|mar\b/i, '🏖️'],
+  [/aldea|hanok|barrio/i, '🏘️'], [/hotel|check/i, '🛏️']].find(([r]) => r.test(t))?.[1] || '📍';
+const cortoItem = t => { let x = String(t || '').replace(/\s*\([^)]*\)/g, '').split(/(?<=[a-záéíóúñ0-9])\. |; /i)[0].trim();
+  const c = x.search(/,\s/); if (c > 18) x = x.slice(0, c);
+  if (x.length > 48) x = x.slice(0, 46).replace(/\s+\S*$/, '') + '…'; return x.replace(/[.:]$/, ''); };
+function esquemaDia(d) {
+  const its = arr(d.items); if (!its.length) return '';
+  const key = 'itx:' + d.fecha;
+  return `<ol class="esquema">${its.map(i => `<li><span class="es-h">${i.hora ? esc(i.hora) : ''}</span><span class="es-ic">${icItem(i.texto)}</span><span class="es-t">${resaltar(cortoItem(i.texto))}</span></li>`).join('')}</ol>
+    <details class="items-pl" data-key="${key}" ${abierto(key, false) ? 'open' : ''}><summary>📄 Texto completo del plan</summary><ul class="items">${its.map(i =>
+      `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${resaltar(i.texto)}</li>`).join('')}</ul></details>`;
+}
 function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   let html = `<div class="hoy-top"><button class="sos" data-act="ayuda">🆘 Ayuda</button></div>` + ahora() + pendingAlert();
@@ -557,8 +572,7 @@ function viewHoy() {
       <div class="dia-ov"><div class="dia-sup">${tc.ic} Día ${dayIdx + 1} de ${dias.length} · ${fmtDate(d.fecha)} · ${esc(d.ciudad)}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</div>
         <div class="dia-tit">${esc(d.titulo)}</div>${chipTiempo(d)}</div></div>
     ${ls.length ? `<div class="dia-chips">${ls.map(l => `<button class="dchip2" data-hs="sitios">${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es.replace(/^(Palacio|Templo|Barrio|Mercado|Aldea|Playa|Puerta|Mirador|Santuario|Calle|Arroyo|Plaza|Torre|Túmulos|Observatorio|Museo|Gruta|Puente|Academia|Escuela confuciana|Isla) /, ''))}</button>`).join('')}</div>` : ''}`; })()}
-    <ul class="items">${arr(d.items).map(i =>
-      `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${resaltar(i.texto)}</li>`).join('')}</ul>
+    ${esquemaDia(d)}
   </div>`;
 
   // Apartados del día como botones (como en Corea); solo los que tienen algo.
@@ -566,14 +580,14 @@ function viewHoy() {
   const secs = [
     // El traslado va dentro de Sitios, como primer tramo de la ruta del día.
     ['sitios', '📖 Sitios', (tr.length ? (() => { const hk = 'tras:' + (tr[0].id || d.fecha), ok = !!u().hecho[hk], key = 'trd:' + d.fecha, ab = abierto(key, !ok);
-      return `<details class="tras-dia ${ok ? 'hecho-card' : ''}" data-key="${key}" ${ab ? 'open' : ''}><summary class="tras-dia-tit"><button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hk)}" data-v="${ok ? 0 : 1}" aria-label="Hecho">${ok ? '✓' : ''}</button>${medio(tr[0])[0]} Primero, el traslado</summary>${antesSalir(d.fecha, tr, al)}${tr.map(trasladoCard).join('')}</details>`; })() : '') + sitiosDia(d)],
+      return `<details class="tras-dia ${ok ? 'hecho-card' : ''}" data-key="${key}" ${ab ? 'open' : ''}><summary class="tras-dia-tit"><button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hk)}" data-v="${ok ? 0 : 1}" aria-label="Hecho">${ok ? '✓' : ''}</button>${medio(tr[0])[0]} Primero, el traslado</summary>${antesSalir(d.fecha, tr, al)}${tr.map(t => trasladoCard(t)).join('')}</details>`; })() : '') + sitiosDia(d)],
     ['hotel', '🛏️ Hotel', (al.sale && al.sale !== al.noche ? alojCard(al.sale, true) : '') + (al.noche ? alojCard(al.noche, false) : '')],
-    ['ciudad', '⭐ Ciudad', destacados(d.ciudad)],
-    ['diario', `${diarioDe(d.fecha).cara || '📔'} Diario`, diarioCard(d)]
-  ].filter(s => s[2]);
-  if (!secs.length) return html;
-  const sel = secs.find(s => s[0] === hoySub) || secs[0];
-  return html + `<div class="row daynav hoysubs">${secs.map(([k, t]) => `<button class="${k === sel[0] ? '' : 'sec'}" data-hs="${k}">${t}</button>`).join('')}</div>${sel[2]}`;
+  ];
+  // Sin botones (no se usaban): Sitios siempre a la vista; Hotel y Diario, plegados al final.
+  const [sit, hotl] = [secs[0][2], secs[1][2]], hk = 'hot:' + d.fecha, dk = 'dia:' + d.fecha, cambia = al.sale && al.noche && al.sale !== al.noche;
+  const nomH = cambia ? `dejáis ${al.sale.nombre} · dormís en ${al.noche.nombre}` : (al.noche || al.sale || {}).nombre;
+  return html + sit + (hotl ? `<details class="card plg hotel-pl" data-key="${hk}" ${abierto(hk, false) ? 'open' : ''}><summary>🛏️ <b>Hotel</b>${nomH ? ` · ${esc(nomH)}` : ''}</summary>${hotl}</details>` : '')
+    + `<details class="card plg diario-pl" data-key="${dk}" ${abierto(dk, false) ? 'open' : ''}><summary>${diarioDe(d.fecha).cara || '📔'} <b>Diario del día</b>${diarioDe(d.fecha).nota ? ' · ✍️' : ''}</summary>${diarioCard(d)}</details>`;
 }
 
 // "Ahora": lo próximo que toca hoy (o la cuenta atrás antes del viaje).
@@ -609,23 +623,6 @@ function ahora() {
   return `<div class="card ahora"><div class="muted">⏱️ AHORA</div>${lineas.join('')}</div>`;
 }
 
-// Lo imprescindible de la ciudad del día: qué ver (★ Lonely y sitios conocidos) y dónde comer.
-function destacados(ciudad) {
-  const k = ck(ciudad); if (!k) return '';
-  const lp = (LP[k] || []);
-  const ver_ = [...lp.filter(l => l.top), ...(CATALOGO[k] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)), ...lp.filter(l => !l.top)]
-    .filter((l, i, a) => a.findIndex(x => x.es === l.es) === i).slice(0, 5);
-  const enCiudad = lugaresComer().filter(l => l.ciudad === k && !['descartado', 'cerrado'].includes(estadoDe(String(l.id)).estado));
-  const comer_ = [...enCiudad.filter(l => estadoDe(String(l.id)).estado === 'quiero'), ...enCiudad.filter(l => l.fuente === 'itinerario'), ...enCiudad.filter(l => /★/.test(l.nota || ''))]
-    .filter((l, i, a) => l.nombre && a.findIndex(x => x.nombre === l.nombre) === i).slice(0, 4);
-  if (!ver_.length && !comer_.length) return '';
-  const tira = ver_.filter(l => wikiDe(l)).slice(0, 3);
-  return `<div class="card destacados"><b>⭐ Destacados en ${esc(ciudad)}</b>
-    ${tira.length ? `<div class="tira">${tira.map(l => `<figure><div class="foto" data-wiki="${esc(wikiDe(l))}"><span>📷</span></div><figcaption>${esc(l.es)}</figcaption></figure>`).join('')}</div>` : ''}
-    ${ver_.length ? `<div>👀 ${ver_.map(l => hecho(l, k) ? `<s class="tachado">${esc(l.es)}</s> ✅` : esc(l.es)).join(' · ')}</div>` : ''}
-    ${comer_.length ? `<div>🍜 ${comer_.map(l => hecho(l, k) ? `<s class="tachado">${esc(l.nombre)}</s> ✅` : esc(l.nombre)).join(' · ')}</div>` : ''}
-    <div class="acciones"><button class="sec mini" data-tab="ciudades">Ver la ciudad</button></div></div>`;
-}
 
 // Sitios cuyo nombre comparte palabra con un barrio: exigen otra palabra en el plan.
 const EXIGE = { '명동성당': 'catedral' };
@@ -975,14 +972,16 @@ function medio(t) {
 }
 // Qué "Paso a paso" están abiertos (lo controla la app, no el navegador).
 const pasosAb = {};
-function trasladoCard(t) {
+function trasladoCard(t, pleg = false) {
   const tren = billete(t) || {}, [ic, nom] = medio(t), pend = isPend(t);
+  // En Ruta, plegable: se pliega solo cuando ya pasó o se marcó hecho en Hoy.
+  const plHecho = (t.fecha && t.fecha < todayISO()) || !!u().hecho['tras:' + (t.id || t.fecha)], plK = 'trr:' + (t.id || t.fecha) + (plHecho ? ':h' : '');
   const d = new Date(String(t.fecha) + 'T12:00:00');
   const dia = isNaN(d) ? esc(t.fecha || '') : `<b>${d.getDate()}</b><small>${d.toLocaleDateString('es-ES', { month: 'short' })}</small><small>${d.toLocaleDateString('es-ES', { weekday: 'short' })}</small>`;
   return `<div class="tl ${pend ? 'pend' : isOk(t) ? 'ok' : ''} ${t.fecha && t.fecha < todayISO() ? 'pasado' : ''}">
     <div class="tl-fecha">${dia}</div>
     <div class="tl-card card">
-      <div class="tl-top"><span class="tl-ic" title="${nom}">${ic}</span><div class="tl-ruta"><b>${esc(t.de)}</b><span class="tl-flecha">↓</span><b>${esc(t.a)}</b></div></div>
+      ${pleg ? `<details class="tl-pl" data-key="${esc(plK)}" ${abierto(plK, !plHecho) ? 'open' : ''}><summary>` : ''}<div class="tl-top"><span class="tl-ic" title="${nom}">${ic}</span><div class="tl-ruta"><b>${esc(t.de)}</b><span class="tl-flecha">↓</span><b>${esc(t.a)}</b></div></div>${pleg ? '</summary>' : ''}
       <div class="tl-meta">${t.fecha && t.fecha < todayISO() ? '' : `${estadoBadge(t)} ${ver(t)}`}</div>
       ${tren.salida || tren.llegada ? `<div class="tl-horas"><span>${esc(tren.salida || '?')}</span><i>→</i><span>${esc(tren.llegada || '?')}</span>${tren.comprado === false ? '<em class="badge pend">billete sin comprar</em>' : ''}</div>` : ''}
       ${tren.numero || tren.asientos ? `<div class="tl-billete"><b class="nvuelo">${esc(tren.numero || '')}</b>${tren.clase ? ` <span class="muted">${esc(tren.clase)}</span>` : ''}${tren.precio ? ` <span class="muted">· ${esc(tren.precio)}</span>` : ''}
@@ -992,7 +991,7 @@ function trasladoCard(t) {
         ${ab ? `<ol>${arr(t.pasos).map(p => `<li>${resaltar(p)}</li>`).join('')}</ol>` : ''}</div>`; })() : ''}
       ${t.frase_ko ? `<div class="ko">${esc(t.frase_ko)}</div>` : ''}
       ${t.romanizacion ? `<div class="muted">${esc(t.romanizacion)}</div>` : ''}
-    </div>
+    ${pleg ? '</details>' : ''}</div>
   </div>`;
 }
 
@@ -1054,10 +1053,11 @@ function estanciaCard(c) {
   const dias = arr(trip.dias).filter(d => d && d.fecha).sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   // Ya pasado: la estancia en cuanto se deja el hotel (día de salida) y cada día al día siguiente.
   const hoy = todayISO(), fuera = c.hasta && c.hasta <= hoy;
-  return `<div class="tl ${fuera ? 'pasado' : ''}"><div class="tl-fecha tl-pin" style="${varsTema(k)}">${tema(k).ic}</div><div class="card estancia" style="${varsTema(k)}"><div class="big">${esc(c.nombre)}</div>
-    <div class="muted">${fmtCorto(c.desde)}${c.hasta ? ' → ' + fmtCorto(c.hasta) : ''}${noches ? ` · ${noches} noche${noches > 1 ? 's' : ''}` : ''}${ns.length ? ` · Día ${ns[0]}${ns.length > 1 ? '-' + ns[ns.length - 1] : ''}` : ''}</div>
+  const ek = 'est:' + (c.id || c.desde) + (fuera ? ':h' : '');
+  return `<div class="tl ${fuera ? 'pasado' : ''}"><div class="tl-fecha tl-pin" style="${varsTema(k)}">${tema(k).ic}</div><details class="card estancia" style="${varsTema(k)}" data-key="${esc(ek)}" ${abierto(ek, !fuera) ? 'open' : ''}><summary><div class="big">${esc(c.nombre)}</div>
+    <div class="muted">${fmtCorto(c.desde)}${c.hasta ? ' → ' + fmtCorto(c.hasta) : ''}${noches ? ` · ${noches} noche${noches > 1 ? 's' : ''}` : ''}${ns.length ? ` · Día ${ns[0]}${ns.length > 1 ? '-' + ns[ns.length - 1] : ''}` : ''}</div></summary>
     ${h ? `<div class="muted">🛏️ ${esc(h.nombre)}</div>` : ''}
-    ${ds.map(d => `<button class="dad-dia ${d.fecha === hoy ? 'on' : ''} ${d.fecha < hoy ? 'pasado' : ''}" data-dia="${d.n - 1}"><span class="hora">${fmtCorto(d.fecha)}</span><span>${esc((dias[d.n - 1] || {}).titulo || '')}</span>${miniTiempo(k, d.fecha)}</button>`).join('')}</div></div>`;
+    ${ds.map(d => `<button class="dad-dia ${d.fecha === hoy ? 'on' : ''} ${d.fecha < hoy ? 'pasado' : ''}" data-dia="${d.n - 1}"><span class="hora">${fmtCorto(d.fecha)}</span><span>${esc((dias[d.n - 1] || {}).titulo || '')}</span>${miniTiempo(k, d.fecha)}</button>`).join('')}</details></div>`;
 }
 
 function viewRuta() {
@@ -1069,7 +1069,7 @@ function viewRuta() {
   if (arr(trip.ciudades).length) html += '<h2>Mapa</h2>' + viewMapa();
   const tr = arr(trip.traslados).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   const est = arr(trip.ciudades).filter(c => c && c.desde).map(c => [c.desde, 1, estanciaCard(c)]);
-  const ev = [...tr.map(t => [t.fecha || '', 0, trasladoCard(t)]), ...est].sort((a, b) => String(a[0]).localeCompare(String(b[0])) || a[1] - b[1]);
+  const ev = [...tr.map(t => [t.fecha || '', 0, trasladoCard(t, true)]), ...est].sort((a, b) => String(a[0]).localeCompare(String(b[0])) || a[1] - b[1]);
   if (ev.length) html += '<h2>Dónde estamos y traslados</h2><div class="timeline">' + ev.map(e => e[2]).join('') + '</div>';
   html += vuelta.map(v => vueloCard(v, 'vuelta')).join('');
   return html || '<p class="muted">Sin datos de ruta.</p>';

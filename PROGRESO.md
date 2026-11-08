@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v157
+Caché del service worker: corea-v158
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -209,6 +209,7 @@ Caché del service worker: corea-v157
 - v155: Andong con la guía en papel del usuario (pp. 195-196). Comer: Andong-Gwan y Sinseon Jjimdak (hangul sin confirmar en la web: VERIFICAR), y horarios de Mammoth Bakery y Jaerim Galbi según la guía. Planes (indispensables de Hahoe): danza de máscaras (14:00 de martes a domingo, de marzo a diciembre), Hahoe Jangteo, pinar de Mansongjeong, árbol de Samsindang, más el hangul del museo de máscaras (하회세계탈박물관) y Byeongsan Seowon; coordenadas aproximadas. Bus a Hahoe: el 210 de la guía es el número antiguo; el actual es el 246 (VERIFICAR), con lanzadera gratis desde la taquilla. Horario del día: la hora fija de una línea va al sitio que más coincide (antes, «Hahoe» se llevaba la hora de la danza) y «hahoe» ya no basta para detectar un sitio. [Supuesto] La barca o el puente de ramas a Buyongdae pueden no funcionar en noviembre: en el plan, Buyongdae va como «si os da tiempo» (en taxi por la otra orilla).
 - v156: Ruta del día: número de parada junto a cada nombre (el mismo que en el mapa); tramos «⬇️ Hasta…» plegables (se pliegan solos cuando el destino está visitado; si se pliegan a mano, se recuerda); «💡 Cerca y no lo tenéis» plegado e intercalado tras la parada donde encaja (H* tras el hotel). Corea → 🏛️ País (nuevo sociedad.js): Política, Educación (suneung del 19/11/2026), Ser médico, Sueldos y trabajo y Población, con fuentes de noviembre de 2026. Planes: hangul, pronunciación, 🔊 y habitantes bajo el nombre de cada ciudad. [Supuesto] Euros aproximados a 1.600 ₩/€.
 - v157: Hoy → Sitios más limpio: plan B de lluvia plegado; cada parada es una ficha plegable con un tono suave propio y la miniatura arriba a la derecha (texto siempre alineado a la izquierda), que se pliega sola al marcarla visitada (también en Planes); si «Día en Naver» se parte, cada tramo sale tras la parada desde la que empieza; «Primero, el traslado» se marca como hecho y se pliega; los traslados ya no tienen estrellas; los avisos se tachan con una casilla (user.avisosOk, va al pasar marcas) y el número solo cuenta los pendientes.
+- v158: Hoy: el itinerario de la tarjeta del día pasa a esquema (hora, icono y título corto) con el texto completo plegado; sin botones Sitios/Hotel/Ciudad/Diario (el usuario no los usaba): Sitios siempre, y Hotel y Diario plegados al final; Ciudad (destacados) borrado. Fichas de los sitios con más tono y filo del color de la pestaña; los tramos, sin fondo. Ruta: estancias y traslados plegables, plegados solos cuando ya pasaron o el traslado se marcó hecho.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
