@@ -24,7 +24,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    ciudades (HISTORIA de cada ciudad) y 🇰🇷 Símbolos. Miscelánea (antes Planes) va dentro de Planes (calendario del Mundial de LoL plegado: WORLDS en contenido.js, hora de
    Corea y dónde estaréis; botones en orden alfabético Curioso (cafés de animales, postres famosos, tiendas raras) / Lavandería / LoL (con consejos de PC bang y T1 HQ Shop) / Ropa (cerca del hotel o en barrios del itinerario; Musinsa Standard y galerías subterráneas, lo que recomiendan los viajeros) que muestran sus sitios debajo: PLANES en contenido.js,
    con distancia al hotel, "cerca", foto, 💰 precio aproximado y 👥 reseñas; lavandería en cada ciudad; sin Cosmética desde v146: hay tiendas por todas partes). Corea tiene apartados:
-   Guía (primero, con iconos por tema), Enseñar, Frases, Diccionario y 🔤 Hangul (hangul.js: HG_LEC 11 lecciones esquematizadas con letras, sonido a la española,
+   Guía (primero, con iconos por tema), 🏛️ País (sociedad.js: PAIS con Política, Educación, Ser médico, Sueldos y trabajo y Población; rejilla como la Guía, cada tema con fuentes y fecha de búsqueda; POBLACION = habitantes bajo el nombre de cada ciudad en Planes, con hangul, 🗣️ pronunciación y 🔊), Enseñar, Frases, Diccionario y 🔤 Hangul (hangul.js: HG_LEC 11 lecciones esquematizadas con letras, sonido a la española,
    romanización, ejemplo con 🔊, trucos y reglas de lectura, marca de leída en user.hgLeidas; 🪧 Carteles HG_CARTELES descompuestos letra a letra; 🎯 Practicar:
    test de letras o carteles que repite lo fallado, user.hgTest; 🔗 Fuentes gratuitas HG_FUENTES) y ⭐ Favoritas (☆ en cada frase, palabra y cartel; user.favs; agrupadas en Frases, Palabras y Carteles)
    (la Historia, historia.js: 22 capítulos con marca de leído en user.leidos y diseño hanji/dancheong, pasó a su pestaña en v103). Más es una rejilla de iconos
@@ -47,7 +47,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    itinerario en orden fijo (orden del texto) → "Añadidos desde Ciudades"
    al final (se quitan con ✕), ordenados por el camino más corto desde el
    último sitio y con aviso "💡 Os pilla de paso entre A y B (desvío)"
-   si encajan mejor dentro del itinerario. Entre cada dos puntos, en su propia franja ("⬇️ Hasta <sitio>"), distancia, tiempo
+   si encajan mejor dentro del itinerario. Cada parada lleva su número (el mismo que en el mapa del día). Entre cada dos puntos, en su propia franja plegable ("⬇️ Hasta <sitio>"; se pliega sola si el destino ya está visitado), distancia, tiempo
    aproximado (a pie ≤1,6 km; si no, líneas de metro concretas con data/metro.json:
    Seúl © OpenStreetMap ODbL, Busan L1/L2 a mano con VERIFICAR; o taxi; si sale taxi y hay alternativa, "🚌 Sin taxi:" con bus o tren de SIN_TAXI en contenido.js, clave = hangul del destino, VERIFICAR) y "🧭 Ruta" que abre
    la app de Naver Map (nmap://route, sin origen: sale desde la ubicación del móvil; si gana el taxi, el metro va plegado como alternativa; misma decisión en el horario). Botón "🧭 Todo el día en Naver" (ruta en coche con hasta 5 paradas intermedias por enlace; si hay más, tramos). Encima, banner "🕘 Horario del día"
@@ -57,7 +57,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    Naver y botón a su sección: Planes, Comer, Miscelánea u Hoy → Hotel). Solo iconos, sin nombres; los que se pisan (<28 px) se separan solos con un hilo y un puntito a su sitio real. Mapa propio sin librerías: puntos offline; calles de OpenStreetMap solo con conexión
    (el service worker guarda las teselas vistas en 'corea-mapa'; "Preparar para viajar" baja
    ~1.000 teselas de zoom 12-16 alrededor de los sitios del viaje; nunca zoom 17+ ni ciudades enteras).
-   Debajo, "💡 Cerca y no lo tenéis":
+   Intercalado tras la parada donde encaja y plegado, "💡 Cerca y no lo tenéis":
    hasta 4 sitios recomendados que no están en ningún día y quedan a
    ≤900 m de la ruta, con "+" para añadirlos a ese día; también en el mapa del día con asterisco y la
    parada tras la que encajan ("2*" = entre la 2 y la 3; "H*" = tras el hotel). Extras

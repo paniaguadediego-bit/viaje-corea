@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v155';
+const VERSION = 'v156';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -750,7 +750,9 @@ function tramo(o, dst, nO, nD, op = {}) {
   const pasos = !r ? '' : c.modo === 'metro' ? pasosMetro(r) : `<details class="alt-metro" data-key="am:${o.join()}>${dst.join()}" ${abierto(`am:${o.join()}>${dst.join()}`, false) ? 'open' : ''}><summary>🚇 Alternativa en metro (~${r.min} min)</summary>${pasosMetro(r)}</details>`;
   const fila = `<div class="tramo-ir"><span>${op.prefijo || ''}${txt}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>`;
   if (op.sinPasos) return fila;
-  // Franja propia entre sitio y sitio, con el destino, para que no parezca parte del sitio anterior.
+  // Franja propia entre sitio y sitio, plegable: se pliega sola cuando el destino ya está visitado.
+  if (op.hasta && op.key) { const key = 'tr:' + op.key + (op.hecho ? ':v' : ''), ab = abierto(key, !op.hecho); // al visitar cambia la clave: se pliega sola
+    return `<details class="tramo tramo-${c.modo} tramo-pl" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary><span class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b></span><span class="tramo-res">${txt}</span></summary>${fila}${sinTaxi}${pasos}</details>`; }
   return `<div class="tramo tramo-${c.modo}">${op.hasta ? `<div class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b></div>` : ''}${fila}${sinTaxi}${pasos}</div>`;
 }
 // Todo el día en Naver Map: hotel → paradas → hotel. Naver admite hasta 5 paradas intermedias por enlace
@@ -789,14 +791,13 @@ function sugerenciasDe(d, ruta, hot) {
 }
 const textoEncaje = g => g.antes ? `De paso entre ${g.tras.n ? 'la parada ' + g.tras.n + ' (' + g.tras.es + ')' : 'el hotel'} y la parada ${g.antes.n} (${g.antes.es}): desvío ~${fmtDist(g.dv)}`
   : `Al final, después de ${g.tras.n ? 'la parada ' + g.tras.n + ' (' + g.tras.es + ')' : 'el hotel'}: a ${fmtDist(g.dv)}`;
-function sugerenciasCerca(d, ruta, hot) {
-  const s = sugerenciasDe(d, ruta, hot); if (!s.length) return '';
-  const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {};
-  return `<div class="sugerencias"><b>💡 Cerca y no lo tenéis</b>${s.map(g => { const l = g.l, h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
-    return `<div class="sug">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit"><span class="sug-etq">${g.etq}</span><b>${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)}</div>
+function sugPlegada(g, d) {
+  const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, l = g.l, h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '', key = 'sug:' + d.fecha + '|' + h;
+  return `<details class="sug-pl" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}><summary><span class="sug-etq">${g.etq}</span>💡 Cerca y no lo tenéis: <b>${esc(l.es)}</b> <span class="muted">(${g.antes ? 'desvío' : 'a'} ~${fmtDist(g.dv)})</span></summary>
+    <div class="sug">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit"><b>${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)}</div>
       <div class="sug-encaje">${esc(textoEncaje(g))}</div>
-      ${txt ? `<div class="muted">${resaltar(recorta(txt, 140), true)}</div>` : ''}</div>
-      <button class="mini sug-add" data-agtog="${esc(h)}|${d.fecha}" aria-label="Añadir a este día">+</button></div>`; }).join('')}</div>`;
+      ${txt ? `<div class="muted">${resaltar(recorta(txt, 140), true)}</div>` : ''}${irQV(l, ck(d.ciudad))}</div>
+      <button class="mini sug-add" data-agtog="${esc(h)}|${d.fecha}" aria-label="Añadir a este día">+</button></div></details>`;
 }
 // ---------- Horarios de apertura y horario propuesto del día (ritmo tranquilo) ----------
 const DIAS_SEM = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
@@ -916,11 +917,13 @@ function sitiosDia(d) {
   const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}; const G = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
   const al = alojDe(d.fecha), hot = al.noche && al.noche.lat != null && ck(al.noche.ciudad) === k ? al.noche : (al.sale && al.sale.lat != null && ck(al.sale.ciudad) === k ? al.sale : null);
   let prev = hot ? [Number(hot.lat), Number(hot.lon)] : null, prevN = hot ? hot.nombre : '';
+  const num = {}; // número de cada parada, el mismo que en el mapa del día
   const fila = (l, extra) => {
     const h = hKey(l), mas = D[h.slice(2)] || D[h], txt = mas || l.desc || l.nota || G[h.slice(2)] || '', c = coordsLugar(l);
-    const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es, { hasta: l.es, aK: hKey(l) }) : '';
+    const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es, { hasta: l.es, aK: hKey(l), key: d.fecha + '|' + h, hecho: hecho(l, k) }) : '';
     if (c) { prev = c; prevN = l.ko || l.es; }
-    return `${t}${extra ? encaje(l) : ''}<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</div>
+    const n = num[h];
+    return `${t}${extra ? encaje(l) : ''}<div class="sd ${hecho(l, k) ? 'hecho-card' : ''}">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit">${btnHecho(l, k)}<b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</div>
       ${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${irQV(l, k)}</div></div>`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
@@ -940,13 +943,15 @@ function sitiosDia(d) {
     const alFinal = km(puntos[puntos.length - 1].c, c);
     return best && best.dv < alFinal - 0.2 ? `<div class="encaje">💡 Os pilla de paso entre ${esc(best.a)} y ${esc(best.b)} (desvío ~${fmtDist(best.dv)}).</div>` : ''; };
   const hc = hot ? [Number(hot.lat), Number(hot.lon)] : null, conMapa = [...auto, ...extras].some(l => coordsLugar(l));
+  { let n = 0; [...auto, ...extras].forEach(l => { if (coordsLugar(l)) num[hKey(l)] = ++n; }); }
+  // Sugerencias "cerca y no lo tenéis", plegadas e intercaladas tras la parada donde encajan (H* = tras el hotel).
+  const sugs = sugerenciasDe(d, [...auto, ...extras], hc), sugTras = n => sugs.filter(g => g.tras.n === n).map(g => sugPlegada(g, d)).join('');
   return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${horarioDia(d, hc, [...auto, ...extras], auto.length)}${planLluvia(d)}<b>📖 Ruta del día</b>
     ${naverDia(hc, hot && (hot.ko || hot.nombre), [...auto, ...extras])}
-    ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>` : ''}
-    ${auto.map(l => fila(l, false)).join('')}
-    ${extras.length ? `<div class="sd-anadidos">➕ Añadidos desde Ciudades</div>${extras.map(l => fila(l, true)).join('')}` : ''}
+    ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>${sugTras(0)}` : ''}
+    ${auto.map(l => fila(l, false) + sugTras(num[hKey(l)])).join('')}
+    ${extras.length ? `<div class="sd-anadidos">➕ Añadidos desde Ciudades</div>${extras.map(l => fila(l, true) + sugTras(num[hKey(l)])).join('')}` : ''}
     ${A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}
-    ${sugerenciasCerca(d, [...auto, ...extras], hc)}
     <div class="muted mini-nota">Metro de Seúl © OpenStreetMap (ODbL).</div></div>`;
 }
 
@@ -1307,6 +1312,8 @@ function viewCiudades() {
       <div class="ciudad-top"><span class="ciudad-ic">${t.ic}</span></div>
       <div class="ciudad-num">${i + 1}</div>
       <div class="ciudad-nom">${esc(nombreCiudad(k))}</div>
+      ${(() => { const pob = typeof POBLACION !== 'undefined' && POBLACION[k], pr = c.ko ? pronuncia(c.ko) : '';
+        return pob || pr ? `<div class="ciudad-pob">${c.ko ? `${esc(c.ko)} ${pr ? `🗣️ «${esc(pr)}»` : ''} ${btnHabla(c.ko)}` : ''}${pob ? ` · 👥 ${esc(pob)}` : ''}</div>` : ''; })()}
       ${t.lema ? `<div class="ciudad-lema">${esc(t.lema)}</div>` : ''}
       <div class="ciudad-fechas">${fechas}</div>
     </div>
@@ -2029,12 +2036,24 @@ function viewHangul() {
   else h += HG_LEC.map((l, i) => hgLeccion(l, i + 1)).join('');
   return h;
 }
+// 🏛️ País: política, educación, ser médico, sueldos y población (PAIS en sociedad.js). Rejilla como la Guía.
+let paisSel = null;
+const negritas = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/VERIFICAR/g, '<span class="ver">VERIFICAR</span>');
+function viewPais() {
+  const P = typeof PAIS !== 'undefined' ? PAIS : [], g = P.find(x => x.id === paisSel);
+  return `<div class="guia-rej">${P.map(x => `<button class="guia-t ${x.id === paisSel ? 'on' : ''}" data-pais="${x.id}"><span>${x.ic}</span>${esc(x.t)}</button>`).join('')}</div>
+    ${g ? `<div class="card guia-txt pais"><b>${g.ic} ${esc(g.t)}</b><p class="pais-intro">${negritas(g.intro)}</p>
+      ${g.bloques.map(([h, xs]) => `<h3>${esc(h)}</h3><ul>${xs.map(x => `<li>${negritas(x)}</li>`).join('')}</ul>`).join('')}
+      <div class="muted pais-fuentes">Fuentes (noviembre de 2026): ${g.fuentes.map(([t, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join(' · ')}</div></div>`
+    : '<p class="muted centro">Toca un tema. Datos buscados en noviembre de 2026, con fuentes.</p>'}`;
+}
 function viewCorea() {
   if (coreaSub === 'historia') coreaSub = 'guia'; // Historia tiene pestaña propia desde v103
-  const seg = [['guia', '🧭 Guía'], ['ensenar', '🪧 Enseñar'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.'], ['hangul', '🔤 Hangul'], ['favs', `⭐${arr(u().favs).length ? ' ' + arr(u().favs).length : ''}`]].map(([k, t]) =>
+  const seg = [['guia', '🧭 Guía'], ['pais', '🏛️ País'], ['ensenar', '🪧 Enseñar'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.'], ['hangul', '🔤 Hangul'], ['favs', `⭐${arr(u().favs).length ? ' ' + arr(u().favs).length : ''}`]].map(([k, t]) =>
     `<button class="${coreaSub === k ? '' : 'sec'}" data-sub="${k}">${t}</button>`).join('');
   let html = `<div class="row daynav seg5">${seg}</div>`;
-  if (coreaSub === 'ensenar') html += viewEnsenar();
+  if (coreaSub === 'pais') html += viewPais();
+  else if (coreaSub === 'ensenar') html += viewEnsenar();
   else if (coreaSub === 'hangul') html += viewHangul();
   else if (coreaSub === 'favs') html += viewFavs();
   else if (coreaSub === 'frases') {
@@ -2830,11 +2849,13 @@ document.addEventListener('click', e => {
   if (pk) { planesCat = pk.dataset.pcat; render(); return; }
   const pc = e.target.closest('[data-pc]');
   if (pc) { ciudadSel = pc.dataset.pc; render(); return; }
+  const pai = e.target.closest('[data-pais]');
+  if (pai) { paisSel = paisSel === pai.dataset.pais ? null : pai.dataset.pais; render(); return; }
   const gs = e.target.closest('[data-guia]');
   if (gs) { guiaSel = guiaSel === gs.dataset.guia ? null : gs.dataset.guia; render(); return; }
   const b = e.target.closest('[data-tab],[data-act],[data-day],[data-theme],[data-go],[data-sub],[data-sit]');
   if (!b) return;
-  if (b.dataset.sub) coreaSub = b.dataset.sub;
+  if (b.dataset.sub) { coreaSub = b.dataset.sub; paisSel = null; }
   else if (b.dataset.sit) fraseSit = b.dataset.sit;
   else if (b.dataset.tab) ir(b.dataset.tab);
   else if (b.dataset.go) ir(b.dataset.go);

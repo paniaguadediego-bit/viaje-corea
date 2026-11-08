@@ -1244,3 +1244,21 @@ body.con-doc { overflow: hidden; }
 .res-fila { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 .res-ciudad .estrellas { margin-top: 0; flex: none; }
 .res-ciudad .star { font-size: 1.05rem; min-height: 26px; padding: 0 2px; }
+/* v156: número de parada, tramos plegables y sugerencias intercaladas */
+.sd-num { display: inline-grid; place-items: center; min-width: 1.45em; height: 1.45em; margin-right: 4px; border-radius: 50%; background: #c0392b; color: #fff; font-size: .78em; font-weight: 700; vertical-align: 1px; }
+details.tramo-pl > summary { list-style: none; cursor: pointer; display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; }
+details.tramo-pl > summary::-webkit-details-marker { display: none; }
+details.tramo-pl > summary::after { content: '▾'; margin-left: auto; color: var(--muted); }
+details.tramo-pl:not([open]) > summary::after { content: '▸'; }
+details.tramo-pl .tramo-hasta { margin: 0; }
+details.tramo-pl .tramo-res { font-size: .8rem; color: var(--muted); }
+details.tramo-pl[open] .tramo-res { display: none; }
+details.tramo-pl:not([open]) { padding: 4px 10px; opacity: .8; }
+details.sug-pl { margin: 6px 0; border: 1px dashed var(--line); border-radius: 10px; background: var(--tint-b); padding: 4px 8px; font-size: .88em; }
+details.sug-pl > summary { cursor: pointer; }
+details.sug-pl .sug { border-top: 0; }
+.ciudad-pob { font-size: .85rem; opacity: .95; margin-top: 2px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px; }
+.ciudad-pob .habla { padding: 0 6px; min-height: 24px; }
+.guia-txt.pais h3 { font-size: .95rem; margin: 12px 0 4px; color: var(--acc); }
+.guia-txt.pais .pais-intro { margin: 6px 0; font-style: italic; }
+.pais-fuentes { margin-top: 10px; font-size: .78rem; line-height: 1.5; }
