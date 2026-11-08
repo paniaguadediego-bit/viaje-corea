@@ -38,7 +38,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    es el botón 💱 junto al título y se abre en una ventana. Gastos: quitado (el usuario usa
    otra app). No añadir
    nada que no esté aquí. Ruta: vuelos, mapa y línea de tiempo con cada estancia (ciudad,
-   noches, hotel y una línea por día) intercalada con los traslados; estancias y traslados plegables, plegados solos cuando ya pasaron (o el traslado se marcó hecho en Hoy). Incluye un mapa esquemático de
+   noches, hotel y una línea por día) intercalada con los traslados; vuelos, estancias y traslados plegables, plegados solos cuando ya pasaron (o el traslado se marcó hecho en Hoy). Incluye un mapa esquemático de
    Corea (SVG propio, offline) con ciudades, traslados y sitios
    (las fichas de ciudad con sitios van en Planes: buscador arriba (todas las ciudades, sin tildes y en hangul;
    también en Comer), 5 botones, se despliega la ciudad elegida con sus botones; cada sitio tiene

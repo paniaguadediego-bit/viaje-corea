@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v158';
+const VERSION = 'v159';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1016,6 +1016,13 @@ function vueloTramos(v, tipo) {
     ${v.nota ? `<div class="vuelo-nota">⚠️ ${resaltar(v.nota)}</div>` : ''}
   </div>`;
 }
+// En Ruta, cada vuelo es plegable y se pliega solo cuando ya ha pasado (como estancias y traslados).
+function vueloPleg(v, tipo) {
+  const fechas = [String(v.fecha || '').slice(0, 10), ...arr(v.tramos).map(t => String(t.llegada || t.salida || '').slice(0, 10))].filter(f => /^\d{4}-\d{2}-\d{2}$/.test(f)).sort();
+  const fin = fechas[fechas.length - 1] || '', pasado = fin && fin < todayISO(), key = 'vu:' + tipo + ':' + (v.fecha || '') + (pasado ? ':h' : '');
+  const ruta = arr(v.tramos).filter(t => t.de).map(t => t.de).concat(arr(v.tramos).filter(t => t.a).slice(-1).map(t => t.a)).join(' → ') || v.tramo || '';
+  return `<details class="vuelo-pl ${pasado ? 'pasado' : ''}" data-key="${esc(key)}" ${abierto(key, !pasado) ? 'open' : ''}><summary>${tipo === 'ida' ? '🛫 Vuelo de ida' : '🛬 Vuelo de vuelta'}${fechas[0] ? ' · ' + fmtCorto(fechas[0]) : ''}${ruta ? ' · ' + esc(ruta) : ''}${pasado ? ' ✓' : ''}</summary>${vueloCard(v, tipo)}</details>`;
+}
 function vueloCard(v, tipo) {
   if (arr(v.tramos).length) return vueloTramos(v, tipo);
   const hora = x => { const m = String(x || '').match(/(\d{4}-\d{2}-\d{2})?\s*(\d{1,2}:\d{2})/); return m ? (m[1] ? fmtCorto(m[1]) + ' · ' : '') + m[2] : esc(x || ''); };
@@ -1065,13 +1072,13 @@ function viewRuta() {
   const conTipo = vuelos.some(v => v.tipo);
   const ida = conTipo ? vuelos.filter(v => v.tipo !== 'vuelta') : vuelos.slice(0, vuelos.length > 1 ? vuelos.length - 1 : 1);
   const vuelta = conTipo ? vuelos.filter(v => v.tipo === 'vuelta') : vuelos.length > 1 ? [vuelos[vuelos.length - 1]] : [];
-  let html = ida.map(v => vueloCard(v, 'ida')).join('') + pendingAlert();
+  let html = ida.map(v => vueloPleg(v, 'ida')).join('') + pendingAlert();
   if (arr(trip.ciudades).length) html += '<h2>Mapa</h2>' + viewMapa();
   const tr = arr(trip.traslados).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   const est = arr(trip.ciudades).filter(c => c && c.desde).map(c => [c.desde, 1, estanciaCard(c)]);
   const ev = [...tr.map(t => [t.fecha || '', 0, trasladoCard(t, true)]), ...est].sort((a, b) => String(a[0]).localeCompare(String(b[0])) || a[1] - b[1]);
   if (ev.length) html += '<h2>Dónde estamos y traslados</h2><div class="timeline">' + ev.map(e => e[2]).join('') + '</div>';
-  html += vuelta.map(v => vueloCard(v, 'vuelta')).join('');
+  html += vuelta.map(v => vueloPleg(v, 'vuelta')).join('');
   return html || '<p class="muted">Sin datos de ruta.</p>';
 }
 

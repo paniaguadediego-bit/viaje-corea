@@ -1305,3 +1305,8 @@ details.card.plg .card { box-shadow: none; margin: 8px 0 0; }
 details.estancia > summary, details.tl-pl > summary { list-style: none; cursor: pointer; }
 details.estancia > summary::-webkit-details-marker, details.tl-pl > summary::-webkit-details-marker { display: none; }
 details.estancia:not([open]) > summary::after, details.tl-pl:not([open]) > summary::after { content: '▸ ver'; font-size: .75rem; color: var(--muted); }
+/* v159: vuelos de Ruta plegables */
+details.vuelo-pl { margin: 8px 0; }
+details.vuelo-pl > summary { cursor: pointer; font-weight: 700; padding: 8px 12px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); }
+details.vuelo-pl[open] > summary { margin-bottom: 6px; }
+details.vuelo-pl.pasado > summary { text-decoration: line-through; opacity: .6; font-weight: 600; }
