@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v161
+Caché del service worker: corea-v162
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -213,6 +213,7 @@ Caché del service worker: corea-v161
 - v159: en Ruta, los vuelos también se pliegan (resumen: ida o vuelta, fecha y aeropuertos) y salen plegados y tachados con ✓ cuando ya pasó su último tramo.
 - v160: arreglo: al volver a abrir la app tras un rato, con red lenta, Hoy salía sin mapa, horario, números de parada, tramos ni Naver, porque coords.json llegaba después de dibujar y Hoy no se redibujaba. Ahora coords, comer y metro se reintentan si fallan (hasta 4 veces) y, al llegar, la pantalla se redibuja siempre.
 - v161: reorganización pedida por el usuario. Comer pasa a Planes (botón 🍜 Comer de cada ciudad, entre Puntos de interés y Miscelánea; los enlaces del mapa llevan allí). Nueva pestaña 🔤 Idioma en la barra (Hangul, Frases, Diccionario, Enseñar y Favoritas) en lugar de Comer. Corea se queda solo con la Guía, en bloques: Moverse, Dinero y compras, Comida (con los Platos típicos, que salen de Comer), Costumbres y cultura, Salud, seguridad y práctico, y País. [Supuesto] Clima, enchufes, qué llevar y lo básico de la Lonely van en «Salud, seguridad y práctico».
+- v162: Hahoe: Byeongsan Seowon (36.54028, 128.55278) y Buyongdae (36.54283, 128.51643) corregidos con coordenadas publicadas (Wikipedia y Around Us). Museo de Máscaras, Hahoe Jangteo, sala de la danza, Samsindang y Mansongjeong siguen aproximados: no se pudo consultar Google ni OpenStreetMap desde aquí. Nuevo «📍 Estoy aquí» en la ficha de Planes y del mapa: guarda la posición del GPS como la buena (user.coordsFix, manda sobre coords.json y se pasa con las marcas).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v161';
+const VERSION = 'v162';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -115,6 +115,8 @@ cargaDatos('data/coords.json', d => { COORDS_LUGARES = d || {}; });
 const coordsLugar = l => {
   if (!l) return null;
   if (l.lat != null && l.lon != null) return [Number(l.lat), Number(l.lon)];
+  // Corrección propia con el GPS («📍 Estoy aquí», user.coordsFix[hKey]) manda sobre coords.json.
+  const fx = typeof user !== 'undefined' && user && user.coordsFix && (l.es || l.ko) && user.coordsFix[hKey(l)]; if (fx) return fx;
   return COORDS_LUGARES[l.id] || COORDS_LUGARES[l.ko] || COORDS_LUGARES[l.es] || null;
 };
 function km([a, b], [c, d]) {
@@ -314,7 +316,7 @@ async function compartirArchivo(nombre, texto, tipo) {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 // Marcas: lo que cada uno apunta en su móvil. Se pasan en un archivo y se UNEN (nunca se borra nada).
-const MARCAS = ['hecho', 'estrellas', 'avisosOk', 'favs', 'diario', 'comer', 'agenda', 'hgLeidas', 'leidos', 'regalos', 'hdIni', 'hdLev', 'checklist'];
+const MARCAS = ['hecho', 'estrellas', 'avisosOk', 'coordsFix', 'favs', 'diario', 'comer', 'agenda', 'hgLeidas', 'leidos', 'regalos', 'hdIni', 'hdLev', 'checklist'];
 function exportMarcas() {
   const U = u(), m = {}; MARCAS.forEach(k => { if (U[k] != null) m[k] = U[k]; });
   compartirArchivo(`corea-marcas-${todayISO()}.json`, JSON.stringify({ tipo: 'corea-marcas', fecha: new Date().toISOString(), user: m }), 'application/json');
@@ -334,6 +336,7 @@ function fundirMarcas(o) {
   ['hgLeidas', 'leidos', 'hdIni', 'hdLev'].forEach(k => { U[k] = U[k] || {}; Object.entries(o[k] || {}).forEach(([a, b]) => { if (b && !U[k][a]) U[k][a] = b; }); });
   U.regalos = arr(U.regalos); arr(o.regalos).forEach(r => { const x = U.regalos.find(x => x.id === r.id); if (!x) { U.regalos.push(r); n.regalos++; } else x.ok = x.ok || r.ok; });
   U.estrellas = U.estrellas || {}; Object.entries(o.estrellas || {}).forEach(([k, x]) => { if (x && Number(x.v) > 0 && !U.estrellas[k]) { U.estrellas[k] = x; n.estrellas = (n.estrellas || 0) + 1; } });
+  U.coordsFix = U.coordsFix || {}; Object.entries(o.coordsFix || {}).forEach(([a, b]) => { if (b && !U.coordsFix[a]) U.coordsFix[a] = b; });
   U.avisosOk = U.avisosOk || {}; Object.entries(o.avisosOk || {}).forEach(([a, b]) => { if (b && !U.avisosOk[a]) U.avisosOk[a] = b; });
   U.checklist = U.checklist || {}; Object.entries(o.checklist || {}).forEach(([a, b]) => { if (b) U.checklist[a] = b; });
   saveUser(); return n;
@@ -1151,7 +1154,7 @@ function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) 
       <span class="qv-cab"><b>${esc(l.es)}${lpPill(l)}</b><small>${plan ? `<span class="qv-dia">📅 ${fmtCorto(plan.fecha)}</span> ` : ''}${esc(breve(desc || l.nota || l.desc))}</small></span>
       <button class="hd-ck qv-ck ${hecho(l, k) ? 'on' : ''}" data-hk="${esc(hKey(l))}" data-v="${hecho(l, k) ? 0 : 1}" aria-label="Visitado">${hecho(l, k) ? '✓' : ''}</button></summary>
     <div class="qv-cuerpo">${w ? `<div class="foto" data-wiki="${esc(w)}"><span>📷</span></div><div class="credito" data-cred="${esc(w)}"></div>` : ''}
-      <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}</div>${estrBox(hKey(l), l.es)}
+      <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}${btnGps(l)}</div>${estrBox(hKey(l), l.es)}
       <div class="ko-s">${esc(l.ko || '')}${distHotel(l, k)}</div>${extra}${ojoLinea(ojoDe(null, l.ko))}${horarioLinea(l)}
       ${infoCompleta(l, desc || l.nota || l.desc)}</div></details>`;
 }
@@ -1438,8 +1441,10 @@ function mpFicha(p, m) {
     ${(() => { if (['itin', 'hotel', 'sug'].includes(p.capa)) return ''; const ps = m.pts.filter(x => x.capa === 'itin' && x.num != null); if (!ps.length || m.pts.some(x => x.capa === 'itin' && x.num == null)) return '';
       const [q, dk] = ps.map(x => [x, km(x.c, p.c)]).sort((a, b) => a[1] - b[1])[0]; return `<div class="mp-parada">📍 A ${fmtDist(dk)} de la parada ${q.num} (${esc(q.es)})</div>`; })()}
     ${m.hotel && !['hotel', 'sug'].includes(p.capa) ? tramo(m.hotel, p.c, 'Hotel', p.ko || p.es, { prefijo: 'Desde el hotel: ', sinPasos: true }) : ''}
-    <div class="acciones">${mpEnlace(p, m)}${p.add ? `<button class="mini" data-agtog="${esc(p.add)}">＋ Añadir a este día</button>` : ''}${naver(p.l || p)}</div></div>`;
+    <div class="acciones">${mpEnlace(p, m)}${p.add ? `<button class="mini" data-agtog="${esc(p.add)}">＋ Añadir a este día</button>` : ''}${naver(p.l || p)}${p.l && p.capa !== 'hotel' ? btnGps(p.l) : ''}</div></div>`;
 }
+// 📍 Estoy aquí: guarda la posición GPS actual como la buena de ese sitio (para corregir coordenadas aproximadas allí mismo).
+const btnGps = l => `<button class="mini sec" data-gps="${esc(hKey(l))}" data-gpsn="${esc(l.es || l.nombre || '')}">📍 ${user && user.coordsFix && user.coordsFix[hKey(l)] ? 'Corregido ✓' : 'Estoy aquí'}</button>`;
 // Botón de la ficha del mapa que lleva a la sección de la app donde está ese sitio.
 function mpEnlace(p, m) {
   const k = ck((p.l && p.l.ciudad) || '') || m.k || '';
@@ -2763,6 +2768,14 @@ document.addEventListener('click', e => {
   }
   const hix = e.target.closest('[data-hdini-x]');
   if (hix) { const U = u(); ['hdIni', 'hdLev'].forEach(c => { if (U[c]) delete U[c][hix.dataset.hdiniX]; }); saveUser(); render(); return; }
+  const gpsb = e.target.closest('button[data-gps]');
+  if (gpsb) { e.preventDefault(); const h = gpsb.dataset.gps, n = gpsb.dataset.gpsn;
+    if (!navigator.geolocation) { alert('Este móvil no da la ubicación.'); return; }
+    gpsb.textContent = '📍 Buscando…';
+    navigator.geolocation.getCurrentPosition(pos => { const { latitude: la, longitude: lo, accuracy: ac } = pos.coords;
+      if (confirm(`¿Guardar tu posición actual (precisión ±${Math.round(ac)} m) como la ubicación de «${n}»?\nHazlo solo si estás delante del sitio.`)) { const U = u(); U.coordsFix = U.coordsFix || {}; U.coordsFix[h] = [+la.toFixed(5), +lo.toFixed(5)]; saveUser(); }
+      render(); }, () => { alert('No se pudo obtener la ubicación (¿permiso de ubicación activado?).'); render(); }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
+    return; }
   const avb = e.target.closest('button[data-avok]');
   if (avb) { e.preventDefault(); const U = u(), o = U.avisosOk = U.avisosOk || {}, a = avb.dataset.avok; if (o[a]) delete o[a]; else o[a] = todayISO(); saveUser(); render(); return; }
   const hk = e.target.closest('button[data-hk]');
