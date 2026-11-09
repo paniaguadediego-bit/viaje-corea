@@ -30,7 +30,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    como la Guía (se toca y sale debajo): Maleta, Seguro,
    Verificar, Documentos (fotos/PDF), Notas, 🎁 Regalos (user.regalos: para quién, qué, dónde, ✍️ quién lo apunta (nombre en localStorage corea.yo, solo en ese móvil; filtro por autor si hay dos), comprado), 📖 Resumen del viaje (datosResumen() con lo marcado: copiar, compartir, .txt, 📘 Word .docx y 📕 PDF con fotos y colores de la app; exportar.js, sin librerías: el .docx es un zip hecho a mano y el PDF sale de Imprimir → Guardar como PDF; el service worker pide las fotos de Wikipedia con CORS para poder meterlas), Escala Pekín (hora de Pekín, vuestras escalas desde trip.vuelos,
    tránsito, equipaje, internet, baterías, dinero y frases en chino a pantalla completa) y Datos y app (importar,
-   exportar, "📤 Pasar mis marcas" (archivo corea-marcas que al importarlo en el otro móvil se UNE, sin borrar nada), "Preparar para viajar" (con wifi: app offline, fotos, mapas, tiempo,
+   exportar, "📤 Pasar mis marcas" (archivo corea-marcas que al importarlo en el otro móvil se UNE, sin borrar nada), "📊 Qué tocáis y qué no" (desde v181: recuento solo en el móvil, localStorage corea.uso, de qué controles se ven y se tocan, agrupados por función; lista "nunca tocado" por pestaña y "lo más tocado", con Copiar y Poner a cero; sirve para decidir qué quitar), "Preparar para viajar" (con wifi: app offline, fotos, mapas, tiempo,
    cambio y aviso de copia), actualizar, borrar). En Hoy, botón rojo "🆘 Ayuda"
    a pantalla completa: hotel de esta noche en hangul grande, 112/119/1330,
    seguro y Embajada de España (urgencia consular VERIFICAR). El conversor ₩/€

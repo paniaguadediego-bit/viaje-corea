@@ -1412,3 +1412,5 @@ button.es-mas { margin-right: 14px; }
 .es-ley { font-size: .78rem; text-align: right; margin: 2px 14px 0 0; }
 /* v180: sin columna de horas en el esquema; el horario va tras cada sitio */
 .esquema li { grid-template-columns: 1.5em 1fr; }
+/* v181: recuento de uso */
+.uso-pre { white-space: pre-wrap; font-size: .78rem; max-height: 40vh; overflow: auto; background: var(--card); padding: 8px; border-radius: 8px; }

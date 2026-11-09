@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v180
+Caché del service worker: corea-v181
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -232,6 +232,7 @@ Caché del service worker: corea-v180
 - v178: más fotos: si Wikipedia (inglesa y coreana) no da foto, se busca en Wikimedia Commons por el hangul y, si no, por el nombre (descartando mapas, planos y logos); el crédito dice «Wikimedia Commons»; se reintentan las fotos que fallaron y cada foto se busca una sola vez aunque la pidan varias miniaturas. [Supuesto] La búsqueda por nombre puede dar alguna foto de otro sitio con el mismo nombre: si pasa, se marca ese sitio con sinFoto o se le pone su artículo. Historia sin la segunda franja de colores arriba. Idioma: ⭐ Favoritas primero y abierta por defecto.
 - v179: en el esquema del día (Hoy), el horario del sitio de cada línea entre paréntesis (de HORARIOS); con * si está por verificar, y la leyenda «* Horario por verificar» sale al tocar «Leer más». Se toma el sitio que se nombra primero en la línea; las líneas de transporte (bus, KTX, taxi…) no llevan horario. [Supuesto] Sitios sin horario apertura-cierre (mercado de Hahoe, Museo de Máscaras…) van sin paréntesis.
 - v180: el horario va justo detrás de cada sitio, no al final de la línea; si una línea nombra dos sitios, cada uno lleva el suyo. Cada sitio sale una vez por día, en la línea que más lo nombra (los drones, no la cena «en Gwangalli»). Un paréntesis pegado al nombre solo se salta si es parte de él (hangul u otro nombre). Quitada la columna de horas de la izquierda del esquema.
+- v181: «📊 Qué tocáis y qué no» en Más → Datos y app. El usuario quiere mejorar la app en general y lo que más falla es encontrar las cosas; pidió saber qué no toca para quitarlo. Cuenta en el móvil (corea.uso, nunca sale de él ni va en Pasar marcas) cada control visto y tocado, agrupado por función (todos los «Visitado» = uno; los de navegación, por destino) y por pestaña. [Supuesto] Tras unos días, el usuario copia la lista y decidimos juntos qué quitar o mover.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

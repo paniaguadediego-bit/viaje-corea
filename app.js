@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v180';
+const VERSION = 'v181';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -2595,10 +2595,73 @@ function viewMas() {
     <p class="muted">Última copia: <b>${esc(localStorage.getItem('corea.ultimaCopia') || 'nunca')}</b></p>
     <h2>App</h2>
     ${prepCard()}
+    ${usoCard()}
     <button class="sec" data-act="update">🔄 Forzar actualización (no borra tus datos)</button>
     <button class="danger" data-act="wipe">Borrar datos de este móvil</button>
     <p class="muted" id="ver">Versión: ${esc(window.VERSION || '…')}</p>`;
   return rej + c;
+}
+
+// ---------- 📊 Qué tocáis y qué no (solo en este móvil, para decidir qué quitar) ----------
+// Cada control se agrupa por su función (todos los «Visitado» cuentan como uno); los de navegación, por su destino.
+const K_USO = 'corea.uso';
+const USO_NAV = new Set(['tab', 'sub', 'hsub', 'hgsub', 'act', 'ms', 'app', 'resumen', 'guia', 'pais', 'pcat', 'mpcapa', 'mpcapad', 'bcity', 'conv', 'sit', 'hgniv', 'carr', 'esmas', 'irplan', 'ircomer', 'irqv']);
+const USO_NO = new Set(['key', 'es', 'ko', 'rom', 'q', 'wiki', 'wikis', 'noms', 'fecha', 'h', 'n', 'i', 'v']);
+let uso = null, usoT = 0;
+function usoCarga() { if (!uso) { try { uso = JSON.parse(localStorage.getItem(K_USO)) || null; } catch {} if (!uso || !uso.k) uso = { desde: todayISO(), k: {} }; } return uso; }
+function usoGuarda() { clearTimeout(usoT); usoT = setTimeout(() => { try { localStorage.setItem(K_USO, JSON.stringify(uso)); } catch {} }, 800); }
+function usoLugar() {
+  const t = (TABS.find(x => x[0] === tab) || [tab, tab])[1];
+  const sub = tab === 'mas' ? ((MAS_SUB.find(x => x[0] === masSub) || [])[1] || masSub) : tab === 'ciudades' ? exSub : tab === 'idioma' ? coreaSub : tab === 'historia' ? histSub : '';
+  return sub ? t + ' › ' + sub : t;
+}
+function usoId(el) {
+  const c = el.closest('summary, button, a, input[type=checkbox], label, [data-dia], [data-tab]'); if (!c || c.closest('#visor')) return null;
+  let k, l = (c.getAttribute('aria-label') || c.title || c.textContent || '').replace(/\s+/g, ' ').trim();
+  if (c.tagName === 'SUMMARY') { const d = c.closest('details[data-key]'); k = 'det:' + (d ? d.dataset.key.split(/[:|]/)[0] : (l.replace(/[\d\s:.,-]+/g, '').slice(0, 20))); }
+  else {
+    const a = [...c.attributes].map(x => x.name).find(n => n.startsWith('data-') && !USO_NO.has(n.slice(5)));
+    if (a) { const n = a.slice(5); k = n + (USO_NAV.has(n) ? '=' + c.getAttribute(a) : ''); }
+    else if (c.tagName === 'A') { try { k = 'a:' + new URL(c.href).hostname; } catch { k = 'a'; } }
+    else k = c.tagName.toLowerCase() + ':' + l.replace(/[\d\s:.,-]+/g, '').slice(0, 20);
+  }
+  if (!k) return null;
+  // Los botones de navegación (rejillas y apartados) son de la pestaña, no del apartado abierto.
+  const lugar = c.closest('#tabs') ? 'Barra inferior' : USO_NAV.has(k.split('=')[0]) ? (TABS.find(x => x[0] === tab) || [tab, tab])[1] : usoLugar();
+  // Los que repiten el nombre de un sitio se nombran por su función, no por el primero que salió.
+  if (!USO_NAV.has(k.split('=')[0]) && l.length > 28) l = l.slice(0, 28) + '…';
+  return [lugar + '|' + k, lugar, l || k];
+}
+document.addEventListener('click', e => {
+  const id = usoId(e.target); if (!id) return; const U = usoCarga(), x = U.k[id[0]] || (U.k[id[0]] = { w: id[1], l: id[2], n: 0 });
+  usoOtro(x, id[2]); x.n++; x.u = todayISO(); usoGuarda();
+}, true);
+function usoVistos() {
+  const U = usoCarga(); let nuevo = false;
+  document.querySelectorAll('#view summary, #view button, #view a, #view input[type=checkbox], #view [data-dia], #tabs button').forEach(el => {
+    const id = usoId(el); if (!id) return; const x = U.k[id[0]];
+    if (!x) { U.k[id[0]] = { w: id[1], l: id[2], n: 0 }; nuevo = true; } else if (usoOtro(x, id[2])) nuevo = true;
+  });
+  if (nuevo) usoGuarda();
+}
+// Mismo control con otro texto (cada tramo, cada ficha…): se cuentan los distintos para decir «y N más».
+function usoOtro(x, l) { if (x.l === l || (x.o || []).includes(l)) return false; x.o = (x.o || []).concat(l).slice(0, 30); return true; }
+const usoNom = x => x.l + (x.o && x.o.length ? ` (y ${x.o.length}${x.o.length >= 30 ? '+' : ''} parecidos)` : '');
+addEventListener('pagehide', () => { if (uso) try { localStorage.setItem(K_USO, JSON.stringify(uso)); } catch {} });
+document.addEventListener('visibilitychange', () => { if (document.hidden && uso) try { localStorage.setItem(K_USO, JSON.stringify(uso)); } catch {} });
+function usoTexto() {
+  const U = usoCarga(), es = Object.values(U.k), nunca = es.filter(x => !x.n), top = es.filter(x => x.n).sort((a, b) => b.n - a.n);
+  const porLugar = {}; nunca.forEach(x => (porLugar[x.w] = porLugar[x.w] || []).push(usoNom(x)));
+  return `Uso de la app desde ${U.desde} (${es.length} controles vistos)\n\nNUNCA TOCADO (${nunca.length}):\n` +
+    Object.keys(porLugar).sort().map(w => `- ${w}: ${porLugar[w].join(' · ')}`).join('\n') +
+    `\n\nLO MÁS TOCADO:\n` + top.slice(0, 25).map(x => `- ${x.n}× ${x.w}: ${usoNom(x)}`).join('\n');
+}
+function usoCard() {
+  const U = usoCarga(), es = Object.values(U.k), nunca = es.filter(x => !x.n).length;
+  return `<details class="card" data-key="uso"><summary><b>📊 Qué tocáis y qué no</b> <span class="muted">· ${nunca} sin tocar de ${es.length}</span></summary>
+    <p class="muted">Cuenta en este móvil (nada sale de él) qué botones y apartados tocáis desde el ${esc(fmtCorto(U.desde))}. Sirve para quitar lo que no se usa. Mándamelo con «Copiar» cuando queráis.</p>
+    <pre class="uso-pre">${esc(usoTexto())}</pre>
+    <button class="sec" data-copy="${esc(usoTexto())}">📋 Copiar</button> <button class="sec" data-act="uso-cero">Poner a cero</button></details>`;
 }
 
 // ---------- Escala en Pekín (Capital, T3): todo lo útil para el tránsito ----------
@@ -2716,6 +2779,7 @@ function render() {
   const cambia = tab !== tabAnt;
   document.body.dataset.pest = tab; // color propio de cada pestaña (CSS). Ojo: NO usar data-tab, que es el atributo de los botones de la barra
   $('#view').innerHTML = html; tabAnt = tab;
+  setTimeout(usoVistos, 0);
   if (cambia) { const v = $('#view'); v.classList.remove('entra'); void v.offsetWidth; v.classList.add('entra'); } // fundido suave al cambiar de pestaña
   filas($('#view')).forEach((f, i) => { if (posX[i]) { f.style.scrollBehavior = 'auto'; f.scrollLeft = posX[i]; f.style.scrollBehavior = ''; } });
   if (['ciudades', 'hoy', 'corea', 'historia'].includes(tab)) pintarFotos();
@@ -2985,6 +3049,7 @@ document.addEventListener('click', e => {
     case 'ayuda': abrirAyuda(); return;
     case 'comer-cancelar': comerForm = false; break;
     case 'example': loadExample(); return;
+    case 'uso-cero': if (!confirm('¿Poner a cero el recuento de uso?')) return; uso = { desde: todayISO(), k: {} }; try { localStorage.setItem(K_USO, JSON.stringify(uso)); } catch {} break;
     case 'wipe':
       if (!confirm('¿Borrar viaje, checklist, notas, fotos y lo marcado de este móvil? Exporta antes una copia.')) return;
       localStorage.removeItem(K_TRIP); localStorage.removeItem(K_USER);
