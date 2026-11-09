@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v172';
+const VERSION = 'v173';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -538,7 +538,7 @@ function antesSalir(f, tr, al) {
 }
 let hoySub = null;
 // Itinerario del día en esquema (hora, icono y título corto); el texto completo, plegado debajo.
-const icItem = t => [[/si os da tiempo/i, '⏭️'], [/^\s*(atardecer|puesta de sol)/i, '🌅'], [/^\s*(almuerzo|comida|cena|desayuno)/i, '🍜'], [/ktx|tren|srt/i, '🚆'], [/vuelo|aeropuerto/i, '✈️'], [/\bbus\b|autob/i, '🚌'], [/taxi/i, '🚕'],
+const icItem = t => [[/suneung|examen/i, '📝'], [/si os da tiempo/i, '⏭️'], [/^\s*(atardecer|puesta de sol)/i, '🌅'], [/^\s*(almuerzo|comida|cena|desayuno)/i, '🍜'], [/ktx|tren|srt/i, '🚆'], [/vuelo|aeropuerto/i, '✈️'], [/\bbus\b|autob/i, '🚌'], [/taxi/i, '🚕'],
   [/almuerzo|comida|comer|cena|desayun|jjimdak|gukbap|bibimbap/i, '🍜'], [/danza|espect|función|concierto/i, '🎭'], [/museo/i, '🏛️'], [/palacio/i, '🏯'],
   [/templo|santuario|seowon|academia/i, '🛕'], [/atardecer|puesta de sol|noche/i, '🌅'], [/mercado|compras|tienda/i, '🛍️'], [/playa|mar\b/i, '🏖️'],
   [/aldea|hanok|barrio/i, '🏘️'], [/hotel|check/i, '🛏️']].find(([r]) => r.test(t))?.[1] || '📍';

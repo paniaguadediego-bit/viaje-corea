@@ -1387,3 +1387,7 @@ button.es-mas { display: block; width: auto; min-height: 0; margin: 0 12px 8px a
 .dia-cab .dia-sup { display: inline-flex; flex-direction: column; align-items: center; border-radius: 14px; padding: 4px 14px; line-height: 1.25; }
 .dia-cab .ds-1 { font-size: 1rem; font-weight: 800; }
 .dia-cab .ds-2 { font-size: .82rem; font-weight: 600; opacity: .95; }
+/* v173: el esquema del día no toca los bordes de la tarjeta */
+.esquema { padding: 0 14px 0 10px; }
+.esquema li { grid-template-columns: 2.9em 1.5em 1fr; }
+button.es-mas { margin-right: 14px; }
