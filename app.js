@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v177';
+const VERSION = 'v178';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1077,7 +1077,7 @@ function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) 
 // Foto principal del artículo de Wikipedia (necesita conexión la primera vez; el service worker la guarda).
 const FOTOS = load('corea.fotos', {});
 // v134: se reintentan las fotos que fallaron antes (artículos mal escritos o sin imagen).
-if (load('corea.fotosv', 0) < 3) { Object.keys(FOTOS).forEach(k => { if (FOTOS[k] === null) delete FOTOS[k]; }); try { save('corea.fotos', FOTOS); save('corea.fotosv', 3); } catch {} } // v166: reintento con la 1.ª foto del artículo
+if (load('corea.fotosv', 0) < 4) { Object.keys(FOTOS).forEach(k => { if (FOTOS[k] === null) delete FOTOS[k]; }); try { save('corea.fotos', FOTOS); save('corea.fotosv', 4); } catch {} } // v166: reintento con la 1.ª foto del artículo
 // Hangul de cada artículo (para buscar en la Wikipedia coreana si la inglesa no tiene foto).
 let KO_WIKI = null;
 const koDeWiki = t => { if (!KO_WIKI) { KO_WIKI = {};
@@ -1093,13 +1093,31 @@ async function resumenWiki(lang, titulo) {
     if (!m.ok) return null; const it = arr((await m.json()).items).find(x => x.type === 'image' && !/\.svg$|map|locator|flag|logo|icon/i.test(x.title || '') && arr(x.srcset).length);
     return it ? { src: (it.srcset[0].src.startsWith('//') ? 'https:' : '') + it.srcset[0].src, url } : null; } catch { return null; }
 }
-async function fotoWiki(t) {
+async function fotoCommons(q) {
+  try {
+    const r = await fetch('https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=10&prop=imageinfo&iiprop=url|mime&iiurlwidth=640&gsrsearch='
+      + encodeURIComponent(q + ' filetype:bitmap'));
+    if (!r.ok) return null; const ps = Object.values(((await r.json()).query || {}).pages || {}).sort((a, b) => (a.index || 0) - (b.index || 0));
+    const p = ps.find(x => x.imageinfo && x.imageinfo[0] && /jpe?g|png|webp/.test(x.imageinfo[0].mime || '') && !/map|locator|flag|logo|icon|plan|diagram|지도|위치/i.test(x.title || ''));
+    return p ? { src: p.imageinfo[0].thumburl || p.imageinfo[0].url, url: p.imageinfo[0].descriptionurl } : null;
+  } catch { return null; }
+}
+// Una sola búsqueda por foto aunque la pidan varias miniaturas a la vez.
+const FOTO_PEND = {};
+function fotoWiki(t) {
+  if (FOTOS[t] !== undefined) return Promise.resolve(FOTOS[t]);
+  return FOTO_PEND[t] || (FOTO_PEND[t] = fotoWiki0(t).finally(() => { delete FOTO_PEND[t]; }));
+}
+async function fotoWiki0(t) {
   if (FOTOS[t] !== undefined) return FOTOS[t];
   let titulo = t; try { titulo = decodeURIComponent(t); } catch {} // algunos nombres venían ya codificados (%27…)
   try {
     let f = titulo.startsWith('ko:') ? null : await resumenWiki('en', titulo);
     const ko = titulo.startsWith('ko:') ? titulo.slice(3) : koDeWiki(t);
     if (!f && ko) f = await resumenWiki('ko', ko.replace(/\s+/g, '')) || (/\s/.test(ko) ? await resumenWiki('ko', ko) : null);
+    // Sin foto en Wikipedia: Wikimedia Commons (fotos libres), buscando por el hangul y, si no, por el nombre.
+    if (!f && ko) f = await fotoCommons(ko);
+    if (!f && !titulo.startsWith('ko:')) f = await fotoCommons(titulo.replace(/_/g, ' ').replace(/\s*\(.*?\)/g, ''));
     FOTOS[t] = f; try { save('corea.fotos', FOTOS); } catch {}
     return f;
   } catch { return undefined; } // sin conexión: se reintenta más tarde
@@ -1141,7 +1159,7 @@ function pintarFotos() {
     img.onerror = () => { if (grande && img.src !== f.src) img.src = f.src; else el.classList.add('sinfoto'); };
     img.src = grande || f.src;
     const c = el.classList.contains('mini') || el.classList.contains('banda') ? null : document.querySelector(`.credito[data-cred="${CSS.escape(el.dataset.wiki)}"]`);
-    if (c && f.url) c.innerHTML = `Foto: <a href="${esc(f.url)}" target="_blank" rel="noopener">Wikipedia</a>`;
+    if (c && f.url) c.innerHTML = `Foto: <a href="${esc(f.url)}" target="_blank" rel="noopener">${/commons\./.test(f.url) ? 'Wikimedia Commons' : 'Wikipedia'}</a>`;
   });
 }
 // Descarga las fotos (y la versión grande de los banners de cada día) para usarlas sin conexión.
@@ -2019,8 +2037,9 @@ function viewPais(soloDetalle = false) {
 }
 // 🔤 Idioma (pestaña propia desde v161): Hangul, Frases, Diccionario, Enseñar y Favoritas.
 function viewIdioma() {
-  if (!['hangul', 'frases', 'dicc', 'ensenar', 'favs'].includes(coreaSub)) coreaSub = 'hangul';
-  const seg = [['hangul', '🔤 Hangul'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.'], ['ensenar', '🪧 Enseñar'], ['favs', `⭐${arr(u().favs).length ? ' ' + arr(u().favs).length : ''}`]].map(([k, t]) =>
+  // ⭐ Favoritas primero y abiertas por defecto al entrar en Idioma.
+  if (!['hangul', 'frases', 'dicc', 'ensenar', 'favs'].includes(coreaSub)) coreaSub = 'favs';
+  const seg = [['favs', `⭐${arr(u().favs).length ? ' ' + arr(u().favs).length : ''}`], ['hangul', '🔤 Hangul'], ['frases', '💬 Frases'], ['dicc', '📖 Dicc.'], ['ensenar', '🪧 Enseñar']].map(([k, t]) =>
     `<button class="${coreaSub === k ? '' : 'sec'}" data-sub="${k}">${t}</button>`).join('');
   let html = `<div class="row daynav seg5">${seg}</div>`;
   if (coreaSub === 'ensenar') html += viewEnsenar();
@@ -2033,7 +2052,7 @@ function viewIdioma() {
   // La búsqueda se recuerda: si la pantalla se redibuja (p. ej. al cerrar el teclado), no se pierde.
   else if (coreaSub === 'dicc') html += `<input id="q" type="search" placeholder="Buscar (español, coreano o romanización)" autocomplete="off" enterkeyhint="search" value="${esc(qDic)}">
     <div id="dres">${dResultados(qDic)}</div>`;
-  else html += viewHangul();
+  else if (coreaSub === 'hangul') html += viewHangul();
   return html;
 }
 // 🇰🇷 Corea: la Guía por bloques temáticos; País (sociedad.js) y los platos típicos van dentro. Lo que no esté en un bloque, al último.
@@ -2685,7 +2704,7 @@ document.addEventListener('click', e => {
   e.preventDefault(); e.stopPropagation();
   const f = FOTOS[ft.dataset.wiki] || {}, card = ft.closest('details, .card, .sd'), nom = card && (card.querySelector('b') || {}).textContent || '';
   const v = document.createElement('div'); v.id = 'visor';
-  v.innerHTML = `<img alt="" src="${esc(img.src.replace(/\/\d+px-/, '/1280px-'))}"><div class="visor-pie"><b>${esc(nom.trim().replace(/^\d+\s*/, '').slice(0, 80))}</b>${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">Foto: Wikipedia</a>` : ''}<span>Toca para cerrar</span></div>`;
+  v.innerHTML = `<img alt="" src="${esc(img.src.replace(/\/\d+px-/, '/1280px-'))}"><div class="visor-pie"><b>${esc(nom.trim().replace(/^\d+\s*/, '').slice(0, 80))}</b>${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${/commons\./.test(f.url) ? 'Foto: Wikimedia Commons' : 'Foto: Wikipedia'}</a>` : ''}<span>Toca para cerrar</span></div>`;
   const big = v.querySelector('img'); big.onerror = () => { if (big.src !== img.src) big.src = img.src; };
   document.body.appendChild(v);
 }, true);

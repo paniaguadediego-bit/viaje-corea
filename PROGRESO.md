@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v177
+Caché del service worker: corea-v178
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -229,6 +229,7 @@ Caché del service worker: corea-v177
 - v175: ficha del mapa más limpia: botones solo con icono (🍜/🏯/🧩 ir a su sección, 🗺️ Naver, 📍 Google, 📌 Estoy aquí, 🧭 Ruta; el texto queda como etiqueta accesible) y la línea gris sin repetir lo que ya dice el nombre ni el tipo (ya lo indica el icono). «Estoy aquí» pasa a 📌 para no confundirse con Google (📍). [Supuesto] Se mantiene «Estoy aquí» (solo icono): no estorba y sirve para corregir sitios mal situados como los de Hahoe.
 - v176: en la ficha del mapa, el nombre coreano va en la misma línea que el occidental, tras «•» (antes, en una línea aparte). El usuario confirma que se queda «📌 Estoy aquí».
 - v177: fichas de sitio de Hoy con indicador de plegado (▾ abajo a la derecha si está abierta, «▸ más» si está plegada) y el botón de Planes solo con el icono 🏯.
+- v178: más fotos: si Wikipedia (inglesa y coreana) no da foto, se busca en Wikimedia Commons por el hangul y, si no, por el nombre (descartando mapas, planos y logos); el crédito dice «Wikimedia Commons»; se reintentan las fotos que fallaron y cada foto se busca una sola vez aunque la pidan varias miniaturas. [Supuesto] La búsqueda por nombre puede dar alguna foto de otro sitio con el mismo nombre: si pasa, se marca ese sitio con sinFoto o se le pone su artículo. Historia sin la segunda franja de colores arriba. Idioma: ⭐ Favoritas primero y abierta por defecto.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

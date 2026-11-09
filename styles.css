@@ -1405,3 +1405,5 @@ button.es-mas { margin-right: 14px; }
 .sitios-dia details.sd > summary::after { display: block !important; content: '▾'; position: absolute; right: 12px; bottom: 6px; font-size: .85rem; color: var(--muted); }
 .sitios-dia details.sd:not([open]) > summary::after { content: '▸ más'; font-size: .75rem; }
 .sitios-dia details.sd[open] { padding-bottom: 18px; }
+/* v178: Historia sin segunda franja de colores (ya está la de la cabecera) */
+.hist-tema { border-top: 0; border-image: none; padding-top: 4px; }
