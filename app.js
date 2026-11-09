@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v189';
+const VERSION = 'v190';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -591,7 +591,7 @@ function esquemaDia(d) {
     return resaltar(t).replace(/\u0001([A-Z])\u0002/g, (_, c) => ` <span class="es-hor">${esc(ins[c.charCodeAt(0) - 65].s)}</span>`);
   };
   const lis = its.map((i, n) => `<li><span class="es-h"></span><span class="es-ic">${icItem(i.texto)}</span><span class="es-t">${conHoras(textos[n], asig[n])}</span></li>`).join('');
-  return `<ol class="esquema ${largo ? 'largo' : ''}">${lis}</ol>
+  return `<ol class="esquema ${largo ? 'largo' : ''}" data-esq="${key}">${lis}</ol>
     ${largo && ast ? '<p class="muted es-ley">* Horario por verificar</p>' : ''}
     ${hay || ast ? `<button class="es-mas" data-esmas="${key}">${largo ? 'Leer menos ▴' : 'Leer más ▾'}</button>` : ''}`;
 }
@@ -2956,7 +2956,11 @@ document.addEventListener('click', e => {
       render(); }, () => { alert('No se pudo obtener la ubicación (¿permiso de ubicación activado?).'); render(); }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
     return; }
   const esm = e.target.closest('button[data-esmas]');
-  if (esm) { abiertos[esm.dataset.esmas] = !abiertos[esm.dataset.esmas]; queueMicrotask(anclar(esm)); render(); return; }
+  // «Leer más» crece hacia abajo: queda quieto el principio de la lista (no el botón), y si ese principio estaba fuera de la pantalla, se baja hasta él.
+  if (esm) { const k = esm.dataset.esmas, sel = `ol[data-esq="${CSS.escape(k)}"]`, ol0 = document.querySelector(sel), y0 = ol0 ? ol0.getBoundingClientRect().top : null;
+    abiertos[k] = !abiertos[k]; render();
+    const ol = document.querySelector(sel); if (ol && y0 != null) { const cab = ($('header') || { offsetHeight: 60 }).offsetHeight + 8; window.scrollBy(0, ol.getBoundingClientRect().top - Math.max(y0, cab)); }
+    return; }
   const avb = e.target.closest('button[data-avok]');
   if (avb) { e.preventDefault(); const U = u(), o = U.avisosOk = U.avisosOk || {}, a = avb.dataset.avok; if (o[a]) delete o[a]; else o[a] = todayISO(); saveUser(); render(); return; }
   const hk = e.target.closest('button[data-hk]');
