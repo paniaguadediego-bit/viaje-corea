@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v186';
+const VERSION = 'v187';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1087,12 +1087,14 @@ function qvLista(k, c) {
 const QV_TIPOS = [[/palacio/i, '🏯 Palacios'], [/museo|biblioteca|prisión|memorial/i, '🏛️ Museos'], [/templo|santuario|pagoda|gruta|catedral|confuciana|academia|seowon/i, '🛕 Templos y santuarios'],
   [/mercado|calle|plaza|coex|centro|square|dong$/i, '🛍️ Mercados, calles y barrios'], [/aldea|barrio|hanok|pueblo/i, '🏘️ Aldeas y hanok'], [/parque|monte|isla|playa|mirador|arroyo|torre|lago|estanque|puente|río|muralla|acantilado|túmulo/i, '🌳 Naturaleza y vistas']];
 const tipoQV = l => (QV_TIPOS.find(([re]) => re.test((l.tipo || '') + ' ' + l.es)) || [0, '✨ Otros'])[1];
-let qvOrden = 'itin', qvFiltro = 'todos';
+let qvOrden = 'itin', qvFiltro = 'todos', qvMarca = '';
 function qvPuntos(k, c) {
   const todos = qvLista(k, c), U = u();
   const F = { todos: () => true, itin: o => o.plan, lp: o => esLP(o.l), otros: o => !o.plan && !esLP(o.l) };
-  let ls = todos.filter(F[qvFiltro] || F.todos);
-  const cuenta = f => todos.filter(F[f]).length, vis = ls.filter(o => hecho(o.l, k)).length;
+  // ✅ Marcados / ☐ No marcados: se suma al otro filtro (p. ej. Itinerario + No marcados = lo que os queda del plan).
+  const base = todos.filter(F[qvFiltro] || F.todos), M = { si: o => hecho(o.l, k), no: o => !hecho(o.l, k) };
+  let ls = base.filter(M[qvMarca] || F.todos);
+  const cuenta = f => todos.filter(F[f]).length, vis = base.filter(M.si).length;
   const chips = (v, op, attr) => op.map(([x, t]) => `<button class="chip ${v === x ? 'on' : ''}" data-${attr}="${x}">${t}</button>`).join('');
   let grupos;
   if (qvOrden === 'az') grupos = [['', ls.slice().sort((a, b) => a.l.es.localeCompare(b.l.es, 'es'))]];
@@ -1101,7 +1103,8 @@ function qvPuntos(k, c) {
       .forEach(o => { const t = o.plan ? `📅 Día ${o.plan.n} · ${fmtCorto(o.plan.fecha)}` : '➕ Fuera del itinerario'; if (!g.has(t)) g.set(t, []); g.get(t).push(o); }); grupos = [...g]; }
   return `<div class="qv-ctrl"><div class="chips">${chips(qvOrden, [['itin', '📅 Itinerario'], ['tipo', '🏷️ Tipo'], ['az', '🔤 A-Z']], 'qvo')}</div>
       <div class="chips">${chips(qvFiltro, [['todos', `Todos ${todos.length}`], ['itin', `📅 Itinerario ${cuenta('itin')}`], ['lp', `LP ${cuenta('lp')}`], ['otros', `Otros ${cuenta('otros')}`]], 'qvf')}</div>
-      <div class="muted mini-nota">✅ ${vis} de ${ls.length} visitados</div></div>
+      <div class="chips">${chips(qvMarca, [['si', `✅ Marcados ${vis}`], ['no', `☐ No marcados ${base.length - vis}`]], 'qvm')}</div>
+      <div class="muted mini-nota">✅ ${vis} de ${base.length} visitados</div></div>
     ${ls.length ? grupos.map(([t, os]) => `${t ? `<div class="qv-grupo">${esc(t)}</div>` : ''}${os.map(o => fichaQV(o.l, k, { desc: o.desc, plan: o.plan, clase: o.l.top ? 'top' : '',
       extra: o.l.tipo && esLP(o.l) ? `<div class="lp-meta"><span class="lp-tipo">${esc(o.l.tipo)}</span>${o.l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(o.l)}</div>` : '' })).join('')}`).join('') : '<p class="muted">Nada con este filtro.</p>'}`;
 }
@@ -2980,10 +2983,10 @@ document.addEventListener('click', e => {
   if (hsb) { histSub = hsb.dataset.hsub; histCap = null; render(); return; }
   const exs = e.target.closest('[data-exs]');
   if (exs) { exSub = exs.dataset.exs; render(); return; }
-  const qo = e.target.closest('[data-qvo],[data-qvf]');
-  if (qo) { if (qo.dataset.qvo) qvOrden = qo.dataset.qvo; else qvFiltro = qo.dataset.qvf; render(); return; }
+  const qo = e.target.closest('[data-qvo],[data-qvf],[data-qvm]');
+  if (qo) { if (qo.dataset.qvo) qvOrden = qo.dataset.qvo; else if (qo.dataset.qvm) qvMarca = qvMarca === qo.dataset.qvm ? '' : qo.dataset.qvm; else qvFiltro = qo.dataset.qvf; render(); return; }
   const iq = e.target.closest('[data-irqv]');
-  if (iq) { ciudadSel = iq.dataset.irqv; exSub = 'puntos'; qCiu = ''; qvFiltro = 'todos'; abiertos['qv:' + iq.dataset.h] = true; ir('ciudades'); render();
+  if (iq) { ciudadSel = iq.dataset.irqv; exSub = 'puntos'; qCiu = ''; qvFiltro = 'todos'; qvMarca = ''; abiertos['qv:' + iq.dataset.h] = true; ir('ciudades'); render();
     const el = document.querySelector(`details[data-key="${CSS.escape('qv:' + iq.dataset.h)}"]`); if (el) { el.scrollIntoView({ block: 'start' }); window.scrollBy(0, -80); } return; }
   const irc = e.target.closest('[data-ircomer],[data-irplan],[data-irhotel]');
   if (irc) {
