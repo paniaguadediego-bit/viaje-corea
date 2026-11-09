@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v170';
+const VERSION = 'v171';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -824,7 +824,9 @@ const hhmm = m => `${String(Math.floor(m / 60) % 24).padStart(2, '0')}:${String(
 function horarioLinea(l, fecha) {
   const h = horDe(l); if (!h) return '';
   const ds = fecha ? new Date(fecha + 'T12:00').getDay() : null;
-  const cierra = arr(h.x).length && !/cierra/i.test(h.t || '') ? ` · cierra los ${arr(h.x).map(x => DIAS_SEM[x].replace(/([^s])$/, '$1s')).join(' y ')}` : '';
+  const pl = x => DIAS_SEM[x].replace(/([^s])$/, '$1s'), abre = [0, 1, 2, 3, 4, 5, 6].filter(x => !arr(h.x).includes(x));
+  const cierra = !arr(h.x).length || /cierra|solo/i.test(h.t || '') || /sábados|domingos|lunes/i.test(h.t || '') && abre.length <= 2 ? ''
+    : abre.length <= 2 ? ` · solo los ${abre.map(pl).join(' y ')}` : ` · cierra los ${arr(h.x).map(pl).join(' y ')}`;
   let aviso = '';
   if (ds !== null && arr(h.x).includes(ds)) aviso = `<div class="hor-cerrado">⛔ El ${DIAS_SEM[ds]} está cerrado: cambiadlo de día</div>`;
   else if (ds !== null && h.noche && !h.noche.includes(ds)) aviso = `<div class="hor-cerrado">🌙 El mercado nocturno solo abre viernes y sábado: el ${DIAS_SEM[ds]} no hay</div>`;
@@ -1844,7 +1846,7 @@ function dResultados(q) {
   return res.length ? res.slice(0, 80).join('') : '<p class="muted">Sin resultados. Prueba con otra palabra.</p>';
 }
 
-const icGuia = t => [[/dinero/i, '💰'], [/t-money|transporte/i, '🚇'], [/taxi/i, '🚕'], [/propina/i, '💸'], [/zapato/i, '👟'], [/enchufe/i, '🔌'], [/^apps/i, '📱'], [/pago/i, '💳'],
+const icGuia = t => [[/snack/i, '🍪'], [/dinero/i, '💰'], [/t-money|transporte/i, '🚇'], [/taxi/i, '🚕'], [/propina/i, '💸'], [/zapato/i, '👟'], [/enchufe/i, '🔌'], [/^apps/i, '📱'], [/pago/i, '💳'],
   [/hangul/i, '🔤'], [/metro y ktx/i, '🚄'], [/clima/i, '🍂'], [/24 h/i, '🏪'], [/baños/i, '🚻'], [/internet/i, '📶'], [/tax free/i, '🛍️'], [/farmacia/i, '💊'], [/beber/i, '🍶'], [/^templos/i, '🛕'], [/fechas/i, '📅'], [/^comida/i, '🍜'], [/^etiqueta/i, '🙇'], [/seguridad|emergencia/i, '🚨'], [/entrada/i, '🛂'], [/básico/i, '🇰🇷'], [/consejos/i, '💡'], [/llevar/i, '🎒'], [/mesa/i, '🥢'], [/saber estar/i, '🤝']]
   .find(([r]) => r.test(t))?.[1] || '📌';
 // Hoteles que se pagan allí (de trip.json, solo en el móvil): reservad efectivo por si no aceptan tarjeta.
@@ -2035,7 +2037,7 @@ function viewIdioma() {
 const GUIA_BLOQUES = [
   ['🚇 Moverse', ['T-money y transporte', 'Metro y KTX', 'Taxis', 'Apps', 'Internet y móvil', 'Entrada al país']],
   ['💳 Dinero y compras', ['Dinero y pagos', 'Compras, tax free y último día', 'Propinas', 'Tiendas 24 h']],
-  ['🍜 Comida', ['Comida', 'platos', 'En la mesa (Lonely Planet)', 'Beber a la coreana']],
+  ['🍜 Comida', ['Comida', 'platos', 'Snacks de tienda 24 h', 'En la mesa (Lonely Planet)', 'Beber a la coreana']],
   ['🙇 Costumbres y cultura', ['Etiqueta', 'Saber estar (Lonely Planet)', 'Zapatos', 'Templos', 'Fechas de vuestro viaje']],
   ['🚨 Salud, seguridad y práctico', ['Seguridad y emergencias', 'Salud y farmacias', 'Baños', 'Enchufes', 'Clima en noviembre', 'Qué llevar (Lonely Planet)', 'Lo básico (Lonely Planet)', 'Consejos de la Lonely Planet']],
   ['🏛️ País', 'pais']

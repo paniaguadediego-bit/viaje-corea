@@ -47,6 +47,8 @@ const CATALOGO = {
     { es: 'BIFF Square', ko: 'BIFF광장', romanizacion: 'BIFF Gwangjang' },
     { es: 'Playa Haeundae', ko: '해운대해수욕장', romanizacion: 'Haeundae Haesuyokjang' },
     { es: 'Playa Gwangalli', ko: '광안리해수욕장', romanizacion: 'Gwangalli Haesuyokjang' },
+    { es: 'Espectáculo de drones (Gwangalli)', ko: '광안리 M 드론라이트쇼', romanizacion: 'Gwangalli M Deuron Raiteusyo', tipo: 'Espectáculo', sinFoto: true, buscar: ['drones', 'drone show'],
+      desc: 'Cientos de drones dibujan figuras sobre el puente Gwangan cada sábado: de octubre a febrero a las 19:00 y 21:00 (de marzo a septiembre, 20:00 y 22:00), unos 12 min, gratis; se ve desde toda la playa. Metro línea 2, Geumnyeonsan o Gwangan. Se suspende con lluvia o viento: VERIFICAR.' },
     { es: 'Aldea cultural Gamcheon', ko: '감천문화마을', romanizacion: 'Gamcheon Munhwa Maeul' },
     { es: 'Mercado Jagalchi', ko: '자갈치시장', romanizacion: 'Jagalchi Sijang' },
     { es: 'Mercado Gukje', ko: '국제시장', romanizacion: 'Gukje Sijang' },
@@ -192,6 +194,16 @@ const GUIA = [
   ['Internet y móvil', [
     'Wifi gratis en metro, cafés y muchas calles; aun así, la eSIM con datos es muy útil para Naver Map y Papago.',
     'Algunas apps coreanas piden número coreano para registrarse: tenedlas probadas antes del viaje.'
+  ]],
+  ['Snacks de tienda 24 h', [
+    'Los clásicos que venden en cualquier GS25, CU o 7-Eleven (buen recuerdo barato para regalar):',
+    'Pepero (빼빼로): palitos de galleta bañados en chocolate. El 11 de noviembre es el «Día del Pepero» y se regalan por todas partes (ese día estaréis en Gyeongju).',
+    'Choco Pie (초코파이): bizcocho con nube y cobertura de chocolate. Honey Butter Chip (허니버터칩): patatas dulces de miel y mantequilla.',
+    'Turtle Chips (꼬북칩): patatas de varias capas, muy crujientes. Kkokkalcorn (꼬깔콘): conos de maíz. Shrimp Crackers (새우깡): gusanitos de gamba.',
+    'Whale Snack (고래밥): galletitas con forma de ballena. Home Run Ball (홈런볼): bolitas de bizcocho rellenas de crema de chocolate. Kancho (칸쵸): galletitas rellenas de chocolate.',
+    'Choco Heim (초코하임): barquillo relleno de chocolate. Binch (빈츠): galleta con chocolate por encima.',
+    'Yakgwa (약과): galleta tradicional de miel y aceite de sésamo, blandita; ahora vuelve a estar de moda entre los jóvenes.',
+    'Truco: enseñad el nombre en hangul al dependiente si no lo encontráis.'
   ]],
   ['Compras, tax free y último día', [
     'En tiendas con el cartel "Tax Free" se pide la devolución del IVA con el pasaporte (llevadlo encima al comprar).',
@@ -880,6 +892,7 @@ const HORARIOS = {
   '서촌': { d: 60, t: 'Barrio abierto' }, '광화문광장': { d: 20, t: 'Plaza abierta' }, '홍대': { d: 120, t: 'Barrio abierto; mejor por la tarde-noche' },
   '부용대': { d: 45, t: 'Mirador abierto (se llega en barca o a pie)' }, '황리단길': { d: 60, t: 'Calle abierta; tiendas unas 10:00-21:00' }, '교촌마을': { d: 45, t: 'Aldea abierta' },
   '월정교': { d: 30, t: 'Puente abierto; iluminado de noche' }, '분황사': { d: 30, t: 'Templo de día', v: true }, '월영교': { d: 30, t: 'Puente abierto; iluminado de noche' },
+  '광안리M드론라이트쇼': { a: '19:00', c: '21:15', x: [0, 1, 2, 3, 4, 5], d: 15, t: 'Sábados a las 19:00 y 21:00 (oct.-feb.); unos 12 min; gratis', v: true },
   '해운대해수욕장': { d: 45, t: 'Playa abierta' }, '동백섬': { d: 60, t: 'Paseo abierto' }, '광안리해수욕장': { d: 60, t: 'Playa abierta; puente iluminado de noche' },
   '송도해수욕장': { d: 60, t: 'Playa abierta (el teleférico tiene su horario)' }, 'BIFF광장': { d: 30, t: 'Plaza abierta; puestos por la tarde' }, '청사포': { d: 45, t: 'Pueblo abierto' },
   '전주한옥마을': { d: 120, t: 'Aldea abierta; tiendas unas 10:00-20:00' }, '풍남문': { d: 15, t: 'Puerta, exterior' }, '오목대': { d: 30, t: 'Mirador abierto' },

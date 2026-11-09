@@ -1377,3 +1377,6 @@ button.es-mas { display: block; width: auto; min-height: 0; margin: 0 12px 8px a
 .carr { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 34px !important; height: 34px; min-height: 34px !important; padding: 0 !important; margin: 0;
   border-radius: 50% !important; border: 0; background: rgba(0,0,0,.35) !important; color: #fff; font-size: 1.4rem; line-height: 1; box-shadow: none; }
 .carr-l { left: 8px; } .carr-r { right: 8px; }
+/* v171: título del carrusel sobre fondo oscuro para que se lea en cualquier foto */
+.dia-cap { left: 50%; right: auto; bottom: 10px; transform: translateX(-50%); max-width: calc(100% - 90px); padding: 4px 12px; border-radius: 999px;
+  background: rgba(0,0,0,.62); text-shadow: none; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
