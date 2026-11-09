@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v174';
+const VERSION = 'v175';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1380,17 +1380,21 @@ function mpDibujar(el, m) {
   const inf = el.querySelector('.mp-info'), p = m.pts[m.sel];
   if (inf) { inf.innerHTML = p ? mpFicha(p, m) : ''; inf.classList.toggle('on', !!p); }
 }
+// En la ficha del mapa los botones van solo con su icono (el texto queda como etiqueta accesible).
+const soloIco = h => h.replace(/(<(a|button)\b[^>]*)>\s*(\S+)\s+([^<]+)<\/\2>/g, (m0, ab, tag, ic, t) => `${ab} title="${esc(t.trim())}" aria-label="${esc(t.trim())}">${ic}</${tag}>`);
 function mpFicha(p, m) {
-  return `<div class="mp-f"><div class="mp-f-t"><b>${p.ic} ${esc(p.es)}</b>${p.l ? lpPill(p.l) : ''}<button class="sec mini" data-mpcerrar>✕</button></div>
+  // Sin repetir en la línea gris lo que ya dice el nombre («bar · cócteles» en «Jinhanbam (bar de cócteles…)»).
+  const sub = String(p.sub || '').split(' · ').filter(x => x && !norm(p.es).includes(norm(x))).join(' · ');
+  return soloIco(`<div class="mp-f"><div class="mp-f-t"><b>${p.ic} ${esc(p.es)}</b>${p.l ? lpPill(p.l) : ''}<button class="sec mini" data-mpcerrar>✕</button></div>
     ${p.ko ? `<div class="ko-s">${esc(p.ko)}</div>` : ''}
-    ${p.capa === 'sug' ? `<div class="sug-encaje">📍 ${esc(p.sub)}</div>${p.txt ? `<div class="muted">${esc(recorta(p.txt, 120))}</div>` : ''}` : `<div class="muted">${esc(p.sub || '')}${p.txt ? ` · ${esc(recorta(p.txt, 150))}` : ''}</div>`}
+    ${p.capa === 'sug' ? `<div class="sug-encaje">📍 ${esc(p.sub)}</div>${p.txt ? `<div class="muted">${esc(recorta(p.txt, 120))}</div>` : ''}` : `<div class="muted">${esc(sub)}${sub && p.txt ? ' · ' : ''}${p.txt ? esc(recorta(p.txt, 150)) : ''}</div>`}
     ${(() => { if (['itin', 'hotel', 'sug'].includes(p.capa)) return ''; const ps = m.pts.filter(x => x.capa === 'itin' && x.num != null); if (!ps.length || m.pts.some(x => x.capa === 'itin' && x.num == null)) return '';
       const [q, dk] = ps.map(x => [x, km(x.c, p.c)]).sort((a, b) => a[1] - b[1])[0]; return `<div class="mp-parada">📍 A ${fmtDist(dk)} de la parada ${q.num} (${esc(q.es)})</div>`; })()}
     ${m.hotel && !['hotel', 'sug'].includes(p.capa) ? tramo(m.hotel, p.c, 'Hotel', p.ko || p.es, { prefijo: 'Desde el hotel: ', sinPasos: true }) : ''}
-    <div class="acciones">${mpEnlace(p, m)}${p.add ? `<button class="mini" data-agtog="${esc(p.add)}">＋ Añadir a este día</button>` : ''}${naver(p.l || p)}${p.l && p.capa !== 'hotel' ? btnGps(p.l) : ''}</div></div>`;
+    <div class="acciones">${mpEnlace(p, m)}${p.add ? `<button class="mini" data-agtog="${esc(p.add)}">＋ Añadir a este día</button>` : ''}${naver(p.l || p)}${p.l && p.capa !== 'hotel' ? btnGps(p.l) : ''}</div></div>`);
 }
 // 📍 Estoy aquí: guarda la posición GPS actual como la buena de ese sitio (para corregir coordenadas aproximadas allí mismo).
-const btnGps = l => `<button class="mini sec" data-gps="${esc(hKey(l))}" data-gpsn="${esc(l.es || l.nombre || '')}">📍 ${user && user.coordsFix && user.coordsFix[hKey(l)] ? 'Corregido ✓' : 'Estoy aquí'}</button>`;
+const btnGps = l => `<button class="mini sec" data-gps="${esc(hKey(l))}" data-gpsn="${esc(l.es || l.nombre || '')}">${user && user.coordsFix && user.coordsFix[hKey(l)] ? '✅ Ubicación corregida' : '📌 Estoy aquí'}</button>`;
 // Botón de la ficha del mapa que lleva a la sección de la app donde está ese sitio.
 function mpEnlace(p, m) {
   const k = ck((p.l && p.l.ciudad) || '') || m.k || '';
@@ -1453,7 +1457,7 @@ function puntosCiudad(k) {
     else add('sitios', l, { ic: '🏯', sub: `${icSitio((l.tipo || '') + ' ' + l.es)} ${l.tipo || 'Punto de interés'}`, txt, lp: !!(LP[k] || []).find(x => hKey(x) === h), hecho: hecho(l, k) });
   });
   lugaresComer().filter(c => c.ciudad === k && !['descartado', 'cerrado'].includes(estadoDe(String(c.id)).estado)).forEach(c =>
-    add('comer', c, { es: c.nombre, ic: IC_COMER[c.tipo] || '🍴', sub: [c.tipo, c.plato, c.precio].filter(Boolean).join(' · '), txt: c.nota, lp: c.fuente === 'lonely', hecho: hecho(c, k) }));
+    add('comer', c, { es: c.nombre, ic: IC_COMER[c.tipo] || '🍴', sub: [c.plato, c.precio].filter(Boolean).join(' · '), txt: c.nota, lp: c.fuente === 'lonely', hecho: hecho(c, k) }));
   (typeof PLANES !== 'undefined' ? PLANES : []).filter(p => p.ciudad === k).forEach(p => add('planes', p, { ic: icPlan(p), sub: p.direccion_en || '', txt: p.desc, hecho: hecho(p, k) }));
   if (hot) todos.push({ capa: 'hotel', c: hot, es: (arr(trip.alojamientos).find(a => ck(a.ciudad) === k) || {}).nombre || 'Hotel', ic: '🛏️', sub: 'Vuestro hotel' });
   return { hot, todos, cuenta };
@@ -2751,7 +2755,7 @@ document.addEventListener('click', e => {
   const gpsb = e.target.closest('button[data-gps]');
   if (gpsb) { e.preventDefault(); const h = gpsb.dataset.gps, n = gpsb.dataset.gpsn;
     if (!navigator.geolocation) { alert('Este móvil no da la ubicación.'); return; }
-    gpsb.textContent = '📍 Buscando…';
+    gpsb.textContent = '📌 …';
     navigator.geolocation.getCurrentPosition(pos => { const { latitude: la, longitude: lo, accuracy: ac } = pos.coords;
       if (confirm(`¿Guardar tu posición actual (precisión ±${Math.round(ac)} m) como la ubicación de «${n}»?\nHazlo solo si estás delante del sitio.`)) { const U = u(); U.coordsFix = U.coordsFix || {}; U.coordsFix[h] = [+la.toFixed(5), +lo.toFixed(5)]; saveUser(); }
       render(); }, () => { alert('No se pudo obtener la ubicación (¿permiso de ubicación activado?).'); render(); }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });

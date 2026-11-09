@@ -1396,3 +1396,5 @@ button.es-mas { margin-right: 14px; }
 .snacks .snack-img img { width: 100%; height: auto; display: block; }
 .snacks .plato .ko { display: flex; align-items: center; gap: 4px; }
 .snacks .plato .habla { float: none; width: 28px !important; height: 28px; min-height: 28px !important; font-size: .8rem; margin: 0; }
+/* v175: botones de la ficha del mapa solo con icono */
+.mp-f .acciones .btn.mini, .mp-f .acciones button.mini, .mp-f .tramo-ir .btn.mini { min-width: 40px; padding: 2px 8px; font-size: 1.05rem; justify-content: center; }
