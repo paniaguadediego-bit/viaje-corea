@@ -131,6 +131,18 @@ const SNACKS = [
   ['Kancho', '칸쵸', 'Galletitas pequeñas rellenas de chocolate, con dibujos.'],
   ['Yakgwa', '약과', 'Galleta tradicional de miel y aceite de sésamo, blandita; ha vuelto a ponerse de moda.']
 ];
+// 📕 «Indispensable» de la Lonely Planet Corea 2024 (edición en español, p. 178), lo que el usuario fotografió.
+// Clave = hangul sin espacios del sitio. Cada cosa: [nombre, hangul, qué mirar (propio)].
+const LP24_INDISP = {
+  '불국사': { p: 178, items: [
+    ['Puentes Cheongungyo y Baegungyo', '청운교 · 백운교', 'La gran escalera-puente de piedra de la fachada (puentes de la Nube Azul y de la Nube Blanca), con 33 peldaños que simbolizan los 33 cielos budistas. Sube a la puerta Jahamun. No se puede pisar: se mira desde abajo.'],
+    ['Puentes Yeonhwagyo y Chilbogyo', '연화교 · 칠보교', 'A la izquierda de los anteriores (puentes de la Flor de Loto y de los Siete Tesoros), más pequeños; en los peldaños hay flores de loto talladas. Llevan a la sala Geungnakjeon.'],
+    ['Sala principal de Buda (Daeungjeon)', '대웅전', 'El corazón del templo, con el Buda Sakyamuni. Está en el patio entre las dos pagodas.'],
+    ['Pagodas Dabotap y Seokgatap', '다보탑 · 석가탑', 'Las dos pagodas de piedra del patio, de la época Silla: Dabotap, la recargada (es la de la moneda de 10 wones), y Seokgatap, la sobria. Comparadlas: son dos maneras de entender la misma idea.'],
+    ['Estatua de Buda de Seokguram', '석굴암 본존불', 'Ya en la gruta de Seokguram, montaña arriba: el gran Buda sedente de granito, tras un cristal y mirando al mar del Este. Dentro no se permiten fotos.']] }
+};
+LP24_INDISP['석굴암'] = { p: 178, items: [LP24_INDISP['불국사'].items[4]] };
+
 const GUIA = [
   ['T-money y transporte', [
     'Tarjeta recargable para metro, bus y muchos taxis. Se compra y recarga en tiendas 24 h (GS25, CU, 7-Eleven) y máquinas del metro.',

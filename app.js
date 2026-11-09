@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v195';
+const VERSION = 'v196';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -631,7 +631,7 @@ function viewHoy() {
     const fs = []; ls.forEach(l => { const w = l.sinFoto ? '' : (wikiDe(l) || (l.ko ? 'ko:' + String(l.ko).replace(/\s+/g, '') : '')); if (w && !fs.some(x => x.w === w)) fs.push({ w, n: `${icSitio((l.tipo || '') + ' ' + l.es)} ${l.es}` }); });
     return `<div class="card dia dia2" style="${varsTema(ck(d.ciudad))}">
     <div class="dia-cab">${(() => { const ko = (arr(trip.ciudades).find(c => ck(c.nombre) === ck(d.ciudad)) || {}).ko; return ko ? `<div class="ciudad-ko">${esc(ko)}</div>` : ''; })()}<div class="dia-sup"><span class="ds-1">${tc.ic} Día ${dayIdx + 1} de ${dias.length}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</span><span class="ds-2">${fmtDate(d.fecha)} · ${esc(d.ciudad)}</span></div>
-      <div class="dia-tit">${esc(d.titulo)}</div>${chipTiempo(d)}${horasTiempo(d)}</div>
+      <div class="dia-tit">${esc(d.titulo)}</div>${chipTiempo(d)}${horasTiempo(d)}${linkHist(ck(d.ciudad))}</div>
     ${fs.length ? `<div class="dia-banner"><div class="foto dia-foto" data-wiki="${esc(fs[0].w)}" data-wikis="${esc(fs.map(x => x.w).join('|'))}" data-noms="${esc(fs.map(x => x.n).join('|'))}"><span></span></div>
       <div class="dia-cap">${esc(fs[0].n)}</div>${fs.length > 1 ? `<button class="carr carr-l" data-carr="-1" aria-label="Foto anterior">‹</button><button class="carr carr-r" data-carr="1" aria-label="Foto siguiente">›</button><div class="dia-puntos">${fs.map((x, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>` : ''}</div>` : ''}`; })()}
     ${esquemaDia(d)}
@@ -898,7 +898,7 @@ function sitiosDia(d) {
     // Ficha plegable: se pliega sola al marcarla como visitada (y la foto, a la derecha, arriba).
     const key = 'sd:' + d.fecha + '|' + h, ab = abierto(key, !hecho(l, k));
     return `${t}${extra ? encaje(l) : ''}<details class="sd ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}${btnHecho(l, k)}${irQV(l, k, true)}<br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
-      <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}</div></details>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}`;
+      <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${lp24(l)}</div></details>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
   let extras = todos.filter(l => !auto.includes(l));
@@ -1053,7 +1053,20 @@ function viewRuta() {
 
 // Desplegable con lo que amplía la Lonely (DIA_LP) o una frase general (DIA_INFO).
 // "Con ojos de guía": ficha cultural ampliada de los lugares emblemáticos (cultura.js).
-function guiaCult(l, ctx) {
+// 📜 Enlace desde los títulos de Hoy y Planes a la historia y curiosidades de la ciudad (Historia → Vuestras ciudades).
+const linkHist = k => (typeof CIUDAD_INFO !== 'undefined' && CIUDAD_INFO[k]) || (typeof HISTORIA !== 'undefined' && HISTORIA[k]) ? `<button class="hist-link" data-histc="${esc(k)}">📜 Historia, costumbres y curiosidades de ${esc(nombreCiudad(k))} ›</button>` : '';
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-histc]'); if (!b) return; e.stopPropagation();
+  const k = b.dataset.histc; histSub = 'ciudades'; histCap = null; abiertos['hcd:' + k] = true; ir('historia'); render();
+  const el = document.querySelector(`details[data-key="hcd:${CSS.escape(k)}"]`); if (el) { el.scrollIntoView({ block: 'start' }); window.scrollBy(0, -10); }
+}, true);
+function guiaCult(l, ctx) { return lp24(l) + guiaCult0(l, ctx); }
+// 📕 Recuadro «Indispensable» de la Lonely Planet 2024 (LP24_INDISP en contenido.js), con hangul y 🔊.
+function lp24(l) {
+  const x = l && typeof l === 'object' && typeof LP24_INDISP !== 'undefined' && LP24_INDISP[hKey(l).slice(2)]; if (!x) return '';
+  return `<div class="lp24"><b>📕 Indispensable · Lonely Planet 2024${x.p ? `, p. ${x.p}` : ''}</b><ol>${x.items.map(([es, ko, d]) => `<li><b>${esc(es)}</b> <span class="ko-s">${esc(ko)}</span>${btnHabla(ko.split(' · ')[0])}<div>${esc(d)}</div></li>`).join('')}</ol></div>`;
+}
+function guiaCult0(l, ctx) {
   const ps = l && typeof l === 'object' && typeof GUIA_CULT !== 'undefined' && GUIA_CULT[hKey(l).slice(2)]; if (!ps) return '';
   const h = hKey(l), k = 'gc:' + ctx + ':' + h;
   return `<details class="guia-cult" data-key="${esc(k)}" ${abierto(k, false) ? 'open' : ''}><summary>🎎 Con ojos de guía</summary>
@@ -1075,7 +1088,7 @@ const enQueVer = (l, k) => { const h = hKey(l); return qvLista(k, ciudadesUnicas
 function infoCompleta(l, desc) {
   const h = hKey(l), D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, I = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
   const gc = typeof GUIA_CULT !== 'undefined' && GUIA_CULT[h.slice(2)], lp = D[h.slice(2)] || D[h], info = !lp && I[h.slice(2)];
-  return `${desc ? `<p>${resaltar(desc, true)}</p>` : ''}
+  return `${desc ? `<p>${resaltar(desc, true)}</p>` : ''}${lp24(l)}
     ${lp && lp !== desc ? `<div class="qv-bloque"><b>📖 Más de la Lonely</b> <span class="badge otro">LP 2016</span><p>${resaltar(lp, true)}</p></div>` : ''}
     ${info && info !== desc ? `<div class="qv-bloque"><b>ℹ️ Más info</b><p>${resaltar(info, true)}</p></div>` : ''}
     ${gc ? `<div class="qv-bloque guia-cult-abierta"><b>🎎 Con ojos de guía</b><p class="gc-gancho">${esc(gc[0])}</p>${gc.slice(1).map(p => `<p class="${/^👀/.test(p) ? 'gc-mira' : /^💡/.test(p) ? 'gc-tip' : ''}">${resaltar(p, true)}</p>`).join('')}</div>` : ''}`;
@@ -1351,7 +1364,7 @@ function viewCiudades() {
       ${(() => { const pob = typeof POBLACION !== 'undefined' && POBLACION[k], pr = c.ko ? pronuncia(c.ko) : '';
         return pob || pr ? `<div class="ciudad-pob">${c.ko ? `${esc(c.ko)} ${pr ? `🗣️ «${esc(pr)}»` : ''} ${btnHabla(c.ko)}` : ''}${pob ? ` · 👥 ${esc(pob)}` : ''}</div>` : ''; })()}
       ${t.lema ? `<div class="ciudad-lema">${esc(t.lema)}</div>` : ''}
-      <div class="ciudad-fechas">${fechas}</div>
+      <div class="ciudad-fechas">${fechas}</div>${linkHist(k)}
     </div>
     <div class="row daynav exsubs">${EX_SUBS.filter(([x]) => x !== 'historia' || h).map(([x, tt]) => `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}">${tt}</button>`).join('')}</div>
     ${exSub === 'comer' ? '' : muchoOjo(k, 'planes')}
@@ -2018,9 +2031,11 @@ function viewHistoria() {
       <div class="hist-sec">🎎 Personajes, cultura y vuestra ruta</div><div class="hc-grid">${H.map((c, i) => i).filter(i => i > 13).map(tarjeta).join('')}</div>`;
   } else if (histSub === 'ciudades') {
     const HC = typeof HISTORIA !== 'undefined' ? HISTORIA : {};
-    cuerpo = ciudadesUnicas().map(c => ck(c.nombre)).filter(k => HC[k]).map(k => `<details class="hist-ciudad" style="${varsTema(k)}" data-key="hcd:${k}" ${abierto('hcd:' + k, false) ? 'open' : ''}>
+    const CI = typeof CIUDAD_INFO !== 'undefined' ? CIUDAD_INFO : {};
+    cuerpo = ciudadesUnicas().map(c => ck(c.nombre)).filter((k, i, a) => (HC[k] || CI[k]) && a.indexOf(k) === i).map(k => `<details class="hist-ciudad" style="${varsTema(k)}" data-key="hcd:${k}" ${abierto('hcd:' + k, false) ? 'open' : ''}>
       <summary><span>${tema(k).ic}</span><b>${esc(nombreCiudad(k))}</b><small>${esc(tema(k).lema || '')}</small></summary>
-      ${HC[k].txt.map(p => `<p>${resaltar(p, true).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}</details>`).join('');
+      ${HC[k] ? `<div class="ci-breve"><b>En pocas palabras</b>${HC[k].txt.map(p => `<p>${resaltar(p, true).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}</div>` : ''}
+      ${arr(CI[k]).map(([ic, t, ps], i) => `<details class="ci-sec" data-key="ci:${k}:${i}" ${abierto('ci:' + k + ':' + i, false) ? 'open' : ''}><summary>${ic} ${esc(t)} <small class="muted">· ${minLect({ p: ps })} min</small></summary>${ps.map(p => `<p>${resaltar(p, true)}</p>`).join('')}</details>`).join('')}</details>`).join('');
   } else cuerpo = `<div class="hist-simb">${HIST_SIMBOLOS.map(([ic, t, d]) => `<div class="hs-it"><span class="hs-ic">${ic}</span><span><b>${t}</b> ${esc(d)}</span></div>`).join('')}</div>`;
   return `<div class="hist-tema">${portada}${subs}${cuerpo}</div>`;
 }

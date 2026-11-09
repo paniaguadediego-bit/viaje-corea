@@ -1484,5 +1484,16 @@ details.comer-fuera > .card { margin: 0 6px 6px; opacity: 1; }
 .t-h.quiza { background: rgba(60,120,220,.45); }
 .t-h.lluvia { background: rgba(30,90,220,.8); box-shadow: inset 0 0 0 1.5px #9cc8ff; }
 .t-h.ya { opacity: .45; }
+/* v196: enlace a la historia de la ciudad, lectura larga por apartados y recuadro «Indispensable» LP 2024 */
+.hist-link { display: block; width: auto; margin: 8px auto 0; padding: 5px 12px; min-height: 0; border-radius: 999px; border: 1px solid rgba(255,255,255,.45); background: rgba(0,0,0,.25) !important; color: #fff !important; font-size: .8rem; font-weight: 700; box-shadow: none; }
+.ci-breve { margin: 4px 0 8px; } .ci-breve > b { display: block; margin-top: 6px; }
+details.ci-sec { border: 1px solid var(--line); border-radius: 10px; margin: 6px 0; background: var(--card); }
+details.ci-sec > summary { padding: 8px 10px; font-weight: 700; cursor: pointer; }
+details.ci-sec > p { margin: 6px 12px 10px; line-height: 1.5; }
+.lp24 { margin: 8px 0; padding: 8px 10px; border-radius: 10px; border: 1.5px solid #d63384; background: color-mix(in srgb, #d63384 7%, var(--card)); }
+.lp24 > b { color: #c2185b; display: block; margin-bottom: 4px; }
+.lp24 ol { margin: 0; padding-left: 20px; } .lp24 li { margin: 5px 0; line-height: 1.4; } .lp24 li div { font-size: .88rem; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lp24 > b { color: #ff8cc6; } }
+:root[data-theme="dark"] .lp24 > b { color: #ff8cc6; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v195"; }
+:root { --css-ver: "v196"; }

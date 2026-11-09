@@ -1,11 +1,11 @@
 // Sube CACHE en cada sesión (y VERSION en app.js) para que el móvil coja la versión nueva.
-const CACHE = 'corea-v195';
+const CACHE = 'corea-v196';
 // Fotos de Wikipedia: caché aparte que no se borra al actualizar la app.
 const FOTOS = 'corea-fotos';
 // Calles del mapa (OpenStreetMap): solo las zonas que se han visto; tampoco se borra al actualizar.
 const MAPA = 'corea-mapa';
 const FILES = [
-  './', './index.html', './styles.css', './app.js', './contenido.js', './diccionario.js', './historia.js', './cultura.js', './hangul.js', './exportar.js', './sociedad.js', './manifest.json',
+  './', './index.html', './styles.css', './app.js', './contenido.js', './diccionario.js', './historia.js', './cultura.js', './hangul.js', './exportar.js', './sociedad.js', './ciudades.js', './manifest.json',
   './example.trip.json', './data/comer.json', './data/coords.json', './data/metro.json', './icons/icon.svg', './icons/icon-192.png',
   './icons/icon-512.png', './icons/apple-touch-icon.png'
 ];

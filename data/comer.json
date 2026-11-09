@@ -1011,11 +1011,11 @@
 "tipo": "restaurante",
 "plato": "cocina coreana",
 "direccion": null,
-"horario": "11.30am-9pm Tue-Sun (LP 2016)",
+"horario": "11:00-15:00 y 17:00-21:00, de jueves a lunes (LP 2024; cierra martes y miércoles, VERIFICAR)",
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016 · ★ elección del autor"
+"nota": "Familiar, en un patio junto a los túmulos: cena tradicional con muchos platos y acompañamientos. Lonely Planet Corea 2024 (en español), p. 181."
 },
 {
 "id": "lp-kisoya",
@@ -1025,11 +1025,11 @@
 "tipo": "restaurante",
 "plato": "japonesa",
 "direccion": "Mapa de la Lonely (centro, cuadro B2, junto a los túmulos de Noseo-dong) · ubicación aproximada",
-"horario": "10am-3pm & 5-10pm (LP 2016)",
+"horario": "10:30-15:00 y 17:00-20:30, de jueves a martes (LP 2024; cierra miércoles, VERIFICAR)",
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016"
+"nota": "Cadena popular de cocina japonesa con toque coreano: tonkatsu, sushi y soba. Lonely Planet Corea 2024 (en español), p. 181."
 },
 {
 "id": "lp-pyongyang-naengmyeon",
@@ -1053,11 +1053,11 @@
 "tipo": "restaurante",
 "plato": "ssambap",
 "direccion": null,
-"horario": "11am-9pm (LP 2016)",
+"horario": "11:00-21:00 (LP 2024)",
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 166"
+"nota": "Agradable para cenar, en la zona de restaurantes de ssambap (rollitos de lechuga) al norte de Wolseong. Lonely Planet Corea 2024 (en español), p. 181."
 },
 {
 "id": "lp-sukyeong-sikdang",
@@ -1067,11 +1067,11 @@
 "tipo": "restaurante",
 "plato": "cocina coreana",
 "direccion": null,
-"horario": "11am-8.30pm (LP 2016)",
+"horario": "11:00-15:00 y 17:00-20:00, de miércoles a lunes (LP 2024; cierra martes, VERIFICAR)",
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 166",
+"nota": "Desde 1979: pajeon (tortitas de cebolleta) y dongdongju (vino de arroz) casero helado. Lonely Planet Corea 2024 (en español), p. 181.",
 "opiniones": {
 "v": 4.2,
 "n": 8,
@@ -1910,139 +1910,195 @@
 }
 },
 {
-  "id": "bs-geumsu-bokguk",
-  "ciudad": "busan",
-  "nombre": "Geumsu Bokguk (sopa de pez globo)",
-  "ko": "금수복국 해운대본점",
-  "tipo": "restaurante",
-  "plato": "bokguk (sopa de pez globo), sashimi y bokkas",
-  "direccion": "Haeundae, cerca de la playa · ubicación aproximada: buscad «금수복국 해운대본점» en Naver",
-  "horario": "24 h todos los días (según Siksin): VERIFICAR",
-  "precio": null,
-  "fuente": "guia",
-  "url": "https://www.siksinhot.com/P/256515",
-  "nota": "Clásico de Haeundae para la resaca y el desayuno: la sopa de pez globo (pez preparado por cocineros con licencia, es seguro). Citado en la Guía Michelin Busan 2025. Suele haber cola a mediodía.",
-  "opiniones": {
-   "v": 3.9,
-   "n": 72,
-   "fuente": "Siksin",
-   "fecha": "2026-11"
-  },
-  "guias": [
-   {
-    "g": "michelin",
-    "d": "Seleccionado",
-    "anio": 2025,
-    "verificar": true
-   }
-  ]
- },
- {
-  "id": "bs-halmae-gukbap",
-  "ciudad": "busan",
-  "nombre": "Haeundae Wonjo Halmae Gukbap",
-  "ko": "해운대원조할매국밥",
-  "tipo": "restaurante",
-  "plato": "gukbap de ternera (sopa de arroz) y de morcilla (seonji)",
-  "direccion": "33, Gunam-ro 21beon-gil, Haeundae-gu (junto al mercado de Haeundae)",
-  "horario": "VERIFICAR",
-  "precio": "Barato (6.000-6.500 ₩ según una reseña; VERIFICAR)",
-  "fuente": "guia",
-  "url": "https://polle.com/place/2EjEt3/",
-  "nota": "Casa de comidas de toda la vida (unos 60 años) a dos calles del hotel. Ojo: es gukbap de ternera, no el de cerdo (dwaeji gukbap) típico de Busan. Opiniones de usuarios divididas.",
-  "opiniones": {
-   "v": 3.9,
-   "n": 62,
-   "fuente": "Siksin",
-   "fecha": "2026-11"
-  }
- },
- {
-  "id": "ad-kkachigumeong",
-  "ciudad": "andong",
-  "nombre": "Kkachigumeongjip (heotjesabap)",
-  "ko": "까치구멍집",
-  "tipo": "restaurante",
-  "plato": "heotjesabap: el «falso banquete de ofrenda» de los yangban de Andong (arroz con verduras, tortitas de pescado y caballa)",
-  "direccion": "203, Seokju-ro, Andong-si (junto al puente Woryeonggyo)",
-  "horario": "09:30-20:30 (descanso 15:00-16:00; último pedido 19:30); abre todos los días (web de turismo, 2025)",
-  "precio": null,
-  "fuente": "guia",
-  "url": "https://www.ktriptips.com/kor/food/403857",
-  "nota": "El plato típico de Andong menos conocido fuera; perfecto para cenar al acabar en el puente Woryeonggyo (día 8). Cierra los pedidos a las 19:30.",
-  "opiniones": {
-   "v": 4.0,
-   "n": null,
-   "fuente": "Siksin",
-   "fecha": "2026-11"
-  }
- },
+"id": "bs-geumsu-bokguk",
+"ciudad": "busan",
+"nombre": "Geumsu Bokguk (sopa de pez globo)",
+"ko": "금수복국 해운대본점",
+"tipo": "restaurante",
+"plato": "bokguk (sopa de pez globo), sashimi y bokkas",
+"direccion": "Haeundae, cerca de la playa · ubicación aproximada: buscad «금수복국 해운대본점» en Naver",
+"horario": "24 h todos los días (según Siksin): VERIFICAR",
+"precio": null,
+"fuente": "guia",
+"url": "https://www.siksinhot.com/P/256515",
+"nota": "Clásico de Haeundae para la resaca y el desayuno: la sopa de pez globo (pez preparado por cocineros con licencia, es seguro). Citado en la Guía Michelin Busan 2025. Suele haber cola a mediodía.",
+"opiniones": {
+"v": 3.9,
+"n": 72,
+"fuente": "Siksin",
+"fecha": "2026-11"
+},
+"guias": [
 {
- "id": "gj-gyori-gimbap",
- "ciudad": "gyeongju",
- "nombre": "Gyori Gimbap (⚠️ mucho ojo)",
- "ko": "교리김밥 본점",
- "tipo": "restaurante",
- "plato": "kimbap de huevo y fideos",
- "direccion": "2, Tapri 3-gil, Gyeongju (cerca de la aldea Gyochon) · ubicación aproximada",
- "horario": "VERIFICAR",
- "precio": null,
- "fuente": "guia",
- "url": "https://polle.com/jd7485/posts/23",
- "nota": "Famoso, pero con notas bajas de usuarios: ver «Mucho ojo con…».",
- "opiniones": {
-  "v": 3.4,
-  "n": 76,
-  "fuente": "Polle",
-  "fecha": "2026-11"
- }
+"g": "michelin",
+"d": "Seleccionado",
+"anio": 2025,
+"verificar": true
+}
+]
 },
 {
- "id": "se-kampungku",
- "ciudad": "seul",
- "nombre": "Kampungku (malasio, halal)",
- "ko": "캄풍쿠 레스토랑",
- "tipo": "restaurante",
- "plato": "nasi lemak (chef malasio)",
- "direccion": "16-4 Namsan-dong 2-ga, Jung-gu · a 5 min de la salida 2 del metro Myeongdong",
- "horario": "11:00-21:00 VERIFICAR",
- "precio": "10.000-20.000 ₩",
- "fuente": "propio",
- "url": "https://mapthemeal.com/seoul/myeongdong/kampungku-restaurant",
- "nota": "Nos encantó: merece la pena. Comida malasia halal; el nasi lemak es lo más recomendado (a veces se acaba).",
- "opiniones": {
-  "v": 4.7,
-  "n": 4065,
-  "fuente": "Google (captura)",
-  "fecha": "2026-11"
- }
+"id": "bs-halmae-gukbap",
+"ciudad": "busan",
+"nombre": "Haeundae Wonjo Halmae Gukbap",
+"ko": "해운대원조할매국밥",
+"tipo": "restaurante",
+"plato": "gukbap de ternera (sopa de arroz) y de morcilla (seonji)",
+"direccion": "33, Gunam-ro 21beon-gil, Haeundae-gu (junto al mercado de Haeundae)",
+"horario": "VERIFICAR",
+"precio": "Barato (6.000-6.500 ₩ según una reseña; VERIFICAR)",
+"fuente": "guia",
+"url": "https://polle.com/place/2EjEt3/",
+"nota": "Casa de comidas de toda la vida (unos 60 años) a dos calles del hotel. Ojo: es gukbap de ternera, no el de cerdo (dwaeji gukbap) típico de Busan. Opiniones de usuarios divididas.",
+"opiniones": {
+"v": 3.9,
+"n": 62,
+"fuente": "Siksin",
+"fecha": "2026-11"
+}
 },
 {
- "id": "ad-andong-gwan",
- "ciudad": "andong",
- "nombre": "Andong-Gwan",
- "ko": null,
- "tipo": "restaurante",
- "plato": "bulgogi, bibimbap y mandu hervidos, con soju o makgeolli",
- "direccion": "Andong (restaurante tradicional «en una esquina», según la guía) · dirección VERIFICAR",
- "horario": "11:00-20:00 (guía en papel; VERIFICAR)",
- "precio": "₩ barato (guía en papel)",
- "fuente": "guia",
- "url": null,
- "nota": "Recomendado en vuestra guía en papel (p. 195). No he encontrado su hangul en la web: buscadlo en Naver por el nombre. VERIFICAR que sigue abierto."
+"id": "ad-kkachigumeong",
+"ciudad": "andong",
+"nombre": "Kkachigumeongjip (heotjesabap)",
+"ko": "까치구멍집",
+"tipo": "restaurante",
+"plato": "heotjesabap: el «falso banquete de ofrenda» de los yangban de Andong (arroz con verduras, tortitas de pescado y caballa)",
+"direccion": "203, Seokju-ro, Andong-si (junto al puente Woryeonggyo)",
+"horario": "09:30-20:30 (descanso 15:00-16:00; último pedido 19:30); abre todos los días (web de turismo, 2025)",
+"precio": null,
+"fuente": "guia",
+"url": "https://www.ktriptips.com/kor/food/403857",
+"nota": "El plato típico de Andong menos conocido fuera; perfecto para cenar al acabar en el puente Woryeonggyo (día 8). Cierra los pedidos a las 19:30.",
+"opiniones": {
+"v": 4.0,
+"n": null,
+"fuente": "Siksin",
+"fecha": "2026-11"
+}
 },
 {
- "id": "ad-sinseon-jjimdak",
- "ciudad": "andong",
- "nombre": "Sinseon Jjimdak",
- "ko": null,
- "tipo": "restaurante",
- "plato": "Andong jjimdak (pollo guisado con fideos)",
- "direccion": "Callejón del jjimdak, dentro del mercado tradicional de Andong (안동구시장)",
- "horario": "10:00-22:00 (guía en papel; VERIFICAR)",
- "precio": "₩₩ medio (guía en papel)",
- "fuente": "guia",
- "url": null,
- "nota": "Recomendado en vuestra guía en papel (p. 195). En la web no aparece con ese nombre (hay un 신세계찜닭 en el mismo callejón: VERIFICAR si es el mismo). Las reseñas dicen que en el callejón todos se parecen mucho."
+"id": "gj-gyori-gimbap",
+"ciudad": "gyeongju",
+"nombre": "Gyori Gimbap (⚠️ mucho ojo)",
+"ko": "교리김밥 본점",
+"tipo": "restaurante",
+"plato": "kimbap de huevo y fideos",
+"direccion": "2, Tapri 3-gil, Gyeongju (cerca de la aldea Gyochon) · ubicación aproximada",
+"horario": "VERIFICAR",
+"precio": null,
+"fuente": "guia",
+"url": "https://polle.com/jd7485/posts/23",
+"nota": "Famoso, pero con notas bajas de usuarios: ver «Mucho ojo con…».",
+"opiniones": {
+"v": 3.4,
+"n": 76,
+"fuente": "Polle",
+"fecha": "2026-11"
+}
+},
+{
+"id": "se-kampungku",
+"ciudad": "seul",
+"nombre": "Kampungku (malasio, halal)",
+"ko": "캄풍쿠 레스토랑",
+"tipo": "restaurante",
+"plato": "nasi lemak (chef malasio)",
+"direccion": "16-4 Namsan-dong 2-ga, Jung-gu · a 5 min de la salida 2 del metro Myeongdong",
+"horario": "11:00-21:00 VERIFICAR",
+"precio": "10.000-20.000 ₩",
+"fuente": "propio",
+"url": "https://mapthemeal.com/seoul/myeongdong/kampungku-restaurant",
+"nota": "Nos encantó: merece la pena. Comida malasia halal; el nasi lemak es lo más recomendado (a veces se acaba).",
+"opiniones": {
+"v": 4.7,
+"n": 4065,
+"fuente": "Google (captura)",
+"fecha": "2026-11"
+}
+},
+{
+"id": "ad-andong-gwan",
+"ciudad": "andong",
+"nombre": "Andong-Gwan",
+"ko": null,
+"tipo": "restaurante",
+"plato": "bulgogi, bibimbap y mandu hervidos, con soju o makgeolli",
+"direccion": "Andong (restaurante tradicional «en una esquina», según la guía) · dirección VERIFICAR",
+"horario": "11:00-20:00 (guía en papel; VERIFICAR)",
+"precio": "₩ barato (guía en papel)",
+"fuente": "guia",
+"url": null,
+"nota": "Recomendado en vuestra guía en papel (p. 195). No he encontrado su hangul en la web: buscadlo en Naver por el nombre. VERIFICAR que sigue abierto."
+},
+{
+"id": "ad-sinseon-jjimdak",
+"ciudad": "andong",
+"nombre": "Sinseon Jjimdak",
+"ko": null,
+"tipo": "restaurante",
+"plato": "Andong jjimdak (pollo guisado con fideos)",
+"direccion": "Callejón del jjimdak, dentro del mercado tradicional de Andong (안동구시장)",
+"horario": "10:00-22:00 (guía en papel; VERIFICAR)",
+"precio": "₩₩ medio (guía en papel)",
+"fuente": "guia",
+"url": null,
+"nota": "Recomendado en vuestra guía en papel (p. 195). En la web no aparece con ese nombre (hay un 신세계찜닭 en el mismo callejón: VERIFICAR si es el mismo). Las reseñas dicen que en el callejón todos se parecen mucho."
+},
+{
+"id": "lp24-gyeongju-bakery",
+"ciudad": "gyeongju",
+"nombre": "Gyeongju Bakery",
+"ko": null,
+"tipo": "café",
+"plato": "pan de Gyeongju, hwangnam-ppang, café y zumos",
+"direccion": null,
+"horario": "9:00-20:00 de lunes a viernes; 9:00-22:00 sábados y domingos (LP 2024)",
+"precio": null,
+"fuente": "lonely",
+"url": null,
+"nota": "Café, té, zumos y dulces horneados, como el pan tradicional de Gyeongju y el hwangnam-ppang (relleno de judía roja). Lonely Planet Corea 2024 (en español), p. 182. Hangul y ubicación: VERIFICAR en Naver."
+},
+{
+"id": "lp24-hyangmisa",
+"ciudad": "gyeongju",
+"nombre": "Hyangmisa",
+"ko": "향미사",
+"tipo": "café",
+"plato": "espresso, americano, café de filtro y tiramisú",
+"direccion": "Hwangnidan-gil (ubicación aproximada)",
+"horario": "10:00-18:00 (LP 2024)",
+"precio": null,
+"fuente": "lonely",
+"url": null,
+"nota": "Café luminoso de especialidad; también tiramisú. Lonely Planet Corea 2024 (en español), p. 182."
+},
+{
+"id": "lp24-supia",
+"ciudad": "gyeongju",
+"nombre": "Cafe SUPIA",
+"ko": null,
+"tipo": "café",
+"plato": "café en hanok",
+"direccion": null,
+"horario": "10:30-20:00, de jueves a martes (LP 2024; cierra miércoles, VERIFICAR)",
+"precio": null,
+"fuente": "lonely",
+"url": null,
+"nota": "Antiguo plató de la serie «Kang's Kitchen 2», en una bonita hanok reconvertida. Lonely Planet Corea 2024 (en español), p. 182. Hangul y ubicación: VERIFICAR en Naver."
+},
+{
+"id": "lp24-no-words",
+"ciudad": "gyeongju",
+"nombre": "No Words",
+"ko": "노워즈",
+"tipo": "café",
+"plato": "café de origen único, financiers, galletas y helado de brownie",
+"direccion": "Hwangnam-dong, junto a los túmulos (ubicación aproximada)",
+"horario": "12:00-18:00 (LP 2024)",
+"precio": null,
+"fuente": "lonely",
+"url": null,
+"nota": "Junto al complejo de túmulos; lo abrieron dos hermanos de Seúl que se enamoraron de Gyeongju. Lonely Planet Corea 2024 (en español), p. 182."
 }
 ]
