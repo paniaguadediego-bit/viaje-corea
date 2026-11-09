@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v163';
+const VERSION = 'v164';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -327,7 +327,7 @@ function fundirMarcas(o) {
   U.hecho = U.hecho || {}; Object.entries(o.hecho || {}).forEach(([k, v]) => { if (v && !U.hecho[k]) { U.hecho[k] = v; n.hecho++; } });
   U.favs = arr(U.favs); arr(o.favs).forEach(f => { if (f && !U.favs.some(x => x.k === f.k)) { U.favs.push(f); n.favs++; } });
   U.diario = U.diario || {}; Object.entries(o.diario || {}).forEach(([f, d]) => { const m = U.diario[f] = U.diario[f] || {}, antes = JSON.stringify(m);
-    if (!m.cara && d.cara) m.cara = d.cara; const nt = junta(m.nota, d.nota); if (nt) m.nota = nt; if (JSON.stringify(m) !== antes) n.diario++; });
+    if (!m.cara && d.cara) m.cara = d.cara; if (arr(d.tags).length) m.tags = [...new Set([...arr(m.tags), ...arr(d.tags)])]; const nt = junta(m.nota, d.nota); if (nt) m.nota = nt; if (JSON.stringify(m) !== antes) n.diario++; });
   U.comer = U.comer || {}; Object.entries(o.comer || {}).forEach(([id, c]) => { const m = U.comer[id] = U.comer[id] || {}, antes = JSON.stringify(m);
     if (!m.estado && c.estado) m.estado = c.estado; if (Number(c.val) > 0 && !(Number(m.val) > 0)) m.val = c.val;
     const nt = junta(m.nota, c.nota); if (nt) m.nota = nt; if (!m.op && c.op) m.op = c.op; if (JSON.stringify(m) !== antes) n.comer++; });
@@ -359,7 +359,7 @@ function viewRegalos() {
 }
 // 📖 Resumen del viaje: lo que hicisteis, para guardarlo o pasárselo a quien prepare su viaje.
 // datosResumen() reúne todo; el texto, el Word y el PDF (exportar.js) se hacen a partir de él.
-const CARA_TXT = { '😍': 'genial', '🙂': 'bien', '😐': 'normal', '😴': 'cansado', '😩': 'duro' };
+const CARA_TXT = { '😍': 'genial', '😄': 'muy bien', '🙂': 'bien', '😐': 'normal', '😴': 'cansado', '😩': 'duro' };
 const CONSEJOS_RES = ['Apps: Naver Map o Kakao Map (Google Maps no da rutas a pie ni en coche en Corea), Kakao T para taxis y Papago para traducir.',
   'Tarjeta T-money para metro y bus (se recarga en tiendas 24 h y en las máquinas del metro).',
   'Trenes KTX con Korail o Trip.com; autobuses entre ciudades con Kobus o Klook.',
@@ -375,7 +375,7 @@ function datosResumen() {
   D.traslados = arr(trip.traslados).filter(t => t && t.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha)).map(t => { const b = billete(t) || {}, [ic, nom] = medio(t);
     return { fecha: t.fecha, de: lugarCorto(t.de), a: lugarCorto(t.a), ic, nom, numero: b.numero || '', horas: b.salida ? `${b.salida}-${b.llegada || '?'}` : '', precio: b.precio || '', val: usa('t:' + (t.id || t.fecha + t.de)) }; });
   D.dias = dias.map((d, i) => { const k = ck(d.ciudad), ls = listaDia(d), vis = ls.filter(l => hecho(l, k)), di = diarioDe(d.fecha), base = vis.length ? vis : ls;
-    return { n: i + 1, fecha: d.fecha, ciudad: d.ciudad, titulo: d.titulo || '', cara: di.cara || '', diario: una(di.nota), visto: vis.length > 0,
+    return { n: i + 1, fecha: d.fecha, ciudad: d.ciudad, titulo: d.titulo || '', cara: di.cara || '', tags: arr(di.tags).map(c => (ETIQ_DIA.find(x => x[0] === c) || [c, ''])).map(([c, t]) => c + ' ' + t), diario: una(di.nota), visto: vis.length > 0,
       sitios: base.map(l => l.es), wiki: (base.map(l => wikiDe(l)).find(Boolean)) || '' }; });
   const lc = lugaresComer(), est = c => estadoDe(String(c.id)), cn = c => (CIUDADES_COMER.find(x => x[0] === c.ciudad) || [])[1] || c.ciudad;
   D.comidos = lc.filter(c => est(c).estado === 'visitado' || Number(est(c).val) > 0 || hecho(c, c.ciudad))
@@ -402,7 +402,7 @@ function textoResumen() {
   L.push('', '📅 DÍA A DÍA');
   D.dias.forEach(d => { L.push(`Día ${d.n} · ${fmtCorto(d.fecha)} · ${d.ciudad}${d.titulo ? ' — ' + d.titulo : ''}${d.cara ? ` ${d.cara}${CARA_TXT[d.cara] ? ' (' + CARA_TXT[d.cara] + ')' : ''}` : ''}`);
     if (d.sitios.length) L.push(`   ${d.visto ? '✅' : '📍 Plan:'} ${d.sitios.join(', ')}`);
-    if (d.diario) L.push(`   📔 ${d.diario}`); });
+    if (d.tags.length) L.push(`   🏷️ ${d.tags.join(' · ')}`); if (d.diario) L.push(`   📔 ${d.diario}`); });
   if (D.comidos.length) { L.push('', '🍜 DÓNDE COMIMOS');
     D.comidos.forEach(c => L.push(`• ${c.ciudad} · ${c.nombre}${c.ko ? ` (${c.ko})` : ''}${c.plato ? ' — ' + c.plato : ''}${c.val ? ' ' + '★'.repeat(c.val) : ''}${c.nota ? ' · ' + c.nota : ''}`)); }
   if (D.top.length) { L.push('', '⭐ IMPRESCINDIBLES (5 ESTRELLAS)'); D.top.forEach(c => L.push(`• ${c.nombre} (${c.ciudad})`)); }
@@ -493,12 +493,16 @@ const alojCard = (a, sale, sinTit = false) => `<div class="card aloj">
     ${a.nota ? `<div class="muted">${esc(a.nota)}</div>` : ''}
     <div class="acciones">${naver(a)}</div>${estrBox('h:' + (a.id || a.nombre), '🛏️ ' + a.nombre)}</div>`;
 // ---------- Diario: carita y nota de cada día (solo en el móvil; va en "Exportar copia") ----------
-const CARAS = [['😍', 'Genial'], ['🙂', 'Bien'], ['😐', 'Normal'], ['😩', 'Duro']];
+const CARAS = [['😍', 'Genial'], ['😄', 'Muy bien'], ['🙂', 'Bien'], ['😐', 'Normal'], ['😴', 'Cansado'], ['😩', 'Duro']];
+// Etiquetas del día (varias a la vez, user.diario[f].tags): ayudan a recordarlo y salen en el Resumen.
+const ETIQ_DIA = [['❤️', 'Momentazo'], ['📸', 'Fotos top'], ['🍜', 'Buena comida'], ['🏯', 'Mucha cultura'], ['🌳', 'Naturaleza'], ['🛍️', 'Compras'],
+  ['🚶', 'Mucho caminar'], ['🌧️', 'Lluvia'], ['🥶', 'Frío'], ['🤯', 'Sorpresa'], ['💸', 'Caro'], ['😤', 'Algo salió mal']];
 const diarioDe = f => (u().diario || {})[f] || {};
 function diarioCard(d, sinTit = false) {
   const e = diarioDe(d.fecha), fut = d.fecha > todayISO();
   return `<div class="card diario">${sinTit ? '' : '<b>📔 ¿Qué tal el día?</b>'}
     <div class="caras">${CARAS.map(([c, t]) => `<button class="cara ${e.cara === c ? 'on' : ''}" data-cara="${d.fecha}|${c}"><span>${c}</span><small>${t}</small></button>`).join('')}</div>
+    <div class="etiq-dia">${ETIQ_DIA.map(([c, t]) => `<button class="chip ${arr(e.tags).includes(c) ? 'on' : ''}" data-etq="${d.fecha}|${c}">${c} ${t}</button>`).join('')}</div>
     <textarea data-diario="${d.fecha}" rows="5" placeholder="${fut ? 'Este día aún no ha llegado; puedes apuntar ideas.' : 'Qué hicisteis, lo mejor, anécdotas… (se guarda solo)'}">${esc(e.nota || '')}</textarea></div>`;
 }
 function diarioResumen() {
@@ -2563,7 +2567,7 @@ let tiraX = null, tabAnt = null;
 // ---------- render ----------
 // Guarda dónde está un botón en pantalla y devuelve la función que lo deja en el mismo sitio tras redibujar.
 function anclar(el) {
-  const at = [...el.attributes].find(x => /^data-(esmas|avok|stk|fav|hgleida|hk|est|val|verif|agtog|agdel|cara)$/.test(x.name)); if (!at) return () => {};
+  const at = [...el.attributes].find(x => /^data-(etq|cara|esmas|avok|stk|fav|hgleida|hk|est|val|verif|agtog|agdel|cara)$/.test(x.name)); if (!at) return () => {};
   const dt = el.closest('details[data-key]:not(.horario-dia)');
   if (dt) { const sd = `details[data-key="${CSS.escape(dt.dataset.key)}"]`, yd = dt.getBoundingClientRect().top; return () => { const n = document.querySelector(sd); if (n) window.scrollBy(0, n.getBoundingClientRect().top - yd); }; }
   const sel = `[${at.name}="${CSS.escape(at.value)}"]`, i = [...document.querySelectorAll(sel)].indexOf(el), y = el.getBoundingClientRect().top;
@@ -2739,6 +2743,8 @@ document.addEventListener('click', e => {
     else { if (qc.dataset.qclear === 'qcs') qCiu = ''; else qCom = ''; render(); }
     return;
   }
+  const et = e.target.closest('[data-etq]');
+  if (et) { const [f, c] = et.dataset.etq.split('|'), U = u(); U.diario = U.diario || {}; const o = U.diario[f] = U.diario[f] || {}; o.tags = arr(o.tags); o.tags = o.tags.includes(c) ? o.tags.filter(x => x !== c) : [...o.tags, c]; saveUser(); queueMicrotask(anclar(et)); render(); return; }
   const ca = e.target.closest('[data-cara]');
   if (ca) { const [f, c] = ca.dataset.cara.split('|'), U = u(); U.diario = U.diario || {}; const o = U.diario[f] = U.diario[f] || {}; o.cara = o.cara === c ? '' : c; saveUser(); render(); return; }
   const mq = e.target.closest('[data-mpz],[data-mpfit],[data-mpyo],[data-mpcerrar],[data-mpcapa],[data-mpcapad],[data-mpdia]');

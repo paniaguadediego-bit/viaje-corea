@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v163
+Caché del service worker: corea-v164
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -215,6 +215,7 @@ Caché del service worker: corea-v163
 - v161: reorganización pedida por el usuario. Comer pasa a Planes (botón 🍜 Comer de cada ciudad, entre Puntos de interés y Miscelánea; los enlaces del mapa llevan allí). Nueva pestaña 🔤 Idioma en la barra (Hangul, Frases, Diccionario, Enseñar y Favoritas) en lugar de Comer. Corea se queda solo con la Guía, en bloques: Moverse, Dinero y compras, Comida (con los Platos típicos, que salen de Comer), Costumbres y cultura, Salud, seguridad y práctico, y País. [Supuesto] Clima, enchufes, qué llevar y lo básico de la Lonely van en «Salud, seguridad y práctico».
 - v162: Hahoe: Byeongsan Seowon (36.54028, 128.55278) y Buyongdae (36.54283, 128.51643) corregidos con coordenadas publicadas (Wikipedia y Around Us). Museo de Máscaras, Hahoe Jangteo, sala de la danza, Samsindang y Mansongjeong siguen aproximados: no se pudo consultar Google ni OpenStreetMap desde aquí. Nuevo «📍 Estoy aquí» en la ficha de Planes y del mapa: guarda la posición del GPS como la buena (user.coordsFix, manda sobre coords.json y se pasa con las marcas).
 - v163: Hoy, a petición del usuario: hotel justo encima de la Ruta del día; hotel y diario sin títulos repetidos; la carita del diario ya no tapa el icono de la ciudad en la tira de días (va en una esquina); la foto del banner del día va pasando por las fotos de los sitios del itinerario; quitado «Horario del día» (tiempos poco reales; con él se va el aviso de último metro); Ruta del día, Naver y tramos centrados; «Ver en Planes» junto a «Visitado»; «Leer más» amplía el esquema del itinerario en el mismo sitio en vez de abrir otra lista.
+- v164: «¿Qué tal el día?» con caritas más pequeñas y dos nuevas (😄 Muy bien, 😴 Cansado), más etiquetas para definir el día (❤️ Momentazo, 📸 Fotos top, 🍜 Buena comida, 🏯 Mucha cultura, 🌳 Naturaleza, 🛍️ Compras, 🚶 Mucho caminar, 🌧️ Lluvia, 🥶 Frío, 🤯 Sorpresa, 💸 Caro, 😤 Algo salió mal), varias a la vez; se guardan en user.diario[f].tags, se unen al pasar marcas y salen en el Resumen, el Word y el PDF.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

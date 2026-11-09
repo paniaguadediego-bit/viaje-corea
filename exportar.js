@@ -70,6 +70,7 @@ function docxXML(D, fotos) {
     if (fotos[d.wiki]) B.push(img(d.wiki));
     if (d.titulo) B.push(wp(wr(d.titulo, { b: true, sz: 14, f: 'Georgia', c: '1B2230' }), { keep: true, despues: 60 }));
     if (d.sitios.length) B.push(wp(wr(d.visto ? '✅ Vimos: ' : '📍 Plan: ', { b: true, c: d.visto ? '2E7D4F' : '8A5A14' }) + wr(d.sitios.join(' · '))));
+    if (d.tags.length) B.push(wp(wr('🏷️ ' + d.tags.join(' · '), { c: '6B6255' })));
     if (d.diario) B.push(wp(wr('📔 ', {}) + wr(d.diario, { i: true }), { borde: EX_COL.mas, fondo: 'F5F0FA' }));
   });
   // Comer
@@ -142,7 +143,7 @@ function docHTML(D, fotos) {
   ${sec('📅', 'Día a día', EX_COL.hoy, D.dias.map(d => `<article class="dx-dia"><div class="dx-dcab"><span>DÍA ${d.n}</span>${e(exFecha(d.fecha))} · ${e(d.ciudad)}${d.cara ? `<i>${d.cara}</i>` : ''}</div>
       ${ft(d.wiki)}<div class="dx-dcuerpo">${d.titulo ? `<h3>${e(d.titulo)}</h3>` : ''}
       ${d.sitios.length ? `<div class="dx-chips"><b class="${d.visto ? 'ok' : ''}">${d.visto ? '✅ Vimos' : '📍 Plan'}</b>${d.sitios.map(s => `<span>${e(s)}</span>`).join('')}</div>` : ''}
-      ${d.diario ? `<div class="dx-diario">📔 ${e(d.diario)}</div>` : ''}</div></article>`).join(''), true)}
+      ${d.tags.length ? `<div class="dx-chips">${d.tags.map(t => `<span>${e(t)}</span>`).join('')}</div>` : ''}${d.diario ? `<div class="dx-diario">📔 ${e(d.diario)}</div>` : ''}</div></article>`).join(''), true)}
   ${D.comidos.length ? sec('🍜', 'Dónde comimos', EX_COL.comer, `<div class="dx-comer">${D.comidos.map(c => `<div class="dx-card">${ft(c.wiki, 'dx-mini')}<b class="dx-c">${e(c.nombre)}</b> <span class="dx-mut">${e(c.ko)}</span>
       ${c.val ? `<div class="dx-est">${'★'.repeat(c.val)}<span>${'☆'.repeat(5 - c.val)}</span></div>` : ''}<div class="dx-mut">${e(c.ciudad)}${c.plato ? ' · ' + e(c.plato) : ''}</div>${c.nota ? `<div class="dx-nota">📝 ${e(c.nota)}</div>` : ''}</div>`).join('')}</div>`, true) : ''}
   ${D.top.length ? sec('⭐', 'Imprescindibles (5 estrellas)', EX_COL.oro, `<ul>${D.top.map(c => `<li><b>${e(c.nombre)}</b> <span class="dx-mut">(${e(c.ciudad)})</span></li>`).join('')}</ul>`) : ''}

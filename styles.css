@@ -1330,3 +1330,10 @@ h2.guia-bloque:first-child { margin-top: 4px; }
 .es-mas { display: block; margin: 2px auto 6px; }
 details.hotel-pl > summary, details.diario-pl > summary { text-align: center; }
 .sitios-dia details.sd > summary .irqv, .sitios-dia details.sd > summary .btn-hecho, .sitios-dia details.sd > summary > button { display: inline-flex; align-items: center; justify-content: center; width: auto; min-height: 32px; padding-top: 0; padding-bottom: 0; margin-top: 0; margin-bottom: 4px; vertical-align: middle; }
+/* v164: caritas más pequeñas y etiquetas del día */
+.diario .caras { gap: 4px; margin: 6px 0; }
+.diario .cara { padding: 4px 1px; border-radius: 10px; }
+.diario .cara span { font-size: 1.15rem; }
+.diario .cara small { font-size: .6rem; }
+.etiq-dia { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin: 4px 0 8px; }
+.etiq-dia .chip { min-height: 28px; padding: 2px 9px; font-size: .78rem; }
