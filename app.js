@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v184';
+const VERSION = 'v185';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -117,7 +117,7 @@ const coordsLugar = l => {
   if (!l) return null;
   if (l.lat != null && l.lon != null) return [Number(l.lat), Number(l.lon)];
   // Corrección propia con el GPS («📍 Estoy aquí», user.coordsFix[hKey]) manda sobre coords.json.
-  const fx = typeof user !== 'undefined' && user && user.coordsFix && (l.es || l.ko) && user.coordsFix[hKey(l)]; if (fx) return fx;
+  const fx = typeof user !== 'undefined' && user && user.coordsFix && (l.es || l.ko || l.nombre) && user.coordsFix[hKey(l)]; if (fx) return fx;
   return COORDS_LUGARES[l.id] || COORDS_LUGARES[l.ko] || COORDS_LUGARES[l.es] || null;
 };
 function km([a, b], [c, d]) {
@@ -1377,7 +1377,7 @@ function mapaHTML(id, pts, { linea = null, fit = null, hotel = null, capas = '',
     <div class="mp-vista"><div class="mp-capa"></div></div>
     <div class="mp-bot"><button data-mpz="1" aria-label="Acercar">+</button><button data-mpz="-1" aria-label="Alejar">−</button><button data-mpfit aria-label="Ver todo">⤢</button><button data-mpyo aria-label="Dónde estoy">📍</button></div>
     <div class="mp-attr">© OpenStreetMap</div>
-    <div class="mp-info"></div></div>`;
+    <div class="mp-info"></div></div><p class="muted mp-pista">✋ ¿Un icono fuera de su calle? Mantenlo pulsado y arrástralo a su sitio.</p>`;
 }
 function mpEncajar(m, W, H) {
   const cs = m.fit.length ? m.fit : m.pts.map(p => p.c);
@@ -1450,9 +1450,10 @@ function mpFicha(p, m) {
     ${(() => { if (['itin', 'hotel', 'sug'].includes(p.capa)) return ''; const ps = m.pts.filter(x => x.capa === 'itin' && x.num != null); if (!ps.length || m.pts.some(x => x.capa === 'itin' && x.num == null)) return '';
       const [q, dk] = ps.map(x => [x, km(x.c, p.c)]).sort((a, b) => a[1] - b[1])[0]; return `<div class="mp-parada">📍 A ${fmtDist(dk)} de la parada ${q.num} (${esc(q.es)})</div>`; })()}
     ${m.hotel && !['hotel', 'sug'].includes(p.capa) ? tramo(m.hotel, p.c, 'Hotel', p.ko || p.es, { prefijo: 'Desde el hotel: ', sinPasos: true }) : ''}
-    <div class="acciones">${mpEnlace(p, m)}${p.add ? `<button class="mini" data-agtog="${esc(p.add)}">＋ Añadir a este día</button>` : ''}${naver(p.l || p)}${p.l && p.capa !== 'hotel' ? btnGps(p.l) : ''}</div></div>`);
+    <div class="acciones">${mpEnlace(p, m)}${p.add ? `<button class="mini" data-agtog="${esc(p.add)}">＋ Añadir a este día</button>` : ''}${naver(p.l || p)}${p.l && p.capa !== 'hotel' ? btnGpsDel(p.l) + btnGps(p.l) : ''}</div></div>`);
 }
 // 📍 Estoy aquí: guarda la posición GPS actual como la buena de ese sitio (para corregir coordenadas aproximadas allí mismo).
+const btnGpsDel = l => user && user.coordsFix && user.coordsFix[hKey(l)] ? `<button class="mini sec" data-gpsdel="${esc(hKey(l))}">↩️ Ubicación original</button>` : '';
 const btnGps = l => `<button class="mini sec" data-gps="${esc(hKey(l))}" data-gpsn="${esc(l.es || l.nombre || '')}">${user && user.coordsFix && user.coordsFix[hKey(l)] ? '✅ Ubicación corregida' : '📌 Estoy aquí'}</button>`;
 // Botón de la ficha del mapa que lleva a la sección de la app donde está ese sitio.
 function mpEnlace(p, m) {
@@ -1464,11 +1465,16 @@ function mpEnlace(p, m) {
 }
 function mpGestos(el, m) {
   const v = el.querySelector('.mp-vista'), capa = () => el.querySelector('.mp-capa');
-  const ps = new Map(); let ini = null, movido = false, pinch = null;
+  const ps = new Map(); let ini = null, movido = false, pinch = null, arr0 = null, larga = 0;
+  // ✋ Mantener pulsado un icono (½ s) y arrastrarlo: se guarda donde se suelte como su ubicación buena (user.coordsFix).
+  const arrastrable = b => { const p = b && m.pts[Number(b.dataset.mpp)]; return p && p.l && p.capa !== 'hotel' ? p : null; };
   const mover = (dx, dy, s = 1) => { capa().style.transform = `translate(${dx}px,${dy}px) scale(${s})`; };
   v.addEventListener('pointerdown', e => {
     v.setPointerCapture(e.pointerId); ps.set(e.pointerId, [e.clientX, e.clientY]);
-    if (ps.size === 1) { ini = [e.clientX, e.clientY]; movido = false; pinch = null; }
+    if (ps.size === 1) { ini = [e.clientX, e.clientY]; movido = false; pinch = null; arr0 = null; clearTimeout(larga);
+      const b = !el.classList.contains('mini') && e.target.closest('.mp-pt');
+      if (arrastrable(b)) larga = setTimeout(() => { if (movido || !ini) return; arr0 = { b, x: parseFloat(b.style.left), y: parseFloat(b.style.top) }; b.classList.add('arrastra'); try { navigator.vibrate && navigator.vibrate(30); } catch {} }, 500); }
+    if (ps.size === 2) clearTimeout(larga);
     if (ps.size === 2) { const [a, b] = [...ps.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), s: 1 }; movido = true; }
   });
   v.addEventListener('pointermove', e => {
@@ -1476,14 +1482,25 @@ function mpGestos(el, m) {
     if (pinch && ps.size === 2) { const [a, b] = [...ps.values()]; pinch.s = Math.hypot(a[0] - b[0], a[1] - b[1]) / pinch.d; capa().style.transformOrigin = `${el.clientWidth / 2}px ${el.clientHeight / 2}px`; mover(0, 0, pinch.s); return; }
     if (!ini || pinch) return;
     const dx = e.clientX - ini[0], dy = e.clientY - ini[1];
+    if (arr0) { arr0.b.style.left = arr0.x + dx + 'px'; arr0.b.style.top = arr0.y + dy + 'px'; return; }
     if (Math.hypot(dx, dy) > 6) movido = true;
     if (movido) mover(dx, dy);
   });
   const fin = e => {
     if (!ps.has(e.pointerId)) return; ps.delete(e.pointerId);
     if (pinch) { if (!ps.size) { const dz = Math.round(Math.log2(pinch.s)); mpZoom(el, m, dz); pinch = null; ini = null; } return; }
-    if (!ini) return;
+    if (!ini) return; clearTimeout(larga);
     const dx = e.clientX - ini[0], dy = e.clientY - ini[1]; ini = null;
+    if (arr0) { const { b, x, y } = arr0, p = arrastrable(b); arr0 = null; b.classList.remove('arrastra');
+      if (p && Math.hypot(dx, dy) > 4) {
+        const W = el.clientWidth, H = el.clientHeight, ox = mpX(m.c[1], m.z) - W / 2, oy = mpY(m.c[0], m.z) - H / 2;
+        const c = [+mpLat(oy + y + dy, m.z).toFixed(5), +mpLon(ox + x + dx, m.z).toFixed(5)], nom = p.es || p.l.es || p.l.nombre || 'este sitio';
+        if (confirm(`¿Poner «${nom}» aquí?\nSe guarda en este móvil y va con «Pasar mis marcas».`)) {
+          const U = u(), h = hKey(p.l); U.coordsFix = U.coordsFix || {}; U.coordsFix[h] = c; saveUser();
+          Object.values(MP).forEach(mm => (mm.pts || []).forEach(q => { if (q.l && hKey(q.l) === h) q.c = c; }));
+        }
+      }
+      mpDibujar(el, m); return; }
     if (movido) { m.c = [mpLat(mpY(m.c[0], m.z) - dy, m.z), mpLon(mpX(m.c[1], m.z) - dx, m.z)]; mpDibujar(el, m); return; }
     const t = document.elementFromPoint(e.clientX, e.clientY), b = t && t.closest('.mp-pt');
     m.sel = b ? Number(b.dataset.mpp) : null; mpDibujar(el, m);
@@ -2985,6 +3002,9 @@ document.addEventListener('click', e => {
   if (et) { const [f, c] = et.dataset.etq.split('|'), U = u(); U.diario = U.diario || {}; const o = U.diario[f] = U.diario[f] || {}; o.tags = arr(o.tags); o.tags = o.tags.includes(c) ? o.tags.filter(x => x !== c) : [...o.tags, c]; saveUser(); queueMicrotask(anclar(et)); render(); return; }
   const ca = e.target.closest('[data-cara]');
   if (ca) { const [f, c] = ca.dataset.cara.split('|'), U = u(); U.diario = U.diario || {}; const o = U.diario[f] = U.diario[f] || {}; o.cara = o.cara === c ? '' : c; saveUser(); render(); return; }
+  const gd = e.target.closest('[data-gpsdel]');
+  if (gd) { if (!confirm('¿Volver a la ubicación original de este sitio?')) return; const U = u(); delete (U.coordsFix || {})[gd.dataset.gpsdel]; saveUser();
+    Object.values(MP).forEach(mm => (mm.pts || []).forEach(q => { if (q.l && hKey(q.l) === gd.dataset.gpsdel) q.c = coordsLugar(q.l) || q.c; })); render(); return; }
   const mq = e.target.closest('[data-mpz],[data-mpfit],[data-mpyo],[data-mpcerrar],[data-mpcapa],[data-mpcapad],[data-mpdia]');
   if (mq) {
     if (mq.dataset.mpcapad) { const c = mq.dataset.mpcapad; if (mpCapasDia.has(c)) mpCapasDia.delete(c); else mpCapasDia.add(c); render(); return; }

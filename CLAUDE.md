@@ -166,7 +166,7 @@ aproximada, la distancia sale con "≈").
 Lo recomendado por la Lonely (lp: true o fuente lonely) lleva el distintivo
 azul "LP" (★ = elección del autor) allí donde aparezca.
 Todo sitio nuevo lleva descripción y coordenadas en data/coords.json
-(para la distancia al hotel). Si están mal, "📍 Estoy aquí" (en la ficha de Planes y del mapa) guarda la posición GPS en user.coordsFix[hKey], que manda sobre coords.json y va al pasar marcas.
+(para la distancia al hotel). Si están mal, en el mapa grande se mantiene pulsado el icono (½ s) y se arrastra a su sitio (desde v185; pide confirmación; "↩️ Ubicación original" en su ficha lo deshace), o "📍 Estoy aquí" (en la ficha de Planes y del mapa) guarda la posición GPS en user.coordsFix[hKey], que manda sobre coords.json y va al pasar marcas.
 
 ## Hoja de ruta (la vital primero: el viaje empieza el 3 nov)
 S1 Estructura PWA, importar/exportar, pantalla de bienvenida

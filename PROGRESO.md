@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v184
+Caché del service worker: corea-v185
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -236,6 +236,7 @@ Caché del service worker: corea-v184
 - v182: arreglo de descuadres tras actualizar. Si la red tarda más de 3 s, el móvil puede usar el app.js nuevo con la hoja de estilos guardada (la vieja): el esquema del día quedaba con una palabra por línea y el recuento de uso no se ajustaba. Ahora el esquema conserva un hueco vacío (oculto con el CSS nuevo) y el recuento lleva su ajuste en línea, así no se descuadran con ninguna de las dos. La versión en Datos y app ya no dice «corea-fotos».
 - v183: 🔍 buscador global en la cabecera (antes del 💱). Encontrar cosas era lo más rebuscado: con él, cualquier sitio, restaurante, lavandería, frase, palabra, tema de la Guía, capítulo de Historia o día del itinerario queda a 2 toques más lo que se escriba. Agrupado por tipo (6 por grupo, 8 días); «atrás» cierra la ventana. [Supuesto] Los buscadores de Planes y Diccionario se quedan de momento; si el recuento de uso dice que no se tocan, se quitan.
 - v184: título de la cabecera «Corea 2026» (se quita «del Sur» del título del viaje; el Resumen y las exportaciones lo mantienen completo). Sin reimportar el viaje.
+- v185: iconos de los mapas descuadrados respecto a las calles. Causa: coords.json aproximadas (3 decimales, ±100 m; varios restaurantes con el mismo punto, que el mapa separa). Desde el sandbox no se llega a Naver, Kakao ni OpenStreetMap para geolocalizar. Arreglo en dos partes: (1) en el mapa grande, mantener pulsado un icono y arrastrarlo a su calle lo guarda en user.coordsFix (confirmación; ↩️ en la ficha para deshacer; va con Pasar marcas); (2) corregir coords.json con búsqueda web por ciudades en el orden del viaje.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
