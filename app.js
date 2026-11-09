@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v190';
+const VERSION = 'v191';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -2370,13 +2370,15 @@ function viewComer(dentro = false) {
   const opt = (v, t, on) => `<option value="${esc(v)}" ${on ? 'selected' : ''}>${esc(t)}</option>`;
   const enC = l => comerCiudad === 'todas' || l.ciudad === comerCiudad;
   const tipos = TIPOS.slice(1).map(t => [t, lugaresComer().filter(l => enC(l) && l.tipo === t).length]).filter(([t, nt]) => nt || comerTipo === t);
-  const ord = { rec: '⭐ Recomendado', nota: '👥 Mejor valorados', dist: '📍 Cerca del hotel', val: '★ Mi valoración' }, sigOrd = { rec: 'nota', nota: 'dist', dist: 'val', val: 'rec' };
+  const chipN = (attr, v, t, nn, on, tit) => `<button class="chip ${on ? 'on' : ''}" ${attr}="${esc(v)}" title="${esc(tit)}">${esc(t)} <small>${nn}</small></button>`;
+  const ordIc = { rec: '🏅', nota: '👥', dist: '📏', val: '★' };
+  const ord = { rec: '🏅 Recomendado', nota: '👥 Mejor valorados', dist: '📏 Más cerca del hotel', val: '★ Mi valoración' }, sigOrd = { rec: 'nota', nota: 'dist', dist: 'val', val: 'rec' };
   return buscadorHTML('qcm', qCom, 'Buscar sitio para comer (nombre, plato…)', resComer(qCom)) + (dentro ? '' : `<div class="cc-row">${[['todas', 'Todas', '🗺️'], ...CIUDADES_COMER.map(([k, t]) => [k, t, tema(k).ic])].map(([k, t, ic]) =>
       `<button class="cbtn ${comerCiudad === k ? 'on' : ''}" ${k !== 'todas' ? `style="${varsTema(k)}"` : ''} data-cc="${k}"><span>${ic}</span>${esc(t)}</button>`).join('')}</div>`) + `
-    <div class="chips tipos-c">${chip('data-ct', 'todos', `🍽️ Todo (${lugaresComer().filter(enC).length})`, comerTipo === 'todos')}${tipos.map(([t, nt]) => chip('data-ct', t, `${IC_COMER[t] || ''} ${t[0].toUpperCase() + t.slice(1)} (${nt})`, comerTipo === t)).join('')}</div>
-    <div class="chips estados-c">${chip('data-ce', 'todos', 'Todos', comerEstado === 'todos')}${chip('data-ce', 'cerca', `📍 Cerca del hotel (${base.filter(l => distKm(l) <= 1.2).length})`, comerEstado === 'cerca')}${chip('data-ce', 'quiero', `⭐ ${n('quiero')}`, comerEstado === 'quiero')}${chip('data-ce', 'visitado', `✅ ${n('visitado')}`, comerEstado === 'visitado')}${chip('data-ce', 'pendiente', 'Sin marcar', comerEstado === 'pendiente')}</div>
+    <div class="chips qv-fila">${chipN('data-ct', 'todos', 'Todo', lugaresComer().filter(enC).length, comerTipo === 'todos', 'Todo')}${tipos.map(([t, nt]) => chipN('data-ct', t, IC_COMER[t] || t, nt, comerTipo === t, t[0].toUpperCase() + t.slice(1))).join('')}</div>
+    <div class="chips qv-fila"><button class="chip qv-ord" data-co="${sigOrd[comerOrden] || 'rec'}" title="Orden: ${esc(ord[comerOrden] || ord.rec)} (tocar para cambiar)">⇅${(ordIc[comerOrden] || ordIc.rec)}</button><span class="qv-sep"></span>${chipN('data-ce', 'cerca', '📍', base.filter(l => distKm(l) <= 1.2).length, comerEstado === 'cerca', 'Cerca del hotel (≤1,2 km)')}${chipN('data-ce', 'quiero', '⭐', n('quiero'), comerEstado === 'quiero', 'Quiero ir')}${chipN('data-ce', 'visitado', '✅', n('visitado'), comerEstado === 'visitado', 'Visitados')}${chipN('data-ce', 'pendiente', '☐', base.filter(l => !est(l)).length, comerEstado === 'pendiente', 'Sin marcar')}</div>
+    <p class="muted mini-nota c2-leyenda">⇅ ${esc(ord[comerOrden] || ord.rec)} · ${lista.length} lugares</p>
     ${muchoOjo(comerCiudad)}
-    <div class="c2-cuenta"><span class="muted">${lista.length} lugares</span><button class="chip orden-btn" data-co="${sigOrd[comerOrden] || 'rec'}">↕ ${ord[comerOrden] || ord.rec}</button></div>
     ${lista.map(cardComer).join('') || '<p class="muted">No hay lugares con este filtro.</p>'}
     ${comerForm ? formComer() : '<button class="sec" data-act="comer-nuevo">＋ Añadir lugar</button>'}`;
 }
@@ -3041,14 +3043,14 @@ document.addEventListener('click', e => {
   const cm = e.target.closest('[data-cc],[data-ct],[data-ce],[data-co],[data-val],[data-est],[data-delcomer]');
   if (cm) {
     comerCongelado = !!(cm.dataset.val || cm.dataset.est);
-    if (cm.dataset.ce) comerEstado = cm.dataset.ce;
+    if (cm.dataset.ce) comerEstado = comerEstado === cm.dataset.ce ? 'todos' : cm.dataset.ce; // tocar el activo lo quita
     else if (cm.dataset.co) comerOrden = cm.dataset.co;
     else if (cm.dataset.val) {
       const U = u(); U.comer = U.comer || {}; const o = U.comer[cm.dataset.val] = U.comer[cm.dataset.val] || {};
       const v = Number(cm.dataset.n); o.val = Number(o.val) === v ? 0 : v; saveUser();
     }
     else if (cm.dataset.cc) comerCiudad = cm.dataset.cc;
-    else if (cm.dataset.ct) comerTipo = cm.dataset.ct;
+    else if (cm.dataset.ct) comerTipo = comerTipo === cm.dataset.ct && cm.dataset.ct !== 'todos' ? 'todos' : cm.dataset.ct;
     else if (cm.dataset.delcomer) {
       if (!confirm('¿Borrar este lugar propio?')) return;
       u().comerPropios = arr(user.comerPropios).filter(l => String(l.id) !== cm.dataset.delcomer); saveUser();
