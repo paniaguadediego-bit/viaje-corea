@@ -1337,3 +1337,5 @@ details.hotel-pl > summary, details.diario-pl > summary { text-align: center; }
 .diario .cara small { font-size: .6rem; }
 .etiq-dia { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin: 4px 0 8px; }
 .etiq-dia .chip { min-height: 28px; padding: 2px 9px; font-size: .78rem; }
+.sitios-dia .naver-dia.naver-sig { flex-direction: column; align-items: center; gap: 2px; margin: 6px 0; }
+.sitios-dia .naver-dia.naver-sig small { color: var(--muted); font-size: .75rem; }

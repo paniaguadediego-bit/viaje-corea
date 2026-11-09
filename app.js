@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v164';
+const VERSION = 'v165';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -780,7 +780,7 @@ function naverDia(hc, hotN, lista) {
   const q = (p, c) => `${p}lat=${c[0][0]}&${p}lng=${c[0][1]}&${p}name=${encodeURIComponent(c[1])}`;
   const url = P => `nmap://route/car?${q('s', P[0])}&${P.slice(1, -1).map((c, i) => q('v' + (i + 1), c) + '&').join('')}${q('d', P[P.length - 1])}&appname=viajecorea`;
   // Cada tramo sale donde empieza: el 1.º arriba y los demás tras la parada desde la que salen (inicio = nº de esa parada).
-  return partes.map((P, i) => ({ inicio: i * paso + (hc ? 0 : 1), html: `<div class="naver-dia"><a class="btn mini" href="${url(P)}">🧭 ${partes.length > 1 ? `Día en Naver (${i + 1}/${partes.length})` : 'Todo el día en Naver'}</a></div>` }));
+  return partes.map((P, i) => ({ inicio: i * paso + (hc ? 0 : 1), html: `<div class="naver-dia ${i ? 'naver-sig' : ''}">${i ? `<small>Siguiente tramo, desde la parada ${i * paso + (hc ? 0 : 1)}:</small>` : ''}<a class="btn mini" href="${url(P)}">🧭 ${partes.length > 1 ? `Día en Naver (${i + 1}/${partes.length})` : 'Todo el día en Naver'}</a></div>` }));
 }
 // Sitios recomendados que no están en ningún día del plan y quedan a ≤900 m de la ruta de ese día.
 // Sitios recomendados que no están en ningún día y quedan a ≤900 m de la ruta, con dónde encajan
@@ -844,7 +844,7 @@ function sitiosDia(d) {
     // Ficha plegable: se pliega sola al marcarla como visitada (y la foto, a la derecha, arriba).
     const key = 'sd:' + d.fecha + '|' + h, ab = abierto(key, !hecho(l, k));
     return `${t}${extra ? encaje(l) : ''}<details class="sd ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}${btnHecho(l, k)}${irQV(l, k)}<br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
-      <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}</div>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}</details>`;
+      <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}</div></details>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
   let extras = todos.filter(l => !auto.includes(l));
