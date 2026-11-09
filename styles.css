@@ -1364,3 +1364,9 @@ button.es-mas { display: block; width: auto; min-height: 0; margin: 0 12px 8px a
 .planb-l li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0; border-top: 1px dashed var(--line); }
 .planb-l li:first-child { border-top: 0; }
 .irqv-ic { width: 34px; min-height: 30px; padding: 0; margin: 0; flex: none; font-size: 1rem; }
+/* v169: la cabecera del día lleva el mismo fondo que el banner de ciudad de Planes (hangul grande y suave) */
+.dia-cab { position: relative; overflow: hidden; }
+.dia-cab > *:not(.ciudad-ko) { position: relative; }
+/* Altavoz pequeño junto al nombre de la ciudad en Planes */
+.ciudad-pob .habla { float: none; width: 24px !important; height: 24px; min-height: 24px !important; font-size: .7rem; margin: 0; padding: 0 !important; }
+.dia-cab .ciudad-ko { font-size: 4.2rem; bottom: -12px; }
