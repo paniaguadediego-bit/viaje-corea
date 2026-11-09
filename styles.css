@@ -1451,3 +1451,10 @@ details.qv:not(.hecho-card) .qv-ck { border: 2px solid color-mix(in srgb, var(--
 @supports (-webkit-touch-callout: none) { input, select, textarea { font-size: 16px !important; } }
 /* Pantallas estrechas (iPhone SE, 375 px): sin la versión en la cabecera para que quepa «Corea 2026» (sigue en Más → Datos y app). */
 @media (max-width: 390px) { #version { display: none; } header { gap: 6px; } }
+/* v192: descartados y cerrados al fondo de Comer, plegados en una línea */
+details.comer-fuera { border: 1.5px dashed color-mix(in srgb, var(--fg) 24%, transparent); border-radius: 12px; margin: 6px 0; background: color-mix(in srgb, var(--fg) 4%, transparent); }
+details.comer-fuera > summary { padding: 8px 12px; cursor: pointer; list-style: none; opacity: .75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+details.comer-fuera > summary::-webkit-details-marker { display: none; }
+details.comer-fuera > summary::after { content: " ▸"; color: var(--muted); }
+details.comer-fuera[open] > summary::after { content: " ▾"; }
+details.comer-fuera > .card { margin: 0 6px 6px; opacity: 1; }

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v191';
+const VERSION = 'v192';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -2379,7 +2379,7 @@ function viewComer(dentro = false) {
     <div class="chips qv-fila"><button class="chip qv-ord" data-co="${sigOrd[comerOrden] || 'rec'}" title="Orden: ${esc(ord[comerOrden] || ord.rec)} (tocar para cambiar)">⇅${(ordIc[comerOrden] || ordIc.rec)}</button><span class="qv-sep"></span>${chipN('data-ce', 'cerca', '📍', base.filter(l => distKm(l) <= 1.2).length, comerEstado === 'cerca', 'Cerca del hotel (≤1,2 km)')}${chipN('data-ce', 'quiero', '⭐', n('quiero'), comerEstado === 'quiero', 'Quiero ir')}${chipN('data-ce', 'visitado', '✅', n('visitado'), comerEstado === 'visitado', 'Visitados')}${chipN('data-ce', 'pendiente', '☐', base.filter(l => !est(l)).length, comerEstado === 'pendiente', 'Sin marcar')}</div>
     <p class="muted mini-nota c2-leyenda">⇅ ${esc(ord[comerOrden] || ord.rec)} · ${lista.length} lugares</p>
     ${muchoOjo(comerCiudad)}
-    ${lista.map(cardComer).join('') || '<p class="muted">No hay lugares con este filtro.</p>'}
+    ${lista.map((l, i) => (comerFuera(l) && !(i && comerFuera(lista[i - 1])) ? `<div class="qv-grupo">👎 Descartados y cerrados · ${lista.filter(comerFuera).length}</div>` : '') + cardComer(l)).join('') || '<p class="muted">No hay lugares con este filtro.</p>'}
     ${comerForm ? formComer() : '<button class="sec" data-act="comer-nuevo">＋ Añadir lugar</button>'}`;
 }
 
@@ -2402,7 +2402,10 @@ const notaAjustada = l => { const o = opinionDe(l); if (!o) return 0; const n = 
 const fmtN = n => n == null || n === '' ? '' : Number(n) >= 1000 ? (Number(n) / 1000).toLocaleString('es-ES', { maximumFractionDigits: 1 }) + ' mil' : String(n);
 // Orden congelado: al marcar (⭐ ✅ 👎 🚫 o valorar) la lista no se reordena hasta cambiar de filtro o de pestaña.
 let comerCongelado = false, comerOrdenPrev = { k: '', ids: [] };
-function ordenarComer(ls) {
+// 👎 Descartados y 🚫 cerrados, siempre al fondo (también con el orden congelado) y plegados.
+const comerFuera = l => ['descartado', 'cerrado'].includes(estadoDe(String(l.id)).estado);
+function ordenarComer(ls) { const r = ordenarComer1(ls); return [...r.filter(l => !comerFuera(l)), ...r.filter(comerFuera)]; }
+function ordenarComer1(ls) {
   const clave = [comerCiudad, comerTipo, comerEstado, comerOrden, qCom].join('|');
   if (comerCongelado && comerOrdenPrev.k === clave) { const pos = new Map(comerOrdenPrev.ids.map((id, i) => [id, i]));
     return ls.map((l, i) => [l, pos.has(String(l.id)) ? pos.get(String(l.id)) : 1e6 + i]).sort((a, b) => a[1] - b[1]).map(x => x[0]); }
@@ -2418,6 +2421,11 @@ function ordenarComer0(ls) {
 }
 
 function cardComer(l) {
+  const card = cardComer0(l); if (!comerFuera(l)) return card;
+  const id = String(l.id ?? ''), e = estadoDe(id).estado, k = `cmd:${id}:${e}`; // con el estado en la clave, se vuelve a plegar al descartar otra vez
+  return `<details class="comer-fuera est-${esc(e)}" data-key="${esc(k)}" ${abierto(k, false) ? 'open' : ''}><summary>${e === 'cerrado' ? '🚫' : '👎'} <b>${esc(l.nombre || 'Sin nombre')}</b>${l.ko ? ` <span class="ko-s">${esc(l.ko)}</span>` : ''} <small class="muted">${e === 'cerrado' ? 'Cerrado' : 'Descartado'}</small></summary>${card}</details>`;
+}
+function cardComer0(l) {
   const id = String(l.id ?? ''), e = estadoDe(id), q = l.ko || l.nombre || '';
   const ciudad = (CIUDADES_COMER.find(c => c[0] === l.ciudad) || [])[1] || l.ciudad || '';
   const w = wikiDe(l), meta = [l.plato, l.precio ? '💰 ' + l.precio + precioEur(l.precio).replace(/<[^>]+>/g, '') : '', l.horario ? '🕒 ' + l.horario : '', comerCiudad === 'todas' ? ciudad : ''].filter(Boolean);

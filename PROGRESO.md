@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v191
+Caché del service worker: corea-v192
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -244,6 +244,7 @@ Caché del service worker: corea-v191
 - v189: repaso para iPhone (simulado iPhone SE 375 px e iPhone 13 en Chromium; aquí no hay Safari/WebKit): ninguna pestaña se sale de ancho. Arreglos: en iOS los campos de texto a 16 px (si no, Safari amplía la página al escribir y no vuelve); en pantallas ≤390 px la cabecera sin la versión para que quepa «Corea 2026». [Supuesto] Sin probar en Safari real: voz coreana, abrir Naver y el arrastre del mapa hay que verlos en el iPhone.
 - v190: «Leer más» del esquema del día crece hacia abajo: queda quieto el principio de la lista (antes, el botón, y el texto subía y la primera línea se salía por arriba). Si el principio ya estaba fuera de la pantalla, se baja hasta él.
 - v191: controles de Comer compactos como los de Puntos de interés: fila de tipos con icono y número (Todo / 🍲 / ☕ / 🧺 / 🥢 / 🍶) y fila con ⇅ orden de un botón (🏅 recomendado → 👥 valorados → 📏 cerca → ★ mía) y 📍 cerca del hotel / ⭐ quiero / ✅ visitado / ☐ sin marcar. Tocar el activo lo quita. Debajo, una línea con el orden y cuántos lugares salen.
+- v192: en Comer, los 👎 descartados (y 🚫 cerrados) bajan al fondo nada más marcarlos, aunque el orden esté congelado, bajo «👎 Descartados y cerrados · n», plegados en una línea (nombre y hangul). Al desplegar sale la tarjeta entera para deshacerlo. [Supuesto] Los cerrados van con los descartados.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
