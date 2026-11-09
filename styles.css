@@ -1339,3 +1339,10 @@ details.hotel-pl > summary, details.diario-pl > summary { text-align: center; }
 .etiq-dia .chip { min-height: 28px; padding: 2px 9px; font-size: .78rem; }
 .sitios-dia .naver-dia.naver-sig { flex-direction: column; align-items: center; gap: 2px; margin: 6px 0; }
 .sitios-dia .naver-dia.naver-sig small { color: var(--muted); font-size: .75rem; }
+/* v166: visor de fotos a pantalla completa */
+#visor { position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,.92); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; }
+#visor img { max-width: 100%; max-height: 82vh; object-fit: contain; border-radius: 8px; }
+#visor .visor-pie { color: #eee; text-align: center; margin-top: 10px; font-size: .9rem; display: flex; flex-direction: column; gap: 4px; }
+#visor .visor-pie a { color: #9cc6ff; }
+#visor .visor-pie span { color: #999; font-size: .78rem; }
+.foto.ok { cursor: zoom-in; }

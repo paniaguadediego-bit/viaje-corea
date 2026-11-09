@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v165';
+const VERSION = 'v166';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -189,7 +189,7 @@ const porPlan = (ls, k) => ls.map((l, i) => [l, i, (enPlan(l, k) || {}).n || 999
 
 // Foto de Wikipedia para un sitio (si se conoce el artículo).
 const wikiDe = l => l && typeof l === 'object' ? (l.wiki || (l.ko && ((typeof WIKI !== 'undefined' && WIKI[l.ko]) || (Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat().find(m => m.ko === l.ko) || {}).wiki)) || '') : '';
-const miniFoto = l => { const w = wikiDe(l); return w ? `<div class="foto mini" data-wiki="${esc(w)}"><span>📷</span></div>` : ''; };
+const miniFoto = l => { const w = wikiDe(l) || (l && l.ko && !l.sinFoto ? 'ko:' + String(l.ko).replace(/\s+/g, '') : ''); return w ? `<div class="foto mini" data-wiki="${esc(w)}"><span>📷</span></div>` : ''; };
 
 // ---------- tema ----------
 const TEMAS = { auto: ['🌓', 'Auto'], light: ['☀️', 'Claro'], dark: ['🌙', 'Oscuro'] };
@@ -1059,7 +1059,7 @@ function qvPuntos(k, c) {
       extra: o.l.tipo && esLP(o.l) ? `<div class="lp-meta"><span class="lp-tipo">${esc(o.l.tipo)}</span>${o.l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(o.l)}</div>` : '' })).join('')}`).join('') : '<p class="muted">Nada con este filtro.</p>'}`;
 }
 function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) {
-  const h = hKey(l), key = 'qv:' + h, w = l.wiki || wikiDe(l) || (l.ko ? 'ko:' + l.ko : ''), ic = icSitio((l.tipo || '') + ' ' + l.es);
+  const h = hKey(l), key = 'qv:' + h, w = l.sinFoto ? '' : (l.wiki || wikiDe(l) || (l.ko ? 'ko:' + l.ko : '')), ic = icSitio((l.tipo || '') + ' ' + l.es);
   return `<details class="qv ${clase} ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}>
     <summary>${w ? `<div class="foto mini qv-f" data-wiki="${esc(w)}"><span>${ic}</span></div>` : `<div class="foto mini qv-f vacia"><span>${ic}</span></div>`}
       <span class="qv-cab"><b>${esc(l.es)}${lpPill(l)}</b><small>${plan ? `<span class="qv-dia">📅 ${fmtCorto(plan.fecha)}</span> ` : ''}${esc(breve(desc || l.nota || l.desc))}</small></span>
@@ -1072,7 +1072,7 @@ function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) 
 // Foto principal del artículo de Wikipedia (necesita conexión la primera vez; el service worker la guarda).
 const FOTOS = load('corea.fotos', {});
 // v134: se reintentan las fotos que fallaron antes (artículos mal escritos o sin imagen).
-if (load('corea.fotosv', 0) < 2) { Object.keys(FOTOS).forEach(k => { if (FOTOS[k] === null) delete FOTOS[k]; }); try { save('corea.fotos', FOTOS); save('corea.fotosv', 2); } catch {} }
+if (load('corea.fotosv', 0) < 3) { Object.keys(FOTOS).forEach(k => { if (FOTOS[k] === null) delete FOTOS[k]; }); try { save('corea.fotos', FOTOS); save('corea.fotosv', 3); } catch {} } // v166: reintento con la 1.ª foto del artículo
 // Hangul de cada artículo (para buscar en la Wikipedia coreana si la inglesa no tiene foto).
 let KO_WIKI = null;
 const koDeWiki = t => { if (!KO_WIKI) { KO_WIKI = {};
@@ -1081,8 +1081,12 @@ const koDeWiki = t => { if (!KO_WIKI) { KO_WIKI = {};
   return KO_WIKI[t] || ''; };
 async function resumenWiki(lang, titulo) {
   const r = await fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/` + encodeURIComponent(titulo.replace(/ /g, '_')));
-  if (!r.ok) return null; const d = await r.json(), im = d && (d.thumbnail || d.originalimage);
-  return im ? { src: im.source, url: d.content_urls && d.content_urls.mobile && d.content_urls.mobile.page } : null;
+  if (!r.ok) return null; const d = await r.json(), im = d && (d.thumbnail || d.originalimage), url = d && d.content_urls && d.content_urls.mobile && d.content_urls.mobile.page;
+  if (im) return { src: im.source, url };
+  // Sin foto principal: la primera foto del artículo (no iconos, mapas ni banderas en SVG).
+  try { const m = await fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/media-list/` + encodeURIComponent(titulo.replace(/ /g, '_')));
+    if (!m.ok) return null; const it = arr((await m.json()).items).find(x => x.type === 'image' && !/\.svg$|map|locator|flag|logo|icon/i.test(x.title || '') && arr(x.srcset).length);
+    return it ? { src: (it.srcset[0].src.startsWith('//') ? 'https:' : '') + it.srcset[0].src, url } : null; } catch { return null; }
 }
 async function fotoWiki(t) {
   if (FOTOS[t] !== undefined) return FOTOS[t];
@@ -2626,6 +2630,17 @@ document.addEventListener('click', e => {
   document.addEventListener('visibilitychange', vis);
   location.href = app;
   setTimeout(() => { document.removeEventListener('visibilitychange', vis); if (!fue && !document.hidden) window.open(web, '_blank'); }, 1500);
+}, true);
+// 🔍 Visor: tocar cualquier foto cargada la abre en grande (otra vez = cerrar). Va antes que todo para que no abra/cierre la ficha.
+document.addEventListener('click', e => {
+  const vz = document.getElementById('visor'); if (vz && e.target.closest('#visor')) { if (!e.target.closest('a')) vz.remove(); e.preventDefault(); e.stopPropagation(); return; }
+  const ft = e.target.closest('.foto.ok'); if (!ft) return; const img = ft.querySelector('img:last-of-type'); if (!img) return;
+  e.preventDefault(); e.stopPropagation();
+  const f = FOTOS[ft.dataset.wiki] || {}, card = ft.closest('details, .card, .sd'), nom = card && (card.querySelector('b') || {}).textContent || '';
+  const v = document.createElement('div'); v.id = 'visor';
+  v.innerHTML = `<img alt="" src="${esc(img.src.replace(/\/\d+px-/, '/1280px-'))}"><div class="visor-pie"><b>${esc(nom.trim().replace(/^\d+\s*/, '').slice(0, 80))}</b>${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">Foto: Wikipedia</a>` : ''}<span>Toca para cerrar</span></div>`;
+  const big = v.querySelector('img'); big.onerror = () => { if (big.src !== img.src) big.src = img.src; };
+  document.body.appendChild(v);
 }, true);
 document.addEventListener('click', e => {
   // Campos de texto: el toque es para escribir; nunca debe redibujar nada.

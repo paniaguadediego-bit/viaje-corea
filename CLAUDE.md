@@ -151,7 +151,7 @@ contenido.js guarda contenido fijo y público: CATALOGO (sitios
 conocidos por ciudad con hangul seguro), IMPRES (imprescindibles
 por ciudad: descripción propia resumida de la Lonely y artículo de
 Wikipedia para la foto; la foto se pide con conexión y el service
-worker la guarda en la caché 'corea-fotos'; si la Wikipedia inglesa no tiene foto, se prueba la coreana con el hangul), WIKI (hangul → artículo de Wikipedia para
+worker la guarda en la caché 'corea-fotos'; si la Wikipedia inglesa no tiene foto, se prueba la coreana con el hangul; si el artículo no tiene foto principal, la primera foto del artículo; sinFoto: true = mejor sin foto que una equivocada; tocar cualquier foto cargada la abre en grande en un visor), WIKI (hangul → artículo de Wikipedia para
 más fotos), ALIAS (nombres alternativos para reconocer sitios en el
 itinerario), HISTORIA (historia breve por ciudad, LP marcado),
 INTRO_LP (introducción de cada ciudad según la Lonely y su

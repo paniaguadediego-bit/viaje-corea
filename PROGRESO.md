@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v165
+Caché del service worker: corea-v166
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -217,6 +217,7 @@ Caché del service worker: corea-v165
 - v163: Hoy, a petición del usuario: hotel justo encima de la Ruta del día; hotel y diario sin títulos repetidos; la carita del diario ya no tapa el icono de la ciudad en la tira de días (va en una esquina); la foto del banner del día va pasando por las fotos de los sitios del itinerario; quitado «Horario del día» (tiempos poco reales; con él se va el aviso de último metro); Ruta del día, Naver y tramos centrados; «Ver en Planes» junto a «Visitado»; «Leer más» amplía el esquema del itinerario en el mismo sitio en vez de abrir otra lista.
 - v164: «¿Qué tal el día?» con caritas más pequeñas y dos nuevas (😄 Muy bien, 😴 Cansado), más etiquetas para definir el día (❤️ Momentazo, 📸 Fotos top, 🍜 Buena comida, 🏯 Mucha cultura, 🌳 Naturaleza, 🛍️ Compras, 🚶 Mucho caminar, 🌧️ Lluvia, 🥶 Frío, 🤯 Sorpresa, 💸 Caro, 😤 Algo salió mal), varias a la vez; se guardan en user.diario[f].tags, se unen al pasar marcas y salen en el Resumen, el Word y el PDF.
 - v165: «Día en Naver (2/2)» ya no va dentro de la ficha de un sitio: sale suelto, justo después de la parada desde la que empieza y antes del tramo siguiente, con el texto «Siguiente tramo, desde la parada N».
+- v166: más fotos: si el artículo de Wikipedia no tiene foto principal, se usa la primera foto del artículo (sin mapas, banderas ni iconos), las miniaturas sin artículo prueban la Wikipedia coreana por el hangul y se reintentan las que fallaron antes. Danza de máscaras con su artículo (Hahoe byeolsingut talnori) y pinar de Mansongjeong con el coreano; árbol de Samsin y Hahoe Jangteo sin foto (sinFoto: no hay artículo y es mejor nada que una equivocada). Nuevo visor: tocar cualquier foto la abre en grande, con el nombre y el enlace a Wikipedia; otro toque la cierra.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
