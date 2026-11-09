@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v169
+Caché del service worker: corea-v170
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -221,6 +221,7 @@ Caché del service worker: corea-v169
 - v167: tarjeta del día de Hoy rediseñada: la cabecera (día X de Y, fecha, ciudad, título y tiempo) va en su propia franja de color, y debajo el carrusel de fotos de los sitios del día con el nombre de cada sitio incrustado y puntitos de posición; quitadas las etiquetas de sitios (sus nombres pasan a ser el título de cada foto). En el trip.json privado, dirección del hotel de Andong comprobada por el usuario en Naver Map (116-1 Dongbu-dong) y sin VERIFICAR.
 - v168: «Leer más» del esquema del día pasa a ser un enlace discreto a la derecha (sin botón con borde). En el plan B de lluvia, cada sitio lleva solo el icono 🏯 a su derecha para abrirlo en Planes (irQV con solo = true).
 - v169: la franja de cabecera del día en Hoy lleva el mismo fondo que el banner de ciudad de Planes (degradado de la ciudad con su nombre en hangul grande y suave). Altavoz de la pronunciación de la ciudad en Planes más pequeño (24 px).
+- v170: carrusel de Hoy con fundido cruzado más suave (1,1 s: la foto nueva aparece mientras la anterior se desvanece) y paso manual con flechas ‹ › o deslizando el dedo; después de moverlo a mano espera 10 s antes de volver a pasar solo. Tocar la foto sigue abriendo el visor.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

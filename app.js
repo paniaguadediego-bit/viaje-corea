@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v169';
+const VERSION = 'v170';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -583,7 +583,7 @@ function viewHoy() {
     <div class="dia-cab">${(() => { const ko = (arr(trip.ciudades).find(c => ck(c.nombre) === ck(d.ciudad)) || {}).ko; return ko ? `<div class="ciudad-ko">${esc(ko)}</div>` : ''; })()}<div class="dia-sup">${tc.ic} Día ${dayIdx + 1} de ${dias.length} · ${fmtDate(d.fecha)} · ${esc(d.ciudad)}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</div>
       <div class="dia-tit">${esc(d.titulo)}</div>${chipTiempo(d)}</div>
     ${fs.length ? `<div class="dia-banner"><div class="foto dia-foto" data-wiki="${esc(fs[0].w)}" data-wikis="${esc(fs.map(x => x.w).join('|'))}" data-noms="${esc(fs.map(x => x.n).join('|'))}"><span></span></div>
-      <div class="dia-cap">${esc(fs[0].n)}</div>${fs.length > 1 ? `<div class="dia-puntos">${fs.map((x, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>` : ''}</div>` : ''}`; })()}
+      <div class="dia-cap">${esc(fs[0].n)}</div>${fs.length > 1 ? `<button class="carr carr-l" data-carr="-1" aria-label="Foto anterior">‹</button><button class="carr carr-r" data-carr="1" aria-label="Foto siguiente">›</button><div class="dia-puntos">${fs.map((x, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>` : ''}</div>` : ''}`; })()}
     ${esquemaDia(d)}
   </div>`;
 
@@ -1102,18 +1102,32 @@ async function fotoWiki(t) {
     return f;
   } catch { return undefined; } // sin conexión: se reintenta más tarde
 }
-// Banner del día: va pasando por las fotos de los sitios del itinerario de ese día (cada 6 s, con fundido).
-setInterval(async () => {
-  const el = document.querySelector('.dia-foto.ok[data-wikis]'); if (!el || document.hidden) return;
-  const ws = el.dataset.wikis.split('|').filter(Boolean); if (ws.length < 2) return;
-  for (let n = 1; n < ws.length; n++) { const w = ws[(ws.indexOf(el.dataset.wiki) + n) % ws.length], f = await fotoWiki(w); if (!f || !f.src) continue;
-    const img = new Image(); img.alt = ''; img.className = 'rota';
-    img.onload = () => { if (!el.isConnected) return; el.dataset.wiki = w; const viejo = el.querySelector('img'); el.appendChild(img); requestAnimationFrame(() => img.classList.add('on')); setTimeout(() => viejo && viejo.remove(), 900);
-      const ix = ws.indexOf(w), noms = (el.dataset.noms || '').split('|'), ban = el.parentElement, cap = ban && ban.querySelector('.dia-cap');
-      if (cap && noms[ix]) cap.textContent = noms[ix]; if (ban) ban.querySelectorAll('.dia-puntos i').forEach((p, k) => p.classList.toggle('on', k === ix)); };
-    img.src = /\/\d+px-/.test(f.src) ? f.src.replace(/\/\d+px-/, '/800px-') : f.src; img.onerror = () => { if (img.src !== f.src) img.src = f.src; };
-    return; }
-}, 6000);
+// Carrusel del día: pasa solo cada 6 s y a mano con las flechas ‹ › o deslizando; fundido suave entre fotos.
+let carrUlt = 0, carrOcupado = false;
+async function carrusel(dir) {
+  const el = document.querySelector('.dia-foto[data-wikis]'); if (!el || carrOcupado) return;
+  const ws = el.dataset.wikis.split('|').filter(Boolean), L = ws.length; if (L < 2) return;
+  carrOcupado = true;
+  try {
+    const i0 = Math.max(0, ws.indexOf(el.dataset.wiki));
+    for (let n = 1; n < L; n++) { const w = ws[((i0 + dir * n) % L + L) % L], f = await fotoWiki(w); if (!f || !f.src) continue;
+      await new Promise(ok => { const img = new Image(); img.alt = ''; img.className = 'rota';
+        img.onload = () => { if (!el.isConnected) return ok(); el.dataset.wiki = w; const viejos = [...el.querySelectorAll('img')]; el.appendChild(img);
+          requestAnimationFrame(() => requestAnimationFrame(() => { img.classList.add('on'); viejos.forEach(v => v.classList.add('sale')); }));
+          setTimeout(() => viejos.forEach(v => v.remove()), 1300);
+          const ix = ws.indexOf(w), noms = (el.dataset.noms || '').split('|'), ban = el.parentElement, cap = ban && ban.querySelector('.dia-cap');
+          if (cap && noms[ix]) cap.textContent = noms[ix]; if (ban) ban.querySelectorAll('.dia-puntos i').forEach((p, k) => p.classList.toggle('on', k === ix)); ok(); };
+        img.onerror = () => { if (img.src !== f.src) img.src = f.src; else ok(); };
+        img.src = /\/\d+px-/.test(f.src) ? f.src.replace(/\/\d+px-/, '/800px-') : f.src; });
+      return; }
+  } finally { carrOcupado = false; }
+}
+setInterval(() => { if (!document.hidden && Date.now() - carrUlt > 10000 && document.querySelector('.dia-foto.ok[data-wikis]')) carrusel(1); }, 6000);
+// Deslizar el dedo sobre la foto: izquierda = siguiente, derecha = anterior (y ese toque no abre el visor).
+let carrX = null, carrSwipe = 0;
+document.addEventListener('touchstart', e => { carrX = e.target.closest('.dia-banner') ? e.touches[0].clientX : null; }, { passive: true });
+document.addEventListener('touchend', e => { if (carrX == null) return; const dx = e.changedTouches[0].clientX - carrX; carrX = null;
+  if (Math.abs(dx) > 40) { carrUlt = carrSwipe = Date.now(); carrusel(dx < 0 ? 1 : -1); } }, { passive: true });
 function pintarFotos() {
   document.querySelectorAll('.foto[data-wiki]:not(.ok)').forEach(async el => {
     const f = await fotoWiki(el.dataset.wiki);
@@ -2638,6 +2652,8 @@ document.addEventListener('click', e => {
 }, true);
 // 🔍 Visor: tocar cualquier foto cargada la abre en grande (otra vez = cerrar). Va antes que todo para que no abra/cierre la ficha.
 document.addEventListener('click', e => {
+  const cb = e.target.closest('[data-carr]'); if (cb) { e.preventDefault(); e.stopPropagation(); carrUlt = Date.now(); carrusel(+cb.dataset.carr); return; }
+  if (Date.now() - carrSwipe < 400 && e.target.closest('.dia-banner')) { e.preventDefault(); e.stopPropagation(); return; }
   const vz = document.getElementById('visor'); if (vz && e.target.closest('#visor')) { if (!e.target.closest('a')) vz.remove(); e.preventDefault(); e.stopPropagation(); return; }
   const ft = e.target.closest('.foto.ok'); if (!ft) return; const img = ft.querySelector('img:last-of-type'); if (!img) return;
   e.preventDefault(); e.stopPropagation();
