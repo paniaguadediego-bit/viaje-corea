@@ -1358,3 +1358,9 @@ details.hotel-pl > summary, details.diario-pl > summary { text-align: center; }
 .dia-puntos { position: absolute; top: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; pointer-events: none; }
 .dia-puntos i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.5); }
 .dia-puntos i.on { background: #fff; }
+/* v168: «Leer más» discreto y plan B con solo el icono a la derecha */
+button.es-mas { display: block; width: auto; min-height: 0; margin: 0 12px 8px auto; padding: 2px 4px; background: none !important; border: 0; box-shadow: none; color: var(--acc); font-size: .8rem; font-weight: 600; }
+.planb-l { list-style: none; padding: 0; margin: 6px 0 0; }
+.planb-l li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0; border-top: 1px dashed var(--line); }
+.planb-l li:first-child { border-top: 0; }
+.irqv-ic { width: 34px; min-height: 30px; padding: 0; margin: 0; flex: none; font-size: 1rem; }

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v167';
+const VERSION = 'v168';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -434,7 +434,7 @@ function planLluvia(d) {
   const key = 'planb:' + d.fecha;
   return `<details class="card plan-b" data-key="${key}" ${abierto(key, false) ? 'open' : ''}><summary><b>☔ Previsión de lluvia${prob != null ? ` (${prob} %)` : ''}: plan B a cubierto</b></summary>
     ${txt.map(t => `<div class="muted">${resaltar(t, true)}</div>`).join('')}
-    <ul>${ls.map(o => `<li>${icSitio(o.l.es)} ${esc(o.l.es)}${hc && coordsLugar(o.l) ? ` <span class="muted">${fmtDist(km(hc, coordsLugar(o.l)))}</span>` : ''} ${irQV(o.l, k)}</li>`).join('')}</ul></details>`;
+    <ul class="planb-l">${ls.map(o => `<li><span>${icSitio(o.l.es)} ${esc(o.l.es)}${hc && coordsLugar(o.l) ? ` <span class="muted">${fmtDist(km(hc, coordsLugar(o.l)))}</span>` : ''}</span>${irQV(o.l, k, true)}</li>`).join('')}</ul></details>`;
 }
 async function exportCopy() {
   await cargarFotos();
@@ -551,7 +551,7 @@ function esquemaDia(d) {
   // «Leer más» no abre otra lista: amplía cada línea del esquema con su texto completo, en el mismo sitio.
   const largo = !!abiertos[key], hay = its.some(i => cortoItem(i.texto) !== String(i.texto || '').trim().replace(/[.:]$/, ''));
   return `<ol class="esquema ${largo ? 'largo' : ''}">${its.map(i => `<li><span class="es-h">${i.hora ? esc(i.hora) : ''}</span><span class="es-ic">${icItem(i.texto)}</span><span class="es-t">${resaltar(largo ? i.texto : cortoItem(i.texto))}</span></li>`).join('')}</ol>
-    ${hay ? `<button class="sec mini es-mas" data-esmas="${key}">${largo ? '▴ Leer menos' : '▾ Leer más'}</button>` : ''}`;
+    ${hay ? `<button class="es-mas" data-esmas="${key}">${largo ? 'Leer menos ▴' : 'Leer más ▾'}</button>` : ''}`;
 }
 function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
@@ -1029,8 +1029,9 @@ function infoCompleta(l, desc) {
     ${gc ? `<div class="qv-bloque guia-cult-abierta"><b>🎎 Con ojos de guía</b><p class="gc-gancho">${esc(gc[0])}</p>${gc.slice(1).map(p => `<p class="${/^👀/.test(p) ? 'gc-mira' : /^💡/.test(p) ? 'gc-tip' : ''}">${resaltar(p, true)}</p>`).join('')}</div>` : ''}`;
 }
 // Enlace a la ficha del sitio en Qué ver (abierta); si no tiene ficha, al buscador de Qué ver.
-const irQV = (l, k) => enQueVer(l, k) ? `<button class="sec mini irqv" data-irqv="${esc(k)}" data-h="${esc(hKey(l))}">🏯 Ver en Planes</button>`
-  : `<button class="sec mini irqv" data-bcity="${esc(k)}" data-bq="${esc(l.es)}">🏯 Ver en Planes</button>`;
+// solo = solo el icono 🏯 (donde ya se sabe qué significa, p. ej. en el plan B de lluvia).
+const irQV = (l, k, solo = false) => { const t = solo ? '🏯' : '🏯 Ver en Planes', c = `sec mini irqv${solo ? ' irqv-ic' : ''}`, a = solo ? ' aria-label="Ver en Planes"' : '';
+  return enQueVer(l, k) ? `<button class="${c}"${a} data-irqv="${esc(k)}" data-h="${esc(hKey(l))}">${t}</button>` : `<button class="${c}"${a} data-bcity="${esc(k)}" data-bq="${esc(l.es)}">${t}</button>`; };
 // Todos los puntos de interés de una ciudad, sin repetir: imprescindibles, Lonely y catálogo.
 function qvLista(k, c) {
   const vistos = new Set(), out = [], add = (l, desc) => { const h = hKey(l); if (!l || vistos.has(h)) return; vistos.add(h); out.push({ l, desc, plan: enPlan(l, k) }); };

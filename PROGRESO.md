@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v167
+Caché del service worker: corea-v168
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -219,6 +219,7 @@ Caché del service worker: corea-v167
 - v165: «Día en Naver (2/2)» ya no va dentro de la ficha de un sitio: sale suelto, justo después de la parada desde la que empieza y antes del tramo siguiente, con el texto «Siguiente tramo, desde la parada N».
 - v166: más fotos: si el artículo de Wikipedia no tiene foto principal, se usa la primera foto del artículo (sin mapas, banderas ni iconos), las miniaturas sin artículo prueban la Wikipedia coreana por el hangul y se reintentan las que fallaron antes. Danza de máscaras con su artículo (Hahoe byeolsingut talnori) y pinar de Mansongjeong con el coreano; árbol de Samsin y Hahoe Jangteo sin foto (sinFoto: no hay artículo y es mejor nada que una equivocada). Nuevo visor: tocar cualquier foto la abre en grande, con el nombre y el enlace a Wikipedia; otro toque la cierra.
 - v167: tarjeta del día de Hoy rediseñada: la cabecera (día X de Y, fecha, ciudad, título y tiempo) va en su propia franja de color, y debajo el carrusel de fotos de los sitios del día con el nombre de cada sitio incrustado y puntitos de posición; quitadas las etiquetas de sitios (sus nombres pasan a ser el título de cada foto). En el trip.json privado, dirección del hotel de Andong comprobada por el usuario en Naver Map (116-1 Dongbu-dong) y sin VERIFICAR.
+- v168: «Leer más» del esquema del día pasa a ser un enlace discreto a la derecha (sin botón con borde). En el plan B de lluvia, cada sitio lleva solo el icono 🏯 a su derecha para abrirlo en Planes (irQV con solo = true).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
