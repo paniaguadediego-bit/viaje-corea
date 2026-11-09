@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v185
+Caché del service worker: corea-v186
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -237,6 +237,8 @@ Caché del service worker: corea-v185
 - v183: 🔍 buscador global en la cabecera (antes del 💱). Encontrar cosas era lo más rebuscado: con él, cualquier sitio, restaurante, lavandería, frase, palabra, tema de la Guía, capítulo de Historia o día del itinerario queda a 2 toques más lo que se escriba. Agrupado por tipo (6 por grupo, 8 días); «atrás» cierra la ventana. [Supuesto] Los buscadores de Planes y Diccionario se quedan de momento; si el recuento de uso dice que no se tocan, se quitan.
 - v184: título de la cabecera «Corea 2026» (se quita «del Sur» del título del viaje; el Resumen y las exportaciones lo mantienen completo). Sin reimportar el viaje.
 - v185: iconos de los mapas descuadrados respecto a las calles. Causa: coords.json aproximadas (3 decimales, ±100 m; varios restaurantes con el mismo punto, que el mapa separa). Desde el sandbox no se llega a Naver, Kakao ni OpenStreetMap para geolocalizar. Arreglo en dos partes: (1) en el mapa grande, mantener pulsado un icono y arrastrarlo a su calle lo guarda en user.coordsFix (confirmación; ↩️ en la ficha para deshacer; va con Pasar marcas); (2) corregir coords.json con búsqueda web por ciudades en el orden del viaje.
+  Resultado de la búsqueda web: los monumentos ya estaban bien; de restaurantes y cafés las webs solo dan dirección, no coordenadas, así que se corrigen arrastrando en el mapa o con «Estoy aquí».
+- v186: en Planes, Comer y Miscelánea, recuadros con borde más marcado y sombra; las visitadas ya no van atenuadas: fondo verde suave, filo verde a la izquierda y ✓ delante del nombre (claro y oscuro). La casilla sin marcar, con borde visible.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
