@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v175';
+const VERSION = 'v176';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1385,8 +1385,7 @@ const soloIco = h => h.replace(/(<(a|button)\b[^>]*)>\s*(\S+)\s+([^<]+)<\/\2>/g,
 function mpFicha(p, m) {
   // Sin repetir en la línea gris lo que ya dice el nombre («bar · cócteles» en «Jinhanbam (bar de cócteles…)»).
   const sub = String(p.sub || '').split(' · ').filter(x => x && !norm(p.es).includes(norm(x))).join(' · ');
-  return soloIco(`<div class="mp-f"><div class="mp-f-t"><b>${p.ic} ${esc(p.es)}</b>${p.l ? lpPill(p.l) : ''}<button class="sec mini" data-mpcerrar>✕</button></div>
-    ${p.ko ? `<div class="ko-s">${esc(p.ko)}</div>` : ''}
+  return soloIco(`<div class="mp-f"><div class="mp-f-t"><b>${p.ic} ${esc(p.es)}${p.ko ? ` <span class="mp-ko">• ${esc(p.ko)}</span>` : ''}</b>${p.l ? lpPill(p.l) : ''}<button class="sec mini" data-mpcerrar>✕</button></div>
     ${p.capa === 'sug' ? `<div class="sug-encaje">📍 ${esc(p.sub)}</div>${p.txt ? `<div class="muted">${esc(recorta(p.txt, 120))}</div>` : ''}` : `<div class="muted">${esc(sub)}${sub && p.txt ? ' · ' : ''}${p.txt ? esc(recorta(p.txt, 150)) : ''}</div>`}
     ${(() => { if (['itin', 'hotel', 'sug'].includes(p.capa)) return ''; const ps = m.pts.filter(x => x.capa === 'itin' && x.num != null); if (!ps.length || m.pts.some(x => x.capa === 'itin' && x.num == null)) return '';
       const [q, dk] = ps.map(x => [x, km(x.c, p.c)]).sort((a, b) => a[1] - b[1])[0]; return `<div class="mp-parada">📍 A ${fmtDist(dk)} de la parada ${q.num} (${esc(q.es)})</div>`; })()}
