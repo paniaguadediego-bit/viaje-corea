@@ -34,7 +34,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    cambio y aviso de copia), actualizar, borrar). En Hoy, botón rojo "🆘 Ayuda"
    a pantalla completa: hotel de esta noche en hangul grande, 112/119/1330,
    seguro y Embajada de España (urgencia consular VERIFICAR). El conversor ₩/€
-   es el botón 💱 junto al título y se abre en una ventana. Gastos: quitado (el usuario usa
+   es el botón 💱 junto al título y se abre en una ventana. Antes, 🔍 (desde v183): buscador global en ventana que busca a la vez en Puntos de interés, Comer, Miscelánea, itinerario (días), Frases, Diccionario, Guía e Historia (sin tildes y en hangul); tocar un resultado cierra la ventana y lleva a su ficha (frases y palabras: pantalla completa; 🔊 en la propia fila). Gastos: quitado (el usuario usa
    otra app). No añadir
    nada que no esté aquí. Ruta: vuelos, mapa y línea de tiempo con cada estancia (ciudad,
    noches, hotel y una línea por día) intercalada con los traslados; vuelos, estancias y traslados plegables, plegados solos cuando ya pasaron (o el traslado se marcó hecho en Hoy). Incluye un mapa esquemático de

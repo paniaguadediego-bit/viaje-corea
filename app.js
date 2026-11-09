@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v182';
+const VERSION = 'v183';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -27,12 +27,13 @@ function ir(t) {
   pila.push({ t: tab, y: window.scrollY }); tab = t; comerCongelado = false; history.pushState({ t }, ''); window.scrollTo(0, 0);
 }
 function cerrarFull() {
+  const bp = document.getElementById('busca-pop'); if (bp) { bp.remove(); return true; }
   const cp = document.getElementById('conv-pop'); if (cp) { cp.remove(); return true; }
   const f = document.getElementById('full'); if (!f) return false;
   f._lock?.release().catch(() => {}); f.remove(); return true;
 }
 window.addEventListener('popstate', () => {
-  if (cerrarFull()) return;
+  if (cerrarFull()) { if (buscaTras) { const f = buscaTras; buscaTras = null; setTimeout(f, 0); } return; }
   if (pila.length) { const a = pila.pop(); tab = a.t || a; render(); const y = a.y || 0; window.scrollTo(0, y); setTimeout(() => window.scrollTo(0, y), 60); }
 });
 let dayIdx = null;
@@ -2602,6 +2603,57 @@ function viewMas() {
   return rej + c;
 }
 
+// ---------- 🔍 Buscador global: todo a la vez (sitios, Comer, Miscelánea, días, frases, palabras, Guía, Historia) ----------
+let qG = '', buscaTras = null;
+function abrirBusca() {
+  if (document.getElementById('busca-pop')) return;
+  const d = document.createElement('div'); d.id = 'busca-pop';
+  d.innerHTML = `<div class="pop-caja"><div class="pop-cab"><input id="qg" type="search" placeholder="Buscar en toda la app (sitio, plato, frase…)" autocomplete="off" enterkeyhint="search" value="${esc(qG)}"><button class="sec mini" data-close>✕</button></div><div class="pop-cuerpo" id="rqg">${resGlobal(qG)}</div></div>`;
+  document.body.appendChild(d); history.pushState({ full: 1 }, '');
+  const i = d.querySelector('#qg'); i.focus(); i.select();
+  i.addEventListener('input', () => { qG = i.value; d.querySelector('#rqg').innerHTML = resGlobal(qG); });
+  // Al tocar un resultado se cierra el buscador (con «atrás», para no dejar historia de más) y se va a su sitio.
+  d.addEventListener('click', e => {
+    if (e.target === d) { history.back(); return; }
+    if (e.target.closest('[data-habla],[data-fav]')) return;
+    const r = e.target.closest('.bg-r'); if (!r) return;
+    e.preventDefault(); e.stopPropagation();
+    const ds = { ...r.dataset }; delete ds.bg;
+    buscaTras = () => { const b = document.createElement('button'); b.hidden = true; Object.assign(b.dataset, ds); document.body.appendChild(b); b.click(); b.remove(); };
+    history.back();
+  }, true);
+}
+function resGlobal(q) {
+  const a = nb(q).trim(); if (a.length < 2) return '<p class="muted centro">Escribe al menos 2 letras. Busca a la vez en Planes, Comer, Miscelánea, el itinerario, Frases, Diccionario, la Guía y la Historia (también en hangul).</p>';
+  const fila = (attrs, ic, t, sub, ko) => `<div class="bg-r" data-bg ${attrs}><span class="bg-ic">${ic}</span><span class="bg-t"><b>${esc(t)}</b>${ko ? ` <span class="ko-s">${esc(ko)}</span>` : ''}<small class="muted">${sub}</small></span></div>`;
+  const G = [], grupo = (tit, rs, n = 6) => { if (rs.length) G.push(`<div class="bg-g">${tit} <span class="muted">${rs.length}</span></div>` + rs.sort((x, y) => y.p - x.p).slice(0, n).map(x => x.h).join('') + (rs.length > n ? `<p class="muted bg-mas">y ${rs.length - n} más: afina la búsqueda</p>` : '')); };
+  const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {};
+  const sit = []; ciudadesCatalogo().forEach(k => sitiosCiudadObj(k).forEach(l => { const h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
+    const p = coincide(q, [l.es, l.ko, l.romanizacion].join(' '), [l.tipo, txt].join(' ')); if (p) sit.push({ p, h: fila(`data-irqv="${esc(k)}" data-h="${esc(h)}"`, icSitio((l.tipo || '') + ' ' + l.es), l.es, `${tema(k).ic} ${esc(nombreCiudad(k))} · Planes`, l.ko) }); }));
+  grupo('🏯 Puntos de interés', sit);
+  grupo('🍜 Comer', lugaresComer().map(l => ({ l, p: coincide(q, [l.nombre, l.ko].join(' '), [l.plato, l.tipo, l.nota, l.direccion].join(' ')) })).filter(x => x.p)
+    .map(({ l, p }) => ({ p, h: fila(`data-ircomer="${esc(l.ciudad)}" data-q="${esc(l.nombre)}"`, '🍜', l.nombre, `${tema(l.ciudad).ic} ${esc(nombreCiudad(l.ciudad))}${l.plato ? ' · ' + esc(l.plato) : ''}`, l.ko) })));
+  grupo('🧩 Miscelánea', (typeof PLANES !== 'undefined' ? PLANES : []).map(l => ({ l, p: coincide(q, [l.es, l.ko, l.romanizacion].join(' '), [l.desc, l.direccion_en, l.cat].join(' ')) })).filter(x => x.p)
+    .map(({ l, p }) => ({ p, h: fila(`data-irplan="${esc(l.ciudad)}" data-cat="${esc(l.cat || '')}"`, icPlan(l), l.es, `${tema(l.ciudad).ic} ${esc(nombreCiudad(l.ciudad))} · Miscelánea`, l.ko) })));
+  grupo('📅 Itinerario', arr(trip && trip.dias).map((d, i) => { const its = [d.titulo, ...arr(d.items).map(x => x && x.texto)].filter(Boolean), m = its.find(t => nb(t).includes(a));
+    return m ? { p: 1, i, h: fila(`data-bdia="${i}"`, tema(ck(d.ciudad)).ic, `Día ${i + 1} · ${fmtCorto(d.fecha)} · ${d.ciudad || ''}`, esc(recorta(m, 90))) } : null; }).filter(Boolean).map(x => ({ ...x, p: -x.i })), 8);
+  grupo('💬 Frases', FRASES.map((f, i) => ({ f, i, p: coincide(q, f[0] + ' ' + f[1], f[2]) })).filter(x => x.p)
+    .map(({ f, i, p }) => ({ p, h: `<div class="bg-r bg-ko" data-bg data-full="f:${i}"><span class="bg-ic">💬</span><span class="bg-t"><b>${esc(f[0])}</b><small><span class="ko-s">${esc(f[1])}</span> · ${esc(f[2])}</small></span>${btnHabla(f[1])}</div>` })));
+  const pal = []; (typeof DICC !== 'undefined' ? DICC : []).forEach(([cat, es], ci) => es.forEach((e, i) => { const p = coincide(q, e[0] + ' ' + e[1], e[2]); if (p) pal.push({ p, h: `<div class="bg-r bg-ko" data-bg data-full="d:${ci}:${i}"><span class="bg-ic">📖</span><span class="bg-t"><b>${esc(e[0])}</b><small><span class="ko-s">${esc(e[1])}</span> · ${esc(e[2])} · ${esc(cat)}</small></span>${btnHabla(e[1])}</div>` }); }));
+  grupo('📖 Diccionario', pal);
+  grupo('🇰🇷 Guía', GUIA.map(([t, ps]) => ({ t, p: coincide(q, t, arr(ps).join(' ')) })).filter(x => x.p)
+    .map(({ t, p }) => ({ p, h: fila(`data-bguia="${esc(t)}"`, icGuia(t), t, 'Corea · Guía') })));
+  grupo('📜 Historia', (typeof HISTORIA_COREA !== 'undefined' ? HISTORIA_COREA : []).map((c, i) => ({ c, i, p: coincide(q, c.t, arr(c.p).join(' ')) })).filter(x => x.p)
+    .map(({ c, i, p }) => ({ p, h: fila(`data-bhist="${i}"`, c.ic || '📜', c.t, `Capítulo ${i + 1}`) })));
+  return G.length ? G.join('') : '<p class="muted centro">Nada con eso. Prueba otra palabra, en singular o en hangul.</p>';
+}
+document.addEventListener('click', e => {
+  if (e.target.closest('#buscabtn')) { abrirBusca(); return; }
+  const b = e.target.closest('[data-bdia],[data-bguia],[data-bhist]'); if (!b) return;
+  if (b.dataset.bdia != null) { dayIdx = +b.dataset.bdia; ir('hoy'); render(); window.scrollTo(0, 0); }
+  else if (b.dataset.bguia != null) { guiaSel = b.dataset.bguia; coreaSub = 'guia'; ir('corea'); render(); const g = document.querySelector('.guia-t.on'); if (g) g.scrollIntoView({ block: 'start' }); }
+  else { histCap = +b.dataset.bhist; ir('historia'); render(); window.scrollTo(0, 0); }
+});
 // ---------- 📊 Qué tocáis y qué no (solo en este móvil, para decidir qué quitar) ----------
 // Cada control se agrupa por su función (todos los «Visitado» cuentan como uno); los de navegación, por su destino.
 const K_USO = 'corea.uso';
@@ -2729,7 +2781,7 @@ function viewEscala() {
 let renderPendiente = false;
 function renderLuego() {
   const ae = document.activeElement;
-  if (ae && /^(SELECT|INPUT|TEXTAREA)$/.test(ae.tagName) && ae.closest('#view, #conv-pop')) { renderPendiente = true; return; }
+  if (ae && /^(SELECT|INPUT|TEXTAREA)$/.test(ae.tagName) && ae.closest('#view, #conv-pop, #busca-pop')) { renderPendiente = true; return; }
   render();
 }
 document.addEventListener('focusout', () => { if (renderPendiente) { renderPendiente = false; setTimeout(render, 50); } });
