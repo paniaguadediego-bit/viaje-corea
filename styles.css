@@ -1410,3 +1410,5 @@ button.es-mas { margin-right: 14px; }
 /* v179: horario en el esquema del día */
 .esquema .es-hor { color: var(--muted, #888); font-size: .82em; white-space: nowrap; }
 .es-ley { font-size: .78rem; text-align: right; margin: 2px 14px 0 0; }
+/* v180: sin columna de horas en el esquema; el horario va tras cada sitio */
+.esquema li { grid-template-columns: 1.5em 1fr; }

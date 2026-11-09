@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v179
+Caché del service worker: corea-v180
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -231,6 +231,7 @@ Caché del service worker: corea-v179
 - v177: fichas de sitio de Hoy con indicador de plegado (▾ abajo a la derecha si está abierta, «▸ más» si está plegada) y el botón de Planes solo con el icono 🏯.
 - v178: más fotos: si Wikipedia (inglesa y coreana) no da foto, se busca en Wikimedia Commons por el hangul y, si no, por el nombre (descartando mapas, planos y logos); el crédito dice «Wikimedia Commons»; se reintentan las fotos que fallaron y cada foto se busca una sola vez aunque la pidan varias miniaturas. [Supuesto] La búsqueda por nombre puede dar alguna foto de otro sitio con el mismo nombre: si pasa, se marca ese sitio con sinFoto o se le pone su artículo. Historia sin la segunda franja de colores arriba. Idioma: ⭐ Favoritas primero y abierta por defecto.
 - v179: en el esquema del día (Hoy), el horario del sitio de cada línea entre paréntesis (de HORARIOS); con * si está por verificar, y la leyenda «* Horario por verificar» sale al tocar «Leer más». Se toma el sitio que se nombra primero en la línea; las líneas de transporte (bus, KTX, taxi…) no llevan horario. [Supuesto] Sitios sin horario apertura-cierre (mercado de Hahoe, Museo de Máscaras…) van sin paréntesis.
+- v180: el horario va justo detrás de cada sitio, no al final de la línea; si una línea nombra dos sitios, cada uno lleva el suyo. Cada sitio sale una vez por día, en la línea que más lo nombra (los drones, no la cena «en Gwangalli»). Un paréntesis pegado al nombre solo se salta si es parte de él (hangul u otro nombre). Quitada la columna de horas de la izquierda del esquema.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
