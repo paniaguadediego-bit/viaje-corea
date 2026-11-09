@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v166';
+const VERSION = 'v167';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -576,12 +576,14 @@ function viewHoy() {
   // Tira de días: se desliza y se toca el día.
   html += `<div class="dias-tira" id="tira">${dias.map((x, i) => { const f = new Date(x.fecha + 'T12:00:00');
     return `<button class="dchip ${i === dayIdx ? 'on' : ''} ${x.fecha === hoy ? 'hoy' : ''} ${enViaje && x.fecha < hoy ? 'pasado' : ''}" data-dsel="${i}" style="${varsTema(ck(x.ciudad))}"><small>${f.toLocaleDateString('es-ES', { weekday: 'short' })}</small><b>${f.getDate()}</b><span>${tema(ck(x.ciudad)).ic}</span>${diarioDe(x.fecha).cara ? `<i class="dchip-cara">${diarioDe(x.fecha).cara}</i>` : ''}</button>`; }).join('')}</div>
-  ${(() => { const ls = listaDia(d), ws = [...new Set(ls.map(wikiDe).filter(Boolean))], fw = ws[0], tc = tema(ck(d.ciudad));
+  ${(() => { const ls = listaDia(d), tc = tema(ck(d.ciudad));
+    // Fotos del carrusel: una por sitio del itinerario que tenga artículo (o hangul), con su nombre como título.
+    const fs = []; ls.forEach(l => { const w = l.sinFoto ? '' : (wikiDe(l) || (l.ko ? 'ko:' + String(l.ko).replace(/\s+/g, '') : '')); if (w && !fs.some(x => x.w === w)) fs.push({ w, n: `${icSitio((l.tipo || '') + ' ' + l.es)} ${l.es}` }); });
     return `<div class="card dia dia2" style="${varsTema(ck(d.ciudad))}">
-    <div class="dia-banner">${fw ? `<div class="foto dia-foto" data-wiki="${esc(fw)}" data-wikis="${esc(ws.join('|'))}"><span></span></div>` : ''}
-      <div class="dia-ov"><div class="dia-sup">${tc.ic} Día ${dayIdx + 1} de ${dias.length} · ${fmtDate(d.fecha)} · ${esc(d.ciudad)}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</div>
-        <div class="dia-tit">${esc(d.titulo)}</div>${chipTiempo(d)}</div></div>
-    ${ls.length ? `<div class="dia-chips">${ls.map(l => `<button class="dchip2" data-hs="sitios">${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es.replace(/^(Palacio|Templo|Barrio|Mercado|Aldea|Playa|Puerta|Mirador|Santuario|Calle|Arroyo|Plaza|Torre|Túmulos|Observatorio|Museo|Gruta|Puente|Academia|Escuela confuciana|Isla) /, ''))}</button>`).join('')}</div>` : ''}`; })()}
+    <div class="dia-cab"><div class="dia-sup">${tc.ic} Día ${dayIdx + 1} de ${dias.length} · ${fmtDate(d.fecha)} · ${esc(d.ciudad)}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</div>
+      <div class="dia-tit">${esc(d.titulo)}</div>${chipTiempo(d)}</div>
+    ${fs.length ? `<div class="dia-banner"><div class="foto dia-foto" data-wiki="${esc(fs[0].w)}" data-wikis="${esc(fs.map(x => x.w).join('|'))}" data-noms="${esc(fs.map(x => x.n).join('|'))}"><span></span></div>
+      <div class="dia-cap">${esc(fs[0].n)}</div>${fs.length > 1 ? `<div class="dia-puntos">${fs.map((x, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>` : ''}</div>` : ''}`; })()}
     ${esquemaDia(d)}
   </div>`;
 
@@ -1105,7 +1107,9 @@ setInterval(async () => {
   const ws = el.dataset.wikis.split('|').filter(Boolean); if (ws.length < 2) return;
   for (let n = 1; n < ws.length; n++) { const w = ws[(ws.indexOf(el.dataset.wiki) + n) % ws.length], f = await fotoWiki(w); if (!f || !f.src) continue;
     const img = new Image(); img.alt = ''; img.className = 'rota';
-    img.onload = () => { if (!el.isConnected) return; el.dataset.wiki = w; const viejo = el.querySelector('img'); el.appendChild(img); requestAnimationFrame(() => img.classList.add('on')); setTimeout(() => viejo && viejo.remove(), 900); };
+    img.onload = () => { if (!el.isConnected) return; el.dataset.wiki = w; const viejo = el.querySelector('img'); el.appendChild(img); requestAnimationFrame(() => img.classList.add('on')); setTimeout(() => viejo && viejo.remove(), 900);
+      const ix = ws.indexOf(w), noms = (el.dataset.noms || '').split('|'), ban = el.parentElement, cap = ban && ban.querySelector('.dia-cap');
+      if (cap && noms[ix]) cap.textContent = noms[ix]; if (ban) ban.querySelectorAll('.dia-puntos i').forEach((p, k) => p.classList.toggle('on', k === ix)); };
     img.src = /\/\d+px-/.test(f.src) ? f.src.replace(/\/\d+px-/, '/800px-') : f.src; img.onerror = () => { if (img.src !== f.src) img.src = f.src; };
     return; }
 }, 6000);
