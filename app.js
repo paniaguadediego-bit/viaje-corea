@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v173';
+const VERSION = 'v174';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -2037,11 +2037,30 @@ function viewIdioma() {
 const GUIA_BLOQUES = [
   ['🚇 Moverse', ['T-money y transporte', 'Metro y KTX', 'Taxis', 'Apps', 'Internet y móvil', 'Entrada al país']],
   ['💳 Dinero y compras', ['Dinero y pagos', 'Compras, tax free y último día', 'Propinas', 'Tiendas 24 h']],
-  ['🍜 Comida', ['Comida', 'platos', 'Snacks de tienda 24 h', 'En la mesa (Lonely Planet)', 'Beber a la coreana']],
+  ['🍜 Comida', ['Comida', 'platos', 'snacks', 'En la mesa (Lonely Planet)', 'Beber a la coreana']],
   ['🙇 Costumbres y cultura', ['Etiqueta', 'Saber estar (Lonely Planet)', 'Zapatos', 'Templos', 'Fechas de vuestro viaje']],
   ['🚨 Salud, seguridad y práctico', ['Seguridad y emergencias', 'Salud y farmacias', 'Baños', 'Enchufes', 'Clima en noviembre', 'Qué llevar (Lonely Planet)', 'Lo básico (Lonely Planet)', 'Consejos de la Lonely Planet']],
   ['🏛️ País', 'pais']
 ];
+// 🍪 Snacks: la captura que añada el usuario (solo en su móvil: localStorage 'corea.img.snacks', reducida a JPEG) y la lista con hangul.
+const K_SNACKS = 'corea.img.snacks';
+function guiaSnacks() {
+  let img = ''; try { img = localStorage.getItem(K_SNACKS) || ''; } catch {}
+  return `<div class="card guia-txt snacks"><b>🍪 Snacks de tienda 24 h</b>
+    ${img ? `<div class="foto ok snack-img" data-wiki=""><img alt="" src="${img}"></div><button class="sec mini" data-snackimg="quitar">✕ Quitar la imagen</button>`
+      : `<button class="sec mini" data-snackimg="poner">📷 Poner aquí tu captura (se guarda solo en tu móvil)</button>`}
+    <p class="muted">Los clásicos de cualquier GS25, CU o 7-Eleven: buen recuerdo barato para regalar. Si no lo encontráis, enseñad el nombre en hangul.</p>
+    ${(typeof SNACKS !== 'undefined' ? SNACKS : []).map(([es, ko, d]) => `<div class="card plato"><div><b>${esc(es)}</b><div class="muted">${esc(d)}</div></div><div class="ko">${esc(ko)}${btnHabla(ko)}</div></div>`).join('')}</div>`;
+}
+function ponerSnackImg() {
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async () => { const f = inp.files && inp.files[0]; if (!f) return;
+    try { const bm = await createImageBitmap(f), esc0 = Math.min(1, 1100 / bm.width), cv = document.createElement('canvas');
+      cv.width = Math.round(bm.width * esc0); cv.height = Math.round(bm.height * esc0); cv.getContext('2d').drawImage(bm, 0, 0, cv.width, cv.height);
+      localStorage.setItem(K_SNACKS, cv.toDataURL('image/jpeg', 0.82)); render(); }
+    catch { alert('No se pudo guardar la imagen (quizá es demasiado grande).'); } };
+  inp.click();
+}
 function glosarioPlatos() {
   if (typeof PLATOS === 'undefined') return '';
   return `<div class="card guia-txt"><b>🥢 Platos típicos ${lpPill({ lp: 1 })}</b><div class="chips">${PLATOS.map(([t], gi) => `<button class="chip ${gi === platoGrupo ? 'on' : ''}" data-pg="${gi}">${esc(t)}</button>`).join('')}</div>
@@ -2053,14 +2072,15 @@ function viewCorea() {
   const btn = (k, ic, t, lp) => `<button class="guia-t ${k === guiaSel ? 'on' : ''}" data-guia="${esc(k)}"><span>${ic}</span>${esc(t)}${lp ? '<small>LP</small>' : ''}</button>`;
   const detalle = k => {
     if (k === 'platos') return glosarioPlatos();
+    if (k === 'snacks') return guiaSnacks();
     if (k.startsWith('pais:')) { paisSel = k.slice(5); return viewPais(true); }
     const g = GUIA.find(([t]) => t === k); if (!g) return '';
     return `<div class="card guia-txt"><b>${icGuia(g[0])} ${esc(g[0])}</b><ul>${g[1].map(x => `<li>${resaltar(x, true)}</li>`).join('')}${g[0] === 'Dinero y pagos' ? pagoAlli() : ''}</ul></div>`;
   };
   return GUIA_BLOQUES.map(([tit, ts], bi) => {
     const items = ts === 'pais' ? P.map(x => ['pais:' + x.id, x.ic, x.t])
-      : [...ts, ...(bi === GUIA_BLOQUES.length - 2 ? resto : [])].filter(t => t === 'platos' || GUIA.some(([g]) => g === t))
-        .map(t => t === 'platos' ? ['platos', '🥢', 'Platos típicos'] : [t, icGuia(t), t.replace(/ \(Lonely Planet\)/, ''), /Lonely/.test(t)]);
+      : [...ts, ...(bi === GUIA_BLOQUES.length - 2 ? resto : [])].filter(t => t === 'platos' || t === 'snacks' || GUIA.some(([g]) => g === t))
+        .map(t => t === 'platos' ? ['platos', '🥢', 'Platos típicos'] : t === 'snacks' ? ['snacks', '🍪', 'Snacks de tienda 24 h'] : [t, icGuia(t), t.replace(/ \(Lonely Planet\)/, ''), /Lonely/.test(t)]);
     if (!items.length) return '';
     const abierto = items.some(([k]) => k === guiaSel);
     return `<h2 class="guia-bloque">${esc(tit)}</h2><div class="guia-rej">${items.map(([k, ic, t, lp]) => btn(k, ic, t, lp)).join('')}</div>${abierto ? detalle(guiaSel) : ''}`;
@@ -2654,6 +2674,7 @@ document.addEventListener('click', e => {
 }, true);
 // 🔍 Visor: tocar cualquier foto cargada la abre en grande (otra vez = cerrar). Va antes que todo para que no abra/cierre la ficha.
 document.addEventListener('click', e => {
+  const si = e.target.closest('[data-snackimg]'); if (si) { e.preventDefault(); e.stopPropagation(); if (si.dataset.snackimg === 'poner') ponerSnackImg(); else if (confirm('¿Quitar la imagen de los snacks?')) { try { localStorage.removeItem(K_SNACKS); } catch {} render(); } return; }
   const cb = e.target.closest('[data-carr]'); if (cb) { e.preventDefault(); e.stopPropagation(); carrUlt = Date.now(); carrusel(+cb.dataset.carr); return; }
   if (Date.now() - carrSwipe < 400 && e.target.closest('.dia-banner')) { e.preventDefault(); e.stopPropagation(); return; }
   const vz = document.getElementById('visor'); if (vz && e.target.closest('#visor')) { if (!e.target.closest('a')) vz.remove(); e.preventDefault(); e.stopPropagation(); return; }

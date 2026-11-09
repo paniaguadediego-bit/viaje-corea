@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v173
+Caché del service worker: corea-v174
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -225,6 +225,7 @@ Caché del service worker: corea-v173
 - v171: Busan: espectáculo de drones de Gwangalli (광안리 M 드론라이트쇼; sábados a las 19:00 y 21:00 de octubre a febrero, ~12 min, gratis, según el Ayuntamiento de Busan) en Planes y, en el trip.json privado, el sábado 14 tras la cena en Gwangalli. Guía → Comida: «🍪 Snacks de tienda 24 h» con los clásicos y su hangul (la imagen de Instagram que pasó el usuario no se sube: no es nuestra). Título del carrusel en una pastilla oscura. El horario de un sitio que abre 1-2 días dice «solo los sábados» en vez de listar los cierres.
 - v172: cabecera de Hoy: «Día X de Y · HOY» más grande y en su propia línea (debajo, fecha y ciudad), y el tiempo del día más pequeño, como pidió el usuario.
 - v173: el esquema del itinerario de Hoy deja margen a ambos lados (el texto llegaba al borde derecho de la tarjeta). Icono 📝 para líneas del suneung o exámenes (antes salía ✈️ porque mencionaba el aeropuerto).
+- v174: Snacks de tienda 24 h como ficha propia: los 12 snacks en el orden de la imagen del usuario, cada uno con su hangul, 🔊 y una línea; botón «📷 Poner aquí tu captura» que guarda la imagen reducida (JPEG ~200 KB) solo en el móvil (localStorage corea.img.snacks), se ve arriba de la ficha y se abre en grande; la imagen de Instagram no se sube al repo (no es nuestra).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

@@ -1391,3 +1391,8 @@ button.es-mas { display: block; width: auto; min-height: 0; margin: 0 12px 8px a
 .esquema { padding: 0 14px 0 10px; }
 .esquema li { grid-template-columns: 2.9em 1.5em 1fr; }
 button.es-mas { margin-right: 14px; }
+/* v174: snacks con la captura del usuario */
+.snacks .snack-img { width: 100%; height: auto; border-radius: 10px; overflow: hidden; margin: 8px 0 4px; }
+.snacks .snack-img img { width: 100%; height: auto; display: block; }
+.snacks .plato .ko { display: flex; align-items: center; gap: 4px; }
+.snacks .plato .habla { float: none; width: 28px !important; height: 28px; min-height: 28px !important; font-size: .8rem; margin: 0; }

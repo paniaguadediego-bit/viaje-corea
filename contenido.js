@@ -116,6 +116,21 @@ const FRASES_SIT = [
 const FRASES = FRASES_SIT.flatMap(([, fs]) => fs);
 
 // Guía de Corea: [título, [puntos]]. "VERIFICAR" = comprobar antes de fiarse.
+// 🍪 Snacks de tienda 24 h (Guía → Comida): nombre, hangul y una línea. Se compran en GS25, CU o 7-Eleven.
+const SNACKS = [
+  ['Pepero', '빼빼로', 'Palitos de galleta bañados en chocolate. El 11 de noviembre es el «Día del Pepero» (estaréis en Gyeongju).'],
+  ['Choco Pie', '초코파이', 'Bizcocho redondo con nube y cobertura de chocolate. El clásico de los clásicos.'],
+  ['Turtle Chips', '꼬북칩', 'Patatas de varias capas, muy crujientes.'],
+  ['Whale Snack', '고래밥', 'Galletitas saladas con forma de ballena y otros animales marinos.'],
+  ['Shrimp Crackers', '새우깡', 'Gusanitos con sabor a gamba, ligeros y salados.'],
+  ['Honey Butter Chip', '허니버터칩', 'Patatas fritas dulces de miel y mantequilla.'],
+  ['Kkokkalcorn', '꼬깔콘', 'Conos crujientes de maíz, salados y algo dulces.'],
+  ['Choco Heim', '초코하임', 'Barquillo crujiente relleno de crema de chocolate.'],
+  ['Binch', '빈츠', 'Galleta con una capa de chocolate por encima.'],
+  ['Home Run Ball', '홈런볼', 'Bolitas de bizcocho blando rellenas de crema de chocolate.'],
+  ['Kancho', '칸쵸', 'Galletitas pequeñas rellenas de chocolate, con dibujos.'],
+  ['Yakgwa', '약과', 'Galleta tradicional de miel y aceite de sésamo, blandita; ha vuelto a ponerse de moda.']
+];
 const GUIA = [
   ['T-money y transporte', [
     'Tarjeta recargable para metro, bus y muchos taxis. Se compra y recarga en tiendas 24 h (GS25, CU, 7-Eleven) y máquinas del metro.',
@@ -194,16 +209,6 @@ const GUIA = [
   ['Internet y móvil', [
     'Wifi gratis en metro, cafés y muchas calles; aun así, la eSIM con datos es muy útil para Naver Map y Papago.',
     'Algunas apps coreanas piden número coreano para registrarse: tenedlas probadas antes del viaje.'
-  ]],
-  ['Snacks de tienda 24 h', [
-    'Los clásicos que venden en cualquier GS25, CU o 7-Eleven (buen recuerdo barato para regalar):',
-    'Pepero (빼빼로): palitos de galleta bañados en chocolate. El 11 de noviembre es el «Día del Pepero» y se regalan por todas partes (ese día estaréis en Gyeongju).',
-    'Choco Pie (초코파이): bizcocho con nube y cobertura de chocolate. Honey Butter Chip (허니버터칩): patatas dulces de miel y mantequilla.',
-    'Turtle Chips (꼬북칩): patatas de varias capas, muy crujientes. Kkokkalcorn (꼬깔콘): conos de maíz. Shrimp Crackers (새우깡): gusanitos de gamba.',
-    'Whale Snack (고래밥): galletitas con forma de ballena. Home Run Ball (홈런볼): bolitas de bizcocho rellenas de crema de chocolate. Kancho (칸쵸): galletitas rellenas de chocolate.',
-    'Choco Heim (초코하임): barquillo relleno de chocolate. Binch (빈츠): galleta con chocolate por encima.',
-    'Yakgwa (약과): galleta tradicional de miel y aceite de sésamo, blandita; ahora vuelve a estar de moda entre los jóvenes.',
-    'Truco: enseñad el nombre en hangul al dependiente si no lo encontráis.'
   ]],
   ['Compras, tax free y último día', [
     'En tiendas con el cartel "Tax Free" se pide la devolución del IVA con el pasaporte (llevadlo encima al comprar).',
