@@ -1314,3 +1314,19 @@ details.vuelo-pl.pasado > summary { text-decoration: line-through; opacity: .6; 
 body[data-pest="idioma"] { --acc: #8e3a6d; }
 h2.guia-bloque { margin: 18px 4px 6px; }
 h2.guia-bloque:first-child { margin-top: 4px; }
+/* v163: Hoy más limpio */
+.sitios-dia .rd-tit { display: block; text-align: center; margin: 8px 0 4px; }
+.sitios-dia .naver-dia { display: flex; justify-content: center; }
+.sitios-dia details.tramo-pl > summary, .sitios-dia .tramo { justify-content: center; text-align: center; }
+.sitios-dia details.tramo-pl > summary::after { margin-left: 6px; }
+.sitios-dia .tramo .tramo-ir { justify-content: center; flex-wrap: wrap; gap: 6px; }
+.sitios-dia details.sd > summary .irqv { margin-left: 2px; }
+.dchip { position: relative; }
+.dchip .dchip-cara { position: absolute; bottom: -4px; right: -4px; font-style: normal; font-size: .8rem; line-height: 1; background: var(--card); border-radius: 50%; padding: 1px; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.dia-foto { position: relative; }
+.dia-foto img.rota { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .8s; }
+.dia-foto img.rota.on { opacity: 1; }
+.esquema.largo .es-t { font-size: .9em; }
+.es-mas { display: block; margin: 2px auto 6px; }
+details.hotel-pl > summary, details.diario-pl > summary { text-align: center; }
+.sitios-dia details.sd > summary .irqv, .sitios-dia details.sd > summary .btn-hecho, .sitios-dia details.sd > summary > button { display: inline-flex; align-items: center; justify-content: center; width: auto; min-height: 32px; padding-top: 0; padding-bottom: 0; margin-top: 0; margin-bottom: 4px; vertical-align: middle; }

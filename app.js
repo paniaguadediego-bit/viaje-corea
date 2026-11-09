@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v162';
+const VERSION = 'v163';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -485,8 +485,8 @@ function alojDe(f) {
 const estrDe = k => Number(((u().estrellas || {})[k] || {}).v) || 0;
 const estrTxt = v => v ? '★'.repeat(v) + '☆'.repeat(5 - v) : '';
 const estrBox = (k, nombre) => { const v = estrDe(k); return `<div class="estrellas">Nuestra valoración: ${[1, 2, 3, 4, 5].map(n => `<button class="star ${v >= n ? 'on' : ''}" data-stk="${esc(k)}" data-stn="${esc(nombre || '')}" data-sv="${n}" aria-label="${n} estrellas">★</button>`).join('')}</div>`; };
-const alojCard = (a, sale) => `<div class="card aloj">
-    <div class="big">🛏️ ${esc(a.nombre)} ${ver(a)}</div>${sale ? '<div class="badge pend">Hoy dejáis este alojamiento</div>' : ''}
+const alojCard = (a, sale, sinTit = false) => `<div class="card aloj">
+    ${sinTit ? '' : `<div class="big">🛏️ ${esc(a.nombre)} ${ver(a)}</div>`}${sale ? '<div class="badge pend">Hoy dejáis este alojamiento</div>' : ''}
     ${a.ko ? `<div class="ko">${esc(a.ko)}</div>` : ''}
     ${a.direccion_ko ? `<div>${esc(a.direccion_ko)}</div>` : ''}
     ${a.direccion_en ? `<div class="muted">${esc(a.direccion_en)}</div>` : ''}
@@ -495,9 +495,9 @@ const alojCard = (a, sale) => `<div class="card aloj">
 // ---------- Diario: carita y nota de cada día (solo en el móvil; va en "Exportar copia") ----------
 const CARAS = [['😍', 'Genial'], ['🙂', 'Bien'], ['😐', 'Normal'], ['😩', 'Duro']];
 const diarioDe = f => (u().diario || {})[f] || {};
-function diarioCard(d) {
+function diarioCard(d, sinTit = false) {
   const e = diarioDe(d.fecha), fut = d.fecha > todayISO();
-  return `<div class="card diario"><b>📔 ¿Qué tal el día?</b>
+  return `<div class="card diario">${sinTit ? '' : '<b>📔 ¿Qué tal el día?</b>'}
     <div class="caras">${CARAS.map(([c, t]) => `<button class="cara ${e.cara === c ? 'on' : ''}" data-cara="${d.fecha}|${c}"><span>${c}</span><small>${t}</small></button>`).join('')}</div>
     <textarea data-diario="${d.fecha}" rows="5" placeholder="${fut ? 'Este día aún no ha llegado; puedes apuntar ideas.' : 'Qué hicisteis, lo mejor, anécdotas… (se guarda solo)'}">${esc(e.nota || '')}</textarea></div>`;
 }
@@ -544,9 +544,10 @@ const cortoItem = t => { let x = String(t || '').replace(/\s*\([^)]*\)/g, '').sp
 function esquemaDia(d) {
   const its = arr(d.items); if (!its.length) return '';
   const key = 'itx:' + d.fecha;
-  return `<ol class="esquema">${its.map(i => `<li><span class="es-h">${i.hora ? esc(i.hora) : ''}</span><span class="es-ic">${icItem(i.texto)}</span><span class="es-t">${resaltar(cortoItem(i.texto))}</span></li>`).join('')}</ol>
-    <details class="items-pl" data-key="${key}" ${abierto(key, false) ? 'open' : ''}><summary>📄 Texto completo del plan</summary><ul class="items">${its.map(i =>
-      `<li>${i.hora ? `<span class="hora">${esc(i.hora)}</span>` : ''}${resaltar(i.texto)}</li>`).join('')}</ul></details>`;
+  // «Leer más» no abre otra lista: amplía cada línea del esquema con su texto completo, en el mismo sitio.
+  const largo = !!abiertos[key], hay = its.some(i => cortoItem(i.texto) !== String(i.texto || '').trim().replace(/[.:]$/, ''));
+  return `<ol class="esquema ${largo ? 'largo' : ''}">${its.map(i => `<li><span class="es-h">${i.hora ? esc(i.hora) : ''}</span><span class="es-ic">${icItem(i.texto)}</span><span class="es-t">${resaltar(largo ? i.texto : cortoItem(i.texto))}</span></li>`).join('')}</ol>
+    ${hay ? `<button class="sec mini es-mas" data-esmas="${key}">${largo ? '▴ Leer menos' : '▾ Leer más'}</button>` : ''}`;
 }
 function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
@@ -570,10 +571,10 @@ function viewHoy() {
 
   // Tira de días: se desliza y se toca el día.
   html += `<div class="dias-tira" id="tira">${dias.map((x, i) => { const f = new Date(x.fecha + 'T12:00:00');
-    return `<button class="dchip ${i === dayIdx ? 'on' : ''} ${x.fecha === hoy ? 'hoy' : ''} ${enViaje && x.fecha < hoy ? 'pasado' : ''}" data-dsel="${i}" style="${varsTema(ck(x.ciudad))}"><small>${f.toLocaleDateString('es-ES', { weekday: 'short' })}</small><b>${f.getDate()}</b><span>${diarioDe(x.fecha).cara || tema(ck(x.ciudad)).ic}</span></button>`; }).join('')}</div>
-  ${(() => { const ls = listaDia(d), fw = ls.map(wikiDe).find(Boolean), tc = tema(ck(d.ciudad));
+    return `<button class="dchip ${i === dayIdx ? 'on' : ''} ${x.fecha === hoy ? 'hoy' : ''} ${enViaje && x.fecha < hoy ? 'pasado' : ''}" data-dsel="${i}" style="${varsTema(ck(x.ciudad))}"><small>${f.toLocaleDateString('es-ES', { weekday: 'short' })}</small><b>${f.getDate()}</b><span>${tema(ck(x.ciudad)).ic}</span>${diarioDe(x.fecha).cara ? `<i class="dchip-cara">${diarioDe(x.fecha).cara}</i>` : ''}</button>`; }).join('')}</div>
+  ${(() => { const ls = listaDia(d), ws = [...new Set(ls.map(wikiDe).filter(Boolean))], fw = ws[0], tc = tema(ck(d.ciudad));
     return `<div class="card dia dia2" style="${varsTema(ck(d.ciudad))}">
-    <div class="dia-banner">${fw ? `<div class="foto dia-foto" data-wiki="${esc(fw)}"><span></span></div>` : ''}
+    <div class="dia-banner">${fw ? `<div class="foto dia-foto" data-wiki="${esc(fw)}" data-wikis="${esc(ws.join('|'))}"><span></span></div>` : ''}
       <div class="dia-ov"><div class="dia-sup">${tc.ic} Día ${dayIdx + 1} de ${dias.length} · ${fmtDate(d.fecha)} · ${esc(d.ciudad)}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</div>
         <div class="dia-tit">${esc(d.titulo)}</div>${chipTiempo(d)}</div></div>
     ${ls.length ? `<div class="dia-chips">${ls.map(l => `<button class="dchip2" data-hs="sitios">${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es.replace(/^(Palacio|Templo|Barrio|Mercado|Aldea|Playa|Puerta|Mirador|Santuario|Calle|Arroyo|Plaza|Torre|Túmulos|Observatorio|Museo|Gruta|Puente|Academia|Escuela confuciana|Isla) /, ''))}</button>`).join('')}</div>` : ''}`; })()}
@@ -585,14 +586,16 @@ function viewHoy() {
   const secs = [
     // El traslado va dentro de Sitios, como primer tramo de la ruta del día.
     ['sitios', '📖 Sitios', (tr.length ? (() => { const hk = 'tras:' + (tr[0].id || d.fecha), ok = !!u().hecho[hk], key = 'trd:' + d.fecha, ab = abierto(key, !ok);
-      return `<details class="tras-dia ${ok ? 'hecho-card' : ''}" data-key="${key}" ${ab ? 'open' : ''}><summary class="tras-dia-tit"><button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hk)}" data-v="${ok ? 0 : 1}" aria-label="Hecho">${ok ? '✓' : ''}</button>${medio(tr[0])[0]} Primero, el traslado</summary>${antesSalir(d.fecha, tr, al)}${tr.map(t => trasladoCard(t)).join('')}</details>`; })() : '') + sitiosDia(d)],
-    ['hotel', '🛏️ Hotel', (al.sale && al.sale !== al.noche ? alojCard(al.sale, true) : '') + (al.noche ? alojCard(al.noche, false) : '')],
+      return `<details class="tras-dia ${ok ? 'hecho-card' : ''}" data-key="${key}" ${ab ? 'open' : ''}><summary class="tras-dia-tit"><button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hk)}" data-v="${ok ? 0 : 1}" aria-label="Hecho">${ok ? '✓' : ''}</button>${medio(tr[0])[0]} Primero, el traslado</summary>${antesSalir(d.fecha, tr, al)}${tr.map(t => trasladoCard(t)).join('')}</details>`; })() : ''), sitiosDia(d)],
+    ['hotel', '🛏️ Hotel', al.sale && al.noche && al.sale !== al.noche ? alojCard(al.sale, true) + alojCard(al.noche, false) : (al.noche || al.sale) ? alojCard(al.noche || al.sale, false, true) : ''],
   ];
   // Sin botones (no se usaban): Sitios siempre a la vista; Hotel y Diario, plegados al final.
-  const [sit, hotl] = [secs[0][2], secs[1][2]], hk = 'hot:' + d.fecha, dk = 'dia:' + d.fecha, cambia = al.sale && al.noche && al.sale !== al.noche;
+  const [tras, sit, hotl] = [secs[0][2], secs[0][3], secs[1][2]], hk = 'hot:' + d.fecha, dk = 'dia:' + d.fecha, cambia = al.sale && al.noche && al.sale !== al.noche;
   const nomH = cambia ? `dejáis ${al.sale.nombre} · dormís en ${al.noche.nombre}` : (al.noche || al.sale || {}).nombre;
-  return html + sit + (hotl ? `<details class="card plg hotel-pl" data-key="${hk}" ${abierto(hk, false) ? 'open' : ''}><summary>🛏️ <b>Hotel</b>${nomH ? ` · ${esc(nomH)}` : ''}</summary>${hotl}</details>` : '')
-    + `<details class="card plg diario-pl" data-key="${dk}" ${abierto(dk, false) ? 'open' : ''}><summary>${diarioDe(d.fecha).cara || '📔'} <b>Diario del día</b>${diarioDe(d.fecha).nota ? ' · ✍️' : ''}</summary>${diarioCard(d)}</details>`;
+  // Orden: traslado, hotel (justo encima del mapa de la Ruta del día), sitios y diario. Sin títulos repetidos dentro.
+  const hU = al.noche || al.sale;
+  return html + tras + (hotl ? `<details class="card plg hotel-pl" data-key="${hk}" ${abierto(hk, false) ? 'open' : ''}><summary>🛏️ <b>${cambia ? 'Hotel' : esc(hU.nombre)}</b>${cambia ? ` · ${esc(nomH)}` : ' ' + ver(hU)}</summary>${hotl}</details>` : '') + sit
+    + `<details class="card plg diario-pl" data-key="${dk}" ${abierto(dk, false) ? 'open' : ''}><summary>${diarioDe(d.fecha).cara || '📔'} <b>¿Qué tal el día?</b>${diarioDe(d.fecha).nota ? ' · ✍️' : ''}</summary>${diarioCard(d, true)}</details>`;
 }
 
 // "Ahora": lo próximo que toca hoy (o la cuenta atrás antes del viaje).
@@ -821,102 +824,6 @@ function horarioLinea(l, fecha) {
   else if (ds !== null && h.noche && !h.noche.includes(ds)) aviso = `<div class="hor-cerrado">🌙 El mercado nocturno solo abre viernes y sábado: el ${DIAS_SEM[ds]} no hay</div>`;
   return `<div class="hor-linea">🕒 ${esc(h.t)}${cierra}${h.v ? ' <span class="ver">VERIFICAR</span>' : ''}${h.n ? `<div class="muted">${esc(h.n)}</div>` : ''}</div>${aviso}`;
 }
-// Minutos e icono del trayecto para el horario (misma decisión que la Ruta del día).
-function minutosTramo(o, dst) { const c = comoIr(o, dst); return { m: c.m, modo: { pie: '🚶', metro: '🚇', taxi: '🚕' }[c.modo] }; }
-const DUR_TIPO = [[/palacio/i, 120], [/museo/i, 90], [/templo|santuario|pagoda/i, 60], [/mercado/i, 60], [/aldea|barrio|calle/i, 75], [/playa|parque|isla|mirador/i, 45]];
-// Horario propuesto del día (ritmo tranquilo). Nunca acaba más tarde de ~21:00: si no cabe todo,
-// primero acorta las visitas y después deja los últimos sitios (antes los añadidos) en "Si os da tiempo".
-const FIN_DIA = 21 * 60;
-function horarioDia(d, hot, orden, nAuto = orden.length) {
-  const extra = new Set(orden.slice(nAuto)), paradas = orden.filter(l => coordsLugar(l)); if (!paradas.length) return '';
-  const ds = new Date(d.fecha + 'T12:00').getDay();
-  let t0 = 9 * 60 + 15, inicio = 'normal';
-  const tr = arr(trip.traslados).filter(x => x.fecha === d.fecha), lleg = tr.map(x => aMinH((billete(x) || {}).llegada)).find(x => x != null);
-  const vuelo = arr(trip.vuelos).flatMap(v => arr(v.tramos)).find(x => x.a === 'ICN' && String(x.llegada || '').startsWith(d.fecha));
-  if (vuelo) { t0 = aMinH(vuelo.llegada.slice(11)) + 150; inicio = 'vuelo'; }
-  else if (lleg != null) { t0 = Math.max(t0, lleg + 45); inicio = 'tren'; }
-  else if (tr.length) { t0 = 13 * 60; inicio = 'traslado'; }
-  // Hora de llegada a la primera parada elegida en el móvil (user.hdIni[fecha]): la salida se calcula hacia atrás.
-  // Si el día trae "llegada"/"levantarse" en trip.json, es su valor por defecto; lo elegido en el móvil manda.
-  const iniM = (u().hdIni || {})[d.fecha], levM = (u().hdLev || {})[d.fecha];
-  const iniU = inicio === 'normal' ? aMinH(iniM || d.llegada) : null;
-  if (iniU != null) { const c1 = coordsLugar(paradas[0]); t0 = iniU - (hot && c1 ? minutosTramo(hot, c1).m : 0); }
-  // Hora de levantarse elegida (user.hdLev[fecha]); con más de 1 h 10 hasta salir, el desayuno es fuera, cerca del hotel.
-  const levU = inicio === 'normal' ? aMinH(levM || d.levantarse) : null;
-  // Horas fijas del itinerario ("09:00 Palacio…").
-  // La hora va al sitio que más coincide con la línea (más palabras y, si empatan, la más larga), no a todos los que se nombran.
-  const fijas = {}; arr(d.items).forEach(i => { const m = aMinH(i.hora); if (m == null) return; const txt = ' ' + norm(i.texto) + ' ';
-    const pt = l => { const ts = tokensDe(l).map(tk => norm(tk.trim())).filter(tk => tk && txt.includes(tk)); return ts.length * 100 + Math.max(0, ...ts.map(x => x.length)); };
-    const mejor = paradas.map(l => [l, pt(l)]).filter(([, p]) => p > 0).sort((a, b) => b[1] - a[1])[0];
-    if (mejor) fijas[hKey(mejor[0])] = fijas[hKey(mejor[0])] ?? m; });
-  // Sitios donde se puede comer o cenar (mercados y zonas de comida).
-  const ZONA_COMIDA = /mercado|myeongdong|gwangjang|jagalchi|nambu|biff|hongdae|insadong|hwangridan/i;
-  // Simula el día con las paradas dadas y las visitas multiplicadas por k.
-  const simula = (lista, k) => {
-    const L = [], add = (m, ic, txt, ex = '', f = m, tipo = '', l = null) => L.push({ m, ic, txt, ex, f, tipo, l });
-    let t = t0;
-    if (inicio === 'normal') { const lev = levU != null && levU < t - 30 ? levU : t - 75, fuera = levU != null && t - lev >= 70;
-      add(lev, '⏰', 'Levantarse'); add(Math.min(lev + 30, t - 30), '🥐', fuera ? 'Desayuno fuera, cerca del hotel' : 'Desayuno', fuera ? 'ideas en Comer → 📍 Cerca del hotel' : '', fuera ? t - 5 : t - 15, 'c');
-      add(t, '🏨', fuera ? 'Salida hacia la 1ª parada' : 'Salida del hotel'); }
-    else add(t, inicio === 'vuelo' ? '✈️' : '🧳', inicio === 'vuelo' ? 'Tras el aeropuerto, el bus y dejar las maletas' : inicio === 'tren' ? `Tras el ${tr.some(x => x.bus && !x.tren) ? 'autobús' : 'tren'} y dejar las maletas` : 'Tras el traslado (hora aproximada: depende del billete)');
-    let prev = hot, comido = t >= 15 * 60, cenado = false, avisos = 0;
-    lista.forEach(l => {
-      // Si la parada es un mercado o zona de comida, se come o cena allí en vez de parar antes.
-      const comida = ZONA_COMIDA.test(l.es);
-      if (!comido && t >= 13 * 60 && !(comida && t <= 14 * 60 + 30)) { add(t, '🍜', 'Comida', '1 h', t + 60, 'c'); t += 60; comido = true; }
-      if (!cenado && t >= 19 * 60 + 30 && !comida) { add(t, '🍽️', 'Cena', '1 h 15', t + 75, 'c'); t += 75; cenado = true; }
-      const c = coordsLugar(l), via = prev ? minutosTramo(prev, c) : { m: 0, modo: '' };
-      let a = t + via.m; const h = horDe(l) || {}, abre = aMinH(h.a), cie = aMinH(h.c), fija = fijas[hKey(l)];
-      const base = h.d || (DUR_TIPO.find(([re]) => re.test((l.tipo || '') + ' ' + l.es)) || [0, 60])[1];
-      let dur = Math.max(20, Math.round(base * k / 5) * 5);
-      // Hora fija del itinerario: si está cerca, se espera; si está lejos, se llega antes y se alarga la visita hasta pasarla.
-      const llega = a;
-      if (fija != null && fija > a) { if (fija - a <= 45) a = fija; else dur = Math.max(dur, fija - a + 60); }
-      if (abre != null && a < abre) a = abre;
-      let nota = a - llega >= 10 ? ` · llegáis a las ${hhmm(llega)}` + (abre != null && a === abre ? `, abre a las ${hhmm(abre)}` : ', esperar') : '';
-      if (!comido && comida && a >= 11 * 60 + 30 && a <= 14 * 60 + 30) { comido = true; dur += 30; nota = ' · 🍜 comer aquí'; }
-      else if (!cenado && comida && a >= 18 * 60) { cenado = true; dur += 30; nota = ' · 🍽️ cenar aquí'; }
-      else if (!comido && a < 13 * 60 && a + dur >= 13 * 60 + 30) { comido = true; dur += 60; nota = ' · 🍜 incluye comer por la zona'; }
-      let aviso = '';
-      if (arr(h.x).includes(ds)) { aviso = ' ⛔ cerrado ese día'; avisos++; }
-      else if (cie != null && a + Math.min(dur, h.d || dur) > cie) { aviso = ` ⚠️ cierra a las ${h.c}`; avisos++; }
-      add(a, String(paradas.indexOf(l) + 1), l.es, `${hhmm(a)}-${hhmm(a + dur)}${via.m ? ` · ${via.modo} ${via.m} min antes` : ''}${nota}${aviso}`, a + dur, 'v', l);
-      t = a + dur; prev = c;
-    });
-    if (!comido) { const cm = Math.max(t, 13 * 60 + 30); add(cm, '🍜', 'Comida', '1 h', cm + 60, 'c'); t = cm + 60; }
-    let fin = t;
-    if (!cenado) { if (t < 19 * 60 + 30) add(t, '☕', 'Tiempo libre, café o compras'); const cena = Math.max(t, 19 * 60 + 30); add(cena, '🍽️', 'Cena', 'hacia las ' + hhmm(cena), cena + 75, 'c'); fin = cena + 75; }
-    if (hot && prev) { const v = minutosTramo(prev, hot), tarde = v.modo === '🚇' && fin + v.m > 23 * 60;
-      add(fin + v.m, '🛏️', 'Vuelta al hotel', `${v.modo} ~${v.m} min${tarde ? ' · ⚠️ el último metro sale hacia medianoche: VERIFICAR en Naver' : ''}`); }
-    return { L, fin, avisos };
-  };
-  // 1) Todo tal cual; 2) visitas más cortas; 3) quitar sitios del final (primero los añadidos; nunca los de hora fija).
-  let lista = paradas.slice(), k = 1, r = simula(lista, 1);
-  for (const kk of [0.8, 0.65]) { if (r.fin <= FIN_DIA) break; k = kk; r = simula(lista, k); }
-  const fuera = [];
-  while (r.fin > FIN_DIA && lista.length > 1) {
-    const quitable = [...lista].reverse().sort((x, y) => extra.has(y) - extra.has(x)).find(l => fijas[hKey(l)] == null);
-    if (!quitable) break;
-    lista = lista.filter(l => l !== quitable); fuera.unshift(quitable); r = simula(lista, k);
-  }
-  // Si al quitar ha sobrado hueco, se recupera lo que quepa (en el orden de la ruta).
-  for (const l of [...fuera]) { const prueba = paradas.filter(x => lista.includes(x) || x === l), r2 = simula(prueba, k);
-    if (r2.fin <= FIN_DIA) { lista = prueba; r = r2; fuera.splice(fuera.indexOf(l), 1); } }
-  const kc = ck(d.ciudad), { L, avisos } = r, ini = L[0].m, ultima = L[L.length - 1].m;
-  // Barra del día: visitas y comidas sobre la franja desde la primera hora hasta la vuelta.
-  const pct = m => ((m - ini) / Math.max(1, ultima - ini) * 100).toFixed(1);
-  const barra = L.filter(x => x.tipo).map(x => `<i class="hd-seg ${x.tipo}" style="left:${pct(x.m)}%;width:${(pct(x.f) - pct(x.m)).toFixed(1)}%"></i>`).join('');
-  const nPar = L.filter(x => x.tipo === 'v').length;
-  return `<details class="horario-dia" data-key="hd:${d.fecha}" ${abierto('hd:' + d.fecha, false) ? 'open' : ''}><summary>
-      <span class="hd-cab"><span class="hd-reloj">🕘</span><span class="hd-tit"><b>Horario del día</b><small>${hhmm(ini)} → ${hhmm(ultima)} · ${nPar} ${nPar === 1 ? 'parada' : 'paradas'} · ritmo tranquilo${avisos ? ` · ⚠️ ${avisos}` : ''}${fuera.length ? ` · ⏭️ ${fuera.length} no ${fuera.length === 1 ? 'cabe' : 'caben'}` : ''}</small></span><span class="hd-flecha">▾</span></span>
-      <span class="hd-barra">${barra}</span><span class="hd-ext"><span>${hhmm(ini)}</span><span>${hhmm(ultima)}</span></span></summary>
-    ${inicio === 'normal' ? `<div class="hd-ini"><label>⏰ Levantarse a las <input type="time" step="300" data-hdlev="${d.fecha}" value="${levU != null ? hhmm(levU) : ''}"></label>
-      <label>🚪 Llegar a la 1ª parada a las <input type="time" step="300" data-hdini="${d.fecha}" value="${iniU != null ? hhmm(iniU) : ''}"></label>${iniM || levM ? ` <button class="sec mini" data-hdini-x="${d.fecha}">↺ Por defecto</button>` : ''}</div>` : ''}
-    <div class="hd-lista">${L.map(x => { const ok = x.l && hecho(x.l, kc);
-      return `<div class="hd-fila ${x.tipo === 'v' ? 'parada' : x.tipo === 'c' ? 'comida' : ''} ${ok ? 'hd-hecho' : ''}"><span class="hd-h">${hhmm(x.m)}</span><span class="hd-ic">${x.ic}</span><span class="hd-t"><b>${esc(x.txt)}</b>${x.ex ? `<small>${esc(x.ex)}</small>` : ''}</span>${x.l ? `<button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hKey(x.l))}" data-v="${ok ? 0 : 1}" aria-label="Marcar como visitado">${ok ? '✓' : ''}</button>` : ''}</div>`; }).join('')}</div>
-    ${fuera.length ? `<div class="hd-fuera"><b>⏭️ Si os da tiempo</b> (no caben antes de las 21:00): ${fuera.map(l => `<b>${esc(l.es)}</b>`).join(', ')}.</div>` : ''}
-    ${k < 1 ? '<div class="muted mini-nota">Visitas algo más cortas para acabar a buena hora.</div>' : ''}</details>`;
-}
 function sitiosDia(d) {
   const k = ck(d.ciudad), A = agendaVer(d.fecha), todos = listaDia(d);
   if (!todos.length) return '';
@@ -932,8 +839,8 @@ function sitiosDia(d) {
     const n = num[h];
     // Ficha plegable: se pliega sola al marcarla como visitada (y la foto, a la derecha, arriba).
     const key = 'sd:' + d.fecha + '|' + h, ab = abierto(key, !hecho(l, k));
-    return `${t}${extra ? encaje(l) : ''}<details class="sd ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}${btnHecho(l, k)}<b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
-      <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${irQV(l, k)}</div>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}</details>`;
+    return `${t}${extra ? encaje(l) : ''}<details class="sd ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}${btnHecho(l, k)}${irQV(l, k)}<br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
+      <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}</div>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}</details>`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
   let extras = todos.filter(l => !auto.includes(l));
@@ -956,7 +863,7 @@ function sitiosDia(d) {
   const nvP = naverDia(hc, hot && (hot.ko || hot.nombre), [...auto, ...extras]); nvP.slice(1).forEach(x => { naverTras[x.inicio] = x.html; });
   // Sugerencias "cerca y no lo tenéis", plegadas e intercaladas tras la parada donde encajan (H* = tras el hotel).
   const sugs = sugerenciasDe(d, [...auto, ...extras], hc), sugTras = n => sugs.filter(g => g.tras.n === n).map(g => sugPlegada(g, d)).join('');
-  return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${horarioDia(d, hc, [...auto, ...extras], auto.length)}${planLluvia(d)}<b>📖 Ruta del día</b>
+  return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${planLluvia(d)}<b class="rd-tit">📖 Ruta del día</b>
     ${(nvP[0] || {}).html || ''}
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>${sugTras(0)}` : ''}
     ${auto.map(l => fila(l, false) + sugTras(num[hKey(l)])).join('')}
@@ -1184,6 +1091,16 @@ async function fotoWiki(t) {
     return f;
   } catch { return undefined; } // sin conexión: se reintenta más tarde
 }
+// Banner del día: va pasando por las fotos de los sitios del itinerario de ese día (cada 6 s, con fundido).
+setInterval(async () => {
+  const el = document.querySelector('.dia-foto.ok[data-wikis]'); if (!el || document.hidden) return;
+  const ws = el.dataset.wikis.split('|').filter(Boolean); if (ws.length < 2) return;
+  for (let n = 1; n < ws.length; n++) { const w = ws[(ws.indexOf(el.dataset.wiki) + n) % ws.length], f = await fotoWiki(w); if (!f || !f.src) continue;
+    const img = new Image(); img.alt = ''; img.className = 'rota';
+    img.onload = () => { if (!el.isConnected) return; el.dataset.wiki = w; const viejo = el.querySelector('img'); el.appendChild(img); requestAnimationFrame(() => img.classList.add('on')); setTimeout(() => viejo && viejo.remove(), 900); };
+    img.src = /\/\d+px-/.test(f.src) ? f.src.replace(/\/\d+px-/, '/800px-') : f.src; img.onerror = () => { if (img.src !== f.src) img.src = f.src; };
+    return; }
+}, 6000);
 function pintarFotos() {
   document.querySelectorAll('.foto[data-wiki]:not(.ok)').forEach(async el => {
     const f = await fotoWiki(el.dataset.wiki);
@@ -2646,7 +2563,7 @@ let tiraX = null, tabAnt = null;
 // ---------- render ----------
 // Guarda dónde está un botón en pantalla y devuelve la función que lo deja en el mismo sitio tras redibujar.
 function anclar(el) {
-  const at = [...el.attributes].find(x => /^data-(avok|stk|fav|hgleida|hk|est|val|verif|agtog|agdel|cara)$/.test(x.name)); if (!at) return () => {};
+  const at = [...el.attributes].find(x => /^data-(esmas|avok|stk|fav|hgleida|hk|est|val|verif|agtog|agdel|cara)$/.test(x.name)); if (!at) return () => {};
   const dt = el.closest('details[data-key]:not(.horario-dia)');
   if (dt) { const sd = `details[data-key="${CSS.escape(dt.dataset.key)}"]`, yd = dt.getBoundingClientRect().top; return () => { const n = document.querySelector(sd); if (n) window.scrollBy(0, n.getBoundingClientRect().top - yd); }; }
   const sel = `[${at.name}="${CSS.escape(at.value)}"]`, i = [...document.querySelectorAll(sel)].indexOf(el), y = el.getBoundingClientRect().top;
@@ -2776,6 +2693,8 @@ document.addEventListener('click', e => {
       if (confirm(`¿Guardar tu posición actual (precisión ±${Math.round(ac)} m) como la ubicación de «${n}»?\nHazlo solo si estás delante del sitio.`)) { const U = u(); U.coordsFix = U.coordsFix || {}; U.coordsFix[h] = [+la.toFixed(5), +lo.toFixed(5)]; saveUser(); }
       render(); }, () => { alert('No se pudo obtener la ubicación (¿permiso de ubicación activado?).'); render(); }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
     return; }
+  const esm = e.target.closest('button[data-esmas]');
+  if (esm) { abiertos[esm.dataset.esmas] = !abiertos[esm.dataset.esmas]; queueMicrotask(anclar(esm)); render(); return; }
   const avb = e.target.closest('button[data-avok]');
   if (avb) { e.preventDefault(); const U = u(), o = U.avisosOk = U.avisosOk || {}, a = avb.dataset.avok; if (o[a]) delete o[a]; else o[a] = todayISO(); saveUser(); render(); return; }
   const hk = e.target.closest('button[data-hk]');
