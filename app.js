@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v183';
+const VERSION = 'v184';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -2798,7 +2798,7 @@ function anclar(el) {
 }
 function render() {
   applyTheme();
-  $('#title').textContent = (trip && trip.meta && trip.meta.titulo) || 'Viaje a Corea';
+  $('#title').textContent = String((trip && trip.meta && trip.meta.titulo) || 'Viaje a Corea').replace(/ del Sur\b/i, ''); // «Corea 2026»: se sobreentiende
   $('#back').hidden = !pila.length;
   $('#tabs').innerHTML = TABS.map(([id, label, ic]) =>
     `<button data-tab="${id}" class="${tab === id || (id === 'mas' && EN_MAS.some(m => m[0] === tab)) ? 'on' : ''}"><span>${ic}</span>${label}</button>`).join('');

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v183
+Caché del service worker: corea-v184
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -235,6 +235,7 @@ Caché del service worker: corea-v183
 - v181: «📊 Qué tocáis y qué no» en Más → Datos y app. El usuario quiere mejorar la app en general y lo que más falla es encontrar las cosas; pidió saber qué no toca para quitarlo. Cuenta en el móvil (corea.uso, nunca sale de él ni va en Pasar marcas) cada control visto y tocado, agrupado por función (todos los «Visitado» = uno; los de navegación, por destino) y por pestaña. [Supuesto] Tras unos días, el usuario copia la lista y decidimos juntos qué quitar o mover.
 - v182: arreglo de descuadres tras actualizar. Si la red tarda más de 3 s, el móvil puede usar el app.js nuevo con la hoja de estilos guardada (la vieja): el esquema del día quedaba con una palabra por línea y el recuento de uso no se ajustaba. Ahora el esquema conserva un hueco vacío (oculto con el CSS nuevo) y el recuento lleva su ajuste en línea, así no se descuadran con ninguna de las dos. La versión en Datos y app ya no dice «corea-fotos».
 - v183: 🔍 buscador global en la cabecera (antes del 💱). Encontrar cosas era lo más rebuscado: con él, cualquier sitio, restaurante, lavandería, frase, palabra, tema de la Guía, capítulo de Historia o día del itinerario queda a 2 toques más lo que se escriba. Agrupado por tipo (6 por grupo, 8 días); «atrás» cierra la ventana. [Supuesto] Los buscadores de Planes y Diccionario se quedan de momento; si el recuento de uso dice que no se tocan, se quitan.
+- v184: título de la cabecera «Corea 2026» (se quita «del Sur» del título del viaje; el Resumen y las exportaciones lo mantienen completo). Sin reimportar el viaje.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
