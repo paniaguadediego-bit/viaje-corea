@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v194';
+const VERSION = 'v195';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -631,7 +631,7 @@ function viewHoy() {
     const fs = []; ls.forEach(l => { const w = l.sinFoto ? '' : (wikiDe(l) || (l.ko ? 'ko:' + String(l.ko).replace(/\s+/g, '') : '')); if (w && !fs.some(x => x.w === w)) fs.push({ w, n: `${icSitio((l.tipo || '') + ' ' + l.es)} ${l.es}` }); });
     return `<div class="card dia dia2" style="${varsTema(ck(d.ciudad))}">
     <div class="dia-cab">${(() => { const ko = (arr(trip.ciudades).find(c => ck(c.nombre) === ck(d.ciudad)) || {}).ko; return ko ? `<div class="ciudad-ko">${esc(ko)}</div>` : ''; })()}<div class="dia-sup"><span class="ds-1">${tc.ic} Día ${dayIdx + 1} de ${dias.length}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</span><span class="ds-2">${fmtDate(d.fecha)} · ${esc(d.ciudad)}</span></div>
-      <div class="dia-tit">${esc(d.titulo)}</div>${chipTiempo(d)}</div>
+      <div class="dia-tit">${esc(d.titulo)}</div>${chipTiempo(d)}${horasTiempo(d)}</div>
     ${fs.length ? `<div class="dia-banner"><div class="foto dia-foto" data-wiki="${esc(fs[0].w)}" data-wikis="${esc(fs.map(x => x.w).join('|'))}" data-noms="${esc(fs.map(x => x.n).join('|'))}"><span></span></div>
       <div class="dia-cap">${esc(fs[0].n)}</div>${fs.length > 1 ? `<button class="carr carr-l" data-carr="-1" aria-label="Foto anterior">‹</button><button class="carr carr-r" data-carr="1" aria-label="Foto siguiente">›</button><div class="dia-puntos">${fs.map((x, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>` : ''}</div>` : ''}`; })()}
     ${esquemaDia(d)}
@@ -2508,19 +2508,22 @@ function coordsCiudad(k) {
 }
 async function actualizarTiempo() {
   if (!trip || !navigator.onLine) return;
-  if (TIEMPO && TIEMPO.ts && Date.now() - TIEMPO.ts < 3 * 3600e3) return;
+  if (TIEMPO && TIEMPO.ts && TIEMPO.h && Date.now() - TIEMPO.ts < 3 * 3600e3) return;
   const ks = [...new Set(arr(trip.dias).map(d => ck(d.ciudad)))].filter(k => coordsCiudad(k));
-  const nuevo = { ts: Date.now(), c: {} };
+  const nuevo = { ts: Date.now(), c: {}, h: {} };
   await Promise.all(ks.map(async k => {
     const [la, lo] = coordsCiudad(k);
     try {
-      const d = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la.toFixed(3)}&longitude=${lo.toFixed(3)}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul&forecast_days=16`, { cache: 'no-store' })).json();
+      const d = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la.toFixed(3)}&longitude=${lo.toFixed(3)}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&hourly=weather_code,precipitation_probability,temperature_2m&timezone=Asia%2FSeoul&forecast_days=16`, { cache: 'no-store' })).json();
       const t = d && d.daily; if (!t || !t.time) return;
       nuevo.c[k] = {}; t.time.forEach((f, i) => { nuevo.c[k][f] = [t.weather_code[i], t.temperature_2m_max[i], t.temperature_2m_min[i], t.precipitation_probability_max[i]]; });
+      // Por horas, solo de 8 a 23 h (lo que se vive del día): [hora, código, % lluvia, temperatura].
+      const hh = d.hourly; if (hh && hh.time) { nuevo.h[k] = {}; hh.time.forEach((x, i) => { const f = x.slice(0, 10), h = +x.slice(11, 13); if (h < 8 || h > 23) return;
+        (nuevo.h[k][f] = nuevo.h[k][f] || []).push([h, hh.weather_code[i], hh.precipitation_probability[i], hh.temperature_2m[i]]); }); }
     } catch { /* sin conexión o servicio caído */ }
   }));
   if (!Object.keys(nuevo.c).length) return;
-  TIEMPO = { ts: nuevo.ts, c: { ...((TIEMPO && TIEMPO.c) || {}), ...nuevo.c } };
+  TIEMPO = { ts: nuevo.ts, c: { ...((TIEMPO && TIEMPO.c) || {}), ...nuevo.c }, h: { ...((TIEMPO && TIEMPO.h) || {}), ...nuevo.h } };
   try { save(K_TIEMPO, TIEMPO); } catch {}
   if (tab === 'hoy' || tab === 'ruta') renderLuego();
 }
@@ -2535,6 +2538,15 @@ function chipTiempo(d) {
   const t = tiempoDe(ck(d.ciudad), d.fecha); if (!t) return '';
   const [c, mx, mn, p] = t;
   return `<div class="dia-tiempo"><span class="t-ic">${icTiempo(c)}</span><b>${Math.round(mn)}° / ${Math.round(mx)}°</b><span>${descTiempo(c)}</span>${p != null ? `<span>💧 ${p} %</span>` : ''}<small>${haceTiempo()}</small></div>`;
+}
+// ⏱️ Por horas, en bloques de 2 h (8-10 … 22-24): el peor cielo y la mayor probabilidad de lluvia de cada bloque. Una fila.
+function horasTiempo(d) {
+  const hs = TIEMPO && TIEMPO.h && TIEMPO.h[ck(d.ciudad)] && TIEMPO.h[ck(d.ciudad)][d.fecha]; if (!hs || !hs.length) return '';
+  const ahora = d.fecha === todayISO() ? new Date().getHours() : -1, bl = [];
+  for (let h = 8; h < 24; h += 2) { const xs = hs.filter(x => x[0] >= h && x[0] < h + 2); if (!xs.length) continue;
+    const c = Math.max(...xs.map(x => x[1] ?? 0)), p = Math.max(...xs.map(x => x[2] ?? 0)), t = Math.round(xs.reduce((a, x) => a + (x[3] ?? 0), 0) / xs.length);
+    bl.push({ h, c, p, t, ya: ahora >= h + 2 }); }
+  return `<div class="t-horas">${bl.map(b => `<span class="t-h ${b.p >= 50 ? 'lluvia' : b.p >= 25 ? 'quiza' : ''} ${b.ya ? 'ya' : ''}" title="${b.h}-${b.h + 2} h: ${descTiempo(b.c)}, ${b.p} % de lluvia"><small>${b.h}h</small><i>${icTiempo(b.c)}</i><small>${b.p >= 25 ? b.p + '%' : b.t + '°'}</small></span>`).join('')}</div>`;
 }
 const miniTiempo = (k, f) => { const t = tiempoDe(k, f); return t ? `<span class="t-mini">${icTiempo(t[0])} ${Math.round(t[1])}°/${Math.round(t[2])}°</span>` : ''; };
 

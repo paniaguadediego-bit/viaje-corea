@@ -62,7 +62,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    api.frankfurter (solo con conexión; se guarda para offline; se
    puede fijar a mano), tiempo previsto por día (Open-Meteo, sin clave,
    hasta 16 días; solo con conexión, se guarda para offline y muestra
-   "hace X h") en la tarjeta del día de Hoy y en cada día de Ruta,
+   "hace X h") en la tarjeta del día de Hoy y en cada día de Ruta; desde v195, en Hoy, una fila por horas bajo el tiempo del día: bloques de 2 h de 8 a 24 con icono y temperatura, o % de lluvia si es ≥25 % (azul claro 25-49 %, azul fuerte ≥50 %; los bloques ya pasados, atenuados),
    destacados de la ciudad en Hoy, lista
    Verificar (marca "✓ verificado" en el móvil), botón "Naver" (abre la app de Naver Map con nmap://search; si no se
    abre en 1,5 s, la web móvil m.map.naver.com; igual con Kakao Map; requiere conexión) y junto a él "📍 Google" (Google Maps, búsqueda por hangul o dirección),

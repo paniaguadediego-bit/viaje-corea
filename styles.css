@@ -1476,5 +1476,13 @@ details.comer-fuera > .card { margin: 0 6px 6px; opacity: 1; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .vuelo.pasado, :root:not([data-theme="light"]) .w-fila.pasado, :root:not([data-theme="light"]) .dchip.pasado:not(.on), :root:not([data-theme="light"]) .timeline .tl.pasado > .card, :root:not([data-theme="light"]) .dad-dia.pasado { opacity: .72; } }
 :root[data-theme="dark"] .vuelo.pasado, :root[data-theme="dark"] .w-fila.pasado, :root[data-theme="dark"] .dchip.pasado:not(.on), :root[data-theme="dark"] .timeline .tl.pasado > .card, :root[data-theme="dark"] .dad-dia.pasado { opacity: .72; }
 
+/* v195: tiempo por horas en la tarjeta del día (bloques de 2 h, una fila) */
+.t-horas { display: flex; gap: 3px; justify-content: center; margin: 6px auto 0; max-width: 100%; }
+.t-h { flex: 1 1 0; min-width: 0; max-width: 44px; display: flex; flex-direction: column; align-items: center; padding: 2px 0; border-radius: 8px; background: rgba(0,0,0,.18); color: #fff; line-height: 1.15; }
+.t-h small { font-size: .62rem; font-weight: 700; }
+.t-h i { font-style: normal; font-size: .95rem; }
+.t-h.quiza { background: rgba(60,120,220,.45); }
+.t-h.lluvia { background: rgba(30,90,220,.8); box-shadow: inset 0 0 0 1.5px #9cc8ff; }
+.t-h.ya { opacity: .45; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v194"; }
+:root { --css-ver: "v195"; }
