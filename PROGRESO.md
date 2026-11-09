@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v181
+Caché del service worker: corea-v182
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -233,6 +233,7 @@ Caché del service worker: corea-v181
 - v179: en el esquema del día (Hoy), el horario del sitio de cada línea entre paréntesis (de HORARIOS); con * si está por verificar, y la leyenda «* Horario por verificar» sale al tocar «Leer más». Se toma el sitio que se nombra primero en la línea; las líneas de transporte (bus, KTX, taxi…) no llevan horario. [Supuesto] Sitios sin horario apertura-cierre (mercado de Hahoe, Museo de Máscaras…) van sin paréntesis.
 - v180: el horario va justo detrás de cada sitio, no al final de la línea; si una línea nombra dos sitios, cada uno lleva el suyo. Cada sitio sale una vez por día, en la línea que más lo nombra (los drones, no la cena «en Gwangalli»). Un paréntesis pegado al nombre solo se salta si es parte de él (hangul u otro nombre). Quitada la columna de horas de la izquierda del esquema.
 - v181: «📊 Qué tocáis y qué no» en Más → Datos y app. El usuario quiere mejorar la app en general y lo que más falla es encontrar las cosas; pidió saber qué no toca para quitarlo. Cuenta en el móvil (corea.uso, nunca sale de él ni va en Pasar marcas) cada control visto y tocado, agrupado por función (todos los «Visitado» = uno; los de navegación, por destino) y por pestaña. [Supuesto] Tras unos días, el usuario copia la lista y decidimos juntos qué quitar o mover.
+- v182: arreglo de descuadres tras actualizar. Si la red tarda más de 3 s, el móvil puede usar el app.js nuevo con la hoja de estilos guardada (la vieja): el esquema del día quedaba con una palabra por línea y el recuento de uso no se ajustaba. Ahora el esquema conserva un hueco vacío (oculto con el CSS nuevo) y el recuento lleva su ajuste en línea, así no se descuadran con ninguna de las dos. La versión en Datos y app ya no dice «corea-fotos».
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

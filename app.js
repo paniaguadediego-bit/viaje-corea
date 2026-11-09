@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v181';
+const VERSION = 'v182';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -589,7 +589,7 @@ function esquemaDia(d) {
     ins.sort((x, y) => y.e - x.e).forEach((x, n) => { t = t.slice(0, x.e) + '\u0001' + String.fromCharCode(65 + n) + '\u0002' + t.slice(x.e); });
     return resaltar(t).replace(/\u0001([A-Z])\u0002/g, (_, c) => ` <span class="es-hor">${esc(ins[c.charCodeAt(0) - 65].s)}</span>`);
   };
-  const lis = its.map((i, n) => `<li><span class="es-ic">${icItem(i.texto)}</span><span class="es-t">${conHoras(textos[n], asig[n])}</span></li>`).join('');
+  const lis = its.map((i, n) => `<li><span class="es-h"></span><span class="es-ic">${icItem(i.texto)}</span><span class="es-t">${conHoras(textos[n], asig[n])}</span></li>`).join('');
   return `<ol class="esquema ${largo ? 'largo' : ''}">${lis}</ol>
     ${largo && ast ? '<p class="muted es-ley">* Horario por verificar</p>' : ''}
     ${hay || ast ? `<button class="es-mas" data-esmas="${key}">${largo ? 'Leer menos ▴' : 'Leer más ▾'}</button>` : ''}`;
@@ -2660,7 +2660,7 @@ function usoCard() {
   const U = usoCarga(), es = Object.values(U.k), nunca = es.filter(x => !x.n).length;
   return `<details class="card" data-key="uso"><summary><b>📊 Qué tocáis y qué no</b> <span class="muted">· ${nunca} sin tocar de ${es.length}</span></summary>
     <p class="muted">Cuenta en este móvil (nada sale de él) qué botones y apartados tocáis desde el ${esc(fmtCorto(U.desde))}. Sirve para quitar lo que no se usa. Mándamelo con «Copiar» cuando queráis.</p>
-    <pre class="uso-pre">${esc(usoTexto())}</pre>
+    <pre class="uso-pre" style="white-space:pre-wrap;word-break:break-word;font-size:.78rem">${esc(usoTexto())}</pre>
     <button class="sec" data-copy="${esc(usoTexto())}">📋 Copiar</button> <button class="sec" data-act="uso-cero">Poner a cero</button></details>`;
 }
 
@@ -3131,4 +3131,4 @@ if ('serviceWorker' in navigator) {
   });
 }
 // Muestra la versión de caché en Más.
-if (window.caches) caches.keys().then(k => { const v = k.find(x => x.startsWith('corea-')); window.VERSION = v; const e = $('#ver'); if (e && v) e.textContent = 'Versión: ' + v; });
+if (window.caches) caches.keys().then(k => { const v = k.find(x => /^corea-v\d/.test(x)); window.VERSION = v; const e = $('#ver'); if (e && v) e.textContent = 'Versión: ' + v; });
