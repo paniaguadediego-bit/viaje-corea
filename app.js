@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v176';
+const VERSION = 'v177';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -847,7 +847,7 @@ function sitiosDia(d) {
     const n = num[h];
     // Ficha plegable: se pliega sola al marcarla como visitada (y la foto, a la derecha, arriba).
     const key = 'sd:' + d.fecha + '|' + h, ab = abierto(key, !hecho(l, k));
-    return `${t}${extra ? encaje(l) : ''}<details class="sd ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}${btnHecho(l, k)}${irQV(l, k)}<br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
+    return `${t}${extra ? encaje(l) : ''}<details class="sd ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}${btnHecho(l, k)}${irQV(l, k, true)}<br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
       <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}</div></details>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).

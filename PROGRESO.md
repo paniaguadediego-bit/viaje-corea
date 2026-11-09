@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v176
+Caché del service worker: corea-v177
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -228,6 +228,7 @@ Caché del service worker: corea-v176
 - v174: Snacks de tienda 24 h como ficha propia: los 12 snacks en el orden de la imagen del usuario, cada uno con su hangul, 🔊 y una línea; botón «📷 Poner aquí tu captura» que guarda la imagen reducida (JPEG ~200 KB) solo en el móvil (localStorage corea.img.snacks), se ve arriba de la ficha y se abre en grande; la imagen de Instagram no se sube al repo (no es nuestra).
 - v175: ficha del mapa más limpia: botones solo con icono (🍜/🏯/🧩 ir a su sección, 🗺️ Naver, 📍 Google, 📌 Estoy aquí, 🧭 Ruta; el texto queda como etiqueta accesible) y la línea gris sin repetir lo que ya dice el nombre ni el tipo (ya lo indica el icono). «Estoy aquí» pasa a 📌 para no confundirse con Google (📍). [Supuesto] Se mantiene «Estoy aquí» (solo icono): no estorba y sirve para corregir sitios mal situados como los de Hahoe.
 - v176: en la ficha del mapa, el nombre coreano va en la misma línea que el occidental, tras «•» (antes, en una línea aparte). El usuario confirma que se queda «📌 Estoy aquí».
+- v177: fichas de sitio de Hoy con indicador de plegado (▾ abajo a la derecha si está abierta, «▸ más» si está plegada) y el botón de Planes solo con el icono 🏯.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
