@@ -1495,5 +1495,7 @@ details.ci-sec > p { margin: 6px 12px 10px; line-height: 1.5; }
 .lp24 ol { margin: 0; padding-left: 20px; } .lp24 li { margin: 5px 0; line-height: 1.4; } .lp24 li div { font-size: .88rem; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lp24 > b { color: #ff8cc6; } }
 :root[data-theme="dark"] .lp24 > b { color: #ff8cc6; }
+/* v197: LP24 (Lonely Planet 2024, añadido después) en rosa, distinto de LP 2016 (azul) */
+.lp-pill.lp24-pill { background: #c2185b !important; color: #fff !important; border-color: #c2185b !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v196"; }
+:root { --css-ver: "v197"; }

@@ -1015,7 +1015,10 @@
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Familiar, en un patio junto a los túmulos: cena tradicional con muchos platos y acompañamientos. Lonely Planet Corea 2024 (en español), p. 181."
+"nota": "Familiar, en un patio junto a los túmulos: cena tradicional con muchos platos y acompañamientos. Lonely Planet Corea 2024 (en español), p. 181; también estaba en la de 2016. ★ elección del autor (LP 2016).",
+"lp24": {
+"p": 181
+}
 },
 {
 "id": "lp-kisoya",
@@ -1029,7 +1032,10 @@
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Cadena popular de cocina japonesa con toque coreano: tonkatsu, sushi y soba. Lonely Planet Corea 2024 (en español), p. 181."
+"nota": "Cadena popular de cocina japonesa con toque coreano: tonkatsu, sushi y soba. Lonely Planet Corea 2024 (en español), p. 181; también estaba en la de 2016.",
+"lp24": {
+"p": 181
+}
 },
 {
 "id": "lp-pyongyang-naengmyeon",
@@ -1057,7 +1063,10 @@
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Agradable para cenar, en la zona de restaurantes de ssambap (rollitos de lechuga) al norte de Wolseong. Lonely Planet Corea 2024 (en español), p. 181."
+"nota": "Agradable para cenar, en la zona de restaurantes de ssambap (rollitos de lechuga) al norte de Wolseong. Lonely Planet Corea 2024 (en español), p. 181; también estaba en la de 2016.",
+"lp24": {
+"p": 181
+}
 },
 {
 "id": "lp-sukyeong-sikdang",
@@ -1071,7 +1080,7 @@
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Desde 1979: pajeon (tortitas de cebolleta) y dongdongju (vino de arroz) casero helado. Lonely Planet Corea 2024 (en español), p. 181.",
+"nota": "Desde 1979: pajeon (tortitas de cebolleta) y dongdongju (vino de arroz) casero helado. Lonely Planet Corea 2024 (en español), p. 181; también estaba en la de 2016.",
 "opiniones": {
 "v": 4.2,
 "n": 8,
@@ -1083,6 +1092,9 @@
 "estado": "dudoso",
 "nota": "Polle lo marca como cerrado (폐점): comprobar en Naver antes de ir.",
 "fuente": "Polle"
+},
+"lp24": {
+"p": 181
 }
 },
 {
@@ -2055,9 +2067,12 @@
 "direccion": null,
 "horario": "9:00-20:00 de lunes a viernes; 9:00-22:00 sábados y domingos (LP 2024)",
 "precio": null,
-"fuente": "lonely",
+"fuente": "lonely24",
 "url": null,
-"nota": "Café, té, zumos y dulces horneados, como el pan tradicional de Gyeongju y el hwangnam-ppang (relleno de judía roja). Lonely Planet Corea 2024 (en español), p. 182. Hangul y ubicación: VERIFICAR en Naver."
+"nota": "Café, té, zumos y dulces horneados, como el pan tradicional de Gyeongju y el hwangnam-ppang (relleno de judía roja). Lonely Planet Corea 2024 (en español), p. 182. Hangul y ubicación: VERIFICAR en Naver.",
+"lp24": {
+"p": 182
+}
 },
 {
 "id": "lp24-hyangmisa",
@@ -2069,9 +2084,12 @@
 "direccion": "Hwangnidan-gil (ubicación aproximada)",
 "horario": "10:00-18:00 (LP 2024)",
 "precio": null,
-"fuente": "lonely",
+"fuente": "lonely24",
 "url": null,
-"nota": "Café luminoso de especialidad; también tiramisú. Lonely Planet Corea 2024 (en español), p. 182."
+"nota": "Café luminoso de especialidad; también tiramisú. Lonely Planet Corea 2024 (en español), p. 182.",
+"lp24": {
+"p": 182
+}
 },
 {
 "id": "lp24-supia",
@@ -2083,9 +2101,12 @@
 "direccion": null,
 "horario": "10:30-20:00, de jueves a martes (LP 2024; cierra miércoles, VERIFICAR)",
 "precio": null,
-"fuente": "lonely",
+"fuente": "lonely24",
 "url": null,
-"nota": "Antiguo plató de la serie «Kang's Kitchen 2», en una bonita hanok reconvertida. Lonely Planet Corea 2024 (en español), p. 182. Hangul y ubicación: VERIFICAR en Naver."
+"nota": "Antiguo plató de la serie «Kang's Kitchen 2», en una bonita hanok reconvertida. Lonely Planet Corea 2024 (en español), p. 182. Hangul y ubicación: VERIFICAR en Naver.",
+"lp24": {
+"p": 182
+}
 },
 {
 "id": "lp24-no-words",
@@ -2097,8 +2118,11 @@
 "direccion": "Hwangnam-dong, junto a los túmulos (ubicación aproximada)",
 "horario": "12:00-18:00 (LP 2024)",
 "precio": null,
-"fuente": "lonely",
+"fuente": "lonely24",
 "url": null,
-"nota": "Junto al complejo de túmulos; lo abrieron dos hermanos de Seúl que se enamoraron de Gyeongju. Lonely Planet Corea 2024 (en español), p. 182."
+"nota": "Junto al complejo de túmulos; lo abrieron dos hermanos de Seúl que se enamoraron de Gyeongju. Lonely Planet Corea 2024 (en español), p. 182.",
+"lp24": {
+"p": 182
+}
 }
 ]

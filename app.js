@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v196';
+const VERSION = 'v197';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1017,7 +1017,10 @@ const sitiosCiudad = k => {
 };
 // Distintivo de recomendación de Lonely Planet (★ = elección del autor).
 const esLP = l => l && typeof l === 'object' && (l.lp || l.fuente === 'lonely');
-const lpPill = l => esLP(l) ? ` <span class="lp-pill" title="Recomendado por Lonely Planet 2016">LP${l.top || /★/.test(l.nota || '') ? ' ★' : ''}</span>` : '';
+// LP (azul) = la Lonely Planet 2016 del PDF original; LP24 (rosa) = lo añadido después desde la Lonely Planet 2024, más actual.
+const esLP24 = l => l && typeof l === 'object' && !!(l.lp24 || l.fuente === 'lonely24' || (typeof LP24_INDISP !== 'undefined' && (l.es || l.ko) && LP24_INDISP[hKey(l).slice(2)]));
+const lpPill = l => (esLP(l) ? ` <span class="lp-pill" title="Recomendado por Lonely Planet 2016">LP${l.top || /★/.test(l.nota || '') ? ' ★' : ''}</span>` : '')
+  + (esLP24(l) ? ` <span class="lp-pill lp24-pill" title="Lonely Planet 2024 (añadido después, más actual)">LP24</span>` : '');
 const lpTag = lpPill;
 const interesDe = c => arr(c.interes).length ? arr(c.interes) : (CATALOGO[ck(c.nombre)] || []).filter(l => !/^(Estación|Aeropuerto)/.test(l.es)).map(l => l.es);
 
@@ -1557,7 +1560,7 @@ function puntosCiudad(k) {
     else add('sitios', l, { ic: '🏯', sub: `${icSitio((l.tipo || '') + ' ' + l.es)} ${l.tipo || 'Punto de interés'}`, txt, lp: !!(LP[k] || []).find(x => hKey(x) === h), hecho: hecho(l, k) });
   });
   lugaresComer().filter(c => c.ciudad === k && !['descartado', 'cerrado'].includes(estadoDe(String(c.id)).estado)).forEach(c =>
-    add('comer', c, { es: c.nombre, ic: IC_COMER[c.tipo] || '🍴', sub: [c.plato, c.precio].filter(Boolean).join(' · '), txt: c.nota, lp: c.fuente === 'lonely', hecho: hecho(c, k) }));
+    add('comer', c, { es: c.nombre, ic: IC_COMER[c.tipo] || '🍴', sub: [c.plato, c.precio].filter(Boolean).join(' · '), txt: c.nota, lp: c.fuente === 'lonely', lp24: esLP24(c), hecho: hecho(c, k) }));
   (typeof PLANES !== 'undefined' ? PLANES : []).filter(p => p.ciudad === k).forEach(p => add('planes', p, { ic: icPlan(p), sub: p.direccion_en || '', txt: p.desc, hecho: hecho(p, k) }));
   if (hot) todos.push({ capa: 'hotel', c: hot, es: (arr(trip.alojamientos).find(a => ck(a.ciudad) === k) || {}).nombre || 'Hotel', ic: '🛏️', sub: 'Vuestro hotel' });
   return { hot, todos, cuenta };
@@ -2363,7 +2366,7 @@ cargaDatos('data/comer.json', d => { DATOS_COMER = arr(d); });
 const CIUDADES_COMER = [['seul', 'Seúl'], ['andong', 'Andong'], ['gyeongju', 'Gyeongju'], ['busan', 'Busan'], ['jeonju', 'Jeonju']];
 const TIPOS = ['todos', 'restaurante', 'café', 'mercado', 'plato', 'bar'];
 const ESTADOS = [['quiero', 'Quiero'], ['visitado', 'Visitado'], ['descartado', 'Descartado'], ['cerrado', 'Cerrado']];
-const FUENTES = { itinerario: 'Itinerario', guia: 'Guía web (no verificado)', lonely: 'Lonely Planet 2016', propio: 'Propio' };
+const FUENTES = { itinerario: 'Itinerario', guia: 'Guía web (no verificado)', lonely: 'Lonely Planet 2016', lonely24: 'Lonely Planet 2024', propio: 'Propio' };
 let platoGrupo = 0;
 let comerCiudad = null, comerTipo = 'todos', comerForm = false, comerEstado = 'todos', comerOrden = 'rec';
 const lugaresComer = () => [...DATOS_COMER, ...arr(u().comerPropios)].filter(l => l && typeof l === 'object');
@@ -2412,7 +2415,7 @@ function puntos(l) {
   if (['descartado', 'cerrado'].includes(e.estado)) return -100;
   const gp = arr(l.guias).reduce((s, g) => s + (g.g === 'michelin' ? (/estrella/.test(g.d) ? 45 : 35) : 20), 0);
   return gp + (e.estado === 'quiero' ? 100 : 0) + (l.fuente === 'itinerario' ? 50 : 0) + (/★/.test(l.nota || '') ? 30 : 0)
-    + (l.fuente === 'guia' ? 20 : l.fuente === 'lonely' ? 10 : 0) + (Number(e.val) || 0) * 5 - (e.estado === 'visitado' ? 40 : 0);
+    + (l.fuente === 'guia' ? 20 : l.fuente === 'lonely' || l.fuente === 'lonely24' ? 10 : 0) + (l.lp24 ? 5 : 0) + (Number(e.val) || 0) * 5 - (e.estado === 'visitado' ? 40 : 0);
 }
 function distKm(l) { const h = hotelDe(l.ciudad), p = coordsLugar(l); return h && p ? km(h, p) : Infinity; }
 // Al salir de las casillas de nota se redibuja (no mientras se pasa de una a otra).
