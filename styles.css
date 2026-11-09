@@ -1439,3 +1439,11 @@ details.qv.hecho-card, .card.lugar.hecho-card, .card.plan-card.hecho-card {
 details.qv.hecho-card .qv-cab b::before, .card.lugar.hecho-card > div b:first-child::before { content: "✓ "; color: #2e9d5b; font-weight: 900; }
 details.qv.hecho-card .qv-f { filter: saturate(.6); }
 details.qv:not(.hecho-card) .qv-ck { border: 2px solid color-mix(in srgb, var(--fg) 45%, transparent); }
+/* v188: controles de Puntos de interés en una fila compacta */
+.qv-fila { gap: 4px !important; justify-content: center; }
+.qv-fila .chip { padding: 3px 9px; min-height: 30px; font-size: .84rem; }
+.qv-fila .chip small { opacity: .75; font-size: .78em; }
+.qv-ord { font-weight: 700; }
+.qv-sep { width: 1px; align-self: stretch; margin: 4px 2px; background: var(--line); }
+.qv-fila { flex-wrap: wrap !important; overflow: visible !important; }
+.qv-fila .chip { padding: 3px 8px; }

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v187';
+const VERSION = 'v188';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1101,10 +1101,10 @@ function qvPuntos(k, c) {
   else if (qvOrden === 'tipo') { const g = {}; ls.forEach(o => (g[tipoQV(o.l)] = g[tipoQV(o.l)] || []).push(o)); grupos = [...QV_TIPOS.map(x => x[1]), '✨ Otros'].filter(t => g[t]).map(t => [t, g[t].sort((a, b) => a.l.es.localeCompare(b.l.es, 'es'))]); }
   else { const g = new Map(); ls.slice().sort((a, b) => ((a.plan || {}).n || 999) - ((b.plan || {}).n || 999) || (b.l.top ? 1 : 0) - (a.l.top ? 1 : 0))
       .forEach(o => { const t = o.plan ? `📅 Día ${o.plan.n} · ${fmtCorto(o.plan.fecha)}` : '➕ Fuera del itinerario'; if (!g.has(t)) g.set(t, []); g.get(t).push(o); }); grupos = [...g]; }
-  return `<div class="qv-ctrl"><div class="chips">${chips(qvOrden, [['itin', '📅 Itinerario'], ['tipo', '🏷️ Tipo'], ['az', '🔤 A-Z']], 'qvo')}</div>
-      <div class="chips">${chips(qvFiltro, [['todos', `Todos ${todos.length}`], ['itin', `📅 Itinerario ${cuenta('itin')}`], ['lp', `LP ${cuenta('lp')}`], ['otros', `Otros ${cuenta('otros')}`]], 'qvf')}</div>
-      <div class="chips">${chips(qvMarca, [['si', `✅ Marcados ${vis}`], ['no', `☐ No marcados ${base.length - vis}`]], 'qvm')}</div>
-      <div class="muted mini-nota">✅ ${vis} de ${base.length} visitados</div></div>
+  // Compacto: el orden es un solo botón que va cambiando; filtros y marcas en una fila con el número dentro.
+  const ORD = [['itin', '📅', 'día'], ['tipo', '🏷️', 'tipo'], ['az', '🔤', 'A-Z']], oi = Math.max(0, ORD.findIndex(x => x[0] === qvOrden)), sig = ORD[(oi + 1) % ORD.length][0];
+  const fil = [['todos', 'Todos', todos.length], ['itin', '📅', cuenta('itin')], ['lp', 'LP', cuenta('lp')], ['otros', 'Otros', cuenta('otros')]].filter(([x, , n]) => n || x === qvFiltro);
+  return `<div class="qv-ctrl"><div class="chips qv-fila"><button class="chip qv-ord" data-qvo="${sig}" title="Orden: ${ORD[oi][2]} (tocar para cambiar)">⇅${ORD[oi][1]}</button><span class="qv-sep"></span>${fil.map(([x, t, n]) => `<button class="chip ${qvFiltro === x ? 'on' : ''}" data-qvf="${x}">${t} <small>${n}</small></button>`).join('')}<span class="qv-sep"></span><button class="chip ${qvMarca === 'si' ? 'on' : ''}" data-qvm="si" title="Marcados">✅ <small>${vis}</small></button><button class="chip ${qvMarca === 'no' ? 'on' : ''}" data-qvm="no" title="No marcados">☐ <small>${base.length - vis}</small></button></div></div>
     ${ls.length ? grupos.map(([t, os]) => `${t ? `<div class="qv-grupo">${esc(t)}</div>` : ''}${os.map(o => fichaQV(o.l, k, { desc: o.desc, plan: o.plan, clase: o.l.top ? 'top' : '',
       extra: o.l.tipo && esLP(o.l) ? `<div class="lp-meta"><span class="lp-tipo">${esc(o.l.tipo)}</span>${o.l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(o.l)}</div>` : '' })).join('')}`).join('') : '<p class="muted">Nada con este filtro.</p>'}`;
 }

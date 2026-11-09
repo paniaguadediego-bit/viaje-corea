@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v187
+Caché del service worker: corea-v188
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -240,6 +240,7 @@ Caché del service worker: corea-v187
   Resultado de la búsqueda web: los monumentos ya estaban bien; de restaurantes y cafés las webs solo dan dirección, no coordenadas, así que se corrigen arrastrando en el mapa o con «Estoy aquí».
 - v186: en Planes, Comer y Miscelánea, recuadros con borde más marcado y sombra; las visitadas ya no van atenuadas: fondo verde suave, filo verde a la izquierda y ✓ delante del nombre (claro y oscuro). La casilla sin marcar, con borde visible.
 - v187: en Puntos de interés de Planes, filtros «✅ Marcados» y «☐ No marcados» (fila propia). Se combinan con Todos/Itinerario/LP/Otros: Itinerario + No marcados = lo que queda del plan. Tocar el activo lo quita. [Supuesto] Solo en Puntos de interés; Comer ya tiene sus estados (Visitado…).
+- v188: controles de Puntos de interés compactados de 4 líneas a 1: botón ⇅ de orden que va cambiando (📅 día → 🏷️ tipo → 🔤 A-Z), filtros Todos / 📅 / LP / Otros (este solo si hay alguno) y ✅ / ☐, cada uno con su número. Quitada la línea «n de m visitados» (lo dice ✅).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
