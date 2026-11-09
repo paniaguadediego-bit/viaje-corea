@@ -1407,3 +1407,6 @@ button.es-mas { margin-right: 14px; }
 .sitios-dia details.sd[open] { padding-bottom: 18px; }
 /* v178: Historia sin segunda franja de colores (ya está la de la cabecera) */
 .hist-tema { border-top: 0; border-image: none; padding-top: 4px; }
+/* v179: horario en el esquema del día */
+.esquema .es-hor { color: var(--muted, #888); font-size: .82em; white-space: nowrap; }
+.es-ley { font-size: .78rem; text-align: right; margin: 2px 14px 0 0; }

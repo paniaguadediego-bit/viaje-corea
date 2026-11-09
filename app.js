@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v178';
+const VERSION = 'v179';
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -550,8 +550,25 @@ function esquemaDia(d) {
   const key = 'itx:' + d.fecha;
   // «Leer más» no abre otra lista: amplía cada línea del esquema con su texto completo, en el mismo sitio.
   const largo = !!abiertos[key], hay = its.some(i => cortoItem(i.texto) !== String(i.texto || '').trim().replace(/[.:]$/, ''));
-  return `<ol class="esquema ${largo ? 'largo' : ''}">${its.map(i => `<li><span class="es-h">${i.hora ? esc(i.hora) : ''}</span><span class="es-ic">${icItem(i.texto)}</span><span class="es-t">${resaltar(largo ? i.texto : cortoItem(i.texto))}</span></li>`).join('')}</ol>
-    ${hay ? `<button class="es-mas" data-esmas="${key}">${largo ? 'Leer menos ▴' : 'Leer más ▾'}</button>` : ''}`;
+  // Horario del sitio de cada línea entre paréntesis; * = por verificar (la leyenda sale con «Leer más»).
+  const ls = listaDia(d); let ast = false;
+  const nt = t => ' ' + String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\(.*?\)/g, ' ').replace(/-/g, '').replace(/[^a-z0-9]+/g, ' ').trim() + ' ';
+  // Nombre completo + palabras propias (sin alias genéricos como «hahoe», que nombrarían la aldea en cualquier línea).
+  const tks = new Map(ls.map(l => [l, [nt(l.es), ...tokensDe(l).filter(x => !STOP.has(x.trim()))]]));
+  const hor = t => {
+    const txt = nt(t);
+    if (/^\s*(bus|ktx|tren|srt|taxi|metro|vuelo)\b/.test(txt)) return '';
+    // El sitio que se nombra primero en la línea (los demás suelen ser detalles: «junto a…», «en el…»).
+    let best = null, bp = 1e9, bl = 0;
+    ls.forEach(l => tks.get(l).forEach(tk => { const p = txt.indexOf(tk); if (p >= 0 && (p < bp || (p === bp && tk.length > bl))) { bp = p; bl = tk.length; best = l; } }));
+    const h = horDe(best); if (!h || !h.a || !h.c) return '';
+    if (h.v) ast = true;
+    return ` <span class="es-hor">(${esc(h.a)}-${esc(h.c)}${h.v ? '*' : ''})</span>`;
+  };
+  const lis = its.map(i => `<li><span class="es-h">${i.hora ? esc(i.hora) : ''}</span><span class="es-ic">${icItem(i.texto)}</span><span class="es-t">${resaltar(largo ? i.texto : cortoItem(i.texto))}${hor(i.texto)}</span></li>`).join('');
+  return `<ol class="esquema ${largo ? 'largo' : ''}">${lis}</ol>
+    ${largo && ast ? '<p class="muted es-ley">* Horario por verificar</p>' : ''}
+    ${hay || ast ? `<button class="es-mas" data-esmas="${key}">${largo ? 'Leer menos ▴' : 'Leer más ▾'}</button>` : ''}`;
 }
 function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
