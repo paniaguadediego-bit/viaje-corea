@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v188
+Caché del service worker: corea-v189
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -241,6 +241,7 @@ Caché del service worker: corea-v188
 - v186: en Planes, Comer y Miscelánea, recuadros con borde más marcado y sombra; las visitadas ya no van atenuadas: fondo verde suave, filo verde a la izquierda y ✓ delante del nombre (claro y oscuro). La casilla sin marcar, con borde visible.
 - v187: en Puntos de interés de Planes, filtros «✅ Marcados» y «☐ No marcados» (fila propia). Se combinan con Todos/Itinerario/LP/Otros: Itinerario + No marcados = lo que queda del plan. Tocar el activo lo quita. [Supuesto] Solo en Puntos de interés; Comer ya tiene sus estados (Visitado…).
 - v188: controles de Puntos de interés compactados de 4 líneas a 1: botón ⇅ de orden que va cambiando (📅 día → 🏷️ tipo → 🔤 A-Z), filtros Todos / 📅 / LP / Otros (este solo si hay alguno) y ✅ / ☐, cada uno con su número. Quitada la línea «n de m visitados» (lo dice ✅).
+- v189: repaso para iPhone (simulado iPhone SE 375 px e iPhone 13 en Chromium; aquí no hay Safari/WebKit): ninguna pestaña se sale de ancho. Arreglos: en iOS los campos de texto a 16 px (si no, Safari amplía la página al escribir y no vuelve); en pantallas ≤390 px la cabecera sin la versión para que quepa «Corea 2026». [Supuesto] Sin probar en Safari real: voz coreana, abrir Naver y el arrastre del mapa hay que verlos en el iPhone.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

@@ -1447,3 +1447,7 @@ details.qv:not(.hecho-card) .qv-ck { border: 2px solid color-mix(in srgb, var(--
 .qv-sep { width: 1px; align-self: stretch; margin: 4px 2px; background: var(--line); }
 .qv-fila { flex-wrap: wrap !important; overflow: visible !important; }
 .qv-fila .chip { padding: 3px 8px; }
+/* v189: iPhone. Safari amplía la página al tocar un campo con letra < 16 px y no vuelve: en iOS los campos van a 16 px. */
+@supports (-webkit-touch-callout: none) { input, select, textarea { font-size: 16px !important; } }
+/* Pantallas estrechas (iPhone SE, 375 px): sin la versión en la cabecera para que quepa «Corea 2026» (sigue en Más → Datos y app). */
+@media (max-width: 390px) { #version { display: none; } header { gap: 6px; } }
