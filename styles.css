@@ -1461,13 +1461,13 @@ details.comer-fuera > .card { margin: 0 6px 6px; opacity: 1; }
 
 /* v193: modo oscuro: textos con el color de la ciudad, de la pestaña o de la época, aclarados para que se lean */
 @media (prefers-color-scheme: dark) {
-:root:not([data-theme="light"]) .cbtn:not(.on), :root:not([data-theme="light"]) .ciudad h2, :root:not([data-theme="light"]) .ciudad summary, :root:not([data-theme="light"]) .ens-ciudad h2 { color: color-mix(in srgb, var(--c1) 45%, #fff); }
+:root:not([data-theme="light"]) .cbtn:not(.on), :root:not([data-theme="light"]) .ciudad h2, :root:not([data-theme="light"]) .ciudad summary, :root:not([data-theme="light"]) .ens-ciudad h2 { color: var(--c1t, #e8eef8); }
 :root:not([data-theme="light"]) .cbtn:not(.on) { border-color: color-mix(in srgb, var(--c1) 55%, var(--line)); background: linear-gradient(160deg, var(--card), color-mix(in srgb, var(--c1) 22%, var(--card))); }
 :root:not([data-theme="light"]) button.es-mas { color: var(--acc2); }
 :root:not([data-theme="light"]) .htl-a, :root:not([data-theme="light"]) .hl-era .hl-ko { color: color-mix(in srgb, var(--ec) 50%, #fff); }
 :root:not([data-theme="light"]) a:not(.btn):not(.chip):not([class*="mp-"]) { color: #8ab4ff; }
 }
-:root[data-theme="dark"] .cbtn:not(.on), :root[data-theme="dark"] .ciudad h2, :root[data-theme="dark"] .ciudad summary, :root[data-theme="dark"] .ens-ciudad h2 { color: color-mix(in srgb, var(--c1) 45%, #fff); }
+:root[data-theme="dark"] .cbtn:not(.on), :root[data-theme="dark"] .ciudad h2, :root[data-theme="dark"] .ciudad summary, :root[data-theme="dark"] .ens-ciudad h2 { color: var(--c1t, #e8eef8); }
 :root[data-theme="dark"] .cbtn:not(.on) { border-color: color-mix(in srgb, var(--c1) 55%, var(--line)); background: linear-gradient(160deg, var(--card), color-mix(in srgb, var(--c1) 22%, var(--card))); }
 :root[data-theme="dark"] button.es-mas { color: var(--acc2); }
 :root[data-theme="dark"] .htl-a, :root[data-theme="dark"] .hl-era .hl-ko { color: color-mix(in srgb, var(--ec) 50%, #fff); }
@@ -1475,3 +1475,6 @@ details.comer-fuera > .card { margin: 0 6px 6px; opacity: 1; }
 /* v193: en oscuro, lo pasado se atenúa menos (con .5 no se leía) */
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .vuelo.pasado, :root:not([data-theme="light"]) .w-fila.pasado, :root:not([data-theme="light"]) .dchip.pasado:not(.on), :root:not([data-theme="light"]) .timeline .tl.pasado > .card, :root:not([data-theme="light"]) .dad-dia.pasado { opacity: .72; } }
 :root[data-theme="dark"] .vuelo.pasado, :root[data-theme="dark"] .w-fila.pasado, :root[data-theme="dark"] .dchip.pasado:not(.on), :root[data-theme="dark"] .timeline .tl.pasado > .card, :root[data-theme="dark"] .dad-dia.pasado { opacity: .72; }
+
+/* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
+:root { --css-ver: "v194"; }

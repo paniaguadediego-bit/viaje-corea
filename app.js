@@ -1,7 +1,13 @@
 'use strict';
 
-// Versión visible arriba. Súbela a la vez que CACHE en sw.js.
-const VERSION = 'v193';
+// Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
+const VERSION = 'v194';
+// Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
+addEventListener('load', () => { try {
+  const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
+  const l = document.querySelector('link[rel="stylesheet"][href^="styles.css"]');
+  if (l && v !== VERSION && navigator.onLine) l.href = 'styles.css?v=' + VERSION;
+} catch {} });
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -142,7 +148,9 @@ const TEMA = {
   incheon: { ic: '✈️', c1: '#3b4a63', c2: '#7d8ca6', lema: '' }
 };
 const tema = k => TEMA[k] || { ic: '📍', c1: '#475569', c2: '#94a3b8', lema: '' };
-const varsTema = k => { const t = tema(k); return `--c1:${t.c1};--c2:${t.c2}`; };
+// --c1t: el color de la ciudad aclarado (55 % blanco), para textos en modo oscuro sin depender de color-mix().
+const aclarar = (hex, f = .55) => '#' + [1, 3, 5].map(i => Math.round(parseInt(hex.slice(i, i + 2), 16) * (1 - f) + 255 * f).toString(16).padStart(2, '0')).join('');
+const varsTema = k => { const t = tema(k); return `--c1:${t.c1};--c2:${t.c2};--c1t:${aclarar(t.c1)}`; };
 function icSitio(t) {
   t = norm(t);
   if (/palacio|fortaleza|ruinas|puerta/.test(t)) return '🏯';
