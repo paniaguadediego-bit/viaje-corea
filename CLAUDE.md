@@ -166,7 +166,7 @@ situación; FRASES es la lista plana), GUIA y PLANES (LoL, cosmética y servicio
 aproximada, la distancia sale con "≈").
 Lo recomendado por la Lonely (lp: true o fuente lonely) lleva el distintivo
 azul "LP" (★ = elección del autor) allí donde aparezca.
-Lo añadido después desde la Lonely Planet 2024 (lp24: {p} en comer.json, fuente lonely24 si solo está en la de 2024, o sitio con LP24_INDISP o en LP24_SITIOS) lleva el distintivo rosa "LP24"; LP24_RUTA_DAEREUNG = recorrido a pie de la LP 2024 por Daereungwon y el centro (9 paradas), en la ficha de Daereungwon, distinto del azul (si está en las dos, ambos).
+Lo añadido después desde la Lonely Planet 2024 (lp24: {p} en comer.json, fuente lonely24 si solo está en la de 2024, o sitio con LP24_INDISP o en LP24_SITIOS) lleva el distintivo rosa "LP24"; LP24_RUTAS (p. ej. LP24_RUTA_DAEREUNG, recorrido a pie de la LP 2024 por Daereungwon y el centro, 9 paradas) = ficha plegada propia «🚶» arriba de Puntos de interés de su ciudad en Planes y en Hoy los días que pasan por ≥3 de sus paradas (desde v201; ya no dentro de los Túmulos), distinto del azul (si está en las dos, ambos).
 Todo sitio nuevo lleva descripción y coordenadas en data/coords.json
 (para la distancia al hotel). Si están mal, en el mapa grande se mantiene pulsado el icono (½ s) y se arrastra a su sitio (desde v185; pide confirmación; "↩️ Ubicación original" en su ficha lo deshace), o "📍 Estoy aquí" (en la ficha de Planes y del mapa) guarda la posición GPS en user.coordsFix[hKey], que manda sobre coords.json y va al pasar marcas.
 

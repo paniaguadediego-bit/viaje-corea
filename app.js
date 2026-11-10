@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v200';
+const VERSION = 'v201';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -654,7 +654,7 @@ function viewHoy() {
   const nomH = cambia ? `dejáis ${al.sale.nombre} · dormís en ${al.noche.nombre}` : (al.noche || al.sale || {}).nombre;
   // Orden: traslado, hotel (justo encima del mapa de la Ruta del día), sitios y diario. Sin títulos repetidos dentro.
   const hU = al.noche || al.sale;
-  return html + tras + (hotl ? `<details class="card plg hotel-pl" data-key="${hk}" ${abierto(hk, false) ? 'open' : ''}><summary>🛏️ <b>${cambia ? 'Hotel' : esc(hU.nombre)}</b>${cambia ? ` · ${esc(nomH)}` : ' ' + ver(hU)}</summary>${hotl}</details>` : '') + sit
+  return html + tras + rutasLP24(ck(d.ciudad), d) + (hotl ? `<details class="card plg hotel-pl" data-key="${hk}" ${abierto(hk, false) ? 'open' : ''}><summary>🛏️ <b>${cambia ? 'Hotel' : esc(hU.nombre)}</b>${cambia ? ` · ${esc(nomH)}` : ' ' + ver(hU)}</summary>${hotl}</details>` : '') + sit
     + `<details class="card plg diario-pl" data-key="${dk}" ${abierto(dk, false) ? 'open' : ''}><summary>${diarioDe(d.fecha).cara || '📔'} <b>¿Qué tal el día?</b>${diarioDe(d.fecha).nota ? ' · ✍️' : ''}</summary>${diarioCard(d, true)}</details>`;
 }
 
@@ -1069,6 +1069,12 @@ document.addEventListener('click', e => {
 }, true);
 function guiaCult(l, ctx) { return lp24(l) + guiaCult0(l, ctx); }
 // 📕 Recuadro «Indispensable» de la Lonely Planet 2024 (LP24_INDISP en contenido.js), con hangul y 🔊.
+// 🚶 Rutas a pie de la LP 2024 (LP24_RUTAS): ficha plegada propia en Planes de su ciudad y en Hoy los días que pasan por ≥3 de sus paradas.
+function rutasLP24(k, d) {
+  const rs = (typeof LP24_RUTAS !== 'undefined' ? LP24_RUTAS : []).filter(r => r.ciudad === k && (!d || listaDia(d).filter(l => r.items.some(([, ko]) => ko.replace(/\s+/g, '') === hKey(l).slice(2))).length >= 3));
+  return rs.map((r, i) => { const key = `rlp:${k}:${i}`; return `<details class="card lp24-ruta" data-key="${key}" ${abierto(key, false) ? 'open' : ''}><summary>🚶 <b>${esc(r.t)}</b> <span class="lp-pill lp24-pill">LP24</span> <small class="muted">· ${r.items.length} paradas</small></summary>
+    <ol>${r.items.map(([es, ko, t]) => `<li><b>${esc(es)}</b> <span class="ko-s">${esc(ko)}</span>${btnHabla(ko)}<div>${esc(t)}</div></li>`).join('')}</ol></details>`; }).join('');
+}
 function lp24(l) {
   const x = l && typeof l === 'object' && typeof LP24_INDISP !== 'undefined' && LP24_INDISP[hKey(l).slice(2)]; if (!x) return '';
   return `<div class="lp24"><b>${x.t ? esc(x.t) : `📕 Indispensable · Lonely Planet 2024${x.p ? `, p. ${x.p}` : ''}`}</b><ol>${x.items.map(([es, ko, d]) => `<li><b>${esc(es)}</b> <span class="ko-s">${esc(ko)}</span>${btnHabla(ko.split(' · ')[0])}<div>${esc(d)}</div></li>`).join('')}</ol></div>`;
@@ -1374,7 +1380,7 @@ function viewCiudades() {
       <div class="ciudad-fechas">${fechas}</div>${linkHist(k)}
     </div>
     <div class="row daynav exsubs">${EX_SUBS.filter(([x]) => x !== 'historia' || h).map(([x, tt]) => `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}">${tt}</button>`).join('')}</div>
-    ${exSub === 'comer' ? '' : muchoOjo(k, 'planes')}
+    ${exSub === 'comer' ? '' : muchoOjo(k, 'planes')}${exSub === 'puntos' ? rutasLP24(k) : ''}
     ${exSub === 'planes' ? planesDe(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
     ${exSub !== 'puntos' ? '</div>' : ''}${exSub === 'puntos' ? `
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>

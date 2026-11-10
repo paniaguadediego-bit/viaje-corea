@@ -142,18 +142,19 @@ const LP24_INDISP = {
     ['Estatua de Buda de Seokguram', '석굴암 본존불', 'Ya en la gruta de Seokguram, montaña arriba: el gran Buda sedente de granito, tras un cristal y mirando al mar del Este. Dentro no se permiten fotos.']] }
 };
 // 🚶 Recorrido a pie por el complejo de tumbas de Daereungwon (LP 2024): sale en la ficha de Daereungwon y de cada parada.
-const LP24_RUTA_DAEREUNG = { t: '🚶 Recorrido a pie · Lonely Planet 2024', items: [
-  ['1 · Tumbas de Noseo-ri y Nodong-ri', '노서동 고분', 'Empieza al norte: túmulos de Seobongchong, Geumgwanchong y Geumnyeonchong, y Bonghwangdae (22 m de alto, 250 m de perímetro), la mayor tumba de Silla que se conserva.'],
-  ['2 · Cheonmachong (Daereungwon)', '천마총', 'Tras cruzar la calle al sur: la única tumba en la que se puede entrar. Al lado, Hwangnamdaechong y la tumba del rey Michu.'],
-  ['3 · Cheomseongdae', '첨성대', 'Saliendo por el extremo sur del parque: observatorio de piedra (632-646), el más antiguo de Extremo Oriente. 12 piedras en la base (meses), 30 capas (días del mes) y unas 366 piedras (días del año).'],
-  ['4 · Donggung y estanque Wolji', '동궁과 월지', 'Pasados los jardines de flores, al otro lado de Wonhwa-ro. Consejo nuestro: dejadlo para el atardecer, cuando se ilumina.'],
-  ['5 · Wolseong (Banwolseong)', '반월성', 'Volviendo al oeste: solar del palacio de Silla. Solo queda el Seokbinggo, el almacén de hielo de piedra (época Joseon), y el foso.'],
-  ['6 · Bosque de Gyerim', '계림', 'Girando al norte: bosque de unos 2.000 años, el de la leyenda de Kim Alji.'],
-  ['7 · Tumba del rey Naemul', '내물왕릉', 'Junto al bosque.'],
-  ['8 · Gyeongju Hyanggyo', '경주향교', 'Escuela confuciana, cerca de las casas tradicionales de Gyochon.'],
-  ['9 · Puente Woljeonggyo', '월정교', 'Fin del recorrido: puente de 66 m, rojo y verde, del año 760 y restaurado en 2009 según la guía, sobre el arroyo Namcheon.']] };
-LP24_INDISP['대릉원'] = LP24_RUTA_DAEREUNG; // el recuadro, solo en Daereungwon; el resto de paradas llevan el distintivo LP24
-const LP24_SITIOS = new Set(['노서동고분', '천마총', '첨성대', '동궁과월지', '반월성', '계림', '내물왕릉', '경주향교', '월정교']);
+const LP24_RUTA_DAEREUNG = { ciudad: 'gyeongju', t: 'Recorrido a pie por Daereungwon y el centro', items: [
+  ['Tumbas de Noseo-ri y Nodong-ri', '노서동 고분', 'Empieza al norte: túmulos de Seobongchong, Geumgwanchong y Geumnyeonchong, y Bonghwangdae (22 m de alto, 250 m de perímetro), la mayor tumba de Silla que se conserva.'],
+  ['Cheonmachong (Daereungwon)', '천마총', 'Tras cruzar la calle al sur: la única tumba en la que se puede entrar. Al lado, Hwangnamdaechong y la tumba del rey Michu.'],
+  ['Cheomseongdae', '첨성대', 'Saliendo por el extremo sur del parque: observatorio de piedra (632-646), el más antiguo de Extremo Oriente. 12 piedras en la base (meses), 30 capas (días del mes) y unas 366 piedras (días del año).'],
+  ['Donggung y estanque Wolji', '동궁과 월지', 'Pasados los jardines de flores, al otro lado de Wonhwa-ro. Consejo nuestro: dejadlo para el atardecer, cuando se ilumina.'],
+  ['Wolseong (Banwolseong)', '반월성', 'Volviendo al oeste: solar del palacio de Silla. Solo queda el Seokbinggo, el almacén de hielo de piedra (época Joseon), y el foso.'],
+  ['Bosque de Gyerim', '계림', 'Girando al norte: bosque de unos 2.000 años, el de la leyenda de Kim Alji.'],
+  ['Tumba del rey Naemul', '내물왕릉', 'Junto al bosque.'],
+  ['Gyeongju Hyanggyo', '경주향교', 'Escuela confuciana, cerca de las casas tradicionales de Gyochon.'],
+  ['Puente Woljeonggyo', '월정교', 'Fin del recorrido: puente de 66 m, rojo y verde, del año 760 y restaurado en 2009 según la guía, sobre el arroyo Namcheon.']] };
+// Ficha propia (Planes → Gyeongju y Hoy el día que toca); cada parada lleva el distintivo LP24.
+const LP24_RUTAS = [LP24_RUTA_DAEREUNG];
+const LP24_SITIOS = new Set(['대릉원', '노서동고분', '천마총', '첨성대', '동궁과월지', '반월성', '계림', '내물왕릉', '경주향교', '월정교']);
 LP24_INDISP['석굴암'] = { p: 178, items: [LP24_INDISP['불국사'].items[4]] };
 
 const GUIA = [

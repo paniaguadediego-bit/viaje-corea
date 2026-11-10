@@ -1501,5 +1501,9 @@ details.ci-sec > p { margin: 6px 12px 10px; line-height: 1.5; }
 .hist-subs { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
 .hist-subs button { width: 100%; height: 56px; min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 4px 2px; font-size: .7rem; line-height: 1.15; white-space: normal; text-align: center; }
 .hist-subs .hs-i { font-size: 1.15rem; line-height: 1; }
+/* v201: ruta a pie LP 2024 en ficha propia */
+details.lp24-ruta { border: 1.5px solid #d63384 !important; border-left: 5px solid #d63384 !important; }
+details.lp24-ruta > summary { cursor: pointer; }
+details.lp24-ruta ol { margin: 6px 0 4px; padding-left: 22px; } details.lp24-ruta li { margin: 6px 0; line-height: 1.4; } details.lp24-ruta li div { font-size: .88rem; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v200"; }
+:root { --css-ver: "v201"; }
