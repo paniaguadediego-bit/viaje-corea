@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v199
+Caché del service worker: corea-v200
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -252,6 +252,7 @@ Caché del service worker: corea-v199
 - v197: lo de la Lonely Planet 2024 se distingue de la LP 2016 del PDF original: distintivo rosa «LP24» (el azul «LP» sigue siendo 2016; si un sitio está en las dos guías, lleva ambos). En comer.json, campo lp24 {p} y fuente lonely24 para lo que solo está en la de 2024; Bulguksa y Seokguram lo llevan por su «Indispensable». En el trip.json privado se quitaron los nombres de los restaurantes cerrados del texto del día (la app los tomaba por parte del plan).
 - v198: los cuatro botones de Historia (Línea del tiempo, Capítulos, Vuestras ciudades, Símbolos) del mismo tamaño: rejilla de 4 columnas iguales, icono arriba y texto debajo (iPhone SE incluido).
 - v199: el usuario confirmó el hotel de Gyeongju (Mini Hotel 141, 원효로 141). Según VisitKorea está en Hwango-dong, cerca de la antigua estación y del mercado Seongdong, no «al lado de la terminal»: corregidos la nota y el paso del traslado en el trip.json privado. Como no se puede geolocalizar desde aquí, la tarjeta del hotel en Hoy lleva «📌 Estoy en el hotel» (GPS → user.coordsFix['hotel:<id>'], manda sobre lat/lon y va al pasar marcas).
+- v200: recorrido a pie de la Lonely Planet 2024 por el complejo de Daereungwon (Noseo-dong → Cheonmachong → Cheomseongdae → Donggung → Wolseong → Gyerim → tumba de Naemul → Hyanggyo → Woljeonggyo): recuadro en la ficha de Daereungwon y distintivo LP24 en cada parada. Nuevos en el catálogo: bosque de Gyerim (계림), tumba del rey Naemul (내물왕릉) y Gyeongju Hyanggyo (경주향교), con coordenadas aproximadas. El día 10 del trip.json privado sigue ese orden, con Donggung al atardecer y museo y Bunhwangsa por la tarde. STOP suma tumba/rey/reina/bosque/escuela/confuciana (la tumba de Naemul se emparejaba con «tumba Cheonmachong»).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v199';
+const VERSION = 'v200';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -171,7 +171,7 @@ const IC_COMER = { restaurante: '🍲', 'café': '☕', mercado: '🧺', plato: 
 const tipoClase = t => 'tipo-' + norm(t || 'otro');
 
 // ---------- ¿Está en nuestro itinerario? (y qué día) ----------
-const STOP = new Set('hahoe sauna palacio templo mercado aldea barrio calle parque museo nacional gruta observatorio tumulos playa estanque santuario catedral cafe restaurante hanok village puerta mirador academia escuela torre puente plaza estacion aeropuerto cultural tradicional folclorica comida callejera puestos desayuno platos probar seul seoul andong gyeongju busan jeonju incheon corea hotel seowon square market para con los las del una tumbas reales hall center centro comercial historia moderna arte murales teleferico tour city turistico bus cafes wonjo halmae gukbap milmyeon jjimdak bibimbap samgyeopsal bakery calle viejo rocas yongsan'.split(' '));
+const STOP = new Set('hahoe sauna palacio templo mercado aldea barrio calle parque museo nacional gruta observatorio tumulos playa estanque santuario catedral cafe restaurante hanok village puerta mirador academia escuela torre puente plaza estacion aeropuerto cultural tradicional folclorica comida callejera puestos desayuno platos probar seul seoul andong gyeongju busan jeonju incheon corea hotel seowon square market para con los las del una tumbas reales hall center centro comercial historia moderna arte murales teleferico tour city turistico bus cafes wonjo halmae gukbap milmyeon jjimdak bibimbap samgyeopsal bakery calle viejo rocas yongsan tumba rey reina bosque escuela confuciana'.split(' '));
 let _plan = null, _planTrip = null;
 function planIdx() {
   if (_plan && _planTrip === trip) return _plan;
@@ -1022,7 +1022,7 @@ const sitiosCiudad = k => {
 // Distintivo de recomendación de Lonely Planet (★ = elección del autor).
 const esLP = l => l && typeof l === 'object' && (l.lp || l.fuente === 'lonely');
 // LP (azul) = la Lonely Planet 2016 del PDF original; LP24 (rosa) = lo añadido después desde la Lonely Planet 2024, más actual.
-const esLP24 = l => l && typeof l === 'object' && !!(l.lp24 || l.fuente === 'lonely24' || (typeof LP24_INDISP !== 'undefined' && (l.es || l.ko) && LP24_INDISP[hKey(l).slice(2)]));
+const esLP24 = l => l && typeof l === 'object' && !!(l.lp24 || l.fuente === 'lonely24' || (typeof LP24_INDISP !== 'undefined' && (l.es || l.ko) && (LP24_INDISP[hKey(l).slice(2)] || (typeof LP24_SITIOS !== 'undefined' && LP24_SITIOS.has(hKey(l).slice(2))))));
 const lpPill = l => (esLP(l) ? ` <span class="lp-pill" title="Recomendado por Lonely Planet 2016">LP${l.top || /★/.test(l.nota || '') ? ' ★' : ''}</span>` : '')
   + (esLP24(l) ? ` <span class="lp-pill lp24-pill" title="Lonely Planet 2024 (añadido después, más actual)">LP24</span>` : '');
 const lpTag = lpPill;
@@ -1071,7 +1071,7 @@ function guiaCult(l, ctx) { return lp24(l) + guiaCult0(l, ctx); }
 // 📕 Recuadro «Indispensable» de la Lonely Planet 2024 (LP24_INDISP en contenido.js), con hangul y 🔊.
 function lp24(l) {
   const x = l && typeof l === 'object' && typeof LP24_INDISP !== 'undefined' && LP24_INDISP[hKey(l).slice(2)]; if (!x) return '';
-  return `<div class="lp24"><b>📕 Indispensable · Lonely Planet 2024${x.p ? `, p. ${x.p}` : ''}</b><ol>${x.items.map(([es, ko, d]) => `<li><b>${esc(es)}</b> <span class="ko-s">${esc(ko)}</span>${btnHabla(ko.split(' · ')[0])}<div>${esc(d)}</div></li>`).join('')}</ol></div>`;
+  return `<div class="lp24"><b>${x.t ? esc(x.t) : `📕 Indispensable · Lonely Planet 2024${x.p ? `, p. ${x.p}` : ''}`}</b><ol>${x.items.map(([es, ko, d]) => `<li><b>${esc(es)}</b> <span class="ko-s">${esc(ko)}</span>${btnHabla(ko.split(' · ')[0])}<div>${esc(d)}</div></li>`).join('')}</ol></div>`;
 }
 function guiaCult0(l, ctx) {
   const ps = l && typeof l === 'object' && typeof GUIA_CULT !== 'undefined' && GUIA_CULT[hKey(l).slice(2)]; if (!ps) return '';

@@ -141,6 +141,19 @@ const LP24_INDISP = {
     ['Pagodas Dabotap y Seokgatap', '다보탑 · 석가탑', 'Las dos pagodas de piedra del patio, de la época Silla: Dabotap, la recargada (es la de la moneda de 10 wones), y Seokgatap, la sobria. Comparadlas: son dos maneras de entender la misma idea.'],
     ['Estatua de Buda de Seokguram', '석굴암 본존불', 'Ya en la gruta de Seokguram, montaña arriba: el gran Buda sedente de granito, tras un cristal y mirando al mar del Este. Dentro no se permiten fotos.']] }
 };
+// 🚶 Recorrido a pie por el complejo de tumbas de Daereungwon (LP 2024): sale en la ficha de Daereungwon y de cada parada.
+const LP24_RUTA_DAEREUNG = { t: '🚶 Recorrido a pie · Lonely Planet 2024', items: [
+  ['1 · Tumbas de Noseo-ri y Nodong-ri', '노서동 고분', 'Empieza al norte: túmulos de Seobongchong, Geumgwanchong y Geumnyeonchong, y Bonghwangdae (22 m de alto, 250 m de perímetro), la mayor tumba de Silla que se conserva.'],
+  ['2 · Cheonmachong (Daereungwon)', '천마총', 'Tras cruzar la calle al sur: la única tumba en la que se puede entrar. Al lado, Hwangnamdaechong y la tumba del rey Michu.'],
+  ['3 · Cheomseongdae', '첨성대', 'Saliendo por el extremo sur del parque: observatorio de piedra (632-646), el más antiguo de Extremo Oriente. 12 piedras en la base (meses), 30 capas (días del mes) y unas 366 piedras (días del año).'],
+  ['4 · Donggung y estanque Wolji', '동궁과 월지', 'Pasados los jardines de flores, al otro lado de Wonhwa-ro. Consejo nuestro: dejadlo para el atardecer, cuando se ilumina.'],
+  ['5 · Wolseong (Banwolseong)', '반월성', 'Volviendo al oeste: solar del palacio de Silla. Solo queda el Seokbinggo, el almacén de hielo de piedra (época Joseon), y el foso.'],
+  ['6 · Bosque de Gyerim', '계림', 'Girando al norte: bosque de unos 2.000 años, el de la leyenda de Kim Alji.'],
+  ['7 · Tumba del rey Naemul', '내물왕릉', 'Junto al bosque.'],
+  ['8 · Gyeongju Hyanggyo', '경주향교', 'Escuela confuciana, cerca de las casas tradicionales de Gyochon.'],
+  ['9 · Puente Woljeonggyo', '월정교', 'Fin del recorrido: puente de 66 m, rojo y verde, del año 760 y restaurado en 2009 según la guía, sobre el arroyo Namcheon.']] };
+LP24_INDISP['대릉원'] = LP24_RUTA_DAEREUNG; // el recuadro, solo en Daereungwon; el resto de paradas llevan el distintivo LP24
+const LP24_SITIOS = new Set(['노서동고분', '천마총', '첨성대', '동궁과월지', '반월성', '계림', '내물왕릉', '경주향교', '월정교']);
 LP24_INDISP['석굴암'] = { p: 178, items: [LP24_INDISP['불국사'].items[4]] };
 
 const GUIA = [
@@ -340,6 +353,9 @@ const LP = {
     R('Fortaleza Banwolseong', '반월성', 'Ruinas', 'Restos del palacio Silla junto al observatorio.'),
     R('Pagoda de Bunhwang-sa', '분황사', 'Pagoda', 'La pagoda fechada más antigua de Corea, de ladrillo.'),
     R('Tumbas de Noseo-dong', '노서동 고분', 'Tumbas', 'Túmulos Silla gratuitos junto a la zona comercial.'),
+    { es: 'Bosque de Gyerim', ko: '계림', tipo: 'Bosque', lp24: true, nota: 'Bosque antiquísimo entre Cheomseongdae y Wolseong, donde según la leyenda apareció Kim Alji, antepasado de los reyes Kim de Silla, en una caja de oro colgada de un árbol.' },
+    { es: 'Tumba del rey Naemul', ko: '내물왕릉', tipo: 'Tumbas', lp24: true, nota: 'Túmulo del rey Naemul (siglo IV), junto al bosque de Gyerim, en la ruta a pie de la LP 2024.' },
+    { es: 'Escuela confuciana Gyeongju Hyanggyo', ko: '경주향교', tipo: 'Escuela confuciana', lp24: true, nota: 'Escuela confuciana pública de época Joseon, junto a la aldea Gyochon, de camino al puente Woljeonggyo.' },
     R('Templo Golgul-sa', '골굴사', 'Templo', 'Buda tallado en la roca y arte marcial budista (sunmudo).'),
     R('Tumbas reales de Samneung', '삼릉', 'Tumbas', 'Tres tumbas en un bosque de pinos, al pie de Namsan.'),
     R('Aldea de Yangdong', '경주 양동마을', 'Aldea', 'Aldea tradicional (Unesco), menos turística que Hahoe.'),
