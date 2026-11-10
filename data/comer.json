@@ -2124,5 +2124,25 @@
 "lp24": {
 "p": 182
 }
+},
+{
+"id": "gj-gyodong-sundubu",
+"ciudad": "gyeongju",
+"nombre": "Gyeongju Gyodong Sundubu",
+"ko": "경주교동순두부",
+"tipo": "restaurante",
+"plato": "sundubu (guiso de tofu tierno) y menú coreano",
+"direccion": "Hwangnam-dong 328-1, junto a Cheomseong-ro 81beon-gil (Naver: «Kyongju kyodong sundubu»)",
+"horario": "Pausa desde las 16:00 (Naver, 10/11); resto VERIFICAR",
+"precio": null,
+"fuente": "propio",
+"url": null,
+"nota": "Almuerzo del 10/11: aquí comisteis (lo añadió el usuario desde Naver Map). Hangul tomado del cartel 慶州校洞 순두부: VERIFICAR la grafía exacta en Naver.",
+"opiniones": {
+"v": 4.82,
+"n": 3000,
+"fuente": "Naver Map",
+"fecha": "2026-11-10"
+}
 }
 ]
