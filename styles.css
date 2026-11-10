@@ -1497,5 +1497,9 @@ details.ci-sec > p { margin: 6px 12px 10px; line-height: 1.5; }
 :root[data-theme="dark"] .lp24 > b { color: #ff8cc6; }
 /* v197: LP24 (Lonely Planet 2024, añadido después) en rosa, distinto de LP 2016 (azul) */
 .lp-pill.lp24-pill { background: #c2185b !important; color: #fff !important; border-color: #c2185b !important; }
+/* v198: los cuatro botones de Historia, del mismo tamaño (icono arriba, texto debajo) */
+.hist-subs { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.hist-subs button { width: 100%; height: 56px; min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 4px 2px; font-size: .7rem; line-height: 1.15; white-space: normal; text-align: center; }
+.hist-subs .hs-i { font-size: 1.15rem; line-height: 1; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v197"; }
+:root { --css-ver: "v198"; }

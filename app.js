@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v197';
+const VERSION = 'v198';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2020,7 +2020,7 @@ function viewHistoria() {
       <div class="hist-sub">${H.length} capítulos · unos ${tot} min · ${EV.length} fechas · para leer en el avión</div>
       <div class="hist-barra"><i style="width:${Math.round(leidos / H.length * 100)}%"></i></div><div class="hist-sub">${leidos} de ${H.length} leídos</div>
       ${sig >= 0 ? `<button class="hist-seguir" data-hc="${sig}">${leidos ? '▶ Seguir' : '▶ Empezar'}: ${esc(H[sig].t)}</button>` : '<div class="hist-sub">✅ ¡Todo leído!</div>'}</div>`;
-  const subs = `<div class="row daynav hist-subs">${HIST_SUBS.map(([k, t]) => `<button class="${k === histSub ? '' : 'sec'}" data-hsub="${k}">${t}</button>`).join('')}</div>`;
+  const subs = `<div class="row daynav hist-subs">${HIST_SUBS.map(([k, t]) => { const [ic, ...r] = t.split(' '); return `<button class="${k === histSub ? '' : 'sec'}" data-hsub="${k}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>`;
   let cuerpo = '';
   if (histSub === 'linea') {
     // Línea vertical: cada etapa con su color y sus fechas; tocar una fecha abre el capítulo.

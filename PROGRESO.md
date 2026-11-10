@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v197
+Caché del service worker: corea-v198
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -250,6 +250,7 @@ Caché del service worker: corea-v197
 - v195: previsión por horas en la tarjeta del día de Hoy, en una sola fila: 8 bloques de 2 h (8-24 h), cada uno con el peor cielo del bloque y la temperatura, o el % de lluvia si es ≥25 %; azul si puede llover (fuerte ≥50 %) y atenuados los ya pasados. Open-Meteo hourly (mismo aviso: solo con conexión, se guarda para offline; unos 30 KB). [Supuesto] Solo en Hoy; Ruta sigue con el resumen del día.
 - v196: (1) botón «📜 Historia, costumbres y curiosidades de <ciudad>» en el título de Hoy y de Planes, que abre Historia → Vuestras ciudades con esa ciudad desplegada. (2) ciudades.js (CIUDAD_INFO): lectura larga de las 5 ciudades en apartados plegables (historia, costumbres, famosos, qué hacer, sabores, lo que no cuentan las guías). Contenido de conocimiento general; lo dudoso con VERIFICAR. (3) LP24_INDISP: «Indispensable» de Bulguksa y Seokguram de la Lonely Planet 2024 (p. 178), en la ficha y en Hoy. (4) Comer Gyeongju con la LP 2024 (pp. 181-182): horarios nuevos de Sukyeong Sikdang (cierra martes), Dosolmaeul (cierra martes y miércoles), Kisoya (cierra miércoles) y Kuro Ssambap; nuevos cafés Gyeongju Bakery, Hyangmisa (향미사), Cafe SUPIA y No Words (노워즈). [Supuesto] Hangul y ubicación de Gyeongju Bakery y SUPIA sin confirmar (VERIFICAR; sin coordenadas). (5) trip.json privado (no va al repo): días 10 y 11 reordenados: el 10, Daereungwon → Cheomseongdae → Gyochon → museo → Bunhwangsa → Donggung al atardecer → cena en Hwangnidan; el 11, taxi a Seokguram, bajada a pie a Bulguksa y vuelta en bus 10/11.
 - v197: lo de la Lonely Planet 2024 se distingue de la LP 2016 del PDF original: distintivo rosa «LP24» (el azul «LP» sigue siendo 2016; si un sitio está en las dos guías, lleva ambos). En comer.json, campo lp24 {p} y fuente lonely24 para lo que solo está en la de 2024; Bulguksa y Seokguram lo llevan por su «Indispensable». En el trip.json privado se quitaron los nombres de los restaurantes cerrados del texto del día (la app los tomaba por parte del plan).
+- v198: los cuatro botones de Historia (Línea del tiempo, Capítulos, Vuestras ciudades, Símbolos) del mismo tamaño: rejilla de 4 columnas iguales, icono arriba y texto debajo (iPhone SE incluido).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
