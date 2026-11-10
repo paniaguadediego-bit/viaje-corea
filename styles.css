@@ -1502,4 +1502,4 @@ details.ci-sec > p { margin: 6px 12px 10px; line-height: 1.5; }
 .hist-subs button { width: 100%; height: 56px; min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 4px 2px; font-size: .7rem; line-height: 1.15; white-space: normal; text-align: center; }
 .hist-subs .hs-i { font-size: 1.15rem; line-height: 1; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v198"; }
+:root { --css-ver: "v199"; }

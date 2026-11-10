@@ -104,7 +104,8 @@ vuelos[{tipo?(ida|vuelta),tramo,fecha,aerolinea,estado,localizador?,
 alojamientos[{id,nombre,ciudad,fechas,noches,coste_eur,pago,
  direccion_en,direccion_ko,ko,nota,verificar,lat?,lon?}]
  (lat/lon del hotel: privados, solo en trip.json; sirven para
- "📍 a X km del hotel")
+ "📍 a X km del hotel"; desde v199 «📌 Estoy en el hotel» en su tarjeta de Hoy
+ guarda la posición GPS en user.coordsFix['hotel:<id>'], que manda sobre lat/lon)
 ciudades[{id,nombre,ko,desde,hasta,lat?,lon?,interes[]?}]
 traslados[{id,fecha,de,a,estado,pasos[],frase_ko,
  romanizacion,tren{salida,llegada,comprado,numero?,clase?,precio?,

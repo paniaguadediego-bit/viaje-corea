@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v198';
+const VERSION = 'v199';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -131,7 +131,11 @@ function km([a, b], [c, d]) {
   return 12742 * Math.asin(Math.sqrt(x));
 }
 // Hotel de una ciudad con coordenadas (de trip.json, privado).
-const hotelDe = k => { const h = arr(trip && trip.alojamientos).find(a => a && ck(a.ciudad) === k && a.lat != null && a.lon != null); return h ? [Number(h.lat), Number(h.lon)] : null; };
+// Ubicación del hotel: la corregida en el móvil («📌 Estoy en el hotel», user.coordsFix['hotel:<id>']) manda sobre la de trip.json.
+const hotelFixKey = a => 'hotel:' + (a.id || a.nombre);
+const hotelDe = k => { const U = typeof user !== 'undefined' && user && user.coordsFix || {};
+  const hs = arr(trip && trip.alojamientos).filter(a => a && ck(a.ciudad) === k), f = hs.find(a => U[hotelFixKey(a)]); if (f) return U[hotelFixKey(f)];
+  const h = hs.find(a => a.lat != null && a.lon != null); return h ? [Number(h.lat), Number(h.lon)] : null; };
 const fmtDist = d => d < 0.95 ? Math.max(100, Math.round(d * 10) * 100) + ' m' : d.toLocaleString('es-ES', { maximumFractionDigits: d < 10 ? 1 : 0 }) + ' km';
 function distHotel(l, k) {
   const h = hotelDe(k), p = coordsLugar(l); if (!h || !p) return '';
@@ -500,7 +504,7 @@ const alojCard = (a, sale, sinTit = false) => `<div class="card aloj">
     ${a.direccion_ko ? `<div>${esc(a.direccion_ko)}</div>` : ''}
     ${a.direccion_en ? `<div class="muted">${esc(a.direccion_en)}</div>` : ''}
     ${a.nota ? `<div class="muted">${esc(a.nota)}</div>` : ''}
-    <div class="acciones">${naver(a)}</div>${estrBox('h:' + (a.id || a.nombre), '🛏️ ' + a.nombre)}</div>`;
+    <div class="acciones">${naver(a)}<button class="mini sec" data-gps="${esc(hotelFixKey(a))}" data-gpsn="${esc(a.nombre)}">${user && user.coordsFix && user.coordsFix[hotelFixKey(a)] ? '✅ Ubicación del hotel corregida' : '📌 Estoy en el hotel'}</button></div>${estrBox('h:' + (a.id || a.nombre), '🛏️ ' + a.nombre)}</div>`;
 // ---------- Diario: carita y nota de cada día (solo en el móvil; va en "Exportar copia") ----------
 const CARAS = [['😍', 'Genial'], ['😄', 'Muy bien'], ['🙂', 'Bien'], ['😐', 'Normal'], ['😴', 'Cansado'], ['😩', 'Duro']];
 // Etiquetas del día (varias a la vez, user.diario[f].tags): ayudan a recordarlo y salen en el Resumen.
