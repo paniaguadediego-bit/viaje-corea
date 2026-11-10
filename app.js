@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v203';
+const VERSION = 'v204';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2392,6 +2392,22 @@ function muchoOjo(ciudad, tipo = 'comer') {
   return `<details class="card ojo-card" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}><summary><b>⚠️ Mucho ojo con… (${os.length})</b> <span class="muted">${tipo === 'planes' ? 'famosos con pegas' : 'famosos con quejas'}</span></summary>
     ${os.map(o => `<div class="ojo-item"><b>${esc(o.es)}</b><p>${esc(o.txt)}</p><div class="muted">Fuentes: ${o.fuentes.map(([t, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join(' · ')}</div></div>`).join('')}</details>`;
 }
+// 🔎 Lo mejor valorado según Naver: no se puede consultar desde aquí, así que botones que abren Naver Map con la búsqueda hecha
+// (zonas del itinerario y del hotel). Allí se ven la nota y las reseñas de verdad; lo que os guste se añade a Comer.
+const NAVER_TOP = {
+  seul: ['명동 맛집', '을지로 맛집', '익선동 맛집', '광장시장 맛집', '남대문시장 맛집', '서울 빵집'],
+  andong: ['안동 맛집', '안동 구시장 찜닭'],
+  gyeongju: ['황리단길 맛집', '경주 황남동 맛집', '황리단길 카페', '황리단길 디저트', '불국사 맛집'],
+  busan: ['해운대 맛집', '해운대 시장 맛집', '광안리 맛집', '남포동 맛집', '자갈치 맛집', '해운대 카페'],
+  jeonju: ['전주 한옥마을 맛집', '전주 남부시장 맛집', '전주 한옥마을 카페', '전주 빵집']
+};
+function naverTop(k) {
+  const qs = NAVER_TOP[k]; if (!qs) return '';
+  const key = 'ntop:' + k;
+  return `<details class="card ntop" data-key="${key}" ${abierto(key, false) ? 'open' : ''}><summary>🔎 <b>Lo mejor valorado en Naver</b> <small class="muted">· abre Naver con la búsqueda hecha</small></summary>
+    <p class="muted">Desde aquí no se pueden leer las notas de Naver. Toca una zona y mirad la ★ y el número de reseñas de cada sitio: los de más de 4,75 con miles de reseñas suelen ser apuesta segura. Si os gusta uno, mandadme la captura y lo añado.</p>
+    <div class="acciones">${qs.map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🗺️ ${esc(q)}</a>`).join('')}</div></details>`;
+}
 function viewComer(dentro = false) {
   if (comerCiudad === null) {
     const k = ck(ciudadActual());
@@ -2414,7 +2430,7 @@ function viewComer(dentro = false) {
     <div class="chips qv-fila">${chipN('data-ct', 'todos', 'Todo', lugaresComer().filter(enC).length, comerTipo === 'todos', 'Todo')}${tipos.map(([t, nt]) => chipN('data-ct', t, IC_COMER[t] || t, nt, comerTipo === t, t[0].toUpperCase() + t.slice(1))).join('')}</div>
     <div class="chips qv-fila"><button class="chip qv-ord" data-co="${sigOrd[comerOrden] || 'rec'}" title="Orden: ${esc(ord[comerOrden] || ord.rec)} (tocar para cambiar)">⇅${(ordIc[comerOrden] || ordIc.rec)}</button><span class="qv-sep"></span>${chipN('data-ce', 'cerca', '📍', base.filter(l => distKm(l) <= 1.2).length, comerEstado === 'cerca', 'Cerca del hotel (≤1,2 km)')}${chipN('data-ce', 'quiero', '⭐', n('quiero'), comerEstado === 'quiero', 'Quiero ir')}${chipN('data-ce', 'visitado', '✅', n('visitado'), comerEstado === 'visitado', 'Visitados')}${chipN('data-ce', 'pendiente', '☐', base.filter(l => !est(l)).length, comerEstado === 'pendiente', 'Sin marcar')}</div>
     <p class="muted mini-nota c2-leyenda">⇅ ${esc(ord[comerOrden] || ord.rec)} · ${lista.length} lugares</p>
-    ${muchoOjo(comerCiudad)}
+    ${muchoOjo(comerCiudad)}${naverTop(comerCiudad)}
     ${lista.map((l, i) => (comerFuera(l) && !(i && comerFuera(lista[i - 1])) ? `<div class="qv-grupo">👎 Descartados y cerrados · ${lista.filter(comerFuera).length}</div>` : '') + cardComer(l)).join('') || '<p class="muted">No hay lugares con este filtro.</p>'}
     ${comerForm ? formComer() : '<button class="sec" data-act="comer-nuevo">＋ Añadir lugar</button>'}`;
 }

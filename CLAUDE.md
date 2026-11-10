@@ -203,7 +203,7 @@ SX Comer (independiente): data/comer.json precacheado; desde v161 va en Planes �
    como Ciudades, chips de tipo con recuento, chips de estado (con "📍 Cerca del hotel" ≤1,2 km), orden con
    un botón (desde v191 todo en dos filas compactas de iconos con número, como Puntos de interés; tocar el activo lo quita); tarjeta con foto o icono, nombre, hangul, distancia y una
    línea de datos; botones ⭐ ✅ 👎 🚫, Enseñar y Naver; el resto en
-   "Más detalles". Desplegable "⚠️ Mucho ojo con…" (MUCHO_OJO en contenido.js: famosos con quejas documentadas en prensa o notas bajas, siempre con fuentes; tipo "planes" sale arriba de cada ciudad en Planes y el resto en Comer; consejo: true = aviso práctico, no un sitio; aviso también en la tarjeta de Comer y en la ficha de Planes si coincide el id o el hangul). (El botón "Comer en <ciudad>" de Hoy
+   "Más detalles". Desplegable "🔎 Lo mejor valorado en Naver" (desde v204, NAVER_TOP en app.js: búsquedas por zona que abren Naver Map, porque sus notas no se pueden leer desde aquí). Desplegable "⚠️ Mucho ojo con…" (MUCHO_OJO en contenido.js: famosos con quejas documentadas en prensa o notas bajas, siempre con fuentes; tipo "planes" sale arriba de cada ciudad en Planes y el resto en Comer; consejo: true = aviso práctico, no un sitio; aviso también en la tarjeta de Comer y en la ficha de Planes si coincide el id o el hangul). (El botón "Comer en <ciudad>" de Hoy
    se quitó: Comer ya filtra por la ciudad del día.)
 
 ## Pruebas mínimas por sesión
