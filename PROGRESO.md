@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v202
+Caché del service worker: corea-v203
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -255,6 +255,7 @@ Caché del service worker: corea-v202
 - v200: recorrido a pie de la Lonely Planet 2024 por el complejo de Daereungwon (Noseo-dong → Cheonmachong → Cheomseongdae → Donggung → Wolseong → Gyerim → tumba de Naemul → Hyanggyo → Woljeonggyo): recuadro en la ficha de Daereungwon y distintivo LP24 en cada parada. Nuevos en el catálogo: bosque de Gyerim (계림), tumba del rey Naemul (내물왕릉) y Gyeongju Hyanggyo (경주향교), con coordenadas aproximadas. El día 10 del trip.json privado sigue ese orden, con Donggung al atardecer y museo y Bunhwangsa por la tarde. STOP suma tumba/rey/reina/bosque/escuela/confuciana (la tumba de Naemul se emparejaba con «tumba Cheonmachong»).
 - v201: el recorrido a pie de la LP 2024 sale de la ficha de los Túmulos y pasa a ficha propia plegada «🚶 Recorrido a pie por Daereungwon y el centro · LP24 · 9 paradas»: arriba de Planes → Gyeongju → Puntos de interés y en Hoy el día 10 (cualquier día con ≥3 de sus paradas). Sin numeración repetida.
 - v202: añadido a Comer de Gyeongju «Gyeongju Gyodong Sundubu» (경주교동순두부, Hwangnam-dong 328-1), donde almorzaron el 10/11; Naver 4,82 con ~3.000 reseñas, pausa desde las 16:00. [Supuesto] Hangul del cartel y coordenadas aproximadas (VERIFICAR; se corrigen arrastrando en el mapa).
+- v203: añadido a Comer de Gyeongju «HOMG.» (황오명과, Hwangnam-dong 308-4), pastelería de jeonbyeong en cajas de regalo; Naver 4,91 con ~2.000 reseñas, cierra a las 20:00. [Supuesto] Tipo café, hangul de la caja y coordenadas aproximadas (VERIFICAR).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

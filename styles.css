@@ -1506,4 +1506,4 @@ details.lp24-ruta { border: 1.5px solid #d63384 !important; border-left: 5px sol
 details.lp24-ruta > summary { cursor: pointer; }
 details.lp24-ruta ol { margin: 6px 0 4px; padding-left: 22px; } details.lp24-ruta li { margin: 6px 0; line-height: 1.4; } details.lp24-ruta li div { font-size: .88rem; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v202"; }
+:root { --css-ver: "v203"; }

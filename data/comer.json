@@ -2144,5 +2144,25 @@
 "fuente": "Naver Map",
 "fecha": "2026-11-10"
 }
+},
+{
+"id": "gj-homg",
+"ciudad": "gyeongju",
+"nombre": "HOMG. (Hwango Myeonggwa)",
+"ko": "황오명과",
+"tipo": "café",
+"plato": "jeonbyeong (galletas finas crujientes) de Gyeongju en cajas de regalo",
+"direccion": "Hwangnam-dong 308-4, zona de Hwangnidan-gil (Naver: «HOMG.»)",
+"horario": "Cierra a las 20:00 (Naver, 10/11); resto VERIFICAR",
+"precio": null,
+"fuente": "propio",
+"url": null,
+"nota": "Pastelería de dulces tradicionales «de Gyeongju» que gusta a todas las edades; buen recuerdo para regalar. La añadió el usuario desde Naver Map el 10/11. Hangul 황오명과 tomado de la caja y el cartel: VERIFICAR.",
+"opiniones": {
+"v": 4.91,
+"n": 2000,
+"fuente": "Naver Map",
+"fecha": "2026-11-10"
+}
 }
 ]
