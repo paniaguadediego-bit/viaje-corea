@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v205';
+const VERSION = 'v206';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1049,7 +1049,7 @@ function viewRuta() {
   const ida = conTipo ? vuelos.filter(v => v.tipo !== 'vuelta') : vuelos.slice(0, vuelos.length > 1 ? vuelos.length - 1 : 1);
   const vuelta = conTipo ? vuelos.filter(v => v.tipo === 'vuelta') : vuelos.length > 1 ? [vuelos[vuelos.length - 1]] : [];
   let html = ida.map(v => vueloPleg(v, 'ida')).join('') + pendingAlert();
-  if (arr(trip.ciudades).length) html += '<h2>Mapa</h2>' + viewMapa();
+  if (arr(trip.ciudades).length) html += viewMapa();
   const tr = arr(trip.traslados).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   const est = arr(trip.ciudades).filter(c => c && c.desde).map(c => [c.desde, 1, estanciaCard(c)]);
   const ev = [...tr.map(t => [t.fecha || '', 0, trasladoCard(t, true)]), ...est].sort((a, b) => String(a[0]).localeCompare(String(b[0])) || a[1] - b[1]);
@@ -1685,46 +1685,74 @@ function coordsDe(nombre) {
   return c ? [c.lat, c.lon] : COORDS[k];
 }
 
+// 🗺️ Mapa de la ruta (Ruta): pequeño, plegable e interactivo. Tocar una ciudad o una línea abre debajo su ficha
+// (estancia: fechas, noches y hotel; traslado: fecha, tren o bus, horas, asientos, estado y pasos).
+let rmSel = null; // 'c:<k>' o 't:<i>'
+const XYR = ([lat, lon]) => [((lon - 126.05) * 92 + 12), ((38.05 - lat) * 112 + 12)];
 function viewMapa() {
-  const ciudades = arr(trip.ciudades);
-  const pts = []; // ciudades únicas con coordenadas
-  ciudades.forEach((c, i) => {
-    const k = coordsDe(c.nombre); if (!k) return;
-    const p = pts.find(p => String(p.k) === String(k));
-    if (p) p.n.push(i + 1); else pts.push({ k, nombre: c.nombre, n: [i + 1], id: c.id });
-  });
+  const ciudades = arr(trip.ciudades), hoy = todayISO();
+  const pts = [];
+  ciudades.forEach((c, i) => { const k = ck(c.nombre), co = coordsDe(c.nombre); if (!co || /espa/.test(k)) return;
+    const p = pts.find(p => p.k === k); if (p) p.st.push({ c, n: i + 1 }); else pts.push({ k, co, nombre: c.nombre, st: [{ c, n: i + 1 }] }); });
   if (!pts.length) return '';
-  let tramos = arr(trip.traslados).map(t => ({ a: coordsDe(ciudadEnTexto(t.de)), b: coordsDe(ciudadEnTexto(t.a)), pend: isPend(t) }));
-  const conTraslado = new Set(arr(trip.traslados).map(t => ciudadEnTexto(t.de) + '>' + ciudadEnTexto(t.a)));
-  ciudades.forEach((c, i) => { // completa tramos sin traslado definido
-    const d = ciudades[i + 1]; if (!d || conTraslado.has(ck(c.nombre) + '>' + ck(d.nombre))) return;
-    tramos.push({ a: coordsDe(c.nombre), b: coordsDe(d.nombre), pend: false });
-  });
-  tramos = tramos.filter(t => t.a && t.b && String(t.a) !== String(t.b));
-  const costa = COSTA.map(([lon, lat]) => XY([lat, lon]).join(',')).join(' ');
-  const norte = [...DMZ.map(([lon, lat]) => XY([lat, lon]).join(',')), XY([38.75, 128.22]).join(','), XY([38.75, 125.9]).join(','), XY([37.78, 125.9]).join(',')].join(' ');
-  const dmz = DMZ.map(([lon, lat]) => XY([lat, lon]).join(',')).join(' ');
-  const [jx, jy] = XY([JEJU[1], JEJU[0]]);
-  return `<svg class="mapa" viewBox="0 0 335 590" role="img" aria-label="Mapa de la ruta">
-    <polygon class="norte" points="${norte}"/>
-    <text class="mar" x="95" y="34" text-anchor="middle">COREA DEL NORTE</text>
-    <polygon class="tierra" points="${costa}"/>
-    <polyline class="dmz" points="${dmz}"/>
-    <text class="mar" x="150" y="76" transform="rotate(-14 150 76)">DMZ</text>
-    <ellipse class="tierra" cx="${jx}" cy="${jy}" rx="${(JEJU[2] * 81).toFixed(1)}" ry="${(JEJU[3] * 100).toFixed(1)}"/>
-    <text class="mar" x="${jx}" y="${(+jy + 4).toFixed(1)}" text-anchor="middle">Jeju</text>
-    <text class="mar" x="22" y="300" transform="rotate(-90 22 300)" text-anchor="middle">MAR AMARILLO</text>
-    <text class="mar" x="322" y="220" transform="rotate(90 322 220)" text-anchor="middle">MAR DEL ESTE</text>
-    <text class="mar" x="235" y="520" text-anchor="middle">ESTRECHO DE COREA</text>
-    ${tramos.map(t => { const [x1, y1] = XY(t.a), [x2, y2] = XY(t.b);
-      return `<line class="${t.pend ? 'pend' : 'ok'}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`; }).join('')}
-    ${pts.map(p => { const [x, y] = XY(p.k); const izq = x > 230;
-      return `<circle r="8" cx="${x}" cy="${y}" data-ciudad="${esc(p.id)}"/>
-      <text x="${izq ? x - 12 : +x + 12}" y="${+y + 5}" text-anchor="${izq ? 'end' : 'start'}">${p.n.join('·')}. ${esc(p.nombre)}</text>`; }).join('')}
+  const trs = arr(trip.traslados).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)))
+    .map(t => ({ t, a: coordsDe(ciudadEnTexto(t.de)), b: coordsDe(ciudadEnTexto(t.a)), ka: ciudadEnTexto(t.de), kb: ciudadEnTexto(t.a) }))
+    .filter(x => x.a && x.b && String(x.a) !== String(x.b));
+  // Puntos de traslado que no son estancia (el aeropuerto de Incheon): nodo pequeño ✈️.
+  trs.forEach(x => [[x.ka, x.a], [x.kb, x.b]].forEach(([k, co]) => { if (!pts.some(p => p.k === k || String(p.co) === String(co))) pts.push({ k, co, nombre: k === 'incheon' ? 'Aeropuerto' : k, st: [], aero: true }); }));
+  const hecho = t => !!u().hecho['tras:' + (t.id || t.fecha)] || String(t.fecha) < hoy;
+  const P = c => XYR(c).map(v => v.toFixed(1));
+  const costa = COSTA.map(([lon, lat]) => P([lat, lon]).join(',')).join(' ');
+  const dmz = DMZ.map(([lon, lat]) => P([lat, lon]).join(',')).join(' ');
+  const W = 330, H = 430;
+  const lineas = trs.map((x, i) => { const [x1, y1] = P(x.a), [x2, y2] = P(x.b), mx = (+x1 + +x2) / 2, my = (+y1 + +y2) / 2, cls = isPend(x.t) ? 'pend' : hecho(x.t) ? 'ya' : 'ok', on = rmSel === 't:' + i;
+    return `<g class="rm-t ${cls} ${on ? 'on' : ''}" data-rms="t:${i}"><line class="rm-hit" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><line class="rm-l" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>
+      <circle class="rm-n" cx="${mx}" cy="${my}" r="9"/><text class="rm-nt" x="${mx}" y="${my + 3.5}" text-anchor="middle">${i + 1}</text></g>`; }).join('');
+  const nodos = pts.map(p => { const [x, y] = P(p.co), t = tema(p.k), on = rmSel === 'c:' + p.k, izq = +x > 220, ahora = p.st.some(s => s.c.desde <= hoy && hoy <= s.c.hasta);
+    if (p.aero) return `<g class="rm-c rm-aero"><circle class="rm-dot" cx="${x}" cy="${y}" r="10"/><text class="rm-ic" x="${x}" y="${+y + 4}" text-anchor="middle">✈️</text><text class="rm-nom" x="${+x + 13}" y="${+y + 18}">${esc(p.nombre)}</text></g>`;
+    return `<g class="rm-c ${on ? 'on' : ''} ${ahora ? 'ahora' : ''}" data-rms="c:${p.k}" style="${varsTema(p.k)}"><circle class="rm-halo" cx="${x}" cy="${y}" r="17"/><circle class="rm-dot" cx="${x}" cy="${y}" r="13"/>
+      <text class="rm-ic" x="${x}" y="${+y + 5}" text-anchor="middle">${t.ic}</text>
+      <text class="rm-nom" x="${izq ? +x - 18 : +x + 18}" y="${+y + 4}" text-anchor="${izq ? 'end' : 'start'}">${esc(nombreCiudad(p.k))}</text></g>`; }).join('');
+  // Ficha de lo tocado
+  let ficha = '';
+  if (rmSel && rmSel.startsWith('c:')) { const p = pts.find(p => 'c:' + p.k === rmSel && !p.aero);
+    if (p) { const hs = arr(trip.alojamientos).filter(a => ck(a.ciudad) === p.k);
+      const inn = trs.filter(x => x.kb === p.k), out = trs.filter(x => x.ka === p.k);
+      ficha = `<div class="rm-ficha" style="${varsTema(p.k)}"><div class="rm-ft"><b>${tema(p.k).ic} ${esc(nombreCiudad(p.k))}</b> ${p.st[0].c.ko ? `<span class="ko-s">${esc(p.st[0].c.ko)}</span>` : ''}<button class="sec mini" data-rms="">✕</button></div>
+        ${p.st.map(({ c }) => { const n = c.desde && c.hasta ? Math.round((new Date(c.hasta) - new Date(c.desde)) / 864e5) : null; return `<div>📅 ${fmtCorto(c.desde)} → ${fmtCorto(c.hasta)}${n ? ` · ${n} ${n === 1 ? 'noche' : 'noches'}` : ''}</div>`; }).join('')}
+        ${hs.map(a => `<div>🛏️ ${esc(a.nombre)}${a.direccion_ko ? ` <span class="muted">· ${esc(a.direccion_ko)}</span>` : ''}</div>`).join('')}
+        ${inn.map(x => `<div>⬅️ Llegada ${fmtCorto(x.t.fecha)}: ${esc(resumenTr(x.t))}</div>`).join('')}${out.map(x => `<div>➡️ Salida ${fmtCorto(x.t.fecha)}: ${esc(resumenTr(x.t))}</div>`).join('')}
+        <div class="acciones"><button class="mini" data-ciudad="${esc(p.st[0].c.id)}">🏯 Ver en Planes</button></div></div>`; } }
+  if (rmSel && rmSel.startsWith('t:')) { const x = trs[+rmSel.slice(2)];
+    if (x) { const t = x.t, v = t.tren || t.bus, di = arr(trip.dias).findIndex(d => d.fecha === t.fecha);
+      ficha = `<div class="rm-ficha tr"><div class="rm-ft"><b>${+rmSel.slice(2) + 1}. ${esc(nomRm(x.ka))} → ${esc(nomRm(x.kb))}</b><button class="sec mini" data-rms="">✕</button></div>
+        <div>📅 ${fmtDate(t.fecha)} · ${isPend(t) ? '<span class="badge pend">pendiente</span>' : hecho(t) ? '<span class="badge ok">hecho</span>' : `<span class="badge ${/compr/i.test(t.estado || 'comprado') ? 'ok' : 'otro'}">${esc(t.estado || 'comprado')}</span>`}</div>
+        ${v ? `<div>${t.tren ? '🚄' : '🚌'} <b>${esc(v.numero || (t.tren ? 'Tren' : 'Bus'))}</b> · ${esc(v.salida || '?')} → ${esc(v.llegada || '?')}${v.clase ? ' · ' + esc(v.clase) : ''}${v.coche ? ' · coche ' + esc(v.coche) : ''}</div>` : ''}
+        ${v && v.asientos ? `<div>💺 ${Object.entries(v.asientos).map(([n, a]) => `${esc(n)} ${esc(a)}`).join(' · ')}</div>` : ''}
+        ${arr(t.pasos).length ? `<ol class="rm-pasos">${arr(t.pasos).map(s => `<li>${resaltar(s, true)}</li>`).join('')}</ol>` : ''}
+        ${di >= 0 ? `<div class="acciones"><button class="mini" data-rmdia="${di}">📅 Ver ese día en Hoy</button></div>` : ''}</div>`; } }
+  const key = 'rmapa';
+  return `<details class="card plg rm-pl" data-key="${key}" ${abierto(key, false) ? 'open' : ''}><summary>🗺️ <b>Mapa de la ruta</b> <small class="muted">· ${pts.filter(p => !p.aero).length} ciudades · ${trs.length} traslados · toca para ver</small></summary>
+  <svg class="rmapa" viewBox="0 0 ${W} ${H}" role="img" aria-label="Mapa de la ruta">
+    <defs><marker id="rmFlecha" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="rm-fl"/></marker>
+      <pattern id="rmOlas" width="22" height="10" patternUnits="userSpaceOnUse"><path d="M0 6 Q5.5 1 11 6 T22 6" class="rm-ola"/></pattern></defs>
+    <rect class="rm-mar" x="0" y="0" width="${W}" height="${H}" rx="14"/><rect x="0" y="0" width="${W}" height="${H}" rx="14" fill="url(#rmOlas)"/>
+    <polygon class="rm-tierra" points="${costa}"/><polyline class="rm-dmz" points="${dmz}"/>
+    <text class="rm-mart" x="26" y="250" transform="rotate(-90 26 250)" text-anchor="middle">MAR AMARILLO</text>
+    <text class="rm-mart" x="316" y="160" transform="rotate(90 316 160)" text-anchor="middle">MAR DEL ESTE</text>
+    ${lineas}${nodos}
   </svg>
-  <div class="leyenda muted">Mapa esquemático · <b style="color:var(--blue)">━</b> comprado ·
-    <b style="color:var(--red)">┅</b> pendiente</div>`;
+  <div class="leyenda muted"><span class="rm-ley ok"></span> comprado · <span class="rm-ley ya"></span> hecho · <span class="rm-ley pend"></span> pendiente · toca una ciudad o un número</div>
+  ${ficha}</details>`;
 }
+const nomRm = k => k === 'incheon' ? 'Aeropuerto de Incheon' : nombreCiudad(k);
+// Una línea del traslado para la ficha de la ciudad: tren o bus y horas.
+const resumenTr = t => { const v = t.tren || t.bus; return v ? `${v.numero || (t.tren ? 'tren' : 'bus')} ${v.salida || ''}${v.llegada ? '→' + v.llegada : ''}` : (t.estado || ''); };
+document.addEventListener('click', e => {
+  const r = e.target.closest('[data-rms],[data-rmdia]'); if (!r || !r.closest('.rm-pl')) return; e.stopPropagation();
+  if (r.dataset.rmdia != null) { dayIdx = +r.dataset.rmdia; ir('hoy'); render(); window.scrollTo(0, 0); return; }
+  const v = r.dataset.rms; rmSel = !v || rmSel === v ? null : v; const y = window.scrollY; render(); window.scrollTo(0, y);
+}, true);
 
 // ---------- Pronunciación "a la española" del coreano (aproximada) ----------
 // Separa cada sílaba en inicial, vocal y final; aplica las reglas de sonido más comunes entre sílabas

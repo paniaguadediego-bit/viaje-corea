@@ -1505,5 +1505,34 @@ details.ci-sec > p { margin: 6px 12px 10px; line-height: 1.5; }
 details.lp24-ruta { border: 1.5px solid #d63384 !important; border-left: 5px solid #d63384 !important; }
 details.lp24-ruta > summary { cursor: pointer; }
 details.lp24-ruta ol { margin: 6px 0 4px; padding-left: 22px; } details.lp24-ruta li { margin: 6px 0; line-height: 1.4; } details.lp24-ruta li div { font-size: .88rem; }
+/* v206: mapa de la ruta pequeño, plegable, interactivo y con el estilo de la app */
+.rmapa { width: 100%; max-width: 270px; display: block; margin: 6px auto 2px; }
+.rm-mar { fill: color-mix(in srgb, #2b6cb0 10%, var(--card)); stroke: var(--line); }
+.rm-ola { fill: none; stroke: color-mix(in srgb, #2b6cb0 22%, transparent); stroke-width: 1; }
+.rm-tierra { fill: var(--hanji, #f6efe2); stroke: #b08d57; stroke-width: 1.2; }
+.rm-dmz { fill: none; stroke: #cd2e3a; stroke-width: 1.2; stroke-dasharray: 3 3; }
+.rm-mart { fill: color-mix(in srgb, #2b6cb0 55%, var(--fg)); font-size: 9px; letter-spacing: .25em; font-weight: 700; opacity: .7; }
+.rm-t { cursor: pointer; }
+.rm-hit { stroke: transparent; stroke-width: 18; }
+.rm-l { stroke-width: 3.2; stroke-linecap: round; }
+.rm-t.ok .rm-l, .rm-t.ok .rm-n { stroke: #1f4e8c; } .rm-t.ok .rm-n { fill: #1f4e8c; }
+.rm-t.ya .rm-l { stroke: #2e9d5b; } .rm-t.ya .rm-n { fill: #2e9d5b; stroke: #2e9d5b; }
+.rm-t.pend .rm-l { stroke: #cd2e3a; stroke-dasharray: 6 4; } .rm-t.pend .rm-n { fill: #cd2e3a; stroke: #cd2e3a; }
+.rm-fl { fill: #1f4e8c; }
+.rm-n { stroke-width: 2; } .rm-nt { fill: #fff; font-size: 10px; font-weight: 800; pointer-events: none; }
+.rm-t.on .rm-l { stroke-width: 5.5; } .rm-t.on .rm-n { r: 11; }
+.rm-c { cursor: pointer; }
+.rm-dot { fill: var(--c1); stroke: #fff; stroke-width: 2.5; }
+.rm-aero .rm-dot { fill: #3b4a63; } .rm-aero { cursor: default; }
+.rm-halo { fill: var(--c1); opacity: 0; }
+.rm-c.ahora .rm-halo { opacity: .25; } .rm-c.on .rm-halo { opacity: .4; }
+.rm-ic { font-size: 13px; pointer-events: none; }
+.rm-nom { fill: var(--fg); font-size: 12px; font-weight: 800; paint-order: stroke; stroke: var(--bg); stroke-width: 3.5px; }
+.rm-ley { display: inline-block; width: 16px; height: 0; border-top: 3px solid #1f4e8c; vertical-align: middle; }
+.rm-ley.ya { border-color: #2e9d5b; } .rm-ley.pend { border-top-style: dashed; border-color: #cd2e3a; }
+.rm-ficha { margin: 8px 4px 4px; padding: 8px 10px; border-radius: 10px; border-left: 5px solid var(--c1, #1f4e8c); background: color-mix(in srgb, var(--c1, #1f4e8c) 8%, var(--card)); font-size: .9rem; line-height: 1.45; }
+.rm-ficha.tr { border-left-color: #1f4e8c; }
+.rm-ft { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 4px; }
+.rm-pasos { margin: 4px 0; padding-left: 20px; font-size: .86rem; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v205"; }
+:root { --css-ver: "v206"; }

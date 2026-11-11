@@ -38,7 +38,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    otra app). No añadir
    nada que no esté aquí. Ruta: vuelos, mapa y línea de tiempo con cada estancia (ciudad,
    noches, hotel y una línea por día) intercalada con los traslados; vuelos, estancias y traslados plegables, plegados solos cuando ya pasaron (o el traslado se marcó hecho en Hoy). Incluye un mapa esquemático de
-   Corea (SVG propio, offline) con ciudades, traslados y sitios
+   Corea (SVG propio, offline; desde v206 pequeño, en ficha plegable «🗺️ Mapa de la ruta», con estilo de la app: mar con olas, tierra hanji, cada ciudad con su icono y color, aeropuerto ✈️, traslados numerados en orden y de color según estado (azul comprado, verde hecho, rojo discontinuo pendiente); tocar una ciudad abre su estancia (fechas, noches, hotel, llegada y salida) y tocar un número, el traslado (fecha, tren o bus, horas, asientos, pasos y «Ver ese día en Hoy»)) con ciudades, traslados y sitios
    (las fichas de ciudad con sitios van en Planes: buscador arriba (todas las ciudades, sin tildes y en hangul;
    también en Comer), 5 botones, se despliega la ciudad elegida con sus botones; cada sitio tiene
    "📅" para apuntarlo a un día de esa ciudad). Agenda en user.agenda[fecha]
