@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v218';
+const VERSION = 'v219';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2093,6 +2093,8 @@ function pagoAlli() {
   return hs.length ? `<li><b>Se pagan allí:</b> ${hs.map(a => `${esc(a.nombre)}${a.coste_eur ? ` (${esc(a.coste_eur)} €)` : ''}`).join(', ')}. Lo normal es que acepten tarjeta, pero llevad efectivo de reserva o preguntad antes.</li>` : '';
 }
 // Historia de Corea para leer en el avión: índice, capítulo, anterior/siguiente y marca de leído (en el móvil).
+// Color de cada apartado de la lectura de ciudades (Historia → Vuestras ciudades), a juego con la app.
+const CI_COL = { '📜': '#8a5a14', '🙇': '#b8322a', '⭐': '#c9962e', '🎯': '#0b6e78', '🍜': '#c2630a', '💡': '#1f4e8c' };
 let histCap = null;
 const minLect = c => Math.max(1, Math.round(c.p.join(' ').split(/\s+/).length / 220));
 // Línea del tiempo (capítulo al que lleva) y foto de Wikipedia de cada capítulo.
@@ -2169,7 +2171,7 @@ function viewHistoria() {
     cuerpo = ciudadesUnicas().map(c => ck(c.nombre)).filter((k, i, a) => (HC[k] || CI[k]) && a.indexOf(k) === i).map(k => `<details class="hist-ciudad" style="${varsTema(k)}" data-key="hcd:${k}" ${abierto('hcd:' + k, false) ? 'open' : ''}>
       <summary><span>${tema(k).ic}</span><b>${esc(nombreCiudad(k))}</b><small>${esc(tema(k).lema || '')}</small></summary>
       ${HC[k] ? `<div class="ci-breve"><b>En pocas palabras</b>${HC[k].txt.map(p => `<p>${resaltar(p, true).replace(/\(LP\)/g, '<span class="badge otro">LP</span>')}</p>`).join('')}</div>` : ''}
-      ${arr(CI[k]).map(([ic, t, ps], i) => `<details class="ci-sec" data-key="ci:${k}:${i}" ${abierto('ci:' + k + ':' + i, false) ? 'open' : ''}><summary>${ic} ${esc(t)} <small class="muted">· ${minLect({ p: ps })} min</small></summary>${ps.map(p => `<p>${resaltar(p, true)}</p>`).join('')}</details>`).join('')}</details>`).join('');
+      ${arr(CI[k]).map(([ic, t, ps], i) => `<details class="ci-sec" data-key="ci:${k}:${i}" data-ic="${ic}" style="--cc:${(CI_COL[ic] || '#8a6a3a')}" ${abierto('ci:' + k + ':' + i, false) ? 'open' : ''}><summary>${ic} ${esc(t)} <small class="muted">· ${minLect({ p: ps })} min</small></summary>${ps.map(p => `<p>${resaltar(p, true)}</p>`).join('')}</details>`).join('')}</details>`).join('');
   } else cuerpo = `<div class="hist-simb">${HIST_SIMBOLOS.map(([ic, t, d]) => `<div class="hs-it"><span class="hs-ic">${ic}</span><span><b>${t}</b> ${esc(d)}</span></div>`).join('')}</div>`;
   return `<div class="hist-tema">${portada}${subs}${cuerpo}</div>`;
 }

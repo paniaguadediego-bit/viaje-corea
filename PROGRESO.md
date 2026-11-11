@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v218
+Caché del service worker: corea-v219
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -271,6 +271,7 @@ Caché del service worker: corea-v218
 - v216: tarjeta del día: «Busan 🌊 · Día 11 de 18» sin fondo (solo texto con sombra), luego el título del día, y el tiempo (resumen y fila por horas) agrupado en una caja propia translúcida, para separar qué día es de qué tiempo hará.
 - v217: los tramos entre paradas de Hoy no se distinguían de las paradas: ahora son más estrechos (margen a los lados, como conectores), de color verde azulado propio con borde discontinuo grueso, sin sombra, y la opción recomendada también en verde azulado. Claro y oscuro.
 - v218: los sitios cercanos con asterisco entran en el itinerario de cada día (también los pasados): se colocan tras la parada donde menos desvío hacen (o tras el hotel), cuentan en la numeración, en los tramos y en el mapa, y llevan ＊ y filo dorado. ✕ los quita de ese día; «↺ Volver al itinerario» los recupera. Cada sitio solo entra en un día (el primero en que encaja). [Supuesto] Se mantiene el máximo de 4 por día y ≤900 m de la ruta.
+- v219: apartados de Historia → Vuestras ciudades con personalidad: cada uno con su color (📜 marrón hanji, 🙇 rojo, ⭐ dorado, 🎯 verde azulado, 🍜 naranja, 💡 azul), degradado suave sobre el papel, su icono grande en marca de agua y, al abrirlo, una franja dancheong bajo el título. La barra de botones de Historia tiene fondo para que no asome el texto por debajo al hacer scroll.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

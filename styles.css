@@ -1581,5 +1581,15 @@ details.novamos-card .qv-cab b, details.novamos-card .sd-tit b { text-decoration
 /* v218: cercanos metidos en el itinerario, con su ＊ y filo dorado */
 .sitios-dia details.sd.sd-cerca { border-left-color: #d4a017 !important; }
 .sd-tit .sug-etq { margin-right: 3px; }
+/* v219: apartados de «Vuestras ciudades» con fondo temático: color propio, degradado sobre el papel, icono en marca de agua y franja dancheong al abrir */
+details.ci-sec { position: relative; overflow: hidden; border: 1px solid color-mix(in srgb, var(--cc) 30%, var(--line)) !important; border-left: 5px solid var(--cc) !important;
+  background: linear-gradient(120deg, color-mix(in srgb, var(--cc) 13%, var(--card)) 0%, var(--card) 65%) !important; }
+details.ci-sec::after { content: attr(data-ic); position: absolute; right: 4px; top: -6px; font-size: 3.4rem; line-height: 1; opacity: .13; pointer-events: none; filter: saturate(.6); }
+details.ci-sec > summary { position: relative; z-index: 1; }
+details.ci-sec[open] > summary { background: linear-gradient(90deg, #2e7d6b 0 20%, #b8322a 20% 40%, #c9962e 40% 60%, #1f4e8c 60% 80%, #2e7d6b 80%) bottom / 100% 3px no-repeat; padding-bottom: 10px; }
+details.ci-sec[open]::after { opacity: .09; font-size: 5rem; top: 30px; }
+details.ci-sec > p { position: relative; z-index: 1; }
+/* v219: la barra de botones de Historia, al quedarse fija arriba, tapa el texto que pasa por debajo */
+.hist-subs { background: var(--bg) !important; padding: 4px 0 !important; box-shadow: 0 6px 6px -6px rgba(0,0,0,.25); }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v218"; }
+:root { --css-ver: "v219"; }
