@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v214';
+const VERSION = 'v215';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -525,27 +525,31 @@ function diarioResumen() {
     return `<div class="card diario-r" data-diaf="${f}"><b>${D[f].cara || '📔'} ${fmtDate(f)}</b>${dd.ciudad ? ` <span class="muted">· ${esc(dd.ciudad)}</span>` : ''}${D[f].nota ? `<div>${esc(D[f].nota).replace(/\n/g, '<br>')}</div>` : ''}</div>`; }).join('')}`;
 }
 // "Antes de salir": lista para los días en que se deja un hotel y hay traslado (se marca en el móvil; se pueden añadir cosas).
+// 🧳 Antes de salir: solo dos días: el de la salida de España (primer vuelo) y la víspera del vuelo de vuelta.
 function antesSalir(f, tr, al) {
-  if (!al.sale) return '';
+  const vs = arr(trip.vuelos).filter(v => v && v.fecha).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
+  const d0 = (arr(trip.dias)[0] || {}).fecha, ida = (vs.find(v => v.tipo !== 'vuelta' && (!d0 || v.fecha >= d0)) || {}).fecha || d0, vuelta = (vs.find(v => v.tipo === 'vuelta') || {}).fecha;
+  const vispera = vuelta ? new Date(new Date(vuelta + 'T12:00:00') - 864e5).toISOString().slice(0, 10) : null;
+  if (f !== ida && f !== vispera) return '';
   const it = [], add = (id, texto) => it.push({ id, texto });
-  // Solo el primer vuelo del día (los siguientes son conexiones).
-  arr(trip.vuelos).forEach(v => { const x = arr(v.tramos).find(x => x.vuelo && String(x.salida || '').startsWith(f));
-    if (x) add('v' + x.vuelo, `✈️ Vuelo ${x.vuelo} a las ${String(x.salida).slice(11)}: estar en el aeropuerto unas 3 h antes`); });
-  tr.forEach(t => {
-    const r = billete(t) || {}, icB = t.bus && !t.tren ? '🚌' : '🚆';
-    if (isPend(t)) add('pend' + t.id, `⚠️ Billete ${lugarCorto(t.de)} → ${lugarCorto(t.a)} SIN COMPRAR`);
-    else if (r.salida) add('tren' + t.id, `${icB} ${r.numero || (t.bus ? 'Autobús' : 'Tren')} a las ${r.salida}${r.coche ? ` · coche ${r.coche}` : ''}${r.asientos ? ` · asientos ${Object.values(r.asientos).join(' y ')}` : ''}: billete (QR) a mano`);
-  });
-  if (/alojamiento|llegada|allí/i.test(al.sale.pago || '')) add('pago', `🏨 Pagar ${al.sale.nombre}${al.sale.coste_eur ? ` (${al.sale.coste_eur} €)` : ''}`);
-  add('pas', '🛂 Pasaportes encima (no en la maleta facturada)');
-  add('carg', '🔌 Cargadores, batería externa y adaptador');
-  add('rev', '🧺 Revisar armario, baño, enchufes y caja fuerte');
-  add('llave', '🔑 Devolver la llave o tarjeta de la habitación');
-  const vueloHoy = arr(trip.vuelos).some(v => v.tipo === 'vuelta' && arr(v.tramos).some(x => x.vuelo && String(x.salida || '').startsWith(f)));
-  if (vueloHoy) { add('tmref', '💳 Recuperar el saldo de la T-money en una tienda 24 h (hasta 20.000 ₩, 500 ₩ de comisión: VERIFICAR)');
-    add('tax', '🧾 Tax Free: tickets y pasaporte a mano para el quiosco de devolución de Incheon'); add('won', '💴 Gastar los wones que sobren (en el aeropuerto el cambio es peor)'); }
-  else add('tm', '💳 T-money con saldo');
-  if (al.noche && al.noche !== al.sale && !/espana/.test(ck(al.noche.ciudad))) add('sig', `🛏️ Próximo hotel: ${al.noche.nombre} (dirección en 🆘 Ayuda para el taxi)`);
+  if (f === ida) {
+    arr(trip.vuelos).forEach(v => { const x = arr(v.tramos).find(x => x.vuelo && String(x.salida || '').startsWith(f));
+      if (x) add('v' + x.vuelo, `✈️ Vuelo ${x.vuelo} a las ${String(x.salida).slice(11)}: estar en el aeropuerto unas 3 h antes`); });
+    tr.forEach(t => { const r = billete(t) || {}; if (isPend(t)) add('pend' + t.id, `⚠️ Billete ${lugarCorto(t.de)} → ${lugarCorto(t.a)} SIN COMPRAR`); else if (r.salida) add('tren' + t.id, `${t.bus && !t.tren ? '🚌' : '🚆'} ${r.numero || (t.bus ? 'Autobús' : 'Tren')} a las ${r.salida}: billete a mano`); });
+    if (al.sale && /alojamiento|llegada|allí/i.test(al.sale.pago || '')) add('pago', `🏨 Pagar ${al.sale.nombre}${al.sale.coste_eur ? ` (${al.sale.coste_eur} €)` : ''}`);
+    add('pas', '🛂 Pasaportes encima (no en la maleta facturada)'); add('carg', '🔌 Cargadores, batería externa y adaptador');
+    if (al.sale) { add('rev', '🧺 Revisar armario, baño, enchufes y caja fuerte'); add('llave', '🔑 Devolver la llave o tarjeta de la habitación'); }
+  } else {
+    // Víspera de la vuelta: dejarlo todo listo para salir mañana hacia Incheon.
+    arr(trip.vuelos).forEach(v => { if (v.tipo !== 'vuelta') return; const x = arr(v.tramos).find(x => x.vuelo && String(x.salida || '').startsWith(vuelta));
+      if (x) add('v' + x.vuelo, `✈️ Mañana: vuelo ${x.vuelo} a las ${String(x.salida).slice(11)} desde Incheon: estar unas 3 h antes`); });
+    add('tmref', '💳 Recuperar el saldo de la T-money en una tienda 24 h (hasta 20.000 ₩, 500 ₩ de comisión: VERIFICAR)');
+    add('tax', '🧾 Tax Free: tickets y pasaporte a mano para el quiosco de devolución de Incheon');
+    add('won', '💴 Gastar los wones que sobren (en el aeropuerto el cambio es peor)');
+    add('mal', '🧳 Dejar las maletas hechas esta noche (líquidos y baterías como toca)');
+    add('pas', '🛂 Pasaportes encima (no en la maleta facturada)'); add('carg', '🔌 Cargadores y batería externa cargados');
+    add('llave', '🔑 Mañana: revisar la habitación y devolver la llave');
+  }
   const U = u(), sc = 'antes:' + f, tot = it.length + arr(U.extra[sc]).length, hechos = Object.keys(U.checklist).filter(k => k.startsWith(sc + '|') && U.checklist[k]).length;
   return `<details class="card antes" data-key="${sc}" ${abierto(sc, false) ? 'open' : ''}><summary><b>🧳 Antes de salir</b> <span class="muted">(${hechos} de ${tot})</span></summary>${checks(sc, it)}</details>`;
 }
@@ -646,7 +650,7 @@ function viewHoy() {
   const secs = [
     // El traslado va dentro de Sitios, como primer tramo de la ruta del día.
     ['sitios', '📖 Sitios', (tr.length ? (() => { const hk = 'tras:' + (tr[0].id || d.fecha), ok = !!u().hecho[hk], key = 'trd:' + d.fecha, ab = abierto(key, !ok);
-      return `<details class="tras-dia ${ok ? 'hecho-card' : ''}" data-key="${key}" ${ab ? 'open' : ''}><summary class="tras-dia-tit"><button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hk)}" data-v="${ok ? 0 : 1}" aria-label="Hecho">${ok ? '✓' : ''}</button>${medio(tr[0])[0]} Primero, el traslado</summary>${antesSalir(d.fecha, tr, al)}${tr.map(t => trasladoCard(t, false, true)).join('')}</details>`; })() : ''), sitiosDia(d)],
+      return `<details class="tras-dia ${ok ? 'hecho-card' : ''}" data-key="${key}" ${ab ? 'open' : ''}><summary class="tras-dia-tit"><button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hk)}" data-v="${ok ? 0 : 1}" aria-label="Hecho">${ok ? '✓' : ''}</button>${medio(tr[0])[0]} Primero, el traslado</summary>${tr.map(t => trasladoCard(t, false, true)).join('')}</details>`; })() : ''), sitiosDia(d)],
     ['hotel', '🛏️ Hotel', al.sale && al.noche && al.sale !== al.noche ? hotelLinea(al.sale, 'Hoy dejáis') + hotelLinea(al.noche, 'Esta noche') : (al.noche || al.sale) ? hotelLinea(al.noche || al.sale, '') : ''],
   ];
   // Sin botones (no se usaban): Sitios siempre a la vista; Hotel y Diario, plegados al final.
@@ -654,7 +658,7 @@ function viewHoy() {
   const nomH = cambia ? `dejáis ${al.sale.nombre} · dormís en ${al.noche.nombre}` : (al.noche || al.sale || {}).nombre;
   // Orden: traslado, hotel (justo encima del mapa de la Ruta del día), sitios y diario. Sin títulos repetidos dentro.
   const hU = al.noche || al.sale;
-  return html + tras + rutasLP24(ck(d.ciudad), d) + (hotl ? `<details class="card plg hotel-pl" data-key="${hk}" ${abierto(hk, false) ? 'open' : ''}><summary>🛏️ <b>${cambia ? 'Hotel' : esc(hU.nombre)}</b>${cambia ? ` · ${esc(nomH)}` : ' ' + ver(hU)}</summary>${hotl}</details>` : '') + sit
+  return html + antesSalir(d.fecha, tr, al) + tras + rutasLP24(ck(d.ciudad), d) + (hotl ? `<details class="card plg hotel-pl" data-key="${hk}" ${abierto(hk, false) ? 'open' : ''}><summary>🛏️ <b>${cambia ? 'Hotel' : esc(hU.nombre)}</b>${cambia ? ` · ${esc(nomH)}` : ' ' + ver(hU)}</summary>${hotl}</details>` : '') + sit
     + `<details class="card plg diario-pl" data-key="${dk}" ${abierto(dk, false) ? 'open' : ''}><summary>${diarioDe(d.fecha).cara || '📔'} <b>¿Qué tal el día?</b>${diarioDe(d.fecha).nota ? ' · ✍️' : ''}</summary>${diarioCard(d, true)}</details>`;
 }
 
