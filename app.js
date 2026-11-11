@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v204';
+const VERSION = 'v205';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1088,7 +1088,9 @@ function guiaCult0(l, ctx) {
 function masLP(l, ctx) {
   if (!l || typeof l !== 'object') return '';
   const h = hKey(l), D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, G = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
-  const lp = D[h.slice(2)] || D[h], txt = lp || G[h.slice(2)];
+  // Si hay recuadro de la LP 2024, manda: no se repite lo de la LP 2016 (se solapaba y traía horarios y buses de 2016).
+  const con24 = typeof LP24_INDISP !== 'undefined' && LP24_INDISP[h.slice(2)];
+  const lp = con24 ? null : D[h.slice(2)] || D[h], txt = lp || (con24 ? null : G[h.slice(2)]);
   if (!txt || txt === l.desc) return guiaCult(l, ctx);
   return guiaCult(l, ctx) + `<details class="mas-lp" data-key="mx:${ctx}:${esc(h)}" ${abierto('mx:' + ctx + ':' + h, false) ? 'open' : ''}><summary>📖 ${lp ? 'Más de la Lonely' : 'Más info'}</summary>
     <p>${resaltar(txt, true)}${lp ? ' <span class="badge otro">LP 2016</span>' : ''}</p></details>`;
@@ -1100,7 +1102,8 @@ const breve = t => { const x = String(t || '').replace(/\s+/g, ' ').trim(), m = 
 const enQueVer = (l, k) => { const h = hKey(l); return qvLista(k, ciudadesUnicas().find(c => ck(c.nombre) === k)).some(o => hKey(o.l) === h); };
 function infoCompleta(l, desc) {
   const h = hKey(l), D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, I = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
-  const gc = typeof GUIA_CULT !== 'undefined' && GUIA_CULT[h.slice(2)], lp = D[h.slice(2)] || D[h], info = !lp && I[h.slice(2)];
+  const con24 = typeof LP24_INDISP !== 'undefined' && LP24_INDISP[h.slice(2)]; // la LP 2024 manda sobre la de 2016
+  const gc = typeof GUIA_CULT !== 'undefined' && GUIA_CULT[h.slice(2)], lp = con24 ? null : D[h.slice(2)] || D[h], info = !lp && !con24 && I[h.slice(2)];
   return `${desc ? `<p>${resaltar(desc, true)}</p>` : ''}${lp24(l)}
     ${lp && lp !== desc ? `<div class="qv-bloque"><b>📖 Más de la Lonely</b> <span class="badge otro">LP 2016</span><p>${resaltar(lp, true)}</p></div>` : ''}
     ${info && info !== desc ? `<div class="qv-bloque"><b>ℹ️ Más info</b><p>${resaltar(info, true)}</p></div>` : ''}

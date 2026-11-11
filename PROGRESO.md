@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v204
+Caché del service worker: corea-v205
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -257,6 +257,7 @@ Caché del service worker: corea-v204
 - v202: añadido a Comer de Gyeongju «Gyeongju Gyodong Sundubu» (경주교동순두부, Hwangnam-dong 328-1), donde almorzaron el 10/11; Naver 4,82 con ~3.000 reseñas, pausa desde las 16:00. [Supuesto] Hangul del cartel y coordenadas aproximadas (VERIFICAR; se corrigen arrastrando en el mapa).
 - v203: añadido a Comer de Gyeongju «HOMG.» (황오명과, Hwangnam-dong 308-4), pastelería de jeonbyeong en cajas de regalo; Naver 4,91 con ~2.000 reseñas, cierra a las 20:00. [Supuesto] Tipo café, hangul de la caja y coordenadas aproximadas (VERIFICAR).
 - v204: el usuario pidió más sitios con >4,75 en Naver y miles de reseñas en Gyeongju y las ciudades que faltan. Las notas de Naver no se pueden leer desde el sandbox (Naver bloqueado y la búsqueda web no las publica; solo DiningCode y blogs), así que no se inventan: en Comer de cada ciudad, desplegable «🔎 Lo mejor valorado en Naver» con botones que abren Naver Map con búsquedas por zona del itinerario y del hotel (맛집, 카페, 빵집, mercados). Lo que les guste lo mandan en captura y se añade.
+- v205: Bulguksa y Seokguram tenían el «Indispensable» LP 2024 cruzado (el Buda de Seokguram salía también en Bulguksa): ahora Bulguksa lleva puentes, sala principal y pagodas, y Seokguram solo su Buda. Si un sitio tiene recuadro LP 2024, ya no se muestra «Más de la Lonely» de la LP 2016 (se repetía y traía horarios y buses de 2016). Quitado «terminal al lado del hotel» del aviso del bus a Bulguksa.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

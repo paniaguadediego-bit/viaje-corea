@@ -138,8 +138,7 @@ const LP24_INDISP = {
     ['Puentes Cheongungyo y Baegungyo', '청운교 · 백운교', 'La gran escalera-puente de piedra de la fachada (puentes de la Nube Azul y de la Nube Blanca), con 33 peldaños que simbolizan los 33 cielos budistas. Sube a la puerta Jahamun. No se puede pisar: se mira desde abajo.'],
     ['Puentes Yeonhwagyo y Chilbogyo', '연화교 · 칠보교', 'A la izquierda de los anteriores (puentes de la Flor de Loto y de los Siete Tesoros), más pequeños; en los peldaños hay flores de loto talladas. Llevan a la sala Geungnakjeon.'],
     ['Sala principal de Buda (Daeungjeon)', '대웅전', 'El corazón del templo, con el Buda Sakyamuni. Está en el patio entre las dos pagodas.'],
-    ['Pagodas Dabotap y Seokgatap', '다보탑 · 석가탑', 'Las dos pagodas de piedra del patio, de la época Silla: Dabotap, la recargada (es la de la moneda de 10 wones), y Seokgatap, la sobria. Comparadlas: son dos maneras de entender la misma idea.'],
-    ['Estatua de Buda de Seokguram', '석굴암 본존불', 'Ya en la gruta de Seokguram, montaña arriba: el gran Buda sedente de granito, tras un cristal y mirando al mar del Este. Dentro no se permiten fotos.']] }
+    ['Pagodas Dabotap y Seokgatap', '다보탑 · 석가탑', 'Las dos pagodas de piedra del patio, de la época Silla: Dabotap, la recargada (es la de la moneda de 10 wones), y Seokgatap, la sobria. Comparadlas: son dos maneras de entender la misma idea.']] }
 };
 // 🚶 Recorrido a pie por el complejo de tumbas de Daereungwon (LP 2024): sale en la ficha de Daereungwon y de cada parada.
 const LP24_RUTA_DAEREUNG = { ciudad: 'gyeongju', t: 'Recorrido a pie por Daereungwon y el centro', items: [
@@ -155,7 +154,7 @@ const LP24_RUTA_DAEREUNG = { ciudad: 'gyeongju', t: 'Recorrido a pie por Daereun
 // Ficha propia (Planes → Gyeongju y Hoy el día que toca); cada parada lleva el distintivo LP24.
 const LP24_RUTAS = [LP24_RUTA_DAEREUNG];
 const LP24_SITIOS = new Set(['대릉원', '노서동고분', '천마총', '첨성대', '동궁과월지', '반월성', '계림', '내물왕릉', '경주향교', '월정교']);
-LP24_INDISP['석굴암'] = { p: 178, items: [LP24_INDISP['불국사'].items[4]] };
+LP24_INDISP['석굴암'] = { p: 178, items: [['Estatua de Buda de Seokguram', '석굴암 본존불', 'El gran Buda sedente de granito de la gruta, tras un cristal y mirando al mar del Este, rodeado de relieves de guardianes y discípulos. Dentro no se permiten fotos.']] };
 
 const GUIA = [
   ['T-money y transporte', [
@@ -940,7 +939,7 @@ const SIN_TAXI = {
   '월영교': 'Bus 246 de vuelta de Hahoe a la terminal de Andong (~50 min) y de allí taxi corto o bus 3 hasta Woryeonggyo.',
   '도산서원': 'Bus 567 desde el centro de Andong (solo unas 4 veces al día en 2019) o el bus turístico que sale de la terminal (en 2023: 8:20, 11:20 y 14:40, de martes a domingo).',
   '봉정사': 'No hay bus directo desde Dosan Seowon: volver al centro de Andong y bus 351 a Bongjeongsa (pocas veces al día). Si vais justos de tiempo, aquí compensa el taxi.',
-  '불국사': 'Bus 10 u 11 desde la terminal de autobuses de Gyeongju (al lado del hotel) hasta Bulguksa, que es final de línea: ~40-50 min y pasan a menudo.',
+  '불국사': 'Bus 10 u 11 desde la terminal de autobuses de Gyeongju hasta Bulguksa, que es final de línea: ~40-50 min y pasan a menudo.',
   '석굴암': 'Bus 12 desde la parada frente a la taquilla de Bulguksa hasta Seokguram (~15 min). Pasa poco (hay viajeros que esperaron más de 1 h): mirad la hora. Andando por el sendero del bosque, ~1 h de subida. Para volver, bus 12 a Bulguksa y allí el 10 o el 11.',
   '감천문화마을': 'Metro L2 de Haeundae a Seomyeon, cambio a la L1 hasta Toseong (토성), salida 6; frente al centro oncológico del hospital, bus de barrio Saha 1-1, Seogu 2 o Seogu 2-2 hasta Gamcheon (~10 min de cuesta). En total, ~1 h 15.',
   '해동용궁사': 'Bus 181 o 1001 (el que más pasa) desde el metro Haeundae (L2), salida 7, hasta la parada «용궁사·국립수산과학원» (~27 min) y 10-15 min a pie. Otra opción: tren Donghae hasta Osiria y bus 139 o 1001 (4 min).',

@@ -158,7 +158,7 @@ propuesta de visita), PLATOS (glosario de platos con hangul de la
 Lonely, en Comer),
 cultura.js: GUIA_CULT (fichas "🎎 Con ojos de guía" de unos 30 lugares emblemáticos: gancho,
 historia, 👀 qué mirar y 💡 consejo; clave = hangul sin espacios; sale en Ciudades, Ruta del día y buscador).
-LP24_INDISP (recuadros «Indispensable» de la Lonely Planet Corea 2024 en español, con página; hangul y 🔊; sale en la ficha abierta de Planes y en la parada de Hoy). DIA_LP (lo que amplía la Lonely de cada sitio del itinerario y de los
+LP24_INDISP (recuadros «Indispensable» de la Lonely Planet Corea 2024 en español, con página; hangul y 🔊; sale en la ficha abierta de Planes y en la parada de Hoy; si un sitio lo tiene, manda sobre la LP 2016: no se muestra su «Más de la Lonely»). DIA_LP (lo que amplía la Lonely de cada sitio del itinerario y de los
 que recomienda; sale en Hoy, "Sitios de hoy", y en Ciudades como
 desplegable "📖 Más de la Lonely" en cada sitio) y DIA_INFO (frase general si la Lonely no lo trata),
 FRASES_SIT (frases por
