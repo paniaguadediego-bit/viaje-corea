@@ -1578,5 +1578,8 @@ details.novamos-card .qv-cab b, details.novamos-card .sd-tit b { text-decoration
 .sitios-dia details.tramo-pl .tramo-hasta, .sitios-dia details.tramo-pl .tramo-hasta b { color: color-mix(in srgb, #0f9d8a 70%, var(--fg)); }
 .sitios-dia details.tramo-pl .tr-op.mejor { background: #0f9d8a; border-color: #0f9d8a; }
 .sitios-dia details.tramo-pl::before, .sitios-dia details.tramo-pl::after { content: ""; display: block; width: 2px; height: 0; }
+/* v218: cercanos metidos en el itinerario, con su ＊ y filo dorado */
+.sitios-dia details.sd.sd-cerca { border-left-color: #d4a017 !important; }
+.sd-tit .sug-etq { margin-right: 3px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v217"; }
+:root { --css-ver: "v218"; }

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v217';
+const VERSION = 'v218';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -718,9 +718,39 @@ function autoDia(d) {
     return pos < 1e9 && !(EXIGE[l.ko] && !p.txt.includes(EXIGE[l.ko])) ? [l, pos] : null;
   }).filter(Boolean).sort((a, b) => a[1] - b[1]).map(x => x[0]);
 }
-function listaDia(d) {
+// Paradas del día sin los cercanos (itinerario sin quitar + añadidos desde Planes).
+function listaDiaBase(d) {
   const k = ck(d.ciudad), A = agendaVer(d.fecha), todos = sitiosCiudadObj(k);
   const auto = autoDia(d).filter(l => !A.del.includes(hKey(l)));
+  const extra = A.add.map(h => todos.find(l => hKey(l) === h)).filter(l => l && !auto.includes(l));
+  return [...auto, ...extra];
+}
+// ＊ Sitios cercanos que no estaban en el plan: desde v218 entran en el itinerario, en el hueco donde menos desvío hacen,
+// numerados como el resto (✕ los quita: van a A.del). Se calculan para todos los días a la vez para no repetir uno en dos días.
+const hotCoordsDia = d => { const k = ck(d.ciudad), al = alojDe(d.fecha), h = al.noche && al.noche.lat != null && ck(al.noche.ciudad) === k ? al.noche : (al.sale && al.sale.lat != null && ck(al.sale.ciudad) === k ? al.sale : null); return h ? [Number(h.lat), Number(h.lon)] : null; };
+let _sugC = { k: '', m: {} };
+function sugsDia(d) {
+  const clave = [Object.keys(COORDS_LUGARES).length, JSON.stringify((user && user.agenda) || {}), JSON.stringify((user && user.coordsFix) || {}), arr(trip && trip.dias).length].join('|');
+  if (_sugC.k !== clave || _sugC.t !== trip) { const m = {}, usados = new Set();
+    arr(trip && trip.dias).filter(x => x.fecha).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha))).forEach(x => {
+      const A = agendaVer(x.fecha); m[x.fecha] = sugerenciasDe(x, listaDiaBase(x), hotCoordsDia(x)).filter(g => !usados.has(hKey(g.l)) && !A.del.includes(hKey(g.l)));
+      m[x.fecha].forEach(g => usados.add(hKey(g.l))); });
+    _sugC = { k: clave, t: trip, m }; }
+  return _sugC.m[d.fecha] || [];
+}
+const esSug = (d, l) => sugsDia(d).some(g => hKey(g.l) === hKey(l));
+// Itinerario del día con los cercanos metidos tras la parada donde encajan (tras.n = nº de parada con coordenadas; 0 = hotel).
+function autoConSug(d) {
+  const A = agendaVer(d.fecha), base = autoDia(d).filter(l => !A.del.includes(hKey(l))), sg = sugsDia(d), out = [];
+  const tras = n => sg.filter(g => g.tras.n === n).sort((a, b) => a.dv - b.dv).map(g => g.l);
+  out.push(...tras(0)); let n = 0;
+  // Los números de tras.n cuentan también los añadidos (ruta = base + añadidos): los que caen tras un añadido van al final.
+  base.forEach(l => { out.push(l); if (coordsLugar(l)) out.push(...tras(++n)); });
+  sg.forEach(g => { if (!out.includes(g.l)) out.push(g.l); });
+  return out;
+}
+function listaDia(d) {
+  const auto = autoConSug(d), A = agendaVer(d.fecha), todos = sitiosCiudadObj(ck(d.ciudad));
   const extra = A.add.map(h => todos.find(l => hKey(l) === h)).filter(l => l && !auto.includes(l));
   return [...auto, ...extra];
 }
@@ -740,9 +770,10 @@ function agendaBtn(l, k, ctx = '') {
 }
 function agendaToggle(h, f) {
   const d = arr(trip.dias).find(x => x.fecha === f); if (!d) return;
-  const A = agendaDe(f), esAuto = autoDia(d).some(x => hKey(x) === h);
+  const A = agendaDe(f), enPlan = autoDia(d).some(x => hKey(x) === h) || sugsDia(d).some(g => hKey(g.l) === h);
   const quita = (ls, x) => { const i = ls.indexOf(x); if (i >= 0) ls.splice(i, 1); };
-  if (esAuto) { if (A.del.includes(h)) quita(A.del, h); else A.del.push(h); }
+  // Del itinerario (o cercano metido solo): ✕ lo pasa a «quitados»; volver a tocar lo recupera. Lo demás se añade o se quita.
+  if (A.del.includes(h)) quita(A.del, h); else if (enPlan) A.del.push(h);
   else { if (A.add.includes(h)) quita(A.add, h); else A.add.push(h); }
   saveUser();
 }
@@ -852,7 +883,7 @@ function naverDia(hc, hotN, lista) {
 // (tras qué parada numerada: "2*" = entre la parada 2 y la 3, el sitio con menos desvío).
 function sugerenciasDe(d, ruta, hot) {
   const k = ck(d.ciudad), cs = ruta.map(coordsLugar).filter(Boolean); if (!cs.length) return [];
-  const enAlgun = new Set(); arr(trip.dias).forEach(x => listaDia(x).forEach(l => enAlgun.add(hKey(l))));
+  const enAlgun = new Set(); arr(trip.dias).forEach(x => listaDiaBase(x).forEach(l => enAlgun.add(hKey(l))));
   const imp = new Set(((typeof IMPRES !== 'undefined' && IMPRES[k]) || []).map(hKey));
   const paradas = []; if (hot) paradas.push({ n: 0, es: 'el hotel', c: hot });
   let n = 0; ruta.forEach(l => { const c = coordsLugar(l); if (c) paradas.push({ n: ++n, es: l.es, c }); });
@@ -897,7 +928,7 @@ function horarioLinea(l, fecha) {
 function sitiosDia(d) {
   const k = ck(d.ciudad), A = agendaVer(d.fecha), todos = listaDia(d);
   if (!todos.length) return '';
-  const auto = autoDia(d).filter(l => !A.del.includes(hKey(l)));
+  const auto = autoConSug(d), sgK = new Set(sugsDia(d).map(g => hKey(g.l)));
   const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}; const G = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
   const al = alojDe(d.fecha), hot = al.noche && al.noche.lat != null && ck(al.noche.ciudad) === k ? al.noche : (al.sale && al.sale.lat != null && ck(al.sale.ciudad) === k ? al.sale : null);
   let prev = hot ? [Number(hot.lat), Number(hot.lon)] : null, prevN = hot ? hot.nombre : '';
@@ -909,7 +940,7 @@ function sitiosDia(d) {
     const n = num[h];
     // Ficha plegable: se pliega sola al marcarla como visitada (y la foto, a la derecha, arriba).
     const key = 'sd:' + d.fecha + '|' + h, ab = abierto(key, !hecho(l, k));
-    return `${t}${extra ? encaje(l) : ''}<details class="sd ${hecho(l, k) ? 'hecho-card' : noVamos(l) ? 'novamos-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}<span class="sd-qv">${irQV(l, k, true)}</span>${btnHecho(l, k)}${irMapas(l)}<span class="sd-lp">${lpPill(l)}</span><br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b> <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
+    return `${t}${extra ? encaje(l) : ''}<details class="sd ${sgK.has(h) ? 'sd-cerca' : ''} ${hecho(l, k) ? 'hecho-card' : noVamos(l) ? 'novamos-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}<span class="sd-qv">${irQV(l, k, true)}</span>${btnHecho(l, k)}${irMapas(l)}<span class="sd-lp">${lpPill(l)}</span><br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${sgK.has(h) ? '<span class="sug-etq" title="Cercano añadido">＊</span>' : ''}${icSitio(l.es)} ${esc(l.es)}</b> <span class="ko-s">${esc(l.ko || '')}</span>${extra || sgK.has(h) ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
       <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${lp24(l)}</div></details>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
@@ -932,13 +963,13 @@ function sitiosDia(d) {
   { let n = 0; [...auto, ...extras].forEach(l => { if (coordsLugar(l)) num[hKey(l)] = ++n; }); }
   const nvP = naverDia(hc, hot && (hot.ko || hot.nombre), [...auto, ...extras]); nvP.slice(1).forEach(x => { naverTras[x.inicio] = x.html; });
   // Sugerencias "cerca y no lo tenéis", plegadas e intercaladas tras la parada donde encajan (H* = tras el hotel).
-  const sugs = sugerenciasDe(d, [...auto, ...extras], hc), sugTras = n => sugs.filter(g => g.tras.n === n).map(g => sugPlegada(g, d)).join('');
+  const sugs = [], sugTras = () => ''; // los cercanos ya van dentro del itinerario (sgK)
   return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${planLluvia(d)}<b class="rd-tit">🛤️ Ruta del día</b>
     ${(nvP[0] || {}).html || ''}
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>${sugTras(0)}` : ''}
     ${auto.map(l => fila(l, false) + sugTras(num[hKey(l)])).join('')}
     ${extras.length ? `<div class="sd-anadidos">➕ Añadidos desde Ciudades</div>${extras.map(l => fila(l, true) + sugTras(num[hKey(l)])).join('')}` : ''}
-    ${sugs.length ? '<div class="muted mini-nota sug-ley"><span class="sug-etq">*</span> Cerca de vuestra ruta y no está en el plan (el número dice tras qué parada encaja; H = tras el hotel). Con ＋ se añade al día.</div>' : ''}
+    ${sgK.size ? '<div class="muted mini-nota sug-ley"><span class="sug-etq">＊</span> Sitio cercano que no estaba en el plan: se ha metido donde os pilla de paso. Con ✕ se quita de este día.</div>' : ''}
     ${A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}
     <div class="muted mini-nota">Metro de Seúl © OpenStreetMap (ODbL).</div></div>`;
 }
@@ -974,6 +1005,11 @@ function irMapas(l) {
   const n = l.ko || l.es || '';
   return `<button class="irmap" data-irmap="naver" data-lat="${c[0]}" data-lon="${c[1]}" data-n="${esc(n)}" title="Cómo llegar con Naver Map" aria-label="Naver">🧭</button><button class="irmap" data-irmap="google" data-lat="${c[0]}" data-lon="${c[1]}" data-n="${esc(n)}" title="Cómo llegar con Google Maps" aria-label="Google Maps">🌐</button>`;
 }
+// ✕ de una parada añadida o cercana (va dentro del summary): la quita de este día sin abrir la ficha.
+document.addEventListener('click', e => {
+  const b = e.target.closest('.sd-x[data-agdel]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+  const f = b.closest('[data-fecha]').dataset.fecha; agendaToggle(b.dataset.agdel, f); render();
+}, true);
 // ＋ de una sugerencia (va dentro del summary): añade al día sin abrir ni cerrar la ficha.
 document.addEventListener('click', e => {
   const b = e.target.closest('.sug-add[data-agtog]'); if (!b) return; e.preventDefault(); e.stopPropagation();
@@ -1689,8 +1725,7 @@ function mapaDiaHTML(d, hot, orden, mini = false) {
     pts.push({ capa: 'itin', c, l, es: l.es, ko: l.ko, num: ++n, pasado: d.fecha < todayISO(), ic: icSitio(l.es), sub: `Parada ${n}`, txt: D[h.slice(2)] || D[h] || l.desc || l.nota || '', hecho: hecho(l, k) }); });
   const ruta = pts.map(p => p.c);
   // Lo que queda de paso y no tenéis: con asterisco y el número de la parada tras la que encaja.
-  sugerenciasDe(d, orden, hot).forEach(g => pts.push({ capa: 'sug', c: g.c, l: g.l, es: g.l.es, ko: g.l.ko, num: g.etq, ic: icSitio(g.l.es), sub: textoEncaje(g),
-    txt: (DIA_LP[hKey(g.l).slice(2)] || g.l.desc || g.l.nota || ''), add: hKey(g.l) + '|' + d.fecha }));
+  // Los cercanos (＊) ya vienen dentro de «orden» desde v218.
   const encuadre = pts.map(p => p.c); // recorrido + asteriscos
   if (mini) return mapaHTML('dm:' + d.fecha, pts, { linea: ruta, hotel: hot, mini, fit: encuadre });
   // Capas extra (apagadas por defecto): lo que queda a ≤1,2 km de algún punto de la ruta.
