@@ -1534,5 +1534,13 @@ details.lp24-ruta ol { margin: 6px 0 4px; padding-left: 22px; } details.lp24-rut
 .rm-ficha.tr { border-left-color: #1f4e8c; }
 .rm-ft { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 4px; }
 .rm-pasos { margin: 4px 0; padding-left: 20px; font-size: .86rem; }
+/* v207: tramos entre paradas, con su propio tono, plegados y con las opciones a la vista; localizar en Naver/Google */
+.sitios-dia details.tramo-pl { background: color-mix(in srgb, #2b6cb0 9%, var(--card)) !important; border: 1.5px dashed color-mix(in srgb, #2b6cb0 55%, var(--line)) !important; opacity: 1 !important; }
+.tr-ops { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; width: 100%; margin-top: 3px; }
+.tr-op { font-size: .78rem; padding: 1px 8px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); white-space: nowrap; }
+.tr-op.mejor { background: #2b6cb0; color: #fff; border-color: #2b6cb0; font-weight: 700; }
+.irmap { width: 34px !important; min-height: 32px !important; padding: 0 !important; margin: 0 0 4px 4px; background: var(--card) !important; border: 1px solid var(--line); border-radius: 10px; box-shadow: none; font-size: 1rem; vertical-align: middle; display: inline-flex !important; align-items: center; justify-content: center; }
+.tl.sin-fecha { grid-template-columns: 1fr !important; padding-left: 0 !important; }
+.tl.sin-fecha::before { display: none !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v206"; }
+:root { --css-ver: "v207"; }

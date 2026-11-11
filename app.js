@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v206';
+const VERSION = 'v207';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -646,7 +646,7 @@ function viewHoy() {
   const secs = [
     // El traslado va dentro de Sitios, como primer tramo de la ruta del día.
     ['sitios', '📖 Sitios', (tr.length ? (() => { const hk = 'tras:' + (tr[0].id || d.fecha), ok = !!u().hecho[hk], key = 'trd:' + d.fecha, ab = abierto(key, !ok);
-      return `<details class="tras-dia ${ok ? 'hecho-card' : ''}" data-key="${key}" ${ab ? 'open' : ''}><summary class="tras-dia-tit"><button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hk)}" data-v="${ok ? 0 : 1}" aria-label="Hecho">${ok ? '✓' : ''}</button>${medio(tr[0])[0]} Primero, el traslado</summary>${antesSalir(d.fecha, tr, al)}${tr.map(t => trasladoCard(t)).join('')}</details>`; })() : ''), sitiosDia(d)],
+      return `<details class="tras-dia ${ok ? 'hecho-card' : ''}" data-key="${key}" ${ab ? 'open' : ''}><summary class="tras-dia-tit"><button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hk)}" data-v="${ok ? 0 : 1}" aria-label="Hecho">${ok ? '✓' : ''}</button>${medio(tr[0])[0]} Primero, el traslado</summary>${antesSalir(d.fecha, tr, al)}${tr.map(t => trasladoCard(t, false, true)).join('')}</details>`; })() : ''), sitiosDia(d)],
     ['hotel', '🛏️ Hotel', al.sale && al.noche && al.sale !== al.noche ? alojCard(al.sale, true) + alojCard(al.noche, false) : (al.noche || al.sale) ? alojCard(al.noche || al.sale, false, true) : ''],
   ];
   // Sin botones (no se usaban): Sitios siempre a la vista; Hotel y Diario, plegados al final.
@@ -820,8 +820,12 @@ function tramo(o, dst, nO, nD, op = {}) {
   const fila = `<div class="tramo-ir"><span>${op.prefijo || ''}${txt}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>`;
   if (op.sinPasos) return fila;
   // Franja propia entre sitio y sitio, plegable: se pliega sola cuando el destino ya está visitado.
-  if (op.hasta && op.key) { const key = 'tr:' + op.key + (op.hecho ? ':v' : ''), ab = abierto(key, !op.hecho); // al visitar cambia la clave: se pliega sola
-    return `<details class="tramo tramo-${c.modo} tramo-pl" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary><span class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b></span><span class="tramo-res">${txt}</span></summary>${fila}${sinTaxi}${pasos}</details>`; }
+  if (op.hasta && op.key) { const key = 'tr:' + op.key, ab = abierto(key, false); // plegados por defecto; las opciones se ven igual
+    // Todas las formas de ir, a la vista aunque esté plegado: a pie (hasta 3 km), metro, taxi y bus; la recomendada, resaltada.
+    const pie = c.k <= 3 ? Math.max(2, Math.round(c.k * 1.3 / 4.5 * 60)) : null, ops = [];
+    if (pie) ops.push(['pie', `🚶 ${pie} min`]); if (r) ops.push(['metro', `🚇 ${r.min} min`]); if (c.k > 0.8) ops.push(['taxi', `🚕 ${c.taxi || Math.round(c.k * 1.3 / (c.k > 8 ? 40 : 22) * 60 + 8)} min`]); if (st) ops.push(['bus', '🚌 bus']);
+    const chips = ops.map(([m, t]) => `<span class="tr-op ${m === c.modo ? 'mejor' : ''}">${t}</span>`).join('');
+    return `<details class="tramo tramo-${c.modo} tramo-pl" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary><span class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b> <small class="muted">· ${fmtDist(c.k)}</small></span><span class="tr-ops">${chips}</span></summary>${sinTaxi}${pasos}${!sinTaxi && !pasos ? `<div class="muted mini-nota">${txt}</div>` : ''}</details>`; }
   return `<div class="tramo tramo-${c.modo}">${op.hasta ? `<div class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b></div>` : ''}${fila}${sinTaxi}${pasos}</div>`;
 }
 // Todo el día en Naver Map: hotel → paradas → hotel. Naver admite hasta 5 paradas intermedias por enlace
@@ -901,7 +905,7 @@ function sitiosDia(d) {
     const n = num[h];
     // Ficha plegable: se pliega sola al marcarla como visitada (y la foto, a la derecha, arriba).
     const key = 'sd:' + d.fecha + '|' + h, ab = abierto(key, !hecho(l, k));
-    return `${t}${extra ? encaje(l) : ''}<details class="sd ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}${btnHecho(l, k)}${irQV(l, k, true)}<br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
+    return `${t}${extra ? encaje(l) : ''}<details class="sd ${hecho(l, k) ? 'hecho-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}${btnHecho(l, k)}${irQV(l, k, true)}${irMapas(l)}<br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
       <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${lp24(l)}</div></details>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
@@ -945,14 +949,29 @@ function medio(t) {
 }
 // Qué "Paso a paso" están abiertos (lo controla la app, no el navegador).
 const pasosAb = {};
-function trasladoCard(t, pleg = false) {
+// 🧭 Cómo llegar a una parada: Naver Map (ruta desde donde estéis) y Google Maps, solo iconos, junto al de Planes.
+function irMapas(l) {
+  const c = coordsLugar(l); if (!c) return '';
+  const n = l.ko || l.es || '';
+  return `<button class="irmap" data-irmap="naver" data-lat="${c[0]}" data-lon="${c[1]}" data-n="${esc(n)}" title="Cómo llegar con Naver Map" aria-label="Naver">🧭</button><button class="irmap" data-irmap="google" data-lat="${c[0]}" data-lon="${c[1]}" data-n="${esc(n)}" title="Cómo llegar con Google Maps" aria-label="Google Maps">📍</button>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-irmap]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+  const { lat, lon, n } = b.dataset;
+  if (b.dataset.irmap === 'google') { window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`, '_blank'); return; }
+  const web = `https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(n)}`;
+  let fue = false; const vis = () => { if (document.hidden) fue = true; }; document.addEventListener('visibilitychange', vis);
+  location.href = `nmap://route/public?dlat=${lat}&dlng=${lon}&dname=${encodeURIComponent(n)}&appname=viajecorea`;
+  setTimeout(() => { document.removeEventListener('visibilitychange', vis); if (!fue && !document.hidden) window.open(web, '_blank'); }, 1500);
+}, true);
+function trasladoCard(t, pleg = false, sinFecha = false) {
   const tren = billete(t) || {}, [ic, nom] = medio(t), pend = isPend(t);
   // En Ruta, plegable: se pliega solo cuando ya pasó o se marcó hecho en Hoy.
   const plHecho = (t.fecha && t.fecha < todayISO()) || !!u().hecho['tras:' + (t.id || t.fecha)], plK = 'trr:' + (t.id || t.fecha) + (plHecho ? ':h' : '');
   const d = new Date(String(t.fecha) + 'T12:00:00');
   const dia = isNaN(d) ? esc(t.fecha || '') : `<b>${d.getDate()}</b><small>${d.toLocaleDateString('es-ES', { month: 'short' })}</small><small>${d.toLocaleDateString('es-ES', { weekday: 'short' })}</small>`;
-  return `<div class="tl ${pend ? 'pend' : isOk(t) ? 'ok' : ''} ${t.fecha && t.fecha < todayISO() ? 'pasado' : ''}">
-    <div class="tl-fecha">${dia}</div>
+  return `<div class="tl ${pend ? 'pend' : isOk(t) ? 'ok' : ''} ${t.fecha && t.fecha < todayISO() ? 'pasado' : ''} ${sinFecha ? 'sin-fecha' : ''}">
+    ${sinFecha ? '' : `<div class="tl-fecha">${dia}</div>`}
     <div class="tl-card card">
       ${pleg ? `<details class="tl-pl" data-key="${esc(plK)}" ${abierto(plK, !plHecho) ? 'open' : ''}><summary>` : ''}<div class="tl-top"><span class="tl-ic" title="${nom}">${ic}</span><div class="tl-ruta"><b>${esc(t.de)}</b><span class="tl-flecha">↓</span><b>${esc(t.a)}</b></div></div>${pleg ? '</summary>' : ''}
       <div class="tl-meta">${t.fecha && t.fecha < todayISO() ? '' : `${estadoBadge(t)} ${ver(t)}`}</div>
