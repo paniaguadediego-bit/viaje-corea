@@ -1571,5 +1571,12 @@ details.novamos-card .qv-cab b, details.novamos-card .sd-tit b { text-decoration
 .dia-clima { margin: 10px auto 2px; padding: 8px 8px 6px; border-radius: 14px; background: rgba(0,0,0,.24); border: 1px solid rgba(255,255,255,.22); max-width: 100%; }
 .dia-clima .dia-tiempo { background: transparent !important; padding: 0 !important; margin: 0 auto; display: flex; }
 .dia-clima .t-horas { margin-top: 6px; }
+/* v217: los tramos entre paradas se distinguen de las paradas: más estrechos (conector), sin sombra, color propio (verde azulado) y fondo de otro tono */
+.sitios-dia details.tramo-pl, .sitios-dia .tramo { margin: 2px 30px !important; border-radius: 18px !important; box-shadow: none !important;
+  background: color-mix(in srgb, #0f9d8a 14%, var(--bg)) !important; border: 2px dashed #0f9d8a !important; }
+.sitios-dia details.tramo-pl > summary { padding: 2px 0; }
+.sitios-dia details.tramo-pl .tramo-hasta, .sitios-dia details.tramo-pl .tramo-hasta b { color: color-mix(in srgb, #0f9d8a 70%, var(--fg)); }
+.sitios-dia details.tramo-pl .tr-op.mejor { background: #0f9d8a; border-color: #0f9d8a; }
+.sitios-dia details.tramo-pl::before, .sitios-dia details.tramo-pl::after { content: ""; display: block; width: 2px; height: 0; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v216"; }
+:root { --css-ver: "v217"; }
