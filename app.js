@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v219';
+const VERSION = 'v220';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1033,6 +1033,13 @@ document.addEventListener('click', e => {
   location.href = `nmap://route/public?dlat=${lat}&dlng=${lon}&dname=${encodeURIComponent(n)}&appname=viajecorea`;
   setTimeout(() => { document.removeEventListener('visibilitychange', vis); if (!fue && !document.hidden) window.open(web, '_blank'); }, 1500);
 }, true);
+// 🛣️ De la estación (o parada) de llegada al hotel de esa noche, en Naver Map (t.llegada en trip.json; si Naver no abre, Google Maps).
+function llegadaHotel(t) {
+  const e = t && t.llegada; if (!e || e.lat == null) return '';
+  const h = alojDe(t.fecha).noche; if (!h) return '';
+  const c = hotelDe(ck(h.ciudad)) || (h.lat != null ? [Number(h.lat), Number(h.lon)] : null); if (!c) return '';
+  return `<div class="lleg-h"><button class="btn mini" data-irab="${e.lat},${e.lon}|${esc(e.ko || e.nombre)}|${c[0]},${c[1]}|${esc(h.ko || h.nombre)}|public">🛣️ ${esc(e.nombre)} → ${esc(h.nombre)} en Naver</button>${e.verificar ? ' <span class="ver">VERIFICAR punto de salida</span>' : ''}</div>`;
+}
 function trasladoCard(t, pleg = false, sinFecha = false) {
   const tren = billete(t) || {}, [ic, nom] = medio(t), pend = isPend(t);
   // En Ruta, plegable: se pliega solo cuando ya pasó o se marcó hecho en Hoy.
@@ -1049,7 +1056,7 @@ function trasladoCard(t, pleg = false, sinFecha = false) {
         ${Object.keys(tren.asientos || {}).length ? `<div>💺 ${tren.coche ? `Coche <b>${esc(tren.coche)}</b> · ` : ''}${Object.entries(tren.asientos).map(([n, a]) => `${esc(n)} <b>${esc(a)}</b>`).join(' · ')}</div>` : ''}${tren.nota ? `<div class="muted">${esc(tren.nota)}</div>` : ''}</div>` : ''}
       ${arr(t.pasos).length ? (() => { const k = 'p:' + (t.id || t.fecha + t.de), ab = k in pasosAb ? pasosAb[k] : pend;
         return `<div class="tl-pasos"><button class="tl-pasos-btn" data-pasos="${esc(k)}" data-v="${ab ? 0 : 1}">${ab ? '▾' : '▸'} Paso a paso (${arr(t.pasos).length})</button>
-        ${ab ? `<ol>${arr(t.pasos).map(p => `<li>${resaltar(p)}</li>`).join('')}</ol>` : ''}</div>`; })() : ''}
+        ${ab ? `<ol>${arr(t.pasos).map((p, i) => `<li>${resaltar(p)}${i === (t.llegada || {}).paso ? llegadaHotel(t) : ''}</li>`).join('')}</ol>` : llegadaHotel(t)}</div>`; })() : ''}
       ${t.frase_ko ? `<div class="ko">${esc(t.frase_ko)}</div>` : ''}
       ${t.romanizacion ? `<div class="muted">${esc(t.romanizacion)}</div>` : ''}
     ${pleg ? '</details>' : ''}</div>

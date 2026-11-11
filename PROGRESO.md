@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v219
+Caché del service worker: corea-v220
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -272,6 +272,7 @@ Caché del service worker: corea-v219
 - v217: los tramos entre paradas de Hoy no se distinguían de las paradas: ahora son más estrechos (margen a los lados, como conectores), de color verde azulado propio con borde discontinuo grueso, sin sombra, y la opción recomendada también en verde azulado. Claro y oscuro.
 - v218: los sitios cercanos con asterisco entran en el itinerario de cada día (también los pasados): se colocan tras la parada donde menos desvío hacen (o tras el hotel), cuentan en la numeración, en los tramos y en el mapa, y llevan ＊ y filo dorado. ✕ los quita de ese día; «↺ Volver al itinerario» los recupera. Cada sitio solo entra en un día (el primero en que encaja). [Supuesto] Se mantiene el máximo de 4 por día y ≤900 m de la ruta.
 - v219: apartados de Historia → Vuestras ciudades con personalidad: cada uno con su color (📜 marrón hanji, 🙇 rojo, ⭐ dorado, 🎯 verde azulado, 🍜 naranja, 💡 azul), degradado suave sobre el papel, su icono grande en marca de agua y, al abrirlo, una franja dancheong bajo el título. La barra de botones de Historia tiene fondo para que no asome el texto por debajo al hacer scroll.
+- v220: en «Primero, el traslado», botón «🛣️ <estación de llegada> → <hotel> en Naver» (ruta en transporte público; si Naver no abre, Google Maps), dentro del paso que va al hotel y también a la vista con los pasos plegados. Los puntos de llegada van en el trip.json privado (traslados[].llegada): Myeong-dong (bus 6015), estación de Andong, Gyeongju Station, Busan Station, Terminal Exprés de Jeonju (coordenadas a VERIFICAR) y Yongsan.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

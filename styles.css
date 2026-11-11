@@ -1591,5 +1591,7 @@ details.ci-sec[open]::after { opacity: .09; font-size: 5rem; top: 30px; }
 details.ci-sec > p { position: relative; z-index: 1; }
 /* v219: la barra de botones de Historia, al quedarse fija arriba, tapa el texto que pasa por debajo */
 .hist-subs { background: var(--bg) !important; padding: 4px 0 !important; box-shadow: 0 6px 6px -6px rgba(0,0,0,.25); }
+/* v220: botón de la estación de llegada al hotel */
+.lleg-h { margin: 6px 0 2px; } .lleg-h .btn { white-space: normal; text-align: left; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v219"; }
+:root { --css-ver: "v220"; }
