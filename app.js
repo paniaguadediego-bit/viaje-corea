@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v207';
+const VERSION = 'v208';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -816,7 +816,8 @@ function tramo(o, dst, nO, nD, op = {}) {
   // Sin taxi: bus o tren a los sitios lejanos (SIN_TAXI en contenido.js), a la vista cuando el tramo sale en taxi.
   const st = c.modo === 'taxi' && op.aK && typeof SIN_TAXI !== 'undefined' && SIN_TAXI[op.aK.slice(2)];
   const sinTaxi = st ? `<div class="sin-taxi">🚌 <b>Sin taxi:</b> ${resaltar(st, true)} <span class="ver">VERIFICAR</span></div>` : '';
-  const pasos = !r ? '' : c.modo === 'metro' ? pasosMetro(r) : `<details class="alt-metro" data-key="am:${o.join()}>${dst.join()}" ${abierto(`am:${o.join()}>${dst.join()}`, false) ? 'open' : ''}><summary>🚇 Alternativa en metro (~${r.min} min)</summary>${pasosMetro(r)}</details>`;
+  const pasos = !r ? '' : c.modo === 'metro' ? pasosMetro(r) : op.hasta && op.key ? `<div class="alt-metro-t">🚇 En metro (~${r.min} min)</div>${pasosMetro(r)}`
+    : `<details class="alt-metro" data-key="am:${o.join()}>${dst.join()}" ${abierto(`am:${o.join()}>${dst.join()}`, false) ? 'open' : ''}><summary>🚇 Alternativa en metro (~${r.min} min)</summary>${pasosMetro(r)}</details>`;
   const fila = `<div class="tramo-ir"><span>${op.prefijo || ''}${txt}</span><a class="btn sec mini" href="${url}">🧭 Ruta</a></div>`;
   if (op.sinPasos) return fila;
   // Franja propia entre sitio y sitio, plegable: se pliega sola cuando el destino ya está visitado.
@@ -825,7 +826,7 @@ function tramo(o, dst, nO, nD, op = {}) {
     const pie = c.k <= 3 ? Math.max(2, Math.round(c.k * 1.3 / 4.5 * 60)) : null, ops = [];
     if (pie) ops.push(['pie', `🚶 ${pie} min`]); if (r) ops.push(['metro', `🚇 ${r.min} min`]); if (c.k > 0.8) ops.push(['taxi', `🚕 ${c.taxi || Math.round(c.k * 1.3 / (c.k > 8 ? 40 : 22) * 60 + 8)} min`]); if (st) ops.push(['bus', '🚌 bus']);
     const chips = ops.map(([m, t]) => `<span class="tr-op ${m === c.modo ? 'mejor' : ''}">${t}</span>`).join('');
-    return `<details class="tramo tramo-${c.modo} tramo-pl" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary><span class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b> <small class="muted">· ${fmtDist(c.k)}</small></span><span class="tr-ops">${chips}</span></summary>${sinTaxi}${pasos}${!sinTaxi && !pasos ? `<div class="muted mini-nota">${txt}</div>` : ''}</details>`; }
+    return `<details class="tramo tramo-${c.modo} tramo-pl" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary><span class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b> <small class="muted">· ${fmtDist(c.k)}</small> <button class="irmap tr-nv" data-irab="${o[0]},${o[1]}|${esc(nO || '')}|${dst[0]},${dst[1]}|${esc(nD || '')}|${c.modo === 'pie' ? 'walk' : 'public'}" title="Este tramo en Naver Map (de parada a parada)" aria-label="Este tramo en Naver">🗺️</button></span><span class="tr-ops">${chips}</span></summary>${sinTaxi}${pasos}${!sinTaxi && !pasos ? `<div class="muted mini-nota">${txt}</div>` : ''}</details>`; }
   return `<div class="tramo tramo-${c.modo}">${op.hasta ? `<div class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b></div>` : ''}${fila}${sinTaxi}${pasos}</div>`;
 }
 // Todo el día en Naver Map: hotel → paradas → hotel. Naver admite hasta 5 paradas intermedias por enlace
@@ -866,12 +867,11 @@ function sugerenciasDe(d, ruta, hot) {
 const textoEncaje = g => g.antes ? `De paso entre ${g.tras.n ? 'la parada ' + g.tras.n + ' (' + g.tras.es + ')' : 'el hotel'} y la parada ${g.antes.n} (${g.antes.es}): desvío ~${fmtDist(g.dv)}`
   : `Al final, después de ${g.tras.n ? 'la parada ' + g.tras.n + ' (' + g.tras.es + ')' : 'el hotel'}: a ${fmtDist(g.dv)}`;
 function sugPlegada(g, d) {
-  const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, l = g.l, h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '', key = 'sug:' + d.fecha + '|' + h;
-  return `<details class="sug-pl" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}><summary><span class="sug-etq">${g.etq}</span>💡 Cerca y no lo tenéis: <b>${esc(l.es)}</b> <span class="muted">(${g.antes ? 'desvío' : 'a'} ~${fmtDist(g.dv)})</span></summary>
-    <div class="sug">${miniFoto(l)}<div class="sd-cuerpo"><div class="sd-tit"><b>${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)}</div>
-      <div class="sug-encaje">${esc(textoEncaje(g))}</div>
-      ${txt ? `<div class="muted">${resaltar(recorta(txt, 140), true)}</div>` : ''}${irQV(l, ck(d.ciudad))}</div>
-      <button class="mini sug-add" data-agtog="${esc(h)}|${d.fecha}" aria-label="Añadir a este día">+</button></div></details>`;
+  // Sitio cercano que no está en el plan: va dentro de la Ruta del día como una parada más, con asterisco (no cuenta en tramos ni mapa).
+  const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, l = g.l, h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '', key = 'sug:' + d.fecha + '|' + h, k = ck(d.ciudad);
+  return `<details class="sd sd-sug" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}${irQV(l, k, true)}${irMapas(l)}<button class="mini sug-add" data-agtog="${esc(h)}|${d.fecha}" title="Añadir a este día" aria-label="Añadir a este día">＋</button><br>
+    <b><span class="sug-etq">${g.etq}</span>${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span></summary>
+    <div class="sd-cuerpo"><div class="sug-encaje">📍 ${esc(textoEncaje(g))}</div>${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(txt), true)}</div>` : ''}</div></details>`;
 }
 // ---------- Horarios de apertura y horario propuesto del día (ritmo tranquilo) ----------
 const DIAS_SEM = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
@@ -934,6 +934,7 @@ function sitiosDia(d) {
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>${sugTras(0)}` : ''}
     ${auto.map(l => fila(l, false) + sugTras(num[hKey(l)])).join('')}
     ${extras.length ? `<div class="sd-anadidos">➕ Añadidos desde Ciudades</div>${extras.map(l => fila(l, true) + sugTras(num[hKey(l)])).join('')}` : ''}
+    ${sugs.length ? '<div class="muted mini-nota sug-ley"><span class="sug-etq">*</span> Cerca de vuestra ruta y no está en el plan (el número dice tras qué parada encaja; H = tras el hotel). Con ＋ se añade al día.</div>' : ''}
     ${A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}
     <div class="muted mini-nota">Metro de Seúl © OpenStreetMap (ODbL).</div></div>`;
 }
@@ -955,6 +956,20 @@ function irMapas(l) {
   const n = l.ko || l.es || '';
   return `<button class="irmap" data-irmap="naver" data-lat="${c[0]}" data-lon="${c[1]}" data-n="${esc(n)}" title="Cómo llegar con Naver Map" aria-label="Naver">🧭</button><button class="irmap" data-irmap="google" data-lat="${c[0]}" data-lon="${c[1]}" data-n="${esc(n)}" title="Cómo llegar con Google Maps" aria-label="Google Maps">📍</button>`;
 }
+// ＋ de una sugerencia (va dentro del summary): añade al día sin abrir ni cerrar la ficha.
+document.addEventListener('click', e => {
+  const b = e.target.closest('.sug-add[data-agtog]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+  const [h, f] = b.dataset.agtog.split('|'); agendaToggle(h, f); render();
+}, true);
+// 🗺️ Tramo de parada a parada en Naver Map (con salida y llegada); si la app no se abre, Google Maps con el mismo recorrido.
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-irab]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+  const [o, nO, dd, nD, modo] = b.dataset.irab.split('|'), [sl, sg] = o.split(','), [dl, dg] = dd.split(',');
+  const web = `https://www.google.com/maps/dir/?api=1&origin=${sl},${sg}&destination=${dl},${dg}&travelmode=${modo === 'walk' ? 'walking' : 'transit'}`;
+  let fue = false; const vis = () => { if (document.hidden) fue = true; }; document.addEventListener('visibilitychange', vis);
+  location.href = `nmap://route/${modo}?slat=${sl}&slng=${sg}&sname=${encodeURIComponent(nO)}&dlat=${dl}&dlng=${dg}&dname=${encodeURIComponent(nD)}&appname=viajecorea`;
+  setTimeout(() => { document.removeEventListener('visibilitychange', vis); if (!fue && !document.hidden) window.open(web, '_blank'); }, 1500);
+}, true);
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-irmap]'); if (!b) return; e.preventDefault(); e.stopPropagation();
   const { lat, lon, n } = b.dataset;

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v207
+Caché del service worker: corea-v208
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -260,6 +260,7 @@ Caché del service worker: corea-v207
 - v205: Bulguksa y Seokguram tenían el «Indispensable» LP 2024 cruzado (el Buda de Seokguram salía también en Bulguksa): ahora Bulguksa lleva puentes, sala principal y pagodas, y Seokguram solo su Buda. Si un sitio tiene recuadro LP 2024, ya no se muestra «Más de la Lonely» de la LP 2016 (se repetía y traía horarios y buses de 2016). Quitado «terminal al lado del hotel» del aviso del bus a Bulguksa.
 - v206: mapa de Ruta rehecho: pequeño (270 px), en ficha plegable, encuadrado en el sur de Corea y con el estilo de la app (olas, tierra hanji, iconos y colores de cada ciudad, aeropuerto ✈️). Interactivo: tocar una ciudad muestra fechas, noches, hotel y trenes de llegada y salida; tocar el número de una línea, el traslado completo (tren, horas, coche, asientos, estado, pasos y botón al día en Hoy). Verde = traslado hecho o pasado.
 - v207: en Hoy, (1) cada parada lleva 🧭 (cómo llegar con Naver Map desde donde estéis) y 📍 (Google Maps) junto al 🏯 de Planes; el botón «🧭 Ruta» sale de los tramos. (2) Tramos entre paradas plegados por defecto, con tono azulado propio, y con las opciones a la vista aunque estén plegados (a pie si ≤3 km, metro, taxi y bus; la recomendada resaltada). (3) En «Primero, el traslado» ya no sale el recuadro de fecha (12 NOV JUE). En el trip.json privado, el día 11 en el orden real: Bulguksa y después Seokguram.
+- v208: tramos de Hoy en un solo desplegable con toda la información (ya no hay «Alternativa en metro» desplegable dentro) y botón 🗺️ en su cabecera que abre ese tramo en Naver de parada a parada (con salida y llegada; si Naver no abre, Google Maps). La parada sigue con 🧭 (desde donde estéis). Los sitios cercanos que no están en el plan pasan a ser paradas dentro de la Ruta del día con su asterisco (H*, 2*…), borde dorado discontinuo, 🏯 🧭 📍 y ＋ para añadirlos, y una leyenda al final. Pendiente: el usuario irá mandando la LP 2024 de Busan, Jeonju y Seúl.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

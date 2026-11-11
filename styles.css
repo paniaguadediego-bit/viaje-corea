@@ -1542,5 +1542,11 @@ details.lp24-ruta ol { margin: 6px 0 4px; padding-left: 22px; } details.lp24-rut
 .irmap { width: 34px !important; min-height: 32px !important; padding: 0 !important; margin: 0 0 4px 4px; background: var(--card) !important; border: 1px solid var(--line); border-radius: 10px; box-shadow: none; font-size: 1rem; vertical-align: middle; display: inline-flex !important; align-items: center; justify-content: center; }
 .tl.sin-fecha { grid-template-columns: 1fr !important; padding-left: 0 !important; }
 .tl.sin-fecha::before { display: none !important; }
+/* v208: sitios cercanos como paradas con asterisco; tramos en un solo desplegable con botón de Naver de parada a parada */
+.sitios-dia details.sd-sug { border-style: dashed !important; border-color: #d4a017 !important; background: color-mix(in srgb, #d4a017 8%, var(--card)) !important; }
+.sitios-dia details.sd-sug .sug-add { width: 34px !important; min-height: 32px !important; padding: 0 !important; margin: 0 0 4px 4px; font-weight: 800; }
+.sug-ley { margin-top: 6px; text-align: center; }
+.tr-nv { width: 30px !important; min-height: 26px !important; font-size: .9rem; margin: 0 0 0 4px !important; vertical-align: middle; }
+.alt-metro-t { margin: 6px 0 2px; font-weight: 700; text-align: center; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v207"; }
+:root { --css-ver: "v208"; }
