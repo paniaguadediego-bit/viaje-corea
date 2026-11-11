@@ -138,7 +138,7 @@ guías de prestigio (🔴 Michelin, 🎗️ Blue Ribbon); suman en el orden
 Estado (Quiero/Visitado/Descartado/Cerrado), notas y lugares
 propios se guardan en el móvil (user.comer, user.comerPropios).
 "Hecho/visitado" es UNA marca por sitio (user.hecho, clave = hangul
-o nombre): Ciudades, Enseñar, Hoy y Comer la comparten (el Checklist
+o nombre; desde v209 la casilla tiene tres pasos: vacía → ✓ visitado → ✗ no vamos (user.noVamos[hKey], ficha atenuada y tachada, no cuenta como «☐ No marcados»; va al pasar marcas) → vacía): Ciudades, Enseñar, Hoy y Comer la comparten (el Checklist
 por ciudad se quitó en v65).
 Campos opcionales: la app NO debe romperse si falta alguno.
 Crea example.trip.json FICTICIO que cumpla este esquema.
