@@ -1560,5 +1560,8 @@ details.novamos-card .qv-cab b, details.novamos-card .sd-tit b { text-decoration
 /* v212: en Hoy, el 🏯 de Planes va a la derecha, justo a la izquierda de la foto */
 .sitios-dia details.sd > summary .sd-qv { float: right; margin: 0 0 4px 6px; }
 .sitios-dia details.sd > summary .sd-qv .irqv { margin: 0 !important; }
+/* v213: distintivos LP / LP24 en la fila de botones (entre 🌐 y 🏯), así el «más» no pisa el hangul */
+.sitios-dia details.sd > summary .sd-lp { display: inline-flex; gap: 2px; vertical-align: middle; margin: 0 0 4px 2px; }
+.sitios-dia details.sd > summary .sd-lp .lp-pill { margin-left: 2px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v212"; }
+:root { --css-ver: "v213"; }

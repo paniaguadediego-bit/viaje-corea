@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v212
+Caché del service worker: corea-v213
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -265,6 +265,7 @@ Caché del service worker: corea-v212
 - v210: un icono, un significado. 📍 solo Puntos de interés (y sitio genérico 🔸); 🌐 Google Maps; 🟢 abrir en Naver; 🧭 cómo llegar desde donde estáis; 🛣️ ruta de parada a parada o todo el día en Naver; 🗺️ solo mapas; 📏 distancias y «cerca»; 🏠 direcciones; 📌 fijar ubicación con GPS (Estoy aquí); 🎯 dónde estoy en el mapa; ↪️ dónde encaja un sitio cercano; 🏯 Planes (y «Dónde lo veréis», que lleva a Planes); 🌆 Vuestras ciudades (Historia); 🏺 etiqueta «Mucha cultura»; 📖 solo Diccionario; 🛤️ Ruta del día; 🧾 Resumen del viaje; 📙 Más de la Lonely (2016); 📕 LP 2024; 🖨️ PDF; 🔍 buscar; 🔎 verificar; 🏆 lo mejor valorado en Naver; ⭐ favoritas y estrellas; 🔖 Quiero (Comer); 🌟 imprescindibles; ✍️ Mis lugares; 🏬 dónde comprar un regalo.
 - v211: los hoteles tienen su apartado en Planes (🛏️ Hotel, entre Comer y Miscelánea) con toda la información (fechas y noches, hangul, direcciones, nota, Naver/Google, Estoy en el hotel y estrellas). En Hoy, el hotel va escueto como las paradas: nombre, hangul, «Hoy dejáis»/«Esta noche», check-in/out y botones 🏯 (lleva a Planes → Hotel), 🧭 Naver, 🌐 Google y 📌 Estoy en el hotel. «Ver el hotel» del mapa también lleva a Planes → Hotel.
 - v212: en las paradas de Hoy (y en las cercanas con asterisco) el 🏯 de Planes pasa a la derecha, justo a la izquierda de la foto; a la izquierda quedan Visitado, 🧭 y 🌐.
+- v213: en las paradas de Hoy, los distintivos LP y LP24 suben a la fila de botones (entre 🌐 y 🏯), así el nombre y el hangul tienen sitio y el «▸ más» no se monta encima.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
