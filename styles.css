@@ -1554,4 +1554,4 @@ button.hk.no { color: #b03a2e !important; border-color: #b03a2e !important; }
 details.novamos-card { opacity: .6; }
 details.novamos-card .qv-cab b, details.novamos-card .sd-tit b { text-decoration: line-through; text-decoration-thickness: 2px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v209"; }
+:root { --css-ver: "v210"; }

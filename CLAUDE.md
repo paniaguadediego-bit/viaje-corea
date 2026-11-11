@@ -77,7 +77,8 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
 6. Dato dudoso = "VERIFICAR". No inventar hangul, teléfonos,
    horarios ni precios. Si un objeto del JSON trae
    "verificar": true, mostrar una marca visible.
-7. Mobile-first, compacto pero legible, una mano, tema claro/oscuro. Estilo desde v109: papel hanji, franja
+7. Iconos: uno por significado (lista en PROGRESO v210): 📍 Puntos de interés, 🌐 Google, 🟢 Naver, 🧭 cómo llegar desde aquí, 🛣️ ruta entre paradas, 🗺️ mapas, 📏 distancias, 🏠 direcciones, 📌 fijar ubicación, 🏯 Planes, 📖 Diccionario, 🛤️ Ruta del día, 🧾 Resumen, 📙 LP 2016, 📕 LP 2024, 🔍 buscar, 🔎 verificar, ⭐ favoritas/estrellas, 🔖 Quiero. No reutilizar uno para otra cosa.
+   7. Mobile-first, compacto pero legible, una mano, tema claro/oscuro. Estilo desde v109: papel hanji, franja
    dancheong y un color por pestaña (body[data-pest] → --acc; nunca data-tab en el body) en títulos, botones activos y filo de las tarjetas.
 8. Cada sesión acaba con: cómo probarlo en modo avión, versión
    subida (CACHE en sw.js, VERSION en app.js y --css-ver al final de styles.css, iguales), PROGRESO.md actualizado

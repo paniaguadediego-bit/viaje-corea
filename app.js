@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v209';
+const VERSION = 'v210';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -108,10 +108,10 @@ function sumaDia(iso, n) {
 }
 
 // Botones para abrir un sitio en Naver Map y en Google Maps (necesitan conexión).
-const googleMaps = (q, t = 'Google') => q ? `<a class="btn sec mini" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}" target="_blank" rel="noopener">📍 ${t}</a>` : '';
+const googleMaps = (q, t = 'Google') => q ? `<a class="btn sec mini" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}" target="_blank" rel="noopener">🌐 ${t}</a>` : '';
 function naver(l) {
   const q = (l && (l.direccion_ko || l.ko || l.direccion_en || l.es || l.nombre)) || '';
-  return q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🗺️ Naver</a>${googleMaps(q)}` : '';
+  return q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 Naver</a>${googleMaps(q)}` : '';
 }
 
 // ---------- distancias al hotel (línea recta, sin conexión) ----------
@@ -139,7 +139,7 @@ const hotelDe = k => { const U = typeof user !== 'undefined' && user && user.coo
 const fmtDist = d => d < 0.95 ? Math.max(100, Math.round(d * 10) * 100) + ' m' : d.toLocaleString('es-ES', { maximumFractionDigits: d < 10 ? 1 : 0 }) + ' km';
 function distHotel(l, k) {
   const h = hotelDe(k), p = coordsLugar(l); if (!h || !p) return '';
-  return ` <span class="dist">📍 ${l.aprox ? '≈ ' : ''}${fmtDist(km(h, p))} del hotel</span>`;
+  return ` <span class="dist">📏 ${l.aprox ? '≈ ' : ''}${fmtDist(km(h, p))} del hotel</span>`;
 }
 
 // ---------- personalidad: color, icono y lema por ciudad; iconos por tipo de sitio ----------
@@ -151,7 +151,7 @@ const TEMA = {
   jeonju: { ic: '🍚', c1: '#2c6e45', c2: '#79b363', lema: 'Hanok, bibimbap y papel hanji' },
   incheon: { ic: '✈️', c1: '#3b4a63', c2: '#7d8ca6', lema: '' }
 };
-const tema = k => TEMA[k] || { ic: '📍', c1: '#475569', c2: '#94a3b8', lema: '' };
+const tema = k => TEMA[k] || { ic: '🔸', c1: '#475569', c2: '#94a3b8', lema: '' };
 // --c1t: el color de la ciudad aclarado (55 % blanco), para textos en modo oscuro sin depender de color-mix().
 const aclarar = (hex, f = .55) => '#' + [1, 3, 5].map(i => Math.round(parseInt(hex.slice(i, i + 2), 16) * (1 - f) + 255 * f).toString(16).padStart(2, '0')).join('');
 const varsTema = k => { const t = tema(k); return `--c1:${t.c1};--c2:${t.c2};--c1t:${aclarar(t.c1)}`; };
@@ -165,7 +165,7 @@ function icSitio(t) {
   if (/mercado/.test(t)) return '🧺';
   if (/tumba|tumulo/.test(t)) return '⛰️';
   if (/sauna/.test(t)) return '♨️';
-  return '📍';
+  return '🔸';
 }
 const IC_COMER = { restaurante: '🍲', 'café': '☕', mercado: '🧺', plato: '🥢', bar: '🍶' };
 const tipoClase = t => 'tipo-' + norm(t || 'otro');
@@ -367,7 +367,7 @@ function viewRegalos() {
       <input id="rg-donde" placeholder="Dónde (opcional: Insadong, mercado…)" autocomplete="off"><button data-rgadd>＋ Añadir</button></div>
     ${autores.length > 1 ? `<div class="chips">${['', ...autores].map(a => `<button class="chip ${a === rgDe ? 'on' : ''}" data-rgde="${esc(a)}">${a ? '✍️ ' + esc(a) : 'Todos'}</button>`).join('')}</div>` : ''}
     ${rs.length ? `<p class="muted">${hechos} de ${rs.length} comprados</p>${rs.map(r => `<div class="card rg ${r.ok ? 'ok' : ''}"><button class="hd-ck ${r.ok ? 'on' : ''}" data-rgok="${esc(r.id)}" aria-label="Comprado">${r.ok ? '✓' : ''}</button>
-      <div class="rg-t"><b>${esc(r.que)}</b><small>${esc(r.para)}${r.donde ? ' · 📍 ' + esc(r.donde) : ''}${r.de ? ' · ✍️ ' + esc(r.de) : ''}</small></div><button class="sec mini" data-rgdel="${esc(r.id)}" aria-label="Quitar">✕</button></div>`).join('')}`
+      <div class="rg-t"><b>${esc(r.que)}</b><small>${esc(r.para)}${r.donde ? ' · 🏬 ' + esc(r.donde) : ''}${r.de ? ' · ✍️ ' + esc(r.de) : ''}</small></div><button class="sec mini" data-rgdel="${esc(r.id)}" aria-label="Quitar">✕</button></div>`).join('')}`
       : '<p class="muted">Apunta aquí lo que queréis traer y a quién; al comprarlo, marca la casilla.</p>'}`;
 }
 // 📖 Resumen del viaje: lo que hicisteis, para guardarlo o pasárselo a quien prepare su viaje.
@@ -408,17 +408,17 @@ function datosResumen() {
 function textoResumen() {
   const D = datosResumen(), L = [`🇰🇷 ${D.titulo}`];
   if (D.nDias) L.push(`${fmtCorto(D.desde)} → ${fmtCorto(D.hasta)} · ${D.nDias} días`);
-  if (D.ruta.length) { L.push('', '🗺️ RUTA');
+  if (D.ruta.length) { L.push('', '✈️ RUTA');
     D.ruta.forEach(r => { L.push(`• ${r.ciudad}: ${fmtCorto(r.desde)}${r.hasta ? ' → ' + fmtCorto(r.hasta) : ''}${r.noches ? ` (${r.noches} noche${r.noches > 1 ? 's' : ''})` : ''}${r.hotel ? ' · 🛏️ ' + r.hotel + (r.val ? ' ' + estrTxt(r.val) : '') : ''}`); }); }
   if (D.traslados.length) { L.push('', '🚆 CÓMO NOS MOVIMOS');
     D.traslados.forEach(t => { L.push(`• ${fmtCorto(t.fecha)} ${t.de} → ${t.a}: ${t.ic} ${t.nom}${t.numero ? ' ' + t.numero : ''}${t.horas ? ` (${t.horas})` : ''}${t.precio ? ' · ' + t.precio : ''}${t.val ? ' ' + estrTxt(t.val) : ''}`); }); }
   L.push('', '📅 DÍA A DÍA');
   D.dias.forEach(d => { L.push(`Día ${d.n} · ${fmtCorto(d.fecha)} · ${d.ciudad}${d.titulo ? ' — ' + d.titulo : ''}${d.cara ? ` ${d.cara}${CARA_TXT[d.cara] ? ' (' + CARA_TXT[d.cara] + ')' : ''}` : ''}`);
-    if (d.sitios.length) L.push(`   ${d.visto ? '✅' : '📍 Plan:'} ${d.sitios.join(', ')}`);
+    if (d.sitios.length) L.push(`   ${d.visto ? '✅' : '▫️ Plan:'} ${d.sitios.join(', ')}`);
     if (d.tags.length) L.push(`   🏷️ ${d.tags.join(' · ')}`); if (d.diario) L.push(`   📔 ${d.diario}`); });
   if (D.comidos.length) { L.push('', '🍜 DÓNDE COMIMOS');
     D.comidos.forEach(c => L.push(`• ${c.ciudad} · ${c.nombre}${c.ko ? ` (${c.ko})` : ''}${c.plato ? ' — ' + c.plato : ''}${c.val ? ' ' + '★'.repeat(c.val) : ''}${c.nota ? ' · ' + c.nota : ''}`)); }
-  if (D.top.length) { L.push('', '⭐ IMPRESCINDIBLES (5 ESTRELLAS)'); D.top.forEach(c => L.push(`• ${c.nombre} (${c.ciudad})`)); }
+  if (D.top.length) { L.push('', '🌟 IMPRESCINDIBLES (5 ESTRELLAS)'); D.top.forEach(c => L.push(`• ${c.nombre} (${c.ciudad})`)); }
   if (D.planes.length) { L.push('', '✅ PLANES REALIZADOS'); D.planes.forEach(g => { L.push(g.ciudad.toUpperCase()); g.items.forEach((x, i) => L.push(`  ${i + 1}. ${x.es}${x.v ? ' ' + estrTxt(x.v) : ''}`)); }); }
   L.push('', '💡 CONSEJOS PRÁCTICOS', ...D.consejos.map(c => '• ' + c));
   return L.join('\n');
@@ -428,9 +428,9 @@ function viewResumen() {
   const lista = D.planes.length ? `<h2>✅ Planes realizados</h2><p class="muted">Toca las estrellas para valorarlos (5 ★ = Imprescindibles).</p>
     ${D.planes.map(g => `<div class="card res-ciudad"><b>${esc(g.ciudad)}</b><ol>${g.items.map(x => `<li><div class="res-fila"><span>${esc(x.es)}</span><span class="estrellas">${[1, 2, 3, 4, 5].map(n => `<button class="star ${x.v >= n ? 'on' : ''}" data-stk="${esc(x.h)}" data-stn="${esc(x.es)}" data-sv="${n}" aria-label="${n} estrellas">★</button>`).join('')}</span></div></li>`).join('')}</ol></div>`).join('')}`
     : '<p class="muted">Cuando marquéis sitios como visitados (☐ Visitado en Planes u Hoy), saldrán aquí por ciudad para ponerles estrellas.</p>';
-  return `<h2>📖 Resumen del viaje</h2>
+  return `<h2>🧾 Resumen del viaje</h2>
     <p class="muted">Se genera con lo que habéis marcado: visitados y sus ⭐ (Planes realizados por ciudad), hoteles y traslados, caritas y notas del diario y Comer (✅, estrellas y notas). Ideal para pasárselo a quien prepare su viaje.</p>
-    <div class="acciones"><button data-resumen="word">📘 Word con fotos</button><button data-resumen="pdf">📕 PDF con fotos</button></div>
+    <div class="acciones"><button data-resumen="word">📘 Word con fotos</button><button data-resumen="pdf">🖨️ PDF con fotos</button></div>
     <div class="acciones"><button data-resumen="copiar">📋 Copiar</button><button class="sec" data-resumen="compartir">📤 Compartir</button><button class="sec" data-resumen="txt">⬇️ Descargar .txt</button></div>
     ${lista}<h2>📄 Texto</h2><pre class="resumen">${esc(t)}</pre>`;
 }
@@ -508,7 +508,7 @@ const alojCard = (a, sale, sinTit = false) => `<div class="card aloj">
 // ---------- Diario: carita y nota de cada día (solo en el móvil; va en "Exportar copia") ----------
 const CARAS = [['😍', 'Genial'], ['😄', 'Muy bien'], ['🙂', 'Bien'], ['😐', 'Normal'], ['😴', 'Cansado'], ['😩', 'Duro']];
 // Etiquetas del día (varias a la vez, user.diario[f].tags): ayudan a recordarlo y salen en el Resumen.
-const ETIQ_DIA = [['❤️', 'Momentazo'], ['📸', 'Fotos top'], ['🍜', 'Buena comida'], ['🏯', 'Mucha cultura'], ['🌳', 'Naturaleza'], ['🛍️', 'Compras'],
+const ETIQ_DIA = [['❤️', 'Momentazo'], ['📸', 'Fotos top'], ['🍜', 'Buena comida'], ['🏺', 'Mucha cultura'], ['🌳', 'Naturaleza'], ['🛍️', 'Compras'],
   ['🚶', 'Mucho caminar'], ['🌧️', 'Lluvia'], ['🥶', 'Frío'], ['🤯', 'Sorpresa'], ['💸', 'Caro'], ['😤', 'Algo salió mal']];
 const diarioDe = f => (u().diario || {})[f] || {};
 function diarioCard(d, sinTit = false) {
@@ -545,7 +545,7 @@ function antesSalir(f, tr, al) {
   if (vueloHoy) { add('tmref', '💳 Recuperar el saldo de la T-money en una tienda 24 h (hasta 20.000 ₩, 500 ₩ de comisión: VERIFICAR)');
     add('tax', '🧾 Tax Free: tickets y pasaporte a mano para el quiosco de devolución de Incheon'); add('won', '💴 Gastar los wones que sobren (en el aeropuerto el cambio es peor)'); }
   else add('tm', '💳 T-money con saldo');
-  if (al.noche && al.noche !== al.sale && !/espana/.test(ck(al.noche.ciudad))) add('sig', `📍 Próximo hotel: ${al.noche.nombre} (dirección en 🆘 Ayuda para el taxi)`);
+  if (al.noche && al.noche !== al.sale && !/espana/.test(ck(al.noche.ciudad))) add('sig', `🛏️ Próximo hotel: ${al.noche.nombre} (dirección en 🆘 Ayuda para el taxi)`);
   const U = u(), sc = 'antes:' + f, tot = it.length + arr(U.extra[sc]).length, hechos = Object.keys(U.checklist).filter(k => k.startsWith(sc + '|') && U.checklist[k]).length;
   return `<details class="card antes" data-key="${sc}" ${abierto(sc, false) ? 'open' : ''}><summary><b>🧳 Antes de salir</b> <span class="muted">(${hechos} de ${tot})</span></summary>${checks(sc, it)}</details>`;
 }
@@ -554,7 +554,7 @@ let hoySub = null;
 const icItem = t => [[/suneung|examen/i, '📝'], [/si os da tiempo/i, '⏭️'], [/^\s*(atardecer|puesta de sol)/i, '🌅'], [/^\s*(almuerzo|comida|cena|desayuno)/i, '🍜'], [/ktx|tren|srt/i, '🚆'], [/vuelo|aeropuerto/i, '✈️'], [/\bbus\b|autob/i, '🚌'], [/taxi/i, '🚕'],
   [/almuerzo|comida|comer|cena|desayun|jjimdak|gukbap|bibimbap/i, '🍜'], [/danza|espect|función|concierto/i, '🎭'], [/museo/i, '🏛️'], [/palacio/i, '🏯'],
   [/templo|santuario|seowon|academia/i, '🛕'], [/atardecer|puesta de sol|noche/i, '🌅'], [/mercado|compras|tienda/i, '🛍️'], [/playa|mar\b/i, '🏖️'],
-  [/aldea|hanok|barrio/i, '🏘️'], [/hotel|check/i, '🛏️']].find(([r]) => r.test(t))?.[1] || '📍';
+  [/aldea|hanok|barrio/i, '🏘️'], [/hotel|check/i, '🛏️']].find(([r]) => r.test(t))?.[1] || '🔸';
 const cortoItem = t => { let x = String(t || '').replace(/\s*\([^)]*\)/g, '').split(/(?<=[a-záéíóúñ0-9])\. |; /i)[0].trim();
   const c = x.search(/,\s/); if (c > 18) x = x.slice(0, c);
   if (x.length > 48) x = x.slice(0, 46).replace(/\s+\S*$/, '') + '…'; return x.replace(/[.:]$/, ''); };
@@ -826,7 +826,7 @@ function tramo(o, dst, nO, nD, op = {}) {
     const pie = c.k <= 3 ? Math.max(2, Math.round(c.k * 1.3 / 4.5 * 60)) : null, ops = [];
     if (pie) ops.push(['pie', `🚶 ${pie} min`]); if (r) ops.push(['metro', `🚇 ${r.min} min`]); if (c.k > 0.8) ops.push(['taxi', `🚕 ${c.taxi || Math.round(c.k * 1.3 / (c.k > 8 ? 40 : 22) * 60 + 8)} min`]); if (st) ops.push(['bus', '🚌 bus']);
     const chips = ops.map(([m, t]) => `<span class="tr-op ${m === c.modo ? 'mejor' : ''}">${t}</span>`).join('');
-    return `<details class="tramo tramo-${c.modo} tramo-pl" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary><span class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b> <small class="muted">· ${fmtDist(c.k)}</small> <button class="irmap tr-nv" data-irab="${o[0]},${o[1]}|${esc(nO || '')}|${dst[0]},${dst[1]}|${esc(nD || '')}|${c.modo === 'pie' ? 'walk' : 'public'}" title="Este tramo en Naver Map (de parada a parada)" aria-label="Este tramo en Naver">🗺️</button></span><span class="tr-ops">${chips}</span></summary>${sinTaxi}${pasos}${!sinTaxi && !pasos ? `<div class="muted mini-nota">${txt}</div>` : ''}</details>`; }
+    return `<details class="tramo tramo-${c.modo} tramo-pl" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary><span class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b> <small class="muted">· ${fmtDist(c.k)}</small> <button class="irmap tr-nv" data-irab="${o[0]},${o[1]}|${esc(nO || '')}|${dst[0]},${dst[1]}|${esc(nD || '')}|${c.modo === 'pie' ? 'walk' : 'public'}" title="Este tramo en Naver Map (de parada a parada)" aria-label="Este tramo en Naver">🛣️</button></span><span class="tr-ops">${chips}</span></summary>${sinTaxi}${pasos}${!sinTaxi && !pasos ? `<div class="muted mini-nota">${txt}</div>` : ''}</details>`; }
   return `<div class="tramo tramo-${c.modo}">${op.hasta ? `<div class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b></div>` : ''}${fila}${sinTaxi}${pasos}</div>`;
 }
 // Todo el día en Naver Map: hotel → paradas → hotel. Naver admite hasta 5 paradas intermedias por enlace
@@ -841,7 +841,7 @@ function naverDia(hc, hotN, lista) {
   const q = (p, c) => `${p}lat=${c[0][0]}&${p}lng=${c[0][1]}&${p}name=${encodeURIComponent(c[1])}`;
   const url = P => `nmap://route/car?${q('s', P[0])}&${P.slice(1, -1).map((c, i) => q('v' + (i + 1), c) + '&').join('')}${q('d', P[P.length - 1])}&appname=viajecorea`;
   // Cada tramo sale donde empieza: el 1.º arriba y los demás tras la parada desde la que salen (inicio = nº de esa parada).
-  return partes.map((P, i) => ({ inicio: i * paso + (hc ? 0 : 1), html: `<div class="naver-dia ${i ? 'naver-sig' : ''}">${i ? `<small>Siguiente tramo, desde la parada ${i * paso + (hc ? 0 : 1)}:</small>` : ''}<a class="btn mini" href="${url(P)}">🧭 ${partes.length > 1 ? `Día en Naver (${i + 1}/${partes.length})` : 'Todo el día en Naver'}</a></div>` }));
+  return partes.map((P, i) => ({ inicio: i * paso + (hc ? 0 : 1), html: `<div class="naver-dia ${i ? 'naver-sig' : ''}">${i ? `<small>Siguiente tramo, desde la parada ${i * paso + (hc ? 0 : 1)}:</small>` : ''}<a class="btn mini" href="${url(P)}">🛣️ ${partes.length > 1 ? `Día en Naver (${i + 1}/${partes.length})` : 'Todo el día en Naver'}</a></div>` }));
 }
 // Sitios recomendados que no están en ningún día del plan y quedan a ≤900 m de la ruta de ese día.
 // Sitios recomendados que no están en ningún día y quedan a ≤900 m de la ruta, con dónde encajan
@@ -871,7 +871,7 @@ function sugPlegada(g, d) {
   const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, l = g.l, h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '', key = 'sug:' + d.fecha + '|' + h, k = ck(d.ciudad);
   return `<details class="sd sd-sug" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}${irQV(l, k, true)}${irMapas(l)}<button class="mini sug-add" data-agtog="${esc(h)}|${d.fecha}" title="Añadir a este día" aria-label="Añadir a este día">＋</button><br>
     <b><span class="sug-etq">${g.etq}</span>${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span></summary>
-    <div class="sd-cuerpo"><div class="sug-encaje">📍 ${esc(textoEncaje(g))}</div>${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(txt), true)}</div>` : ''}</div></details>`;
+    <div class="sd-cuerpo"><div class="sug-encaje">↪️ ${esc(textoEncaje(g))}</div>${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(txt), true)}</div>` : ''}</div></details>`;
 }
 // ---------- Horarios de apertura y horario propuesto del día (ritmo tranquilo) ----------
 const DIAS_SEM = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
@@ -929,7 +929,7 @@ function sitiosDia(d) {
   const nvP = naverDia(hc, hot && (hot.ko || hot.nombre), [...auto, ...extras]); nvP.slice(1).forEach(x => { naverTras[x.inicio] = x.html; });
   // Sugerencias "cerca y no lo tenéis", plegadas e intercaladas tras la parada donde encajan (H* = tras el hotel).
   const sugs = sugerenciasDe(d, [...auto, ...extras], hc), sugTras = n => sugs.filter(g => g.tras.n === n).map(g => sugPlegada(g, d)).join('');
-  return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${planLluvia(d)}<b class="rd-tit">📖 Ruta del día</b>
+  return `<div class="card sitios-dia" data-fecha="${d.fecha}">${conMapa ? bannerMapaDia(d, hc, [...auto, ...extras]) : ''}${planLluvia(d)}<b class="rd-tit">🛤️ Ruta del día</b>
     ${(nvP[0] || {}).html || ''}
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>${sugTras(0)}` : ''}
     ${auto.map(l => fila(l, false) + sugTras(num[hKey(l)])).join('')}
@@ -954,14 +954,14 @@ const pasosAb = {};
 function irMapas(l) {
   const c = coordsLugar(l); if (!c) return '';
   const n = l.ko || l.es || '';
-  return `<button class="irmap" data-irmap="naver" data-lat="${c[0]}" data-lon="${c[1]}" data-n="${esc(n)}" title="Cómo llegar con Naver Map" aria-label="Naver">🧭</button><button class="irmap" data-irmap="google" data-lat="${c[0]}" data-lon="${c[1]}" data-n="${esc(n)}" title="Cómo llegar con Google Maps" aria-label="Google Maps">📍</button>`;
+  return `<button class="irmap" data-irmap="naver" data-lat="${c[0]}" data-lon="${c[1]}" data-n="${esc(n)}" title="Cómo llegar con Naver Map" aria-label="Naver">🧭</button><button class="irmap" data-irmap="google" data-lat="${c[0]}" data-lon="${c[1]}" data-n="${esc(n)}" title="Cómo llegar con Google Maps" aria-label="Google Maps">🌐</button>`;
 }
 // ＋ de una sugerencia (va dentro del summary): añade al día sin abrir ni cerrar la ficha.
 document.addEventListener('click', e => {
   const b = e.target.closest('.sug-add[data-agtog]'); if (!b) return; e.preventDefault(); e.stopPropagation();
   const [h, f] = b.dataset.agtog.split('|'); agendaToggle(h, f); render();
 }, true);
-// 🗺️ Tramo de parada a parada en Naver Map (con salida y llegada); si la app no se abre, Google Maps con el mismo recorrido.
+// 🛣️ Tramo de parada a parada en Naver Map (con salida y llegada); si la app no se abre, Google Maps con el mismo recorrido.
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-irab]'); if (!b) return; e.preventDefault(); e.stopPropagation();
   const [o, nO, dd, nD, modo] = b.dataset.irab.split('|'), [sl, sg] = o.split(','), [dl, dg] = dd.split(',');
@@ -1126,7 +1126,7 @@ function masLP(l, ctx) {
   const con24 = typeof LP24_INDISP !== 'undefined' && LP24_INDISP[h.slice(2)];
   const lp = con24 ? null : D[h.slice(2)] || D[h], txt = lp || (con24 ? null : G[h.slice(2)]);
   if (!txt || txt === l.desc) return guiaCult(l, ctx);
-  return guiaCult(l, ctx) + `<details class="mas-lp" data-key="mx:${ctx}:${esc(h)}" ${abierto('mx:' + ctx + ':' + h, false) ? 'open' : ''}><summary>📖 ${lp ? 'Más de la Lonely' : 'Más info'}</summary>
+  return guiaCult(l, ctx) + `<details class="mas-lp" data-key="mx:${ctx}:${esc(h)}" ${abierto('mx:' + ctx + ':' + h, false) ? 'open' : ''}><summary>📙 ${lp ? 'Más de la Lonely' : 'Más info'}</summary>
     <p>${resaltar(txt, true)}${lp ? ' <span class="badge otro">LP 2016</span>' : ''}</p></details>`;
 }
 // Imprescindibles de una ciudad: foto (Wikipedia, se guarda para offline), descripción y ✓ hecho.
@@ -1139,7 +1139,7 @@ function infoCompleta(l, desc) {
   const con24 = typeof LP24_INDISP !== 'undefined' && LP24_INDISP[h.slice(2)]; // la LP 2024 manda sobre la de 2016
   const gc = typeof GUIA_CULT !== 'undefined' && GUIA_CULT[h.slice(2)], lp = con24 ? null : D[h.slice(2)] || D[h], info = !lp && !con24 && I[h.slice(2)];
   return `${desc ? `<p>${resaltar(desc, true)}</p>` : ''}${lp24(l)}
-    ${lp && lp !== desc ? `<div class="qv-bloque"><b>📖 Más de la Lonely</b> <span class="badge otro">LP 2016</span><p>${resaltar(lp, true)}</p></div>` : ''}
+    ${lp && lp !== desc ? `<div class="qv-bloque"><b>📙 Más de la Lonely</b> <span class="badge otro">LP 2016</span><p>${resaltar(lp, true)}</p></div>` : ''}
     ${info && info !== desc ? `<div class="qv-bloque"><b>ℹ️ Más info</b><p>${resaltar(info, true)}</p></div>` : ''}
     ${gc ? `<div class="qv-bloque guia-cult-abierta"><b>🎎 Con ojos de guía</b><p class="gc-gancho">${esc(gc[0])}</p>${gc.slice(1).map(p => `<p class="${/^👀/.test(p) ? 'gc-mira' : /^💡/.test(p) ? 'gc-tip' : ''}">${resaltar(p, true)}</p>`).join('')}</div>` : ''}`;
 }
@@ -1435,7 +1435,7 @@ const mpX = (lon, z) => (lon + 180) / 360 * MPT * 2 ** z;
 const mpY = (lat, z) => { const s = Math.sin(lat * Math.PI / 180); return (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * MPT * 2 ** z; };
 const mpLon = (x, z) => x / (MPT * 2 ** z) * 360 - 180;
 const mpLat = (y, z) => 180 / Math.PI * Math.atan(Math.sinh(Math.PI - 2 * Math.PI * y / (MPT * 2 ** z)));
-const MP_CAPAS = [['itin', 'Itinerario', '#cd2e3a'], ['sitios', '🏯 Puntos de interés', '#1f4e8c'], ['comer', 'Comer', '#d97706'], ['planes', 'Miscelánea', '#7c3aed']];
+const MP_CAPAS = [['itin', 'Itinerario', '#cd2e3a'], ['sitios', '📍 Puntos de interés', '#1f4e8c'], ['comer', 'Comer', '#d97706'], ['planes', 'Miscelánea', '#7c3aed']];
 let mpCapas = new Set(['itin', 'sitios', 'comer', 'planes']), mapaCiudad = false, mpCapasDia = new Set();
 const mapaDia = new Set();
 const recorta = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
@@ -1449,7 +1449,7 @@ function mapaHTML(id, pts, { linea = null, fit = null, hotel = null, capas = '',
   if (mini) return `<div class="mapa mini" data-mapa="${esc(id)}"><div class="mp-vista"><div class="mp-capa"></div></div></div>`;
   return `${capas}<div class="mapa" data-mapa="${esc(id)}">
     <div class="mp-vista"><div class="mp-capa"></div></div>
-    <div class="mp-bot"><button data-mpz="1" aria-label="Acercar">+</button><button data-mpz="-1" aria-label="Alejar">−</button><button data-mpfit aria-label="Ver todo">⤢</button><button data-mpyo aria-label="Dónde estoy">📍</button></div>
+    <div class="mp-bot"><button data-mpz="1" aria-label="Acercar">+</button><button data-mpz="-1" aria-label="Alejar">−</button><button data-mpfit aria-label="Ver todo">⤢</button><button data-mpyo aria-label="Dónde estoy">🎯</button></div>
     <div class="mp-attr">© OpenStreetMap</div>
     <div class="mp-info"></div></div><p class="muted mp-pista">✋ ¿Un icono fuera de su calle? Mantenlo pulsado y arrástralo a su sitio.</p>`;
 }
@@ -1520,9 +1520,9 @@ function mpFicha(p, m) {
   // Sin repetir en la línea gris lo que ya dice el nombre («bar · cócteles» en «Jinhanbam (bar de cócteles…)»).
   const sub = String(p.sub || '').split(' · ').filter(x => x && !norm(p.es).includes(norm(x))).join(' · ');
   return soloIco(`<div class="mp-f"><div class="mp-f-t"><b>${p.ic} ${esc(p.es)}${p.ko ? ` <span class="mp-ko">• ${esc(p.ko)}</span>` : ''}</b>${p.l ? lpPill(p.l) : ''}<button class="sec mini" data-mpcerrar>✕</button></div>
-    ${p.capa === 'sug' ? `<div class="sug-encaje">📍 ${esc(p.sub)}</div>${p.txt ? `<div class="muted">${esc(recorta(p.txt, 120))}</div>` : ''}` : `<div class="muted">${esc(sub)}${sub && p.txt ? ' · ' : ''}${p.txt ? esc(recorta(p.txt, 150)) : ''}</div>`}
+    ${p.capa === 'sug' ? `<div class="sug-encaje">↪️ ${esc(p.sub)}</div>${p.txt ? `<div class="muted">${esc(recorta(p.txt, 120))}</div>` : ''}` : `<div class="muted">${esc(sub)}${sub && p.txt ? ' · ' : ''}${p.txt ? esc(recorta(p.txt, 150)) : ''}</div>`}
     ${(() => { if (['itin', 'hotel', 'sug'].includes(p.capa)) return ''; const ps = m.pts.filter(x => x.capa === 'itin' && x.num != null); if (!ps.length || m.pts.some(x => x.capa === 'itin' && x.num == null)) return '';
-      const [q, dk] = ps.map(x => [x, km(x.c, p.c)]).sort((a, b) => a[1] - b[1])[0]; return `<div class="mp-parada">📍 A ${fmtDist(dk)} de la parada ${q.num} (${esc(q.es)})</div>`; })()}
+      const [q, dk] = ps.map(x => [x, km(x.c, p.c)]).sort((a, b) => a[1] - b[1])[0]; return `<div class="mp-parada">📏 A ${fmtDist(dk)} de la parada ${q.num} (${esc(q.es)})</div>`; })()}
     ${m.hotel && !['hotel', 'sug'].includes(p.capa) ? tramo(m.hotel, p.c, 'Hotel', p.ko || p.es, { prefijo: 'Desde el hotel: ', sinPasos: true }) : ''}
     <div class="acciones">${mpEnlace(p, m)}${p.add ? `<button class="mini" data-agtog="${esc(p.add)}">＋ Añadir a este día</button>` : ''}${naver(p.l || p)}${p.l && p.capa !== 'hotel' ? btnGpsDel(p.l) + btnGps(p.l) : ''}</div></div>`);
 }
@@ -1604,7 +1604,7 @@ function puntosCiudad(k) {
   sitiosCiudadObj(k).forEach(l => {
     const h = hKey(l), f = enDia.get(h), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
     if (f) add('itin', l, { num: new Date(f + 'T12:00').getDate(), pasado: f < todayISO(), ic: icSitio(l.es), sub: `Día ${fmtCorto(f)}`, txt, lp: l.lp || l.top, hecho: hecho(l, k) });
-    else add('sitios', l, { ic: '🏯', sub: `${icSitio((l.tipo || '') + ' ' + l.es)} ${l.tipo || 'Punto de interés'}`, txt, lp: !!(LP[k] || []).find(x => hKey(x) === h), hecho: hecho(l, k) });
+    else add('sitios', l, { ic: '📍', sub: `${icSitio((l.tipo || '') + ' ' + l.es)} ${l.tipo || 'Punto de interés'}`, txt, lp: !!(LP[k] || []).find(x => hKey(x) === h), hecho: hecho(l, k) });
   });
   lugaresComer().filter(c => c.ciudad === k && !['descartado', 'cerrado'].includes(estadoDe(String(c.id)).estado)).forEach(c =>
     add('comer', c, { es: c.nombre, ic: IC_COMER[c.tipo] || '🍴', sub: [c.plato, c.precio].filter(Boolean).join(' · '), txt: c.nota, lp: c.fuente === 'lonely', lp24: esLP24(c), hecho: hecho(c, k) }));
@@ -1890,7 +1890,7 @@ function ciudadDeLugar(l) {
 // ---------- Buscadores de Ciudades y Comer (todas las ciudades; sin tildes; también en hangul) ----------
 let qCiu = '', qCom = '', qDic = '';
 const nb = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-const buscadorHTML = (id, v, ph, res) => `<div class="buscador"><input id="${id}" type="search" placeholder="🔎 ${esc(ph)}" value="${esc(v)}" autocomplete="off" enterkeyhint="search"><button class="sec mini" data-qclear="${id}" aria-label="Borrar">✕</button></div><div id="r${id}">${res}</div>`;
+const buscadorHTML = (id, v, ph, res) => `<div class="buscador"><input id="${id}" type="search" placeholder="🔍 ${esc(ph)}" value="${esc(v)}" autocomplete="off" enterkeyhint="search"><button class="sec mini" data-qclear="${id}" aria-label="Borrar">✕</button></div><div id="r${id}">${res}</div>`;
 // Puntuación: 2 si está en el nombre o el hangul, 1 si solo en la descripción.
 function coincide(q, nombre, extra) { const a = nb(q).trim(); if (!a) return 0; return nb(nombre).includes(a) ? 2 : nb(extra).includes(a) ? 1 : 0; }
 function resCiudades(q) {
@@ -1927,8 +1927,8 @@ function viewEnsenar() {
   const deCiudad = mios.filter(([l]) => ciudadDeLugar(l) === k), otros = mios.filter(([l]) => !ciudadDeLugar(l));
   const sitios = sitiosCiudad(k).map((l, i) => [l, i]).sort((a, b) => ((enPlan(a[0], k) || {}).n || 999) - ((enPlan(b[0], k) || {}).n || 999) || a[1] - b[1]);
   return botones + `<div class="ens-ciudad" style="${varsTema(k)}">
-    ${deCiudad.length ? `<h2>📌 Mis lugares en ${esc(nombreCiudad(k))}</h2>${deCiudad.map(([l, i]) => lugarFila(l, 'j:' + i, k)).join('')}` : ''}
-    ${sitios.length ? `<h2>🗺️ Sitios conocidos</h2>${sitios.map(([l, i]) => lugarFila(l, `c:${k}:${i}`, k)).join('')}` : ''}
+    ${deCiudad.length ? `<h2>✍️ Mis lugares en ${esc(nombreCiudad(k))}</h2>${deCiudad.map(([l, i]) => lugarFila(l, 'j:' + i, k)).join('')}` : ''}
+    ${sitios.length ? `<h2>📍 Sitios conocidos</h2>${sitios.map(([l, i]) => lugarFila(l, `c:${k}:${i}`, k)).join('')}` : ''}
     ${otros.length ? `<details data-key="mis:otros" ${abierto('mis:otros', false) ? 'open' : ''}><summary class="card big">Otros lugares <span class="muted">${otros.length}</span></summary>${otros.map(([l, i]) => lugarFila(l, 'j:' + i, '')).join('')}</details>` : ''}
   </div>`;
 }
@@ -2065,7 +2065,7 @@ document.addEventListener('touchstart', e => { toque0 = e.target.closest('.hist-
 document.addEventListener('touchend', e => { if (!toque0 || histCap === null) return; const t = e.changedTouches[0], dx = t.clientX - toque0[0], dy = t.clientY - toque0[1]; toque0 = null;
   if (Math.abs(dx) < 70 || Math.abs(dy) > 50) return; const n = histCap + (dx < 0 ? 1 : -1), H = HISTORIA_COREA;
   if (n < 0 || n >= H.length) return; histDir = dx < 0 ? 'sig' : 'ant'; histCap = n; render(); window.scrollTo(0, 0); }, { passive: true });
-const HIST_SUBS = [['linea', '⏳ Línea del tiempo'], ['caps', '📚 Capítulos'], ['ciudades', '🏯 Vuestras ciudades'], ['simbolos', '🇰🇷 Símbolos']];
+const HIST_SUBS = [['linea', '⏳ Línea del tiempo'], ['caps', '📚 Capítulos'], ['ciudades', '🌆 Vuestras ciudades'], ['simbolos', '🇰🇷 Símbolos']];
 // Sitio del catálogo por su hangul (para "Dónde lo veréis").
 function sitioPorKo(ko) { for (const k of ciudadesCatalogo()) { const l = sitiosCiudadObj(k).find(x => hKey(x).slice(2) === ko); if (l) return [l, k]; } return null; }
 function viewHistoria() {
@@ -2084,7 +2084,7 @@ function viewHistoria() {
       ${m.r ? `<div class="hc-resumen"><b>⏱️ En 30 segundos</b>${esc(m.r)}</div>` : ''}
       ${c.p.map((x, j) => `<p class="${j === 0 ? 'capital' : ''}">${resaltar(x, true)}</p>`).join('')}
       ${evs.length ? `<div class="hc-box"><b>📅 Fechas clave</b>${evs.map(e => `<div class="hc-ev"><span>${esc(e[0])}</span>${esc(e[1])}</div>`).join('')}</div>` : ''}
-      ${ver.length ? `<div class="hc-box"><b>📍 Dónde lo veréis en el viaje</b><div class="hc-ver">${ver.map(([l, k]) => `<button class="chip" data-bcity="${esc(k)}" data-bq="${esc(l.es)}">${tema(k).ic} ${esc(l.es)}</button>`).join('')}</div></div>` : ''}
+      ${ver.length ? `<div class="hc-box"><b>🏯 Dónde lo veréis en el viaje</b><div class="hc-ver">${ver.map(([l, k]) => `<button class="chip" data-bcity="${esc(k)}" data-bq="${esc(l.es)}">${tema(k).ic} ${esc(l.es)}</button>`).join('')}</div></div>` : ''}
       <div class="hc-fin muted">Desliza ← → para cambiar de capítulo</div>
       <div class="hist-nav2"><button class="sec" data-hc="${i - 1}" ${i === 0 ? 'disabled' : ''} aria-label="Anterior">◀</button>
         <button class="sec hn-ind" data-hc="ind">☰ ${i + 1}/${H.length}</button>
@@ -2299,7 +2299,7 @@ function worldsCard() {
     <div class="muted">${esc(WORLDS.nota)} <span class="ver">VERIFICAR</span></div>
     <div class="muted">Dónde verlo en grupo: T1 Base Camp (Hongdae, Gangnam y Busan, 24 h) y LoL Park en Seúl. Final: el T1 Base Camp de Busan está a unos 300 m del hotel.</div></details>`;
 }
-const icPlan = p => p.ic || ({ lol: '🎮', servicio: '🧺', curioso: '✨', ropa: '👕' })[p.cat] || '⭐';
+const icPlan = p => p.ic || ({ lol: '🎮', servicio: '🧺', curioso: '✨', ropa: '👕' })[p.cat] || '🔹';
 function planesDe(k) {
   const P = typeof PLANES !== 'undefined' ? PLANES : [];
   if (!P.some(p => p.ciudad === k)) return `${worldsCard()}<p class="muted">No hay planes guardados en esta ciudad.</p>`;
@@ -2315,11 +2315,11 @@ function planesDe(k) {
       <div class="sd-tit">${btnHecho(p, k)}<b>${icPlan(p)} ${esc(p.es)}</b></div>
       <div class="ko-s">${esc(p.ko)}${distHotel(p, k)}</div>
       <div class="muted">${resaltar(p.desc, true)}</div>
-      ${p.direccion_en ? `<div class="muted">📌 ${esc(p.direccion_en)}</div>` : ''}
+      ${p.direccion_en ? `<div class="muted">🏠 ${esc(p.direccion_en)}</div>` : ''}
       ${p.nota ? `<div class="muted">🕒 ${resaltar(p.nota, true)}</div>` : ''}
       ${p.precio ? `<div class="pl-precio">💰 ${resaltar(p.precio, true)}</div>` : ''}
       ${p.opiniones || p.resenas ? `<div class="pl-resenas">${p.opiniones ? `<b>⭐ ${esc(String(p.opiniones.v).replace('.', ','))}</b> <span class="muted">(${esc(p.opiniones.n)} reseñas, ${esc(p.opiniones.fuente)})</span> ` : ''}${p.resenas ? `👥 ${esc(p.resenas)}` : ''}</div>` : ''}
-      ${otros.length || plan.length ? `<details class="pl-cerca" data-key="plc:${esc(p.id)}" ${abierto('plc:' + p.id, false) ? 'open' : ''}><summary>📍 Cerca${otros.length ? `: ${otros.length} ${otros.length === 1 ? 'plan' : 'planes'}` : ''}${plan.length ? ` · 📅 ${plan.length} de vuestro plan` : ''}</summary>
+      ${otros.length || plan.length ? `<details class="pl-cerca" data-key="plc:${esc(p.id)}" ${abierto('plc:' + p.id, false) ? 'open' : ''}><summary>📏 Cerca${otros.length ? `: ${otros.length} ${otros.length === 1 ? 'plan' : 'planes'}` : ''}${plan.length ? ` · 📅 ${plan.length} de vuestro plan` : ''}</summary>
         ${otros.length ? `<div class="cerca">${otros.map(([o, d]) => `${icPlan(o)} ${esc(o.es)} <span class="muted">${fmtDist(d)}</span>`).join(' · ')}</div>` : ''}
         ${plan.length ? `<div class="cerca">📅 ${plan.map(([l, d, e]) => `${esc(l.es)} <span class="muted">(día ${e.n}, ${fmtDist(d)})</span>`).join(' · ')}</div>` : ''}</details>` : ''}
       <div class="acciones">${naver(p)}<button class="mini" data-full="pl:${i}">Enseñar</button></div>${estrBox(hKey(p), icPlan(p) + ' ' + p.es)}</div>`;
@@ -2472,9 +2472,9 @@ const NAVER_TOP = {
 function naverTop(k) {
   const qs = NAVER_TOP[k]; if (!qs) return '';
   const key = 'ntop:' + k;
-  return `<details class="card ntop" data-key="${key}" ${abierto(key, false) ? 'open' : ''}><summary>🔎 <b>Lo mejor valorado en Naver</b> <small class="muted">· abre Naver con la búsqueda hecha</small></summary>
+  return `<details class="card ntop" data-key="${key}" ${abierto(key, false) ? 'open' : ''}><summary>🏆 <b>Lo mejor valorado en Naver</b> <small class="muted">· abre Naver con la búsqueda hecha</small></summary>
     <p class="muted">Desde aquí no se pueden leer las notas de Naver. Toca una zona y mirad la ★ y el número de reseñas de cada sitio: los de más de 4,75 con miles de reseñas suelen ser apuesta segura. Si os gusta uno, mandadme la captura y lo añado.</p>
-    <div class="acciones">${qs.map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🗺️ ${esc(q)}</a>`).join('')}</div></details>`;
+    <div class="acciones">${qs.map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 ${esc(q)}</a>`).join('')}</div></details>`;
 }
 function viewComer(dentro = false) {
   if (comerCiudad === null) {
@@ -2493,10 +2493,10 @@ function viewComer(dentro = false) {
   const chipN = (attr, v, t, nn, on, tit) => `<button class="chip ${on ? 'on' : ''}" ${attr}="${esc(v)}" title="${esc(tit)}">${esc(t)} <small>${nn}</small></button>`;
   const ordIc = { rec: '🏅', nota: '👥', dist: '📏', val: '★' };
   const ord = { rec: '🏅 Recomendado', nota: '👥 Mejor valorados', dist: '📏 Más cerca del hotel', val: '★ Mi valoración' }, sigOrd = { rec: 'nota', nota: 'dist', dist: 'val', val: 'rec' };
-  return buscadorHTML('qcm', qCom, 'Buscar sitio para comer (nombre, plato…)', resComer(qCom)) + (dentro ? '' : `<div class="cc-row">${[['todas', 'Todas', '🗺️'], ...CIUDADES_COMER.map(([k, t]) => [k, t, tema(k).ic])].map(([k, t, ic]) =>
+  return buscadorHTML('qcm', qCom, 'Buscar sitio para comer (nombre, plato…)', resComer(qCom)) + (dentro ? '' : `<div class="cc-row">${[['todas', 'Todas', '🌏'], ...CIUDADES_COMER.map(([k, t]) => [k, t, tema(k).ic])].map(([k, t, ic]) =>
       `<button class="cbtn ${comerCiudad === k ? 'on' : ''}" ${k !== 'todas' ? `style="${varsTema(k)}"` : ''} data-cc="${k}"><span>${ic}</span>${esc(t)}</button>`).join('')}</div>`) + `
     <div class="chips qv-fila">${chipN('data-ct', 'todos', 'Todo', lugaresComer().filter(enC).length, comerTipo === 'todos', 'Todo')}${tipos.map(([t, nt]) => chipN('data-ct', t, IC_COMER[t] || t, nt, comerTipo === t, t[0].toUpperCase() + t.slice(1))).join('')}</div>
-    <div class="chips qv-fila"><button class="chip qv-ord" data-co="${sigOrd[comerOrden] || 'rec'}" title="Orden: ${esc(ord[comerOrden] || ord.rec)} (tocar para cambiar)">⇅${(ordIc[comerOrden] || ordIc.rec)}</button><span class="qv-sep"></span>${chipN('data-ce', 'cerca', '📍', base.filter(l => distKm(l) <= 1.2).length, comerEstado === 'cerca', 'Cerca del hotel (≤1,2 km)')}${chipN('data-ce', 'quiero', '⭐', n('quiero'), comerEstado === 'quiero', 'Quiero ir')}${chipN('data-ce', 'visitado', '✅', n('visitado'), comerEstado === 'visitado', 'Visitados')}${chipN('data-ce', 'pendiente', '☐', base.filter(l => !est(l)).length, comerEstado === 'pendiente', 'Sin marcar')}</div>
+    <div class="chips qv-fila"><button class="chip qv-ord" data-co="${sigOrd[comerOrden] || 'rec'}" title="Orden: ${esc(ord[comerOrden] || ord.rec)} (tocar para cambiar)">⇅${(ordIc[comerOrden] || ordIc.rec)}</button><span class="qv-sep"></span>${chipN('data-ce', 'cerca', '📏', base.filter(l => distKm(l) <= 1.2).length, comerEstado === 'cerca', 'Cerca del hotel (≤1,2 km)')}${chipN('data-ce', 'quiero', '🔖', n('quiero'), comerEstado === 'quiero', 'Quiero ir')}${chipN('data-ce', 'visitado', '✅', n('visitado'), comerEstado === 'visitado', 'Visitados')}${chipN('data-ce', 'pendiente', '☐', base.filter(l => !est(l)).length, comerEstado === 'pendiente', 'Sin marcar')}</div>
     <p class="muted mini-nota c2-leyenda">⇅ ${esc(ord[comerOrden] || ord.rec)} · ${lista.length} lugares</p>
     ${muchoOjo(comerCiudad)}${naverTop(comerCiudad)}
     ${lista.map((l, i) => (comerFuera(l) && !(i && comerFuera(lista[i - 1])) ? `<div class="qv-grupo">👎 Descartados y cerrados · ${lista.filter(comerFuera).length}</div>` : '') + cardComer(l)).join('') || '<p class="muted">No hay lugares con este filtro.</p>'}
@@ -2562,12 +2562,12 @@ function cardComer0(l) {
       </div>
     </div>
     <div class="c2-acc">
-      ${ESTADOS.map(([k, t]) => `<button class="c2-est ${e.estado === k ? 'on' : ''} e-${k}" data-est="${esc(id)}" data-v="${k}" title="${t}">${{ quiero: '⭐', visitado: '✅', descartado: '👎', cerrado: '🚫' }[k]}<small>${t}</small></button>`).join('')}
+      ${ESTADOS.map(([k, t]) => `<button class="c2-est ${e.estado === k ? 'on' : ''} e-${k}" data-est="${esc(id)}" data-v="${k}" title="${t}">${{ quiero: '🔖', visitado: '✅', descartado: '👎', cerrado: '🚫' }[k]}<small>${t}</small></button>`).join('')}
       <button class="mini" data-full="k:${esc(id)}">Enseñar</button>
-      ${q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🗺️</a>${googleMaps((l.ko || l.nombre || '') + ' ' + ciudad, 'G')}` : ''}
+      ${q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢</a>${googleMaps((l.ko || l.nombre || '') + ' ' + ciudad, 'G')}` : ''}
     </div>
     <details class="c2-mas" data-key="cm:${esc(id)}" ${abierto('cm:' + id, false) ? 'open' : ''}><summary>Más detalles${e.nota ? ' · 📝' : ''}${Number(e.val) ? ' · ' + '★'.repeat(Number(e.val)) : ''}</summary>
-      ${l.direccion ? `<div class="muted">📍 ${esc(l.direccion)}</div>` : ''}
+      ${l.direccion ? `<div class="muted">🏠 ${esc(l.direccion)}</div>` : ''}
       ${l.nota ? `<div class="muted">${resaltar(l.nota, true)}</div>` : ''}
       <div class="muted">Fuente: ${esc(FUENTES[l.fuente] || l.fuente || '—')}${l.url ? ` · <a href="${esc(l.url)}" target="_blank" rel="noopener">enlace</a>` : ''}</div>
       ${l.comprobado && l.comprobado.nota ? `<div class="muted">🔎 ${esc(l.comprobado.nota)}${l.comprobado.fecha ? ' (' + esc(l.comprobado.fecha) + ')' : ''}</div>` : ''}
@@ -2727,14 +2727,14 @@ function viewVerificar() {
   return `<div class="card"><b>${hechos} de ${total} verificados</b></div>
     ${g.map(([t, ls]) => { const p = ls.filter(x => !verificado(x.key)).length; return `<details data-key="vf:${esc(t)}" ${abierto('vf:' + t, false) ? 'open' : ''}><summary class="card big">${esc(t)} <span class="muted">${p ? p + ' pendientes' : '✓ todo'}</span></summary>
       ${ls.map(x => `<div class="card lugar ${verificado(x.key) ? 'hecho' : ''}"><div><div>${esc(x.titulo)}</div><div class="muted">${esc(x.sub || '')}</div></div>
-        <div class="acciones">${x.q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(x.q)}" data-app="naver" data-q="${esc(x.q)}" target="_blank" rel="noopener">🗺️</a>` : ''}
+        <div class="acciones">${x.q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(x.q)}" data-app="naver" data-q="${esc(x.q)}" target="_blank" rel="noopener">🟢</a>` : ''}
         <button class="mini ${verificado(x.key) ? 'sec' : ''}" data-verif="${esc(x.key)}">${verificado(x.key) ? 'Deshacer' : '✓'}</button></div></div>`).join('')}</details>`; }).join('')}`;
 }
 
 // Más con rejilla de iconos, como la Guía de Corea: se toca un tema y sale debajo.
 let masSub = 'maleta';
 const MAS_SUB = [['maleta', 'Maleta', '🧳'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'],
-  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['resumen', 'Resumen del viaje', '📖'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️']];
+  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['resumen', 'Resumen del viaje', '🧾'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️']];
 function viewMas() {
   const pend = trip ? pendientesVerificar().reduce((a, [, ls]) => a + ls.filter(x => !verificado(x.key)).length, 0) : 0;
   const subs = trip ? MAS_SUB : MAS_SUB.filter(([k]) => k === 'datos');
@@ -2792,7 +2792,7 @@ function resGlobal(q) {
   const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {};
   const sit = []; ciudadesCatalogo().forEach(k => sitiosCiudadObj(k).forEach(l => { const h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '';
     const p = coincide(q, [l.es, l.ko, l.romanizacion].join(' '), [l.tipo, txt].join(' ')); if (p) sit.push({ p, h: fila(`data-irqv="${esc(k)}" data-h="${esc(h)}"`, icSitio((l.tipo || '') + ' ' + l.es), l.es, `${tema(k).ic} ${esc(nombreCiudad(k))} · Planes`, l.ko) }); }));
-  grupo('🏯 Puntos de interés', sit);
+  grupo('📍 Puntos de interés', sit);
   grupo('🍜 Comer', lugaresComer().map(l => ({ l, p: coincide(q, [l.nombre, l.ko].join(' '), [l.plato, l.tipo, l.nota, l.direccion].join(' ')) })).filter(x => x.p)
     .map(({ l, p }) => ({ p, h: fila(`data-ircomer="${esc(l.ciudad)}" data-q="${esc(l.nombre)}"`, '🍜', l.nombre, `${tema(l.ciudad).ic} ${esc(nombreCiudad(l.ciudad))}${l.plato ? ' · ' + esc(l.plato) : ''}`, l.ko) })));
   grupo('🧩 Miscelánea', (typeof PLANES !== 'undefined' ? PLANES : []).map(l => ({ l, p: coincide(q, [l.es, l.ko, l.romanizacion].join(' '), [l.desc, l.direccion_en, l.cat].join(' ')) })).filter(x => x.p)

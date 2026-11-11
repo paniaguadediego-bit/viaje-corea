@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v209
+Caché del service worker: corea-v210
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -262,6 +262,7 @@ Caché del service worker: corea-v209
 - v207: en Hoy, (1) cada parada lleva 🧭 (cómo llegar con Naver Map desde donde estéis) y 📍 (Google Maps) junto al 🏯 de Planes; el botón «🧭 Ruta» sale de los tramos. (2) Tramos entre paradas plegados por defecto, con tono azulado propio, y con las opciones a la vista aunque estén plegados (a pie si ≤3 km, metro, taxi y bus; la recomendada resaltada). (3) En «Primero, el traslado» ya no sale el recuadro de fecha (12 NOV JUE). En el trip.json privado, el día 11 en el orden real: Bulguksa y después Seokguram.
 - v208: tramos de Hoy en un solo desplegable con toda la información (ya no hay «Alternativa en metro» desplegable dentro) y botón 🗺️ en su cabecera que abre ese tramo en Naver de parada a parada (con salida y llegada; si Naver no abre, Google Maps). La parada sigue con 🧭 (desde donde estéis). Los sitios cercanos que no están en el plan pasan a ser paradas dentro de la Ruta del día con su asterisco (H*, 2*…), borde dorado discontinuo, 🏯 🧭 📍 y ＋ para añadirlos, y una leyenda al final. Pendiente: el usuario irá mandando la LP 2024 de Busan, Jeonju y Seúl.
 - v209: la casilla de visitado de los sitios (Planes y Hoy) tiene un tercer toque: ✗ «No vamos» (no nos interesa). Vacía → ✓ → ✗ → vacía. Se guarda en user.noVamos (va con Pasar mis marcas); la ficha queda atenuada y tachada y no cuenta en «☐ No marcados». Los traslados siguen con dos estados.
+- v210: un icono, un significado. 📍 solo Puntos de interés (y sitio genérico 🔸); 🌐 Google Maps; 🟢 abrir en Naver; 🧭 cómo llegar desde donde estáis; 🛣️ ruta de parada a parada o todo el día en Naver; 🗺️ solo mapas; 📏 distancias y «cerca»; 🏠 direcciones; 📌 fijar ubicación con GPS (Estoy aquí); 🎯 dónde estoy en el mapa; ↪️ dónde encaja un sitio cercano; 🏯 Planes (y «Dónde lo veréis», que lleva a Planes); 🌆 Vuestras ciudades (Historia); 🏺 etiqueta «Mucha cultura»; 📖 solo Diccionario; 🛤️ Ruta del día; 🧾 Resumen del viaje; 📙 Más de la Lonely (2016); 📕 LP 2024; 🖨️ PDF; 🔍 buscar; 🔎 verificar; 🏆 lo mejor valorado en Naver; ⭐ favoritas y estrellas; 🔖 Quiero (Comer); 🌟 imprescindibles; ✍️ Mis lugares; 🏬 dónde comprar un regalo.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

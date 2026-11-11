@@ -1,4 +1,4 @@
-// 📘 Word y 📕 PDF del Resumen del viaje, con fotos y los colores de la app. Sin librerías:
+// 📘 Word y 🖨️ PDF del Resumen del viaje, con fotos y los colores de la app. Sin librerías:
 // el Word (.docx) se arma aquí mismo (un .zip con XML) y el PDF sale de "Imprimir → Guardar como PDF".
 // Usa datosResumen(), fmtCorto(), FOTOS, fotoWiki() y compartirArchivo() de app.js.
 
@@ -158,7 +158,7 @@ async function verPDF(btn) {
     const D = datosResumen(), fotos = await exFotos(D, t => exEstado(btn, t));
     let v = document.getElementById('doc-vista'); if (v) v.remove();
     v = document.createElement('div'); v.id = 'doc-vista';
-    v.innerHTML = `<div class="dx-barra"><button data-dx="pdf">📕 Guardar como PDF</button><button class="sec" data-dx="cerrar">✕ Cerrar</button></div>
+    v.innerHTML = `<div class="dx-barra"><button data-dx="pdf">🖨️ Guardar como PDF</button><button class="sec" data-dx="cerrar">✕ Cerrar</button></div>
       <p class="dx-ayuda">En la ventana de imprimir elige <b>«Guardar como PDF»</b> como impresora.</p><div class="dx-doc">${docHTML(D, fotos)}</div>`;
     document.body.appendChild(v); document.body.classList.add('con-doc'); window.scrollTo(0, 0);
     v.addEventListener('click', ev => { const b = ev.target.closest('[data-dx]'); if (!b) return;
