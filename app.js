@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v210';
+const VERSION = 'v211';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -647,7 +647,7 @@ function viewHoy() {
     // El traslado va dentro de Sitios, como primer tramo de la ruta del día.
     ['sitios', '📖 Sitios', (tr.length ? (() => { const hk = 'tras:' + (tr[0].id || d.fecha), ok = !!u().hecho[hk], key = 'trd:' + d.fecha, ab = abierto(key, !ok);
       return `<details class="tras-dia ${ok ? 'hecho-card' : ''}" data-key="${key}" ${ab ? 'open' : ''}><summary class="tras-dia-tit"><button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hk)}" data-v="${ok ? 0 : 1}" aria-label="Hecho">${ok ? '✓' : ''}</button>${medio(tr[0])[0]} Primero, el traslado</summary>${antesSalir(d.fecha, tr, al)}${tr.map(t => trasladoCard(t, false, true)).join('')}</details>`; })() : ''), sitiosDia(d)],
-    ['hotel', '🛏️ Hotel', al.sale && al.noche && al.sale !== al.noche ? alojCard(al.sale, true) + alojCard(al.noche, false) : (al.noche || al.sale) ? alojCard(al.noche || al.sale, false, true) : ''],
+    ['hotel', '🛏️ Hotel', al.sale && al.noche && al.sale !== al.noche ? hotelLinea(al.sale, 'Hoy dejáis') + hotelLinea(al.noche, 'Esta noche') : (al.noche || al.sale) ? hotelLinea(al.noche || al.sale, '') : ''],
   ];
   // Sin botones (no se usaban): Sitios siempre a la vista; Hotel y Diario, plegados al final.
   const [tras, sit, hotl] = [secs[0][2], secs[0][3], secs[1][2]], hk = 'hot:' + d.fecha, dk = 'dia:' + d.fecha, cambia = al.sale && al.noche && al.sale !== al.noche;
@@ -950,6 +950,20 @@ function medio(t) {
 }
 // Qué "Paso a paso" están abiertos (lo controla la app, no el navegador).
 const pasosAb = {};
+// 🛏️ Planes → Hotel: toda la información de los alojamientos de la ciudad (antes estaba en Hoy).
+function hotelesDe(k) {
+  const hs = arr(trip.alojamientos).filter(a => ck(a.ciudad) === k);
+  if (!hs.length) return '<p class="muted centro">No hay alojamiento apuntado en esta ciudad.</p>';
+  return hs.map(a => `<div class="muted centro hotel-fechas">📅 ${esc(String(a.fechas || '').replace(/(\d{4})-(\d\d)-(\d\d)/g, (m0, y, mo, d) => fmtCorto(`${y}-${mo}-${d}`)))}${a.noches ? ` · ${a.noches} ${a.noches == 1 ? 'noche' : 'noches'}` : ''}</div>${alojCard(a, false)}`).join('');
+}
+// Hoy: hotel en una línea, como las paradas (🏯 lleva a Planes → Hotel; 🧭 y 🌐 para llegar).
+function hotelLinea(a, etiqueta) {
+  const k = ck(a.ciudad), c = hotelDe(k) || (a.lat != null ? [Number(a.lat), Number(a.lon)] : null), n = a.ko || a.nombre;
+  const io = String(a.nota || '').match(/check-?in[^0-9]*(\d{1,2}[:.]\d{2})/i), oo = String(a.nota || '').match(/check-?out[^0-9]*(\d{1,2}[:.]\d{2})/i);
+  return `<div class="hotel-linea"><div><b>🛏️ ${esc(a.nombre)}</b> ${a.ko ? `<span class="ko-s">${esc(a.ko)}</span>` : ''}${etiqueta ? ` <span class="badge ${etiqueta === 'Hoy dejáis' ? 'pend' : 'ok'}">${etiqueta}</span>` : ''}</div>
+    ${io || oo ? `<div class="muted">${io ? `Check-in ${io[1]}` : ''}${io && oo ? ' · ' : ''}${oo ? `check-out ${oo[1]}` : ''}</div>` : ''}
+    <div class="hl-acc"><button class="irmap" data-irhotel="${esc(k)}" title="Ver en Planes → Hotel" aria-label="Ver en Planes">🏯</button>${c ? `<button class="irmap" data-irmap="naver" data-lat="${c[0]}" data-lon="${c[1]}" data-n="${esc(n)}" title="Cómo llegar con Naver Map" aria-label="Naver">🧭</button><button class="irmap" data-irmap="google" data-lat="${c[0]}" data-lon="${c[1]}" data-n="${esc(n)}" title="Cómo llegar con Google Maps" aria-label="Google Maps">🌐</button>` : ''}<button class="irmap" data-gps="${esc(hotelFixKey(a))}" data-gpsn="${esc(a.nombre)}" title="Estoy en el hotel: fijar su ubicación" aria-label="Estoy en el hotel">📌</button></div></div>`;
+}
 // 🧭 Cómo llegar a una parada: Naver Map (ruta desde donde estéis) y Google Maps, solo iconos, junto al de Planes.
 function irMapas(l) {
   const c = coordsLugar(l); if (!c) return '';
@@ -1391,7 +1405,7 @@ function abrirAyuda() {
 // Ciudades: 5 botones; al tocar uno se despliega su ficha debajo. Por defecto, la ciudad del día.
 // Qué ver (antes Explorar y Ciudades): por ciudad, Puntos de interés y Planes. El mapa de cada ciudad va en la pestaña Mapas.
 let ciudadSel = null, historiaAbierta = false, exSub = 'puntos';
-const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['planes', '🧩 Miscelánea']];
+const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['hotel', '🛏️ Hotel'], ['planes', '🧩 Miscelánea']];
 // Mapas: el mapa de cada ciudad (itinerario, más sitios, Comer, Planes y hotel). Al tocar un icono, su ficha enlaza con Qué ver o Comer.
 function viewMapas() {
   const botones = botonesCiudad(); if (!botones) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
@@ -1418,7 +1432,7 @@ function viewCiudades() {
     </div>
     <div class="row daynav exsubs">${EX_SUBS.filter(([x]) => x !== 'historia' || h).map(([x, tt]) => `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}">${tt}</button>`).join('')}</div>
     ${exSub === 'comer' ? '' : muchoOjo(k, 'planes')}${exSub === 'puntos' ? rutasLP24(k) : ''}
-    ${exSub === 'planes' ? planesDe(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
+    ${exSub === 'planes' ? planesDe(k) : ''}${exSub === 'hotel' ? hotelesDe(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
     ${exSub !== 'puntos' ? '</div>' : ''}${exSub === 'puntos' ? `
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
       ${INTRO_LP[k].plan ? `<details data-key="lp:${k}" ${abierto("lp:" + k, false) ? "open" : ""}><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
@@ -1532,7 +1546,7 @@ const btnGps = l => `<button class="mini sec" data-gps="${esc(hKey(l))}" data-gp
 // Botón de la ficha del mapa que lleva a la sección de la app donde está ese sitio.
 function mpEnlace(p, m) {
   const k = ck((p.l && p.l.ciudad) || '') || m.k || '';
-  if (p.capa === 'hotel') return `<button class="mini" data-irhotel>🛏️ Ver el hotel</button>`;
+  if (p.capa === 'hotel') return `<button class="mini" data-irhotel="${esc(m.k || '')}">🛏️ Ver el hotel</button>`;
   if (p.capa === 'comer') return `<button class="mini" data-ircomer="${esc(k)}" data-q="${esc(p.es)}">🍜 Ver en Comer</button>`;
   if (p.capa === 'planes') return `<button class="mini" data-irplan="${esc(k)}" data-cat="${esc((p.l && p.l.cat) || '')}">🧩 Ver en Miscelánea</button>`;
   return k ? (p.l && enQueVer(p.l, k) ? `<button class="mini" data-irqv="${esc(k)}" data-h="${esc(hKey(p.l))}">🏯 Ver en Planes</button>` : `<button class="mini" data-bcity="${esc(k)}" data-bq="${esc(p.es)}">🏯 Ver en Planes</button>`) : '';
@@ -3138,7 +3152,7 @@ document.addEventListener('click', e => {
     const el = document.querySelector(`details[data-key="${CSS.escape('qv:' + iq.dataset.h)}"]`); if (el) { el.scrollIntoView({ block: 'start' }); window.scrollBy(0, -80); } return; }
   const irc = e.target.closest('[data-ircomer],[data-irplan],[data-irhotel]');
   if (irc) {
-    if (irc.hasAttribute('data-irhotel')) { hoySub = 'hotel'; ir('hoy'); }
+    if (irc.hasAttribute('data-irhotel')) { if (irc.dataset.irhotel) ciudadSel = irc.dataset.irhotel; exSub = 'hotel'; ir('ciudades'); }
     else if (irc.dataset.ircomer != null) { if (irc.dataset.ircomer) comerCiudad = irc.dataset.ircomer; comerTipo = 'todos'; comerEstado = 'todos'; qCom = irc.dataset.q || ''; if (irc.dataset.ircomer) ciudadSel = irc.dataset.ircomer; exSub = 'comer'; ir('ciudades'); }
     else { if (irc.dataset.irplan) ciudadSel = irc.dataset.irplan; exSub = 'planes'; if (irc.dataset.cat) planesCat = irc.dataset.cat; ir('ciudades'); }
     render(); window.scrollTo(0, 0); return;

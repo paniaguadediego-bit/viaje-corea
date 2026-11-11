@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v210
+Caché del service worker: corea-v211
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -263,6 +263,7 @@ Caché del service worker: corea-v210
 - v208: tramos de Hoy en un solo desplegable con toda la información (ya no hay «Alternativa en metro» desplegable dentro) y botón 🗺️ en su cabecera que abre ese tramo en Naver de parada a parada (con salida y llegada; si Naver no abre, Google Maps). La parada sigue con 🧭 (desde donde estéis). Los sitios cercanos que no están en el plan pasan a ser paradas dentro de la Ruta del día con su asterisco (H*, 2*…), borde dorado discontinuo, 🏯 🧭 📍 y ＋ para añadirlos, y una leyenda al final. Pendiente: el usuario irá mandando la LP 2024 de Busan, Jeonju y Seúl.
 - v209: la casilla de visitado de los sitios (Planes y Hoy) tiene un tercer toque: ✗ «No vamos» (no nos interesa). Vacía → ✓ → ✗ → vacía. Se guarda en user.noVamos (va con Pasar mis marcas); la ficha queda atenuada y tachada y no cuenta en «☐ No marcados». Los traslados siguen con dos estados.
 - v210: un icono, un significado. 📍 solo Puntos de interés (y sitio genérico 🔸); 🌐 Google Maps; 🟢 abrir en Naver; 🧭 cómo llegar desde donde estáis; 🛣️ ruta de parada a parada o todo el día en Naver; 🗺️ solo mapas; 📏 distancias y «cerca»; 🏠 direcciones; 📌 fijar ubicación con GPS (Estoy aquí); 🎯 dónde estoy en el mapa; ↪️ dónde encaja un sitio cercano; 🏯 Planes (y «Dónde lo veréis», que lleva a Planes); 🌆 Vuestras ciudades (Historia); 🏺 etiqueta «Mucha cultura»; 📖 solo Diccionario; 🛤️ Ruta del día; 🧾 Resumen del viaje; 📙 Más de la Lonely (2016); 📕 LP 2024; 🖨️ PDF; 🔍 buscar; 🔎 verificar; 🏆 lo mejor valorado en Naver; ⭐ favoritas y estrellas; 🔖 Quiero (Comer); 🌟 imprescindibles; ✍️ Mis lugares; 🏬 dónde comprar un regalo.
+- v211: los hoteles tienen su apartado en Planes (🛏️ Hotel, entre Comer y Miscelánea) con toda la información (fechas y noches, hangul, direcciones, nota, Naver/Google, Estoy en el hotel y estrellas). En Hoy, el hotel va escueto como las paradas: nombre, hangul, «Hoy dejáis»/«Esta noche», check-in/out y botones 🏯 (lleva a Planes → Hotel), 🧭 Naver, 🌐 Google y 📌 Estoy en el hotel. «Ver el hotel» del mapa también lleva a Planes → Hotel.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
