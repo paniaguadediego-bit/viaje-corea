@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v220';
+const VERSION = 'v221';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2341,7 +2341,11 @@ function viewCorea() {
 // ---------- Planes: League of Legends y cosmética ----------
 let planesCat = 'curioso';
 // Orden alfabético (Curioso es además la que se abre por defecto).
-const PCATS = [['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🎮 LoL'], ['ropa', '👕 Ropa']];
+const PCATS = [['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
+// 🖥️ PC: cibercafés (PC방) junto a los hoteles. No se han encontrado nombres fiables, así que se buscan en Naver por zona.
+const PC_BUSQ = { seul: ['명동 PC방', '회현역 PC방', '충무로 PC방'], busan: ['해운대역 PC방', '해운대 PC방', '광안리 PC방'] };
+const pcBusca = k => PC_BUSQ[k] ? `<div class="card guia-txt"><b>🖥️ PC방 cerca del hotel</b><p class="muted">Cibercafés de barrio, casi siempre 24 h y por horas (unos 1.000-2.000 ₩/h: VERIFICAR). Toca una zona para verlos en Naver con su nota y reseñas; si os gusta uno, mandadme la captura y lo añado.</p>
+  <div class="acciones">${PC_BUSQ[k].map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 ${esc(q)}</a>`).join('')}</div></div>` : '';
 // Calendario del Mundial de LoL con la ciudad donde estaréis cada día.
 // Cibercafés coreanos (PC bang, PC방): cómo usarlos siendo turista.
 const PCBANG = `<details class="card pcbang" data-key="pcbang"><summary><b>🖥️ Cibercafés (PC bang, PC방): cómo jugar</b></summary><ul>
@@ -2392,8 +2396,8 @@ function planesDe(k) {
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
   return `<p class="muted">Horarios de webs (nov 2026): compruébalos antes de ir.</p>
-    ${worldsCard()}${(() => { const cats = PCATS.filter(([c]) => P.some(p => p.ciudad === k && p.cat === c)); if (!cats.some(([c]) => c === planesCat)) planesCat = (cats[0] || [])[0];
-      return `<div class="row daynav pcats">${cats.map(([c, t]) => `<button class="${c === planesCat ? '' : 'sec'}" data-pcat="${c}">${t}</button>`).join('')}</div>` + (planesCat === 'lol' ? PCBANG : '') + grupo(planesCat, ''); })()}`;
+    ${worldsCard()}${(() => { const cats = PCATS.filter(([c]) => P.some(p => p.ciudad === k && p.cat === c) || (c === 'lol' && PC_BUSQ[k])); if (!cats.some(([c]) => c === planesCat)) planesCat = (cats[0] || [])[0];
+      return `<div class="row daynav pcats">${cats.map(([c, t]) => { const [ic, ...r] = t.split(' '); return `<button class="${c === planesCat ? '' : 'sec'}" data-pcat="${c}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>` + (planesCat === 'lol' ? pcBusca(k) + PCBANG : '') + grupo(planesCat, ''); })()}`;
 }
 
 // ---------- Seguro ----------

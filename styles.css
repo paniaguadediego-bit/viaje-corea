@@ -1593,5 +1593,9 @@ details.ci-sec > p { position: relative; z-index: 1; }
 .hist-subs { background: var(--bg) !important; padding: 4px 0 !important; box-shadow: 0 6px 6px -6px rgba(0,0,0,.25); }
 /* v220: botón de la estación de llegada al hotel */
 .lleg-h { margin: 6px 0 2px; } .lleg-h .btn { white-space: normal; text-align: left; }
+/* v221: botones de Miscelánea del mismo tamaño (icono arriba, texto debajo) */
+.pcats { display: grid !important; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; }
+.pcats button { width: 100%; height: 54px; min-height: 54px !important; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 4px 2px !important; font-size: .74rem !important; line-height: 1.15; }
+.pcats .hs-i { font-size: 1.15rem; line-height: 1; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v220"; }
+:root { --css-ver: "v221"; }
