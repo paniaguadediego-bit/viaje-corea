@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v211';
+const VERSION = 'v212';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -869,7 +869,7 @@ const textoEncaje = g => g.antes ? `De paso entre ${g.tras.n ? 'la parada ' + g.
 function sugPlegada(g, d) {
   // Sitio cercano que no está en el plan: va dentro de la Ruta del día como una parada más, con asterisco (no cuenta en tramos ni mapa).
   const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, l = g.l, h = hKey(l), txt = D[h.slice(2)] || D[h] || l.desc || l.nota || '', key = 'sug:' + d.fecha + '|' + h, k = ck(d.ciudad);
-  return `<details class="sd sd-sug" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}${irQV(l, k, true)}${irMapas(l)}<button class="mini sug-add" data-agtog="${esc(h)}|${d.fecha}" title="Añadir a este día" aria-label="Añadir a este día">＋</button><br>
+  return `<details class="sd sd-sug" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}<span class="sd-qv">${irQV(l, k, true)}</span>${irMapas(l)}<button class="mini sug-add" data-agtog="${esc(h)}|${d.fecha}" title="Añadir a este día" aria-label="Añadir a este día">＋</button><br>
     <b><span class="sug-etq">${g.etq}</span>${icSitio((l.tipo || '') + ' ' + l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span></summary>
     <div class="sd-cuerpo"><div class="sug-encaje">↪️ ${esc(textoEncaje(g))}</div>${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(txt), true)}</div>` : ''}</div></details>`;
 }
@@ -905,7 +905,7 @@ function sitiosDia(d) {
     const n = num[h];
     // Ficha plegable: se pliega sola al marcarla como visitada (y la foto, a la derecha, arriba).
     const key = 'sd:' + d.fecha + '|' + h, ab = abierto(key, !hecho(l, k));
-    return `${t}${extra ? encaje(l) : ''}<details class="sd ${hecho(l, k) ? 'hecho-card' : noVamos(l) ? 'novamos-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}${btnHecho(l, k)}${irQV(l, k, true)}${irMapas(l)}<br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
+    return `${t}${extra ? encaje(l) : ''}<details class="sd ${hecho(l, k) ? 'hecho-card' : noVamos(l) ? 'novamos-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}<span class="sd-qv">${irQV(l, k, true)}</span>${btnHecho(l, k)}${irMapas(l)}<br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${icSitio(l.es)} ${esc(l.es)}</b>${lpPill(l)} <span class="ko-s">${esc(l.ko || '')}</span>${extra ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
       <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${lp24(l)}</div></details>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).

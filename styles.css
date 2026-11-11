@@ -1557,5 +1557,8 @@ details.novamos-card .qv-cab b, details.novamos-card .sd-tit b { text-decoration
 .hotel-linea { padding: 6px 4px; text-align: left; } .hotel-linea + .hotel-linea { border-top: 1px dashed var(--line); }
 .hl-acc { display: flex; gap: 4px; margin-top: 4px; } .hl-acc .irmap { margin: 0 !important; }
 .hotel-fechas { margin: 10px 0 -4px; }
+/* v212: en Hoy, el 🏯 de Planes va a la derecha, justo a la izquierda de la foto */
+.sitios-dia details.sd > summary .sd-qv { float: right; margin: 0 0 4px 6px; }
+.sitios-dia details.sd > summary .sd-qv .irqv { margin: 0 !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v211"; }
+:root { --css-ver: "v212"; }
