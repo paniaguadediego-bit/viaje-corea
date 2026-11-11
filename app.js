@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v215';
+const VERSION = 'v216';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -639,7 +639,7 @@ function viewHoy() {
     const fs = []; ls.forEach(l => { const w = l.sinFoto ? '' : (wikiDe(l) || (l.ko ? 'ko:' + String(l.ko).replace(/\s+/g, '') : '')); if (w && !fs.some(x => x.w === w)) fs.push({ w, n: `${icSitio((l.tipo || '') + ' ' + l.es)} ${l.es}` }); });
     return `<div class="card dia dia2" style="${varsTema(ck(d.ciudad))}">
     <div class="dia-cab">${(() => { const ko = (arr(trip.ciudades).find(c => ck(c.nombre) === ck(d.ciudad)) || {}).ko; return ko ? `<div class="ciudad-ko">${esc(ko)}</div>` : ''; })()}<div class="dia-sup"><span class="ds-1">${esc(d.ciudad)} ${tc.ic} · Día ${dayIdx + 1} de ${dias.length}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</span></div>
-      <div class="dia-tit">${esc(d.titulo)}</div>${chipTiempo(d)}${horasTiempo(d)}${linkHist(ck(d.ciudad), true)}</div>
+      <div class="dia-tit">${esc(d.titulo)}</div>${(t => t ? `<div class="dia-clima">${t}</div>` : '')(chipTiempo(d) + horasTiempo(d))}${linkHist(ck(d.ciudad), true)}</div>
     ${fs.length ? `<div class="dia-banner"><div class="foto dia-foto" data-wiki="${esc(fs[0].w)}" data-wikis="${esc(fs.map(x => x.w).join('|'))}" data-noms="${esc(fs.map(x => x.n).join('|'))}"><span></span></div>
       <div class="dia-cap">${esc(fs[0].n)}</div>${fs.length > 1 ? `<button class="carr carr-l" data-carr="-1" aria-label="Foto anterior">‹</button><button class="carr carr-r" data-carr="1" aria-label="Foto siguiente">›</button><div class="dia-puntos">${fs.map((x, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>` : ''}</div>` : ''}`; })()}
     ${esquemaDia(d)}

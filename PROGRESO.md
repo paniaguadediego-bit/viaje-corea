@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v215
+Caché del service worker: corea-v216
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -268,6 +268,7 @@ Caché del service worker: corea-v215
 - v213: en las paradas de Hoy, los distintivos LP y LP24 suben a la fila de botones (entre 🌐 y 🏯), así el nombre y el hangul tienen sitio y el «▸ más» no se monta encima.
 - v214: tarjeta del día de Hoy más corta: una sola línea «Busan 🌊 · Día 10 de 18» (sin la fecha, que ya está en la tira de días) y el enlace a la historia de la ciudad pasa a ser un icono 📜 arriba a la derecha. En Planes sigue el botón largo.
 - v215: «🧳 Antes de salir» ya no sale cada día que se deja hotel: solo el primer día del viaje (salida desde Madrid, 3/11) y la víspera del vuelo de vuelta (18/11, elegido por el usuario): vuelo de mañana desde Incheon, recuperar T-money, Tax Free, gastar wones, maletas hechas, pasaportes, cargadores y llave. Va arriba en Hoy, fuera de «Primero, el traslado».
+- v216: tarjeta del día: «Busan 🌊 · Día 11 de 18» sin fondo (solo texto con sombra), luego el título del día, y el tiempo (resumen y fila por horas) agrupado en una caja propia translúcida, para separar qué día es de qué tiempo hará.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

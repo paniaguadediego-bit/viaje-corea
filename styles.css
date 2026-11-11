@@ -1566,5 +1566,10 @@ details.novamos-card .qv-cab b, details.novamos-card .sd-tit b { text-decoration
 /* v214: tarjeta del día más corta: «Ciudad 🌊 · Día X de Y» en una línea y 📜 arriba a la derecha */
 .dia-cab { position: relative; }
 .dia-cab .hist-ic { position: absolute !important; top: 8px !important; right: 8px !important; left: auto !important; margin: 0 !important; width: 38px !important; height: 38px; min-height: 38px !important; padding: 0 !important; border-radius: 50% !important; background: rgba(0,0,0,.28) !important; border: 1px solid rgba(255,255,255,.45) !important; font-size: 1.15rem; box-shadow: none; z-index: 2; }
+/* v216: en la tarjeta del día, «Ciudad · Día X de Y» sin fondo y el tiempo (resumen + horas) agrupado en su propia caja */
+.dia-cab .dia-sup { background: transparent !important; padding: 0 !important; font-size: 1rem !important; text-shadow: 0 1px 3px rgba(0,0,0,.45); }
+.dia-clima { margin: 10px auto 2px; padding: 8px 8px 6px; border-radius: 14px; background: rgba(0,0,0,.24); border: 1px solid rgba(255,255,255,.22); max-width: 100%; }
+.dia-clima .dia-tiempo { background: transparent !important; padding: 0 !important; margin: 0 auto; display: flex; }
+.dia-clima .t-horas { margin-top: 6px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v215"; }
+:root { --css-ver: "v216"; }
