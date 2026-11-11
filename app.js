@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v213';
+const VERSION = 'v214';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -634,8 +634,8 @@ function viewHoy() {
     // Fotos del carrusel: una por sitio del itinerario que tenga artículo (o hangul), con su nombre como título.
     const fs = []; ls.forEach(l => { const w = l.sinFoto ? '' : (wikiDe(l) || (l.ko ? 'ko:' + String(l.ko).replace(/\s+/g, '') : '')); if (w && !fs.some(x => x.w === w)) fs.push({ w, n: `${icSitio((l.tipo || '') + ' ' + l.es)} ${l.es}` }); });
     return `<div class="card dia dia2" style="${varsTema(ck(d.ciudad))}">
-    <div class="dia-cab">${(() => { const ko = (arr(trip.ciudades).find(c => ck(c.nombre) === ck(d.ciudad)) || {}).ko; return ko ? `<div class="ciudad-ko">${esc(ko)}</div>` : ''; })()}<div class="dia-sup"><span class="ds-1">${tc.ic} Día ${dayIdx + 1} de ${dias.length}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</span><span class="ds-2">${fmtDate(d.fecha)} · ${esc(d.ciudad)}</span></div>
-      <div class="dia-tit">${esc(d.titulo)}</div>${chipTiempo(d)}${horasTiempo(d)}${linkHist(ck(d.ciudad))}</div>
+    <div class="dia-cab">${(() => { const ko = (arr(trip.ciudades).find(c => ck(c.nombre) === ck(d.ciudad)) || {}).ko; return ko ? `<div class="ciudad-ko">${esc(ko)}</div>` : ''; })()}<div class="dia-sup"><span class="ds-1">${esc(d.ciudad)} ${tc.ic} · Día ${dayIdx + 1} de ${dias.length}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</span></div>
+      <div class="dia-tit">${esc(d.titulo)}</div>${chipTiempo(d)}${horasTiempo(d)}${linkHist(ck(d.ciudad), true)}</div>
     ${fs.length ? `<div class="dia-banner"><div class="foto dia-foto" data-wiki="${esc(fs[0].w)}" data-wikis="${esc(fs.map(x => x.w).join('|'))}" data-noms="${esc(fs.map(x => x.n).join('|'))}"><span></span></div>
       <div class="dia-cap">${esc(fs[0].n)}</div>${fs.length > 1 ? `<button class="carr carr-l" data-carr="-1" aria-label="Foto anterior">‹</button><button class="carr carr-r" data-carr="1" aria-label="Foto siguiente">›</button><div class="dia-puntos">${fs.map((x, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>` : ''}</div>` : ''}`; })()}
     ${esquemaDia(d)}
@@ -1109,7 +1109,10 @@ function viewRuta() {
 // Desplegable con lo que amplía la Lonely (DIA_LP) o una frase general (DIA_INFO).
 // "Con ojos de guía": ficha cultural ampliada de los lugares emblemáticos (cultura.js).
 // 📜 Enlace desde los títulos de Hoy y Planes a la historia y curiosidades de la ciudad (Historia → Vuestras ciudades).
-const linkHist = k => (typeof CIUDAD_INFO !== 'undefined' && CIUDAD_INFO[k]) || (typeof HISTORIA !== 'undefined' && HISTORIA[k]) ? `<button class="hist-link" data-histc="${esc(k)}">📜 Historia, costumbres y curiosidades de ${esc(nombreCiudad(k))} ›</button>` : '';
+// En Hoy, solo el icono 📜 arriba a la derecha de la tarjeta del día (ic = true).
+const linkHist = (k, ic = false) => (typeof CIUDAD_INFO !== 'undefined' && CIUDAD_INFO[k]) || (typeof HISTORIA !== 'undefined' && HISTORIA[k])
+  ? (ic ? `<button class="hist-ic" data-histc="${esc(k)}" title="Historia, costumbres y curiosidades de ${esc(nombreCiudad(k))}" aria-label="Historia y curiosidades de ${esc(nombreCiudad(k))}">📜</button>`
+    : `<button class="hist-link" data-histc="${esc(k)}">📜 Historia, costumbres y curiosidades de ${esc(nombreCiudad(k))} ›</button>`) : '';
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-histc]'); if (!b) return; e.stopPropagation();
   const k = b.dataset.histc; histSub = 'ciudades'; histCap = null; abiertos['hcd:' + k] = true; ir('historia'); render();

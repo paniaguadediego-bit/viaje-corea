@@ -1563,5 +1563,8 @@ details.novamos-card .qv-cab b, details.novamos-card .sd-tit b { text-decoration
 /* v213: distintivos LP / LP24 en la fila de botones (entre 🌐 y 🏯), así el «más» no pisa el hangul */
 .sitios-dia details.sd > summary .sd-lp { display: inline-flex; gap: 2px; vertical-align: middle; margin: 0 0 4px 2px; }
 .sitios-dia details.sd > summary .sd-lp .lp-pill { margin-left: 2px; }
+/* v214: tarjeta del día más corta: «Ciudad 🌊 · Día X de Y» en una línea y 📜 arriba a la derecha */
+.dia-cab { position: relative; }
+.dia-cab .hist-ic { position: absolute !important; top: 8px !important; right: 8px !important; left: auto !important; margin: 0 !important; width: 38px !important; height: 38px; min-height: 38px !important; padding: 0 !important; border-radius: 50% !important; background: rgba(0,0,0,.28) !important; border: 1px solid rgba(255,255,255,.45) !important; font-size: 1.15rem; box-shadow: none; z-index: 2; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v213"; }
+:root { --css-ver: "v214"; }

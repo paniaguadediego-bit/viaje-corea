@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v213
+Caché del service worker: corea-v214
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -266,6 +266,7 @@ Caché del service worker: corea-v213
 - v211: los hoteles tienen su apartado en Planes (🛏️ Hotel, entre Comer y Miscelánea) con toda la información (fechas y noches, hangul, direcciones, nota, Naver/Google, Estoy en el hotel y estrellas). En Hoy, el hotel va escueto como las paradas: nombre, hangul, «Hoy dejáis»/«Esta noche», check-in/out y botones 🏯 (lleva a Planes → Hotel), 🧭 Naver, 🌐 Google y 📌 Estoy en el hotel. «Ver el hotel» del mapa también lleva a Planes → Hotel.
 - v212: en las paradas de Hoy (y en las cercanas con asterisco) el 🏯 de Planes pasa a la derecha, justo a la izquierda de la foto; a la izquierda quedan Visitado, 🧭 y 🌐.
 - v213: en las paradas de Hoy, los distintivos LP y LP24 suben a la fila de botones (entre 🌐 y 🏯), así el nombre y el hangul tienen sitio y el «▸ más» no se monta encima.
+- v214: tarjeta del día de Hoy más corta: una sola línea «Busan 🌊 · Día 10 de 18» (sin la fecha, que ya está en la tira de días) y el enlace a la historia de la ciudad pasa a ser un icono 📜 arriba a la derecha. En Planes sigue el botón largo.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
