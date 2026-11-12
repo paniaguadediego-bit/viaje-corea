@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v229';
+const VERSION = 'v230';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2825,10 +2825,44 @@ function viewVerificar() {
 // Más con rejilla de iconos, como la Guía de Corea: se toca un tema y sale debajo.
 let masSub = 'maleta';
 const MAS_SUB = [['maleta', 'Maleta', '🧳'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'],
-  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['resumen', 'Resumen del viaje', '🧾'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️']];
+  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['resumen', 'Resumen del viaje', '🧾'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️'], ['guiaapp', 'Guía de la app', '🛠️']];
+// ---------- 🛠️ Guía de la app: GUIA-APP.md (precacheado), también sin viaje; sirve para hacer otra app de otro país ----------
+let GUIA_MD = null;
+function cargaGuiaApp() { fetch('GUIA-APP.md').then(r => r.ok ? r.text() : Promise.reject()).then(t => { GUIA_MD = t; renderLuego(); }).catch(() => { GUIA_MD = ''; renderLuego(); }); }
+function mdHtml(md) {
+  const inl = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/`([^`]+)`/g, '<code>$1</code>');
+  const out = []; let lista = null, tabla = null, par = [];
+  const cierra = () => { if (par.length) { out.push(`<p>${inl(par.join(' '))}</p>`); par = []; }
+    if (lista) { out.push(`<${lista.t}>${lista.it.map(x => `<li>${x}</li>`).join('')}</${lista.t}>`); lista = null; }
+    if (tabla) { out.push(`<div class="ga-tabla"><table>${tabla.map((f, i) => `<tr>${f.map(c => i ? `<td>${inl(c)}</td>` : `<th>${inl(c)}</th>`).join('')}</tr>`).join('')}</table></div>`); tabla = null; } };
+  md.split('\n').forEach(l => {
+    let m;
+    if (!l.trim()) return cierra();
+    if ((m = l.match(/^(#{1,3}) (.+)/))) { cierra(); const n = m[1].length + 1; out.push(`<h${n}>${inl(m[2])}</h${n}>`); return; }
+    if (/^\|/.test(l)) { if (par.length || lista) cierra(); if (/^\|[-| ]+\|$/.test(l)) return; (tabla = tabla || []).push(l.replace(/^\||\|$/g, '').split('|').map(x => x.trim())); return; }
+    if ((m = l.match(/^> (.*)/))) { cierra(); out.push(`<blockquote>${inl(m[1])}</blockquote>`); return; }
+    if ((m = l.match(/^(\s*)(?:- |(\d+)\. )(.+)/))) { if (par.length) cierra(); const t = m[2] ? 'ol' : 'ul';
+      if (m[1].length && lista) { lista.it[lista.it.length - 1] += `<ul><li>${inl(m[3])}</li></ul>`; return; }
+      if (!lista || lista.t !== t) { cierra(); lista = { t, it: [] }; } lista.it.push(inl(m[3])); return; }
+    if (lista && /^\s{2,}\S/.test(l)) { lista.it[lista.it.length - 1] += `<div>${inl(l.trim())}</div>`; return; }
+    par.push(l.trim());
+  });
+  cierra();
+  // Cada apartado (## del .md) plegable: en el móvil se abre solo el que interesa.
+  const [ini, ...secs] = out.join('').split('<h3>');
+  return ini + secs.map(x => { const i = x.indexOf('</h3>'); return `<details class="ga-sec"><summary>${x.slice(0, i)}</summary>${x.slice(i + 5)}</details>`; }).join('');
+}
+function viewGuiaApp() {
+  if (GUIA_MD === null) { cargaGuiaApp(); return '<h2>🛠️ Guía de la app</h2><p class="muted">Cargando…</p>'; }
+  if (!GUIA_MD) return '<h2>🛠️ Guía de la app</h2><div class="card">No se ha podido abrir GUIA-APP.md. Abre la app una vez con conexión para guardarla.</div>';
+  return `<div class="card guia-app">${mdHtml(GUIA_MD)}</div>
+    <div class="acciones"><button data-guiaapp="copiar">📋 Copiar</button><button class="sec" data-guiaapp="md">⬇️ Descargar .md</button></div>`;
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-guiaapp]'); if (!b || !GUIA_MD) return;
+  if (b.dataset.guiaapp === 'copiar') copiar(GUIA_MD); else compartirArchivo('GUIA-APP.md', GUIA_MD, 'text/markdown'); });
 function viewMas() {
   const pend = trip ? pendientesVerificar().reduce((a, [, ls]) => a + ls.filter(x => !verificado(x.key)).length, 0) : 0;
-  const subs = trip ? MAS_SUB : MAS_SUB.filter(([k]) => k === 'datos');
+  const subs = trip ? MAS_SUB : MAS_SUB.filter(([k]) => k === 'datos' || k === 'guiaapp');
   if (!subs.some(([k]) => k === masSub)) masSub = subs[0][0];
   const rej = `<div class="guia-rej">${subs.map(([k, t, ic]) => `<button class="guia-t ${k === masSub ? 'on' : ''}" data-ms="${k}"><span>${ic}</span>${t}${k === 'verificar' && pend ? `<small>${pend}</small>` : ''}</button>`).join('')}</div>`;
   let c = '';
@@ -2839,6 +2873,7 @@ function viewMas() {
   else if (masSub === 'escala') c = viewEscala();
   else if (masSub === 'regalos') c = viewRegalos();
   else if (masSub === 'resumen') c = viewResumen();
+  else if (masSub === 'guiaapp') c = viewGuiaApp();
   else if (masSub === 'notas') c = `<h2>📝 Notas</h2><textarea data-notas rows="10" placeholder="Escribe aquí… (se guarda solo)">${esc(u().notas)}</textarea>${diarioResumen()}`;
   else c = `<h2>Datos del viaje</h2>
     <button data-act="import">📂 Importar viaje</button>
