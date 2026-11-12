@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v222';
+const VERSION = 'v223';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1455,13 +1455,16 @@ function abrirAyuda() {
 // Ciudades: 5 botones; al tocar uno se despliega su ficha debajo. Por defecto, la ciudad del día.
 // Qué ver (antes Explorar y Ciudades): por ciudad, Puntos de interés y Planes. El mapa de cada ciudad va en la pestaña Mapas.
 let ciudadSel = null, historiaAbierta = false, exSub = 'puntos';
-const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['hotel', '🛏️ Hotel'], ['planes', '🧩 Miscelánea']];
+// Desde v223, lo que era Miscelánea se desgrana al mismo nivel: 7 apartados (los de Miscelánea solo si la ciudad tiene algo).
+const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['hotel', '🛏️ Hotel'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
+const CATS_MISC = new Set(['curioso', 'servicio', 'lol', 'ropa']);
 // Mapas: el mapa de cada ciudad (itinerario, más sitios, Comer, Planes y hotel). Al tocar un icono, su ficha enlaza con Qué ver o Comer.
 function viewMapas() {
   const botones = botonesCiudad(); if (!botones) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
   return `<h2>🗺️ Mapas</h2>${botones}<div class="mapas-ciudad" style="${varsTema(ciudadSel)}">${mapaCiudadHTML(ciudadSel)}</div>`;
 }
 function viewCiudades() {
+  if (exSub === 'planes') exSub = planesCat || 'curioso';
   if (!EX_SUBS.some(([x]) => x === exSub)) exSub = 'puntos';
   const uniq = ciudadesUnicas();
   if (!uniq.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
@@ -1480,9 +1483,10 @@ function viewCiudades() {
       ${t.lema ? `<div class="ciudad-lema">${esc(t.lema)}</div>` : ''}
       <div class="ciudad-fechas">${fechas}</div>${linkHist(k)}
     </div>
-    <div class="row daynav exsubs">${EX_SUBS.filter(([x]) => x !== 'historia' || h).map(([x, tt]) => `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}">${tt}</button>`).join('')}</div>
-    ${exSub === 'comer' ? '' : muchoOjo(k, 'planes')}${exSub === 'puntos' ? rutasLP24(k) : ''}
-    ${exSub === 'planes' ? planesDe(k) : ''}${exSub === 'hotel' ? hotelesDe(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
+    ${muchoOjo(k, 'planes')}
+    <div class="exsubs7">${EX_SUBS.filter(([x]) => !CATS_MISC.has(x) || (typeof PLANES !== 'undefined' && PLANES.some(p => p.ciudad === k && p.cat === x)) || (x === 'lol' && PC_BUSQ[k])).map(([x, tt]) => { const [ic, ...r] = tt.split(' '); return `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>
+    ${exSub === 'puntos' ? rutasLP24(k) : ''}
+    ${CATS_MISC.has(exSub) ? planesDe(k, exSub) : ''}${exSub === 'hotel' ? hotelesDe(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
     ${exSub !== 'puntos' ? '</div>' : ''}${exSub === 'puntos' ? `
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
       ${INTRO_LP[k].plan ? `<details data-key="lp:${k}" ${abierto("lp:" + k, false) ? "open" : ""}><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
@@ -2369,7 +2373,8 @@ function worldsCard() {
     <div class="muted">Dónde verlo en grupo: T1 Base Camp (Hongdae, Gangnam y Busan, 24 h) y LoL Park en Seúl. Final: el T1 Base Camp de Busan está a unos 300 m del hotel.</div></details>`;
 }
 const icPlan = p => p.ic || ({ lol: '🎮', servicio: '🧺', curioso: '✨', ropa: '👕' })[p.cat] || '🔹';
-function planesDe(k) {
+function planesDe(k, cat) {
+  planesCat = cat;
   const P = typeof PLANES !== 'undefined' ? PLANES : [];
   if (!P.some(p => p.ciudad === k) && !PC_BUSQ[k]) return `<p class="muted">No hay planes guardados en esta ciudad.</p>`;
   // Sitios del catálogo e itinerario con coordenadas, para "cerca de".
@@ -2396,8 +2401,7 @@ function planesDe(k) {
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
   return `<p class="muted">Horarios de webs (nov 2026): compruébalos antes de ir.</p>
-    ${(() => { const cats = PCATS.filter(([c]) => P.some(p => p.ciudad === k && p.cat === c) || (c === 'lol' && PC_BUSQ[k])); if (!cats.some(([c]) => c === planesCat)) planesCat = (cats[0] || [])[0];
-      return `<div class="row daynav pcats">${cats.map(([c, t]) => { const [ic, ...r] = t.split(' '); return `<button class="${c === planesCat ? '' : 'sec'}" data-pcat="${c}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>` + (planesCat === 'lol' ? worldsCard() + pcBusca(k) + PCBANG : '') + grupo(planesCat, ''); })()}`;
+    ${(cat === 'lol' ? worldsCard() + pcBusca(k) + PCBANG : '') + grupo(cat, '')}`;
 }
 
 // ---------- Seguro ----------
@@ -3035,7 +3039,7 @@ function render() {
     `<button data-tab="${id}" class="${tab === id || (id === 'mas' && EN_MAS.some(m => m[0] === tab)) ? 'on' : ''}"><span>${ic}</span>${label}</button>`).join('');
 
   if (tab === 'checklist') { masSub = 'maleta'; tab = 'mas'; }
-  if (tab === 'planes') { exSub = 'planes'; tab = 'ciudades'; } // Planes vive dentro de Qué ver desde v102
+  if (tab === 'planes') { exSub = planesCat || 'curioso'; tab = 'ciudades'; } // Planes vive dentro de Qué ver desde v102
   if (['seguro', 'verificar'].includes(tab)) { masSub = tab; tab = 'mas'; }
   // Comer vive dentro de Planes (botón 🍜 Comer de cada ciudad) desde v161.
   if (tab === 'comer') { if (comerCiudad && comerCiudad !== 'todas') ciudadSel = comerCiudad; exSub = 'comer'; tab = 'ciudades'; }
@@ -3209,7 +3213,7 @@ document.addEventListener('click', e => {
   if (irc) {
     if (irc.hasAttribute('data-irhotel')) { if (irc.dataset.irhotel) ciudadSel = irc.dataset.irhotel; exSub = 'hotel'; ir('ciudades'); }
     else if (irc.dataset.ircomer != null) { if (irc.dataset.ircomer) comerCiudad = irc.dataset.ircomer; comerTipo = 'todos'; comerEstado = 'todos'; qCom = irc.dataset.q || ''; if (irc.dataset.ircomer) ciudadSel = irc.dataset.ircomer; exSub = 'comer'; ir('ciudades'); }
-    else { if (irc.dataset.irplan) ciudadSel = irc.dataset.irplan; exSub = 'planes'; if (irc.dataset.cat) planesCat = irc.dataset.cat; ir('ciudades'); }
+    else { if (irc.dataset.irplan) ciudadSel = irc.dataset.irplan; exSub = irc.dataset.cat || planesCat || 'curioso'; if (irc.dataset.cat) planesCat = irc.dataset.cat; ir('ciudades'); }
     render(); window.scrollTo(0, 0); return;
   }
   const qc = e.target.closest('[data-qclear],[data-bcity]');

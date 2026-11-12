@@ -1597,5 +1597,16 @@ details.ci-sec > p { position: relative; z-index: 1; }
 .pcats { display: grid !important; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; }
 .pcats button { width: 100%; height: 54px; min-height: 54px !important; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 4px 2px !important; font-size: .74rem !important; line-height: 1.15; }
 .pcats .hs-i { font-size: 1.15rem; line-height: 1; }
+/* v223: pestaña activa de la barra inferior bien marcada; 7 apartados de cada ciudad al mismo nivel; «Mucho ojo» con tinte amarillo */
+nav#tabs button { position: relative; opacity: .72; }
+nav#tabs button.on { opacity: 1; color: var(--acc) !important; font-weight: 800 !important; }
+nav#tabs button.on span { background: var(--acc) !important; border-radius: 12px; padding: 3px 12px; box-shadow: 0 2px 8px color-mix(in srgb, var(--acc) 45%, transparent); }
+nav#tabs button.on::before { content: ""; position: absolute; top: 0; left: 18%; right: 18%; height: 3px; border-radius: 0 0 3px 3px; background: var(--acc); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) nav#tabs button.on { color: var(--acc2) !important; } }
+:root[data-theme="dark"] nav#tabs button.on { color: var(--acc2) !important; }
+.exsubs7 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin: 8px 8px 6px; }
+.exsubs7 button { width: 100%; height: 54px; min-height: 54px !important; margin: 0 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 4px 2px !important; font-size: .72rem !important; line-height: 1.12; white-space: normal; text-align: center; }
+.exsubs7 .hs-i { font-size: 1.15rem; line-height: 1; }
+.ciudad .ojo-card { margin: 8px; background: color-mix(in srgb, #f2c94c 16%, var(--card)) !important; border: 1px solid color-mix(in srgb, #d4a017 45%, var(--line)) !important; border-left: 4px solid #d4a017 !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v222"; }
+:root { --css-ver: "v223"; }

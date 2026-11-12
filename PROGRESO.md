@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v222
+Caché del service worker: corea-v223
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -275,6 +275,7 @@ Caché del service worker: corea-v222
 - v220: en «Primero, el traslado», botón «🛣️ <estación de llegada> → <hotel> en Naver» (ruta en transporte público; si Naver no abre, Google Maps), dentro del paso que va al hotel y también a la vista con los pasos plegados. Los puntos de llegada van en el trip.json privado (traslados[].llegada): Myeong-dong (bus 6015), estación de Andong, Gyeongju Station, Busan Station, Terminal Exprés de Jeonju (coordenadas a VERIFICAR) y Yongsan.
 - v221: Miscelánea: los cuatro botones del mismo tamaño (icono arriba y texto debajo, como en Historia). LoL pasa a llamarse 🖥️ PC: sigue con LoL Park, T1 HQ Shop y los consejos de PC bang, y en Seúl y Busan suma «PC방 cerca del hotel» con botones de Naver (명동, 회현역, 충무로; 해운대역, 해운대, 광안리). No se encontraron cibercafés concretos con datos fiables, así que no se inventan: se buscan en Naver y, con captura, se añaden.
 - v222: el calendario del Mundial de LoL 2026 ya no sale arriba de toda Miscelánea: solo al tocar 🖥️ PC, encima de «Cibercafés (PC방) cerca del hotel».
+- v223: (1) barra inferior: la pestaña activa con su icono sobre una pastilla del color de la pestaña, rayita arriba y texto en negrita; las demás algo atenuadas. (2) Planes: «⚠️ Mucho ojo con…» justo debajo del recuadro de la ciudad, en su ventana con tinte amarillo. (3) Miscelánea desaparece como botón: sus apartados (Curioso, Lavandería, PC, Ropa) quedan al nivel de Puntos de interés, Comer y Hotel (hasta 7 botones). (4) Nuevos: Busan → Curioso: Samjin Eomuk (tienda madre en Yeongdo) y ssiat hotteok de BIFF Square; Ropa: Shinsegae Centum City, galería subterránea de Seomyeon y Gwangbok-ro. Jeonju → Curioso: Gilgeoriya (baguette burger) y casa de té Gyodong Dawon; Ropa: Gaeksa-gil. Coordenadas aproximadas; horarios y precios con VERIFICAR.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
