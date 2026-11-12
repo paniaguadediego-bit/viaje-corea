@@ -1617,4 +1617,4 @@ nav#tabs button.on::before { content: ""; position: absolute; top: 0; left: 18%;
 .guia-rej { display: flex !important; flex-wrap: wrap; justify-content: center; }
 .guia-rej > .guia-t { flex: 0 0 calc(25% - 5px); }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v226"; }
+:root { --css-ver: "v227"; }

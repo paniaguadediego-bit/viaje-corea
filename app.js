@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v226';
+const VERSION = 'v227';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1456,7 +1456,7 @@ function abrirAyuda() {
 // Qué ver (antes Explorar y Ciudades): por ciudad, Puntos de interés y Planes. El mapa de cada ciudad va en la pestaña Mapas.
 let ciudadSel = null, historiaAbierta = false, exSub = 'puntos';
 // Desde v223, lo que era Miscelánea se desgrana al mismo nivel: 7 apartados (los de Miscelánea solo si la ciudad tiene algo).
-const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['hotel', '🛏️ Hotel'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
+const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['platos', '🥢 Platos típicos'], ['hotel', '🛏️ Hotel'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
 const CATS_MISC = new Set(['curioso', 'servicio', 'lol', 'ropa']);
 // Mapas: el mapa de cada ciudad (itinerario, más sitios, Comer, Planes y hotel). Al tocar un icono, su ficha enlaza con Qué ver o Comer.
 function viewMapas() {
@@ -1484,9 +1484,9 @@ function viewCiudades() {
       <div class="ciudad-fechas">${fechas}</div>${linkHist(k)}
     </div>
     ${muchoOjo(k, 'planes')}
-    <div class="exsubs7">${EX_SUBS.filter(([x]) => !CATS_MISC.has(x) || (typeof PLANES !== 'undefined' && PLANES.some(p => p.ciudad === k && p.cat === x)) || (x === 'lol' && PC_BUSQ[k])).map(([x, tt]) => { const [ic, ...r] = tt.split(' '); return `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>
+    <div class="exsubs7">${EX_SUBS.filter(([x]) => x === 'platos' ? platosDe(k, true) : !CATS_MISC.has(x) || (typeof PLANES !== 'undefined' && PLANES.some(p => p.ciudad === k && p.cat === x)) || (x === 'lol' && PC_BUSQ[k])).map(([x, tt]) => { const [ic, ...r] = tt.split(' '); return `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>
     ${exSub === 'puntos' ? rutasLP24(k) : ''}
-    ${CATS_MISC.has(exSub) ? planesDe(k, exSub) : ''}${exSub === 'hotel' ? hotelesDe(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
+    ${CATS_MISC.has(exSub) ? planesDe(k, exSub) : ''}${exSub === 'platos' ? platosDe(k) : ''}${exSub === 'hotel' ? hotelesDe(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
     ${exSub !== 'puntos' ? '</div>' : ''}${exSub === 'puntos' ? `
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
       ${INTRO_LP[k].plan ? `<details data-key="lp:${k}" ${abierto("lp:" + k, false) ? "open" : ""}><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
@@ -2551,12 +2551,20 @@ function naverTop(k) {
     <p class="muted">Desde aquí no se pueden leer las notas de Naver. Toca una zona y mirad la ★ y el número de reseñas de cada sitio: los de más de 4,75 con miles de reseñas suelen ser apuesta segura. Si os gusta uno, mandadme la captura y lo añado.</p>
     <div class="acciones">${qs.map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 ${esc(q)}</a>`).join('')}</div></details>`;
 }
+// 🥢 Platos típicos de la ciudad (Planes): las fichas de Comer que son platos, no locales, y los «Sabores» de la lectura de la ciudad.
+function platosDe(k, hay = false) {
+  const ps = lugaresComer().filter(l => l.ciudad === k && l.tipo === 'plato');
+  const sab = typeof CIUDAD_INFO !== 'undefined' && arr(CIUDAD_INFO[k]).find(([ic]) => ic === '🍜');
+  if (hay) return ps.length > 0 || !!sab;
+  return `${sab ? `<div class="card guia-txt platos-ciudad"><b>🥢 Qué probar en ${esc(nombreCiudad(k))}</b>${sab[2].map(p => `<p>${resaltar(p, true)}</p>`).join('')}</div>` : ''}
+    ${ps.length ? `<div class="qv-grupo">📌 Dónde probarlos</div>${ps.map(cardComer).join('')}` : ''}`;
+}
 function viewComer(dentro = false) {
   if (comerCiudad === null) {
     const k = ck(ciudadActual());
     comerCiudad = CIUDADES_COMER.some(c => c[0] === k) ? k : 'todas';
   }
-  const base = lugaresComer().filter(l => (comerCiudad === 'todas' || l.ciudad === comerCiudad) && (comerTipo === 'todos' || l.tipo === comerTipo));
+  const base = lugaresComer().filter(l => (comerCiudad === 'todas' || l.ciudad === comerCiudad) && (comerTipo === 'todos' || l.tipo === comerTipo) && !(dentro && l.tipo === 'plato'));
   const est = l => estadoDe(String(l.id)).estado || '';
   const n = v => base.filter(l => est(l) === v).length;
   let lista = base.filter(l => comerEstado === 'todos' ? true : comerEstado === 'cerca' ? distKm(l) <= 1.2 : comerEstado === 'pendiente' ? !est(l) : est(l) === comerEstado);

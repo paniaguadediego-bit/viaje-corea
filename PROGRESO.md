@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v226
+Caché del service worker: corea-v227
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -279,6 +279,7 @@ Caché del service worker: corea-v226
 - v224: los botones de cada ciudad en Planes, centrados (la segunda fila, si no se llena, queda en el centro).
 - v225: si un sitio tiene un «⚠️ Mucho ojo con» asociado (por id de Comer o por hangul), lleva un ⚠️ pequeño en superíndice junto al nombre en Planes, Comer, los apartados de Miscelánea y las paradas de Hoy (p. ej. Aldea Gamcheon, Mercado Jagalchi, Haedong Yonggungsa).
 - v226: rejillas de iconos de Corea (Guía y sus bloques) y de Más centradas: si una fila no se llena, sus botones quedan en el centro.
+- v227: nuevo apartado «🥢 Platos típicos» en cada ciudad de Planes, a la derecha de Comer: «Qué probar en <ciudad>» (los Sabores de la lectura de la ciudad) y, debajo, «Dónde probarlos» con las fichas de comer.json de tipo plato (Platos de Busan a probar, BIFF Square, jjimdak y caballa de Andong, pan de 10 wones y de Hwangnam…), que salen de Comer porque no son locales.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
