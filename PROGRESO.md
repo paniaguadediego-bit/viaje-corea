@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v231
+Caché del service worker: corea-v232
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -284,6 +284,7 @@ Caché del service worker: corea-v231
 - v229: itinerario eficiente, por zonas. Los ＊ ya no van en el hueco de menor desvío de todo el día (el 13 metía Yongdusan y los museos de Nampo entre el hotel y Gamcheon, y luego se volvía a Nampo), sino pegados a la parada del plan (o al hotel) que tienen más cerca, antes o después según lo que menos desvíe. Cotejado con el itinerario original: el 13 ya iba Gamcheon → Songdo → Nampo; el 16 (Jeonju) pasa a Jaman → Gyeonggijeon → mercado Nambu (en el trip.json privado). Los sitios nuevos de la LP24 de Busan llevan «buscar» propio: Eulsukdo se colaba en el día 12 por la palabra «isla».
 - v230: Más → 🛠️ Guía de la app (también sin trip.json): muestra GUIA-APP.md (precacheado en sw.js) con un lector de markdown propio (mdHtml), apartados plegables, 📋 Copiar y ⬇️ Descargar .md. GUIA-APP.md explica cada pestaña, cómo está hecha (archivos, del país o genéricos, datos, versiones, reglas) y el paso a paso para hacer otra app para otro país, con un encargo para Claude listo para pegar. [Supuesto] Un solo archivo (GUIA-APP.md) en vez de varios: la misma fuente para el repositorio y para la app; README.md enlaza a él.
 - v231: «Primero, el traslado» de Hoy es una sola ficha (trasladoHoy): plegada y centrada, con lo esencial (ciudad → ciudad, horas grandes, tren y asientos, y €✓ = comprado en vez de «comprado (tren)»); al tocar en cualquier parte se abre todo: clase y precio, nota, pasos (sin su desplegable), frase en coreano, hotel de llegada y, abajo, 🛣️ estación → hotel en Naver. En Ruta sigue trasladoCard. Quitado «E-ticket con QR…» de las notas del trip.json privado. Arreglado: los estilos de v230 (Guía de la app) no se habían añadido porque el marcador del final de styles.css es «/* Versión de esta hoja (igual…».
+- v232: en los tramos de Hoy, la flecha ▸/▾ de plegar va al final de la fila de opciones (🚶 🚇 🚕 🚌) en vez de ocupar una fila propia.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
