@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v239';
+const VERSION = 'v240';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2601,6 +2601,7 @@ function platosDe(k, hay = false) {
     ${ps.length ? `<div class="qv-grupo">📌 Dónde probarlos</div>${ps.map(cardComer).join('')}` : ''}`;
 }
 function viewComer(dentro = false) {
+  if (dentro && comerTipo === 'plato') comerTipo = 'todos'; // los platos tienen su pestaña (🥢 Platos típicos)
   if (comerCiudad === null) {
     const k = ck(ciudadActual());
     comerCiudad = CIUDADES_COMER.some(c => c[0] === k) ? k : 'todas';
@@ -2613,13 +2614,13 @@ function viewComer(dentro = false) {
   const chip = (attr, v, t, on) => `<button class="chip ${on ? 'on' : ''}" ${attr}="${esc(v)}">${esc(t)}</button>`;
   const opt = (v, t, on) => `<option value="${esc(v)}" ${on ? 'selected' : ''}>${esc(t)}</option>`;
   const enC = l => comerCiudad === 'todas' || l.ciudad === comerCiudad;
-  const tipos = TIPOS.slice(1).map(t => [t, lugaresComer().filter(l => enC(l) && l.tipo === t).length]).filter(([t, nt]) => nt || comerTipo === t);
+  const tipos = TIPOS.slice(1).filter(t => !(dentro && t === 'plato')).map(t => [t, lugaresComer().filter(l => enC(l) && l.tipo === t).length]).filter(([t, nt]) => nt || comerTipo === t);
   const chipN = (attr, v, t, nn, on, tit) => `<button class="chip ${on ? 'on' : ''}" ${attr}="${esc(v)}" title="${esc(tit)}">${esc(t)} <small>${nn}</small></button>`;
   const ordIc = { rec: '🏅', nota: '👥', dist: '📏', val: '★' };
   const ord = { rec: '🏅 Recomendado', nota: '👥 Mejor valorados', dist: '📏 Más cerca del hotel', val: '★ Mi valoración' }, sigOrd = { rec: 'nota', nota: 'dist', dist: 'val', val: 'rec' };
   return buscadorHTML('qcm', qCom, 'Buscar sitio para comer (nombre, plato…)', resComer(qCom)) + (dentro ? '' : `<div class="cc-row">${[['todas', 'Todas', '🌏'], ...CIUDADES_COMER.map(([k, t]) => [k, t, tema(k).ic])].map(([k, t, ic]) =>
       `<button class="cbtn ${comerCiudad === k ? 'on' : ''}" ${k !== 'todas' ? `style="${varsTema(k)}"` : ''} data-cc="${k}"><span>${ic}</span>${esc(t)}</button>`).join('')}</div>`) + `
-    <div class="chips qv-fila">${chipN('data-ct', 'todos', 'Todo', lugaresComer().filter(enC).length, comerTipo === 'todos', 'Todo')}${tipos.map(([t, nt]) => chipN('data-ct', t, IC_COMER[t] || t, nt, comerTipo === t, t[0].toUpperCase() + t.slice(1))).join('')}</div>
+    <div class="chips qv-fila">${chipN('data-ct', 'todos', 'Todo', lugaresComer().filter(l => enC(l) && !(dentro && l.tipo === 'plato')).length, comerTipo === 'todos', 'Todo')}${tipos.map(([t, nt]) => chipN('data-ct', t, IC_COMER[t] || t, nt, comerTipo === t, t[0].toUpperCase() + t.slice(1))).join('')}</div>
     <div class="chips qv-fila"><button class="chip qv-ord" data-co="${sigOrd[comerOrden] || 'rec'}" title="Orden: ${esc(ord[comerOrden] || ord.rec)} (tocar para cambiar)">⇅${(ordIc[comerOrden] || ordIc.rec)}</button><span class="qv-sep"></span>${chipN('data-ce', 'cerca', '📏', base.filter(l => distKm(l) <= 1.2).length, comerEstado === 'cerca', 'Cerca del hotel (≤1,2 km)')}${chipN('data-ce', 'quiero', '🔖', n('quiero'), comerEstado === 'quiero', 'Quiero ir')}${chipN('data-ce', 'visitado', '✅', n('visitado'), comerEstado === 'visitado', 'Visitados')}${chipN('data-ce', 'pendiente', '☐', base.filter(l => !est(l)).length, comerEstado === 'pendiente', 'Sin marcar')}</div>
     <p class="muted mini-nota c2-leyenda">⇅ ${esc(ord[comerOrden] || ord.rec)} · ${lista.length} lugares</p>
     ${muchoOjo(comerCiudad)}${naverTop(comerCiudad)}

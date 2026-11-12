@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v239
+Caché del service worker: corea-v240
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -292,6 +292,7 @@ Caché del service worker: corea-v239
 - v237: en las fichas de Comer, los 4 estados (Quiero, Visitado, Descartado, Cerrado) van en su propia fila, un cuarto cada uno, y Enseñar, Naver y Google debajo: con la letra grande del móvil (Android e iPhone) «Descartado» se salía del botón. Revisado con una prueba automática (pantalla de 360 px y letra al 118 %) que busca textos que se salen de botones, chips y pestañas en todas las vistas: no queda ninguno más.
 - v238: «Enseñar» deja de ser un botón grande: ahora es el icono redondo 한 arriba a la derecha de las fichas de Comer, Hotel (Planes → Hotel; nueva clave h:<id> en showFull) y Curioso, PC, Ropa y Lavandería, y solo sale si hay hangul. Abre la pantalla completa de siempre. La lista de Idioma → Enseñar no cambia. Icono nuevo en la lista de iconos: 한 = enseñar en coreano.
 - v239: en las paradas de Hoy, el indicador de plegar es una pastilla visible abajo a la derecha (▾ más / ▴ menos, con el color de la pestaña) en vez del «▸ más» pequeño y gris.
+- v240: en Planes → Comer se quita el filtro 🥢 (tipo plato): esas fichas ya están en 🥢 Platos típicos y el filtro dejaba la lista vacía. «Todo» ya no las cuenta y, si el filtro guardado era «plato», vuelve a «Todo».
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
