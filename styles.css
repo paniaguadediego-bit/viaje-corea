@@ -1695,5 +1695,10 @@ nav#tabs button.on span { color: #fff !important; }
 .prob-ns.on { background: var(--muted) !important; color: #fff; border-color: var(--muted); }
 .prob.ok .prob-t b { text-decoration: none; }
 .prob.ok { opacity: 1; background: color-mix(in srgb, var(--ok) 8%, var(--card)) !important; }
+/* v244: documentos y billetes con ✓ «ya usado» */
+.doc-fig { position: relative; }
+.doc-ck { position: absolute; top: 6px; left: 6px; z-index: 2; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+.doc-fig.usado { opacity: .55; }
+.doc-usados { margin-top: 12px; } .doc-usados > summary { cursor: pointer; font-weight: 700; color: var(--muted); text-align: center; padding: 6px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v243"; }
+:root { --css-ver: "v244"; }

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v243';
+const VERSION = 'v244';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -259,12 +259,20 @@ async function anadirFotos(files) {
   }
   await cargarFotos(); render();
 }
+// ✓ Ya usado: cada documento o billete se puede marcar (user.docUsado[id], solo en este móvil, como las fotos); los usados van plegados al final.
 function viewFotos() {
+  const U = u().docUsado || {}, fig = f => `<figure class="card doc-fig ${U[f.id] ? 'usado' : ''}" data-foto="${esc(f.id)}"><button class="hd-ck doc-ck ${U[f.id] ? 'on' : ''}" data-docuso="${esc(f.id)}" title="${U[f.id] ? 'Usado (tocar para quitar)' : 'Marcar como ya usado'}" aria-label="Ya usado">${U[f.id] ? '✓' : ''}</button>${esPdfData(f.data) ? '<div class="pdf-ic">📄<small>PDF</small></div>' : `<img src="${f.data}" alt="">`}
+      <figcaption>${esc(f.nombre)}</figcaption></figure>`;
+  const pend = fotos.filter(f => !U[f.id]), usados = fotos.filter(f => U[f.id]);
   return `<h2>Documentos y billetes</h2>
-    <div class="fotos">${fotos.map(f => `<figure class="card" data-foto="${esc(f.id)}">${esPdfData(f.data) ? '<div class="pdf-ic">📄<small>PDF</small></div>' : `<img src="${f.data}" alt="">`}
-      <figcaption>${esc(f.nombre)}</figcaption></figure>`).join('')}</div>
-    <button class="sec" data-act="foto">📎 Añadir foto o PDF</button>`;
+    ${fotos.length ? '<p class="muted centro">Marca ☐ cuando ya lo hayáis usado: pasa a «Ya usados», abajo y plegado.</p>' : ''}
+    <div class="fotos">${pend.map(fig).join('')}</div>
+    ${pend.length || !usados.length ? '' : '<p class="muted centro">Todo usado 🎉</p>'}
+    <button class="sec" data-act="foto">📎 Añadir foto o PDF</button>
+    ${usados.length ? `<details class="doc-usados" data-key="docus" ${abierto('docus', false) ? 'open' : ''}><summary>✓ Ya usados · ${usados.length}</summary><div class="fotos">${usados.map(fig).join('')}</div></details>` : ''}`;
 }
+document.addEventListener('click', e => { const b = e.target.closest('[data-docuso]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+  const U = u(); U.docUsado = U.docUsado || {}; const id = b.dataset.docuso; if (U.docUsado[id]) delete U.docUsado[id]; else U.docUsado[id] = 1; saveUser(); render(); }, true);
 const esPdfData = d => /^data:application\/pdf/.test(String(d || ''));
 // Abre un PDF guardado con el visor del móvil (funciona sin conexión).
 function abrirPdf(f) {
