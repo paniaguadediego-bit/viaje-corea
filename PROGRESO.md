@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v225
+Caché del service worker: corea-v226
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -278,6 +278,7 @@ Caché del service worker: corea-v225
 - v223: (1) barra inferior: la pestaña activa con su icono sobre una pastilla del color de la pestaña, rayita arriba y texto en negrita; las demás algo atenuadas. (2) Planes: «⚠️ Mucho ojo con…» justo debajo del recuadro de la ciudad, en su ventana con tinte amarillo. (3) Miscelánea desaparece como botón: sus apartados (Curioso, Lavandería, PC, Ropa) quedan al nivel de Puntos de interés, Comer y Hotel (hasta 7 botones). (4) Nuevos: Busan → Curioso: Samjin Eomuk (tienda madre en Yeongdo) y ssiat hotteok de BIFF Square; Ropa: Shinsegae Centum City, galería subterránea de Seomyeon y Gwangbok-ro. Jeonju → Curioso: Gilgeoriya (baguette burger) y casa de té Gyodong Dawon; Ropa: Gaeksa-gil. Coordenadas aproximadas; horarios y precios con VERIFICAR.
 - v224: los botones de cada ciudad en Planes, centrados (la segunda fila, si no se llena, queda en el centro).
 - v225: si un sitio tiene un «⚠️ Mucho ojo con» asociado (por id de Comer o por hangul), lleva un ⚠️ pequeño en superíndice junto al nombre en Planes, Comer, los apartados de Miscelánea y las paradas de Hoy (p. ej. Aldea Gamcheon, Mercado Jagalchi, Haedong Yonggungsa).
+- v226: rejillas de iconos de Corea (Guía y sus bloques) y de Más centradas: si una fila no se llena, sus botones quedan en el centro.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
