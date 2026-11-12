@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v233
+Caché del service worker: corea-v234
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -286,6 +286,7 @@ Caché del service worker: corea-v233
 - v231: «Primero, el traslado» de Hoy es una sola ficha (trasladoHoy): plegada y centrada, con lo esencial (ciudad → ciudad, horas grandes, tren y asientos, y €✓ = comprado en vez de «comprado (tren)»); al tocar en cualquier parte se abre todo: clase y precio, nota, pasos (sin su desplegable), frase en coreano, hotel de llegada y, abajo, 🛣️ estación → hotel en Naver. En Ruta sigue trasladoCard. Quitado «E-ticket con QR…» de las notas del trip.json privado. Arreglado: los estilos de v230 (Guía de la app) no se habían añadido porque el marcador del final de styles.css es «/* Versión de esta hoja (igual…».
 - v232: en los tramos de Hoy, la flecha ▸/▾ de plegar va al final de la fila de opciones (🚶 🚇 🚕 🚌) en vez de ocupar una fila propia.
 - v233: añadida la cafetería Dongbaek 104 Rooftop Café (동백104, Busan, junto al Sky Capsule; recomendada por el usuario, 4,7 ★ con 171 reseñas en Google). Coordenadas aproximadas por la dirección (Dalmaji-gil 104beon-gil); horario VERIFICAR.
+- v234: ARREGLO URGENTE. La v233 subió styles.css y sw.js vacíos (el script de cambio de versión abría el archivo para escribir antes de leerlo), y la app se veía sin estilos. Restaurados desde la v232. [Lección] Antes de cada commit, comprobar que ningún archivo del repositorio queda vacío.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
