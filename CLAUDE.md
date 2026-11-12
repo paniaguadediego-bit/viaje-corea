@@ -54,7 +54,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
    Naver y botón a su sección: Planes, Comer, Miscelánea u Hoy → Hotel). Solo iconos, sin nombres; los que se pisan (<28 px) se separan solos con un hilo y un puntito a su sitio real. Mapa propio sin librerías: puntos offline; calles de OpenStreetMap solo con conexión
    (el service worker guarda las teselas vistas en 'corea-mapa'; "Preparar para viajar" baja
    ~1.000 teselas de zoom 12-16 alrededor de los sitios del viaje; nunca zoom 17+ ni ciudades enteras).
-   Desde v218 metidos en el itinerario (autoConSug/sugsDia; listaDiaBase = sin ellos) en el hueco de menor desvío, numerados como el resto, con ＊ y filo dorado, en tramos y mapa; ✕ los quita de ese día (A.del) y «Volver al itinerario» los recupera; un mismo sitio solo entra en un día; "💡 Cerca y no lo tenéis":
+   Desde v218 metidos en el itinerario (autoConSug/sugsDia; listaDiaBase = sin ellos), desde v229 junto a la parada (u hotel) más cercana, antes o después según el menor desvío (agrupar por zonas, sin ir y volver), numerados como el resto, con ＊ y filo dorado, en tramos y mapa; ✕ los quita de ese día (A.del) y «Volver al itinerario» los recupera; un mismo sitio solo entra en un día; "💡 Cerca y no lo tenéis":
    hasta 4 sitios recomendados que no están en ningún día y quedan a
    ≤900 m de la ruta, con "+" para añadirlos a ese día; también en el mapa del día con asterisco y la
    parada tras la que encajan ("2*" = entre la 2 y la 3; "H*" = tras el hotel). Extras

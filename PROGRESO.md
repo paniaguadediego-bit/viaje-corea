@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v228
+Caché del service worker: corea-v229
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -281,6 +281,7 @@ Caché del service worker: corea-v228
 - v226: rejillas de iconos de Corea (Guía y sus bloques) y de Más centradas: si una fila no se llena, sus botones quedan en el centro.
 - v227: nuevo apartado «🥢 Platos típicos» en cada ciudad de Planes, a la derecha de Comer: «Qué probar en <ciudad>» (los Sabores de la lectura de la ciudad) y, debajo, «Dónde probarlos» con las fichas de comer.json de tipo plato (Platos de Busan a probar, BIFF Square, jjimdak y caballa de Andong, pan de 10 wones y de Hwangnam…), que salen de Comer porque no son locales.
 - v228: Platos típicos: lo que no tiene ubicación en coords.json (p. ej. «Platos de Busan a probar») ya no es ficha: va como línea 🍽️ dentro de «Qué probar en <ciudad>»; en «Dónde probarlos» solo sitios reales. Busan con la Lonely Planet 2024 (pp. 154-164): recuadro rosa LP24 (LP24_INDISP con t, manda sobre la LP 2016) en 26 sitios (Beomeo-sa, Taejongdae, teleférico de Songdo, Gamcheon, Jagalchi, Yongdusan, Blueline, Haedong Yonggungsa, Geumgang, Igidae, Gwangalli con los fuegos artificiales de noviembre, bus turístico y Busan Pass…); sitios nuevos en CATALOGO (teleférico de Songdo con alias «air cruise», Songjeong, Museo del Cine, Oryukdo Skywalk, Eulsukdo, Dadaepo, Busan Cinema Center, cafés de Jeonpo y Oncheoncheon); 21 restaurantes y bares nuevos en comer.json (fuente lonely24, hangul null y ubicación aproximada: VERIFICAR) y el callejón del dwaeji gukbap de Seomyeon en Platos típicos; Dolgorae, Sulbing, Noran Mahura y Gukje con lp24 y horario de 2024.
+- v229: itinerario eficiente, por zonas. Los ＊ ya no van en el hueco de menor desvío de todo el día (el 13 metía Yongdusan y los museos de Nampo entre el hotel y Gamcheon, y luego se volvía a Nampo), sino pegados a la parada del plan (o al hotel) que tienen más cerca, antes o después según lo que menos desvíe. Cotejado con el itinerario original: el 13 ya iba Gamcheon → Songdo → Nampo; el 16 (Jeonju) pasa a Jaman → Gyeonggijeon → mercado Nambu (en el trip.json privado). Los sitios nuevos de la LP24 de Busan llevan «buscar» propio: Eulsukdo se colaba en el día 12 por la palabra «isla».
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

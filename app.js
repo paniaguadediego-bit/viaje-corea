@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v228';
+const VERSION = 'v229';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -890,11 +890,15 @@ function sugerenciasDe(d, ruta, hot) {
   return sitiosCiudadObj(k).filter(l => !enAlgun.has(hKey(l)) && coordsLugar(l)).map(l => {
     const c = coordsLugar(l), ds = ruta.filter(x => coordsLugar(x)).map(x => [x, km(coordsLugar(x), c)]).sort((a, b) => a[1] - b[1]);
     if (!ds.length || ds[0][1] > 0.9) return null;
+    // Desde v229 va pegado a la parada (o al hotel) que tiene más cerca, antes o después según lo que menos desvíe:
+    // así se agrupa por zonas y no se va y se vuelve (antes, el hueco de menor desvío podía estar en la otra punta del día).
+    let jc = 0; paradas.forEach((q, j) => { if (km(q.c, c) < km(paradas[jc].c, c)) jc = j; });
+    const segs = [jc, jc + 1].filter(j => j >= 1 && j < paradas.length);
     let mejor = null;
-    for (let j = 1; j < paradas.length; j++) { const dv = km(paradas[j - 1].c, c) + km(c, paradas[j].c) - km(paradas[j - 1].c, paradas[j].c);
-      if (!mejor || dv < mejor.dv) mejor = { dv, tras: paradas[j - 1], antes: paradas[j] }; }
+    segs.forEach(j => { const dv = km(paradas[j - 1].c, c) + km(c, paradas[j].c) - km(paradas[j - 1].c, paradas[j].c);
+      if (!mejor || dv < mejor.dv) mejor = { dv, tras: paradas[j - 1], antes: paradas[j] }; });
     const ult = paradas[paradas.length - 1], alFinal = km(ult.c, c);
-    if (!mejor || alFinal < mejor.dv) mejor = { dv: alFinal, tras: ult, antes: null };
+    if (jc === paradas.length - 1 && (!mejor || alFinal < mejor.dv)) mejor = { dv: alFinal, tras: ult, antes: null };
     return { l, c, dm: ds[0][1], junto: ds[0][0], peso: (imp.has(hKey(l)) ? 2 : 0) + (l.top ? 1 : 0), ...mejor,
       etq: (mejor.tras.n === 0 ? 'H' : mejor.tras.n) + '*' };
   }).filter(Boolean).sort((a, b) => b.peso - a.peso || a.dm - b.dm).slice(0, 4);
