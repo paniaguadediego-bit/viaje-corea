@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v247
+Caché del service worker: corea-v248
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -300,6 +300,7 @@ Caché del service worker: corea-v247
 - v245: arreglo: las fotos de 🥢 Probados no salían porque pintarFotos() solo se llamaba en Hoy, Planes, Corea e Historia; ahora también en Más. «Preparar para viajar» descarga también las fotos de los platos.
 - v246: Escala Pekín: «💱 Yuan ↔ euro» (cambio del BCE vía frankfurter, que ya pedía KRW y ahora también CNY; se guarda para offline; tabla de 10 a 500 ¥ y aviso de pagar en yuanes) y «🆘 Si algo sale mal» plegable: 110 policía, 120 ambulancia, 119 bomberos; emergencia consular +86 139 1146 1886, Consulado General (+86 10 6532 0780, 9 Sanlitun Dongsijie, para pasaporte perdido) y Embajada (+86 10 6532 3629, Sanlitun Lu 9), según exteriores.gob.es; teléfono del seguro del trip.json; qué hacer si se pierde la conexión, si hay que dormir en Pekín (VERIFICAR) o si no llega la maleta. Si el cambio de wones está fijado a mano, ya no se pisa al pedir el del yuan.
 - v247: el 🔊 de los recuadros LP24 y de Probados es más pequeño (30 px); en la pantalla completa de Enseñar, el botón «🔊 Escuchar» se veía negro sobre oscuro con el tema oscuro (ahora azul sobre claro siempre) y la pronunciación larga se corta en líneas en vez de salirse de la pantalla.
+- v248: en Hoy, el desplegable del hotel plegado dice solo «🛏️ Hotel» (o «🛏️ Hoteles» los días de cambio), en una fila; los nombres salen al abrirlo.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

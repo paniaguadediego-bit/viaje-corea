@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v247';
+const VERSION = 'v248';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -667,10 +667,9 @@ function viewHoy() {
   ];
   // Sin botones (no se usaban): Sitios siempre a la vista; Hotel y Diario, plegados al final.
   const [tras, sit, hotl] = [secs[0][2], secs[0][3], secs[1][2]], hk = 'hot:' + d.fecha, dk = 'dia:' + d.fecha, cambia = al.sale && al.noche && al.sale !== al.noche;
-  const nomH = cambia ? `dejáis ${al.sale.nombre} · dormís en ${al.noche.nombre}` : (al.noche || al.sale || {}).nombre;
   // Orden: traslado, hotel (justo encima del mapa de la Ruta del día), sitios y diario. Sin títulos repetidos dentro.
   const hU = al.noche || al.sale;
-  return html + antesSalir(d.fecha, tr, al) + tras + rutasLP24(ck(d.ciudad), d) + (hotl ? `<details class="card plg hotel-pl" data-key="${hk}" ${abierto(hk, false) ? 'open' : ''}><summary>🛏️ <b>${cambia ? 'Hotel' : esc(hU.nombre)}</b>${cambia ? ` · ${esc(nomH)}` : ' ' + ver(hU)}</summary>${hotl}</details>` : '') + sit
+  return html + antesSalir(d.fecha, tr, al) + tras + rutasLP24(ck(d.ciudad), d) + (hotl ? `<details class="card plg hotel-pl" data-key="${hk}" ${abierto(hk, false) ? 'open' : ''}><summary>🛏️ <b>${cambia ? 'Hoteles' : 'Hotel'}</b>${cambia ? '' : ' ' + ver(hU)}</summary>${hotl}</details>` : '') + sit
     + `<details class="card plg diario-pl" data-key="${dk}" ${abierto(dk, false) ? 'open' : ''}><summary>${diarioDe(d.fecha).cara || '📔'} <b>¿Qué tal el día?</b>${diarioDe(d.fecha).nota ? ' · ✍️' : ''}</summary>${diarioCard(d, true)}</details>`;
 }
 
