@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v261';
+const VERSION = 'v262';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -627,6 +627,14 @@ function esquemaDia(d) {
     ${largo && ast ? '<p class="muted es-ley">* Horario por verificar</p>' : ''}
     ${hay || ast ? `<button class="es-mas" data-esmas="${key}">${largo ? 'Leer menos ▴' : 'Leer más ▾'}</button>` : ''}`;
 }
+// Carrusel de Hoy: la primera foto es una principal al azar; el resto (principales y extras), barajado. Se guarda por día mientras la app está abierta.
+const CARR_ORDEN = {};
+function barajaDia(f, princ, extra) {
+  const k = f + '|' + princ.length + '|' + extra.length; if (CARR_ORDEN[f] && CARR_ORDEN[f].k === k) return CARR_ORDEN[f].v;
+  const mez = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const p = mez(princ), v = p.length ? [p[0], ...mez([...p.slice(1), ...extra])] : [];
+  CARR_ORDEN[f] = { k, v }; return v;
+}
 function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   let html = `<div class="hoy-top"><button class="sos" data-act="ayuda">🆘 Ayuda</button></div>` + ahora() + pendingAlert();
@@ -652,12 +660,15 @@ function viewHoy() {
     return `<button class="dchip ${i === dayIdx ? 'on' : ''} ${x.fecha === hoy ? 'hoy' : ''} ${enViaje && x.fecha < hoy ? 'pasado' : ''}" data-dsel="${i}" style="${varsTema(ck(x.ciudad))}"><small>${f.toLocaleDateString('es-ES', { weekday: 'short' })}</small><b>${f.getDate()}</b><span>${tema(ck(x.ciudad)).ic}</span>${diarioDe(x.fecha).cara ? `<i class="dchip-cara">${diarioDe(x.fecha).cara}</i>` : ''}</button>`; }).join('')}</div>
   ${(() => { const ls = listaDia(d), tc = tema(ck(d.ciudad));
     // Fotos del carrusel: una por sitio del itinerario que tenga artículo (o hangul), con su nombre como título.
-    const fs = []; ls.forEach(l => { const w = l.sinFoto ? '' : (wikiDe(l) || (l.ko ? 'ko:' + String(l.ko).replace(/\s+/g, '') : '')); if (w && !fs.some(x => x.w === w)) fs.push({ w, n: `${icSitio((l.tipo || '') + ' ' + l.es)} ${l.es}` }); });
+    // v262: además de la principal, hasta 2 fotos más de cada artículo (mm:); orden aleatorio, el mismo mientras la app siga abierta.
+    const fs0 = [], extra = []; ls.forEach(l => { const w = l.sinFoto ? '' : (wikiDe(l) || (l.ko ? 'ko:' + String(l.ko).replace(/\s+/g, '') : '')); if (!w || fs0.some(x => x.w === w)) return;
+      const n = `${icSitio((l.tipo || '') + ' ' + l.es)} ${l.es}`, base = w.startsWith('ko:') ? 'ko:' + w.slice(3) : 'en:' + w; fs0.push({ w, n }); [1, 2].forEach(i => extra.push({ w: 'mm:' + base + ':' + i, n })); });
+    const fs = barajaDia(d.fecha, fs0, extra);
     return `<div class="card dia dia2" style="${varsTema(ck(d.ciudad))}">
     <div class="dia-cab">${(() => { const ko = (arr(trip.ciudades).find(c => ck(c.nombre) === ck(d.ciudad)) || {}).ko; return ko ? `<div class="ciudad-ko">${esc(ko)}</div>` : ''; })()}<div class="dia-sup"><span class="ds-1">${esc(d.ciudad)} ${tc.ic} · Día ${dayIdx + 1} de ${dias.length}${d.fecha === hoy ? ' · <b>HOY</b>' : ''}</span></div>
       <div class="dia-tit">${esc(d.titulo)}</div>${(t => t ? `<div class="dia-clima">${t}</div>` : '')(chipTiempo(d) + horasTiempo(d))}${linkHist(ck(d.ciudad), true)}</div>
     ${fs.length ? `<div class="dia-banner"><div class="foto dia-foto" data-wiki="${esc(fs[0].w)}" data-wikis="${esc(fs.map(x => x.w).join('|'))}" data-noms="${esc(fs.map(x => x.n).join('|'))}"><span></span></div>
-      <div class="dia-cap">${esc(fs[0].n)}</div>${fs.length > 1 ? `<button class="carr carr-l" data-carr="-1" aria-label="Foto anterior">‹</button><button class="carr carr-r" data-carr="1" aria-label="Foto siguiente">›</button><div class="dia-puntos">${fs.map((x, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>` : ''}</div>` : ''}`; })()}
+      <div class="dia-cap">${esc(fs[0].n)}</div>${fs.length > 1 ? `<button class="carr carr-l" data-carr="-1" aria-label="Foto anterior">‹</button><button class="carr carr-r" data-carr="1" aria-label="Foto siguiente">›</button><div class="dia-puntos" ${fs.length > 12 ? 'hidden' : ''}>${fs.map((x, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>` : ''}</div>` : ''}`; })()}
     ${esquemaDia(d)}
   </div>`;
 
@@ -958,7 +969,7 @@ function sitiosDia(d) {
     if (c) { prev = c; prevN = l.ko || l.es; }
     const n = num[h];
     // Ficha plegable: se pliega sola al marcarla como visitada (y la foto, a la derecha, arriba).
-    const key = 'sd:' + d.fecha + '|' + h, ab = abierto(key, !hecho(l, k));
+    const key = 'sd:' + d.fecha + '|' + h, ab = abierto(key, false); // v262: plegadas por defecto
     return `${t}${extra ? encaje(l) : ''}<details class="sd ${sgK.has(h) ? 'sd-cerca' : ''} ${hecho(l, k) ? 'hecho-card' : noVamos(l) ? 'novamos-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}<span class="sd-qv">${irQV(l, k, true)}</span>${btnHecho(l, k)}${irMapas(l)}<span class="sd-lp">${lpPill(l)}</span><br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${sgK.has(h) ? '<span class="sug-etq" title="Cercano añadido">＊</span>' : ''}${icSitio(l.es)} ${esc(l.es)}${ojoSup(l)}</b> <span class="ko-s">${esc(l.ko || '')}</span>${extra || sgK.has(h) ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
       <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${lp24(l)}</div></details>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}`;
   };
@@ -1336,6 +1347,14 @@ function fotoWiki(t) {
 async function fotoWiki0(t) {
   if (FOTOS[t] !== undefined) return FOTOS[t];
   let titulo = t; try { titulo = decodeURIComponent(t); } catch {} // algunos nombres venían ya codificados (%27…)
+  if (titulo.startsWith('mm:')) { // n-ésima foto del artículo (para el carrusel): mm:<idioma>:<título>:<n>
+    const r = titulo.slice(3), lang = r.slice(0, 2), n = Number(r.slice(r.lastIndexOf(':') + 1)), tt = r.slice(3, r.lastIndexOf(':'));
+    try { const m = await fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/media-list/` + encodeURIComponent(tt.replace(/ /g, '_')));
+      if (!m.ok) { FOTOS[t] = null; return null; }
+      const its = arr((await m.json()).items).filter(x => x.type === 'image' && !/\.svg$|map|locator|flag|logo|icon|plan|지도|위치/i.test(x.title || '') && arr(x.srcset).length);
+      const it = its[n]; const f = it ? { src: (it.srcset[0].src.startsWith('//') ? 'https:' : '') + it.srcset[0].src, url: `https://${lang}.wikipedia.org/wiki/` + encodeURIComponent(tt) } : null;
+      FOTOS[t] = f; try { save('corea.fotos', FOTOS); } catch {} return f; } catch { return undefined; }
+  }
   try {
     let f = titulo.startsWith('ko:') ? null : await resumenWiki('en', titulo);
     const ko = titulo.startsWith('ko:') ? titulo.slice(3) : koDeWiki(t);
@@ -2533,6 +2552,14 @@ function ciudadActual() {
 // Recuerda qué desplegables están abiertos entre redibujados.
 const abiertos = {};
 const abierto = (k, def) => (k in abiertos ? abiertos[k] : def);
+// v262: con una parada de Hoy abierta, tocar su contenido (no un botón, enlace o foto) la vuelve a plegar.
+document.addEventListener('click', e => {
+  const dt = e.target.closest('details.sd[open]'); if (!dt || e.target.closest('summary')) return;
+  if (e.target.closest('button, a, input, textarea, select, label, .foto, img, audio, video')) return;
+  if (e.target.closest('details') !== dt) return; // dentro de un desplegable interior: no
+  if (window.getSelection && String(window.getSelection())) return; // seleccionando texto
+  dt.open = false;
+});
 document.addEventListener('toggle', e => { const k = e.target.dataset && e.target.dataset.key; if (k) abiertos[k] = e.target.open; }, true);
 
 // ---------- "Hecho / visitado": una sola marca por sitio para toda la app ----------
