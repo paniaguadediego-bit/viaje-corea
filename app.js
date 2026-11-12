@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v240';
+const VERSION = 'v241';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2688,7 +2688,7 @@ function cardComer0(l) {
     </div>
     <div class="c2-acc">
       ${ESTADOS.map(([k, t]) => `<button class="c2-est ${e.estado === k ? 'on' : ''} e-${k}" data-est="${esc(id)}" data-v="${k}" title="${t}">${{ quiero: '🔖', visitado: '✅', descartado: '👎', cerrado: '🚫' }[k]}<small>${t}</small></button>`).join('')}
-      ${q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢</a>${googleMaps((l.ko || l.nombre || '') + ' ' + ciudad, 'G')}` : ''}
+      ${q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 Naver</a>${googleMaps((l.ko || l.nombre || '') + ' ' + ciudad)}` : ''}
     </div>
     <details class="c2-mas" data-key="cm:${esc(id)}" ${abierto('cm:' + id, false) ? 'open' : ''}><summary>Más detalles${e.nota ? ' · 📝' : ''}${Number(e.val) ? ' · ' + '★'.repeat(Number(e.val)) : ''}</summary>
       ${l.direccion ? `<div class="muted">🏠 ${esc(l.direccion)}</div>` : ''}

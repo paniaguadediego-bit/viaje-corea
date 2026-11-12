@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v240
+Caché del service worker: corea-v241
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -293,6 +293,7 @@ Caché del service worker: corea-v240
 - v238: «Enseñar» deja de ser un botón grande: ahora es el icono redondo 한 arriba a la derecha de las fichas de Comer, Hotel (Planes → Hotel; nueva clave h:<id> en showFull) y Curioso, PC, Ropa y Lavandería, y solo sale si hay hangul. Abre la pantalla completa de siempre. La lista de Idioma → Enseñar no cambia. Icono nuevo en la lista de iconos: 한 = enseñar en coreano.
 - v239: en las paradas de Hoy, el indicador de plegar es una pastilla visible abajo a la derecha (▾ más / ▴ menos, con el color de la pestaña) en vez del «▸ más» pequeño y gris.
 - v240: en Planes → Comer se quita el filtro 🥢 (tipo plato): esas fichas ya están en 🥢 Platos típicos y el filtro dejaba la lista vacía. «Todo» ya no las cuenta y, si el filtro guardado era «plato», vuelve a «Todo».
+- v241: los iconos de Naver y Google llevan su nombre: en Comer «🟢 Naver» y «🌐 Google» (antes 🟢 y «G»), y en las paradas de Hoy y el hotel de Hoy el 🧭 y el 🌐 tienen «Naver» y «Google» en pequeño debajo.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
