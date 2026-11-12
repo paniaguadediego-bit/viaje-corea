@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v241
+Caché del service worker: corea-v242
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -294,6 +294,7 @@ Caché del service worker: corea-v241
 - v239: en las paradas de Hoy, el indicador de plegar es una pastilla visible abajo a la derecha (▾ más / ▴ menos, con el color de la pestaña) en vez del «▸ más» pequeño y gris.
 - v240: en Planes → Comer se quita el filtro 🥢 (tipo plato): esas fichas ya están en 🥢 Platos típicos y el filtro dejaba la lista vacía. «Todo» ya no las cuenta y, si el filtro guardado era «plato», vuelve a «Todo».
 - v241: los iconos de Naver y Google llevan su nombre: en Comer «🟢 Naver» y «🌐 Google» (antes 🟢 y «G»), y en las paradas de Hoy y el hotel de Hoy el 🧭 y el 🌐 tienen «Naver» y «Google» en pequeño debajo.
+- v242: Más → 🥢 Probados: 67 comidas y bebidas típicas (PROBAR en contenido.js) en grupos plegables (Imprescindibles de Corea, De la calle y de la tienda 24 h, Bebidas, y lo típico de Seúl, Andong, Gyeongju, Busan y Jeonju), con hangul, 🔊, una línea y casilla; barra de progreso; se abre el grupo de la ciudad de hoy. La marca (user.probados[hangul]) se comparte con Planes → 🥢 Platos típicos, donde sale la lista de esa ciudad al final, va al pasar marcas y al Resumen (texto, Word y PDF: «🥢 Lo que probamos»). [Supuesto] Recuadro en Más (como Regalos) y no en Corea → Comida, porque es una lista personal para marcar. Arreglado también: el ☰ de la pestaña Más activa no se veía.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

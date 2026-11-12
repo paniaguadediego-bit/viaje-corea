@@ -1125,3 +1125,83 @@ const MUCHO_OJO = [
     fuentes: [['Kyunghyang (2025)', 'https://www.khan.co.kr/article/202511021823001'], ['Polle', 'https://polle.com/reah1004/posts/238']] }
 ];
 
+
+// 🥢 Probados (Más): comidas y bebidas típicas para marcar si las habéis probado (user.probados[hangul]).
+// [grupo, icono, clave de ciudad o '', [[nombre, hangul, una línea]]]. Hangul de uso corriente; la marca se comparte con Planes → 🥢 Platos típicos.
+const PROBAR = [
+  ['Imprescindibles de Corea', '🇰🇷', '', [
+    ['Kimchi', '김치', 'Col fermentada picante: sale en casi todas las comidas.'],
+    ['Bibimbap', '비빔밥', 'Arroz con verduras, huevo y salsa picante para mezclar.'],
+    ['Bulgogi', '불고기', 'Ternera marinada en láminas a la parrilla.'],
+    ['Samgyeopsal', '삼겹살', 'Panceta a la parrilla en la mesa, envuelta en lechuga.'],
+    ['Galbi', '갈비', 'Costillas marinadas a la parrilla.'],
+    ['Pollo frito coreano', '치킨', 'Crujiente, con salsa dulce y picante; con cerveza es el «chimaek».'],
+    ['Kimchi jjigae', '김치찌개', 'Guiso de kimchi con cerdo y tofu.'],
+    ['Doenjang jjigae', '된장찌개', 'Guiso de pasta de soja fermentada.'],
+    ['Sundubu jjigae', '순두부찌개', 'Guiso picante de tofu sedoso.'],
+    ['Samgyetang', '삼계탕', 'Pollito entero en sopa con ginseng y arroz.'],
+    ['Naengmyeon', '냉면', 'Fideos fríos de alforfón en caldo helado.'],
+    ['Kalguksu', '칼국수', 'Fideos cortados a cuchillo en caldo.'],
+    ['Japchae', '잡채', 'Fideos de boniato salteados con verduras.'],
+    ['Jajangmyeon', '짜장면', 'Fideos con salsa negra de soja (coreano-chino).'],
+    ['Budae jjigae', '부대찌개', '«Guiso del ejército» con salchichas y Spam.'],
+    ['Haemul pajeon', '해물파전', 'Tortita de cebolleta y marisco.'],
+    ['Mandu', '만두', 'Empanadillas al vapor o fritas.'],
+    ['Bossam', '보쌈', 'Cerdo hervido para envolver con kimchi.'],
+    ['Jokbal', '족발', 'Manitas de cerdo cocidas en soja, en lonchas.'],
+    ['Dakgalbi', '닭갈비', 'Pollo picante salteado en plancha grande.'],
+    ['Hoe', '회', 'Pescado crudo en lonchas, al estilo coreano.']]],
+  ['De la calle y de la tienda 24 h', '🍢', '', [
+    ['Tteokbokki', '떡볶이', 'Pasteles de arroz en salsa roja picante.'],
+    ['Gimbap', '김밥', 'Rollo de arroz y alga con relleno.'],
+    ['Eomuk', '어묵', 'Pasta de pescado en brocheta, con su caldo.'],
+    ['Sundae', '순대', 'Morcilla coreana de fideos de boniato.'],
+    ['Hotteok', '호떡', 'Tortita frita rellena de azúcar moreno.'],
+    ['Bungeoppang', '붕어빵', 'Pez de masa relleno de alubia roja.'],
+    ['Gyeran-ppang', '계란빵', 'Bollito con un huevo entero dentro.'],
+    ['Dalgona', '달고나', 'Caramelo de azúcar y bicarbonato con un dibujo.'],
+    ['Bingsu', '빙수', 'Hielo raspado con fruta, leche o alubia roja.'],
+    ['Ramyeon de tienda', '라면', 'Fideos instantáneos hechos en la máquina de la tienda.'],
+    ['Samgak gimbap', '삼각김밥', 'Triángulo de arroz y alga de las tiendas 24 h.']]],
+  ['Bebidas', '🍶', '', [
+    ['Soju', '소주', 'El aguardiente nacional, en botellita verde.'],
+    ['Makgeolli', '막걸리', 'Vino de arroz turbio y suave.'],
+    ['Somaek', '소맥', 'Soju mezclado con cerveza.'],
+    ['Sikhye', '식혜', 'Bebida dulce de arroz fermentado, fría.'],
+    ['Yuja-cha', '유자차', 'Té de cítrico yuzu con miel, caliente.'],
+    ['Omija-cha', '오미자차', 'Té de la «baya de los cinco sabores».'],
+    ['Sujeonggwa', '수정과', 'Ponche frío de canela y jengibre.'],
+    ['Leche de plátano', '바나나우유', 'La de botellita panzuda amarilla de las tiendas.']]],
+  ['Seúl', '🏙️', 'seul', [
+    ['Bindaetteok', '빈대떡', 'Tortita de soja molida del mercado Gwangjang.'],
+    ['Mayak gimbap', '마약김밥', 'Minigimbap «adictivo» de Gwangjang.'],
+    ['Yukhoe', '육회', 'Ternera cruda aliñada (Gwangjang).'],
+    ['Seolleongtang', '설렁탕', 'Sopa blanca de huesos de ternera, muy de Seúl.'],
+    ['Dakhanmari', '닭한마리', 'Pollo entero cocido en la mesa (Dongdaemun).']]],
+  ['Andong', '🎭', 'andong', [
+    ['Andong jjimdak', '안동찜닭', 'Pollo guisado en soja con fideos de cristal.'],
+    ['Ganjogoe', '간고등어', 'Caballa salada a la parrilla.'],
+    ['Heotjesatbap', '헛제삿밥', 'Bibimbap de la «falsa comida de ofrenda».'],
+    ['Andong soju', '안동소주', 'Soju destilado tradicional, fuerte.'],
+    ['Sikhye de Andong', '안동식혜', 'El de Andong: rojo, con guindilla y rábano.']]],
+  ['Gyeongju', '👑', 'gyeongju', [
+    ['Hwangnam-ppang', '황남빵', 'Pastelito de alubia roja, el recuerdo de Gyeongju.'],
+    ['Pan de 10 wones', '십원빵', 'Gofre con forma de moneda relleno de queso.'],
+    ['Chalbori-ppang', '찰보리빵', 'Tortitas de cebada rellenas de alubia roja.'],
+    ['Ssambap', '쌈밥', 'Arroz con muchas verduras para envolver (zona de los túmulos).'],
+    ['Gyodong beopju', '교동법주', 'Licor de arroz de la familia Choi de Gyochon.']]],
+  ['Busan', '🌊', 'busan', [
+    ['Dwaeji gukbap', '돼지국밥', 'Sopa de cerdo con arroz, el plato estrella.'],
+    ['Milmyeon', '밀면', 'Fideos fríos de trigo de los refugiados.'],
+    ['Ssiat hotteok', '씨앗호떡', 'Hotteok relleno de pipas (BIFF Square).'],
+    ['Nakgopsae', '낙곱새', 'Pulpo, tripa y gambas en guiso picante.'],
+    ['Bibim dangmyeon', '비빔당면', 'Fideos de cristal aliñados del mercado Gukje.'],
+    ['Gomjangeo', '곰장어', 'Anguila babosa a la parrilla.'],
+    ['Bokguk', '복국', 'Sopa de pez globo, muy de Haeundae.']]],
+  ['Jeonju', '🍚', 'jeonju', [
+    ['Bibimbap de Jeonju', '전주비빔밥', 'El bibimbap de su cuna.'],
+    ['Kongnamul gukbap', '콩나물국밥', 'Sopa de brotes de soja con arroz.'],
+    ['Moju', '모주', 'Makgeolli caliente con canela y jengibre.'],
+    ['Makgeolli del callejón', '막걸리골목', 'Tetera de makgeolli con la mesa llena de platillos, en sus callejones.'],
+    ['Choco Pie de PNB', '초코파이', 'El de la pastelería PNB, mucho más grande que el de tienda.']]]
+];

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v241';
+const VERSION = 'v242';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -329,7 +329,7 @@ async function compartirArchivo(nombre, texto, tipo) {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 // Marcas: lo que cada uno apunta en su móvil. Se pasan en un archivo y se UNEN (nunca se borra nada).
-const MARCAS = ['hecho', 'noVamos', 'estrellas', 'avisosOk', 'coordsFix', 'favs', 'diario', 'comer', 'agenda', 'hgLeidas', 'leidos', 'regalos', 'hdIni', 'hdLev', 'checklist'];
+const MARCAS = ['hecho', 'noVamos', 'probados', 'estrellas', 'avisosOk', 'coordsFix', 'favs', 'diario', 'comer', 'agenda', 'hgLeidas', 'leidos', 'regalos', 'hdIni', 'hdLev', 'checklist'];
 function exportMarcas() {
   const U = u(), m = {}; MARCAS.forEach(k => { if (U[k] != null) m[k] = U[k]; });
   compartirArchivo(`corea-marcas-${todayISO()}.json`, JSON.stringify({ tipo: 'corea-marcas', fecha: new Date().toISOString(), user: m }), 'application/json');
@@ -346,7 +346,7 @@ function fundirMarcas(o) {
     const nt = junta(m.nota, c.nota); if (nt) m.nota = nt; if (!m.op && c.op) m.op = c.op; if (JSON.stringify(m) !== antes) n.comer++; });
   U.agenda = U.agenda || {}; Object.entries(o.agenda || {}).forEach(([f, a]) => { const m = U.agenda[f] = U.agenda[f] || { add: [], del: [], orden: null };
     m.add = [...new Set([...arr(m.add), ...arr(a.add)])]; m.del = [...new Set([...arr(m.del), ...arr(a.del)])]; });
-  ['hgLeidas', 'leidos', 'hdIni', 'hdLev', 'noVamos'].forEach(k => { U[k] = U[k] || {}; Object.entries(o[k] || {}).forEach(([a, b]) => { if (b && !U[k][a]) U[k][a] = b; }); });
+  ['hgLeidas', 'leidos', 'hdIni', 'hdLev', 'noVamos', 'probados'].forEach(k => { U[k] = U[k] || {}; Object.entries(o[k] || {}).forEach(([a, b]) => { if (b && !U[k][a]) U[k][a] = b; }); });
   U.regalos = arr(U.regalos); arr(o.regalos).forEach(r => { const x = U.regalos.find(x => x.id === r.id); if (!x) { U.regalos.push(r); n.regalos++; } else x.ok = x.ok || r.ok; });
   U.estrellas = U.estrellas || {}; Object.entries(o.estrellas || {}).forEach(([k, x]) => { if (x && Number(x.v) > 0 && !U.estrellas[k]) { U.estrellas[k] = x; n.estrellas = (n.estrellas || 0) + 1; } });
   U.coordsFix = U.coordsFix || {}; Object.entries(o.coordsFix || {}).forEach(([a, b]) => { if (b && !U.coordsFix[a]) U.coordsFix[a] = b; });
@@ -402,6 +402,7 @@ function datosResumen() {
     return { ciudad: nombreCiudad(k), items }; }).filter(g => g.items.length);
   // ⭐ Imprescindibles: solo lo de 5 estrellas (sitios y Comer).
   D.top = [...D.planes.flatMap(g => g.items.filter(x => x.v === 5).map(x => ({ nombre: x.es, ciudad: g.ciudad }))), ...D.comidos.filter(c => c.val === 5).map(c => ({ nombre: '🍜 ' + c.nombre, ciudad: c.ciudad }))];
+  D.probados = probGrupos().map(([t, ic, k, xs]) => ({ t: ic + ' ' + t, xs: xs.filter(x => probado(x[1])).map(x => x[0]) })).filter(g => g.xs.length);
   D.consejos = CONSEJOS_RES;
   return D;
 }
@@ -420,6 +421,7 @@ function textoResumen() {
     D.comidos.forEach(c => L.push(`• ${c.ciudad} · ${c.nombre}${c.ko ? ` (${c.ko})` : ''}${c.plato ? ' — ' + c.plato : ''}${c.val ? ' ' + '★'.repeat(c.val) : ''}${c.nota ? ' · ' + c.nota : ''}`)); }
   if (D.top.length) { L.push('', '🌟 IMPRESCINDIBLES (5 ESTRELLAS)'); D.top.forEach(c => L.push(`• ${c.nombre} (${c.ciudad})`)); }
   if (D.planes.length) { L.push('', '✅ PLANES REALIZADOS'); D.planes.forEach(g => { L.push(g.ciudad.toUpperCase()); g.items.forEach((x, i) => L.push(`  ${i + 1}. ${x.es}${x.v ? ' ' + estrTxt(x.v) : ''}`)); }); }
+  if (D.probados.length) { L.push('', '🥢 LO QUE PROBAMOS'); D.probados.forEach(g => L.push(`• ${g.t}: ${g.xs.join(', ')}`)); }
   L.push('', '💡 CONSEJOS PRÁCTICOS', ...D.consejos.map(c => '• ' + c));
   return L.join('\n');
 }
@@ -2595,10 +2597,10 @@ function platosDe(k, hay = false) {
   const sitio = l => !!(COORDS_LUGARES[l.id] || (l.ko && COORDS_LUGARES[l.ko]));
   const ps = todos.filter(sitio), sueltos = todos.filter(l => !sitio(l));
   const sab = typeof CIUDAD_INFO !== 'undefined' && arr(CIUDAD_INFO[k]).find(([ic]) => ic === '🍜');
-  if (hay) return todos.length > 0 || !!sab;
+  if (hay) return todos.length > 0 || !!sab || probGrupos().some(g => g[2] === k);
   const lin = sueltos.map(l => `<p>🍽️ <b>${esc(l.plato || l.nombre)}</b>${l.nota ? ` — ${esc(l.nota)}` : ''}</p>`).join('');
   return `${sab || lin ? `<div class="card guia-txt platos-ciudad"><b>🥢 Qué probar en ${esc(nombreCiudad(k))}</b>${sab ? sab[2].map(p => `<p>${resaltar(p, true)}</p>`).join('') : ''}${lin}</div>` : ''}
-    ${ps.length ? `<div class="qv-grupo">📌 Dónde probarlos</div>${ps.map(cardComer).join('')}` : ''}`;
+    ${ps.length ? `<div class="qv-grupo">📌 Dónde probarlos</div>${ps.map(cardComer).join('')}` : ''}${probCiudad(k)}`;
 }
 function viewComer(dentro = false) {
   if (dentro && comerTipo === 'plato') comerTipo = 'todos'; // los platos tienen su pestaña (🥢 Platos típicos)
@@ -2858,7 +2860,7 @@ function viewVerificar() {
 // Más con rejilla de iconos, como la Guía de Corea: se toca un tema y sale debajo.
 let masSub = 'maleta';
 const MAS_SUB = [['maleta', 'Maleta', '🧳'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'],
-  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['resumen', 'Resumen del viaje', '🧾'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️'], ['guiaapp', 'Guía de la app', '🛠️']];
+  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['probados', 'Probados', '🥢'], ['resumen', 'Resumen del viaje', '🧾'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️'], ['guiaapp', 'Guía de la app', '🛠️']];
 // ---------- 🛠️ Guía de la app: GUIA-APP.md (precacheado), también sin viaje; sirve para hacer otra app de otro país ----------
 let GUIA_MD = null;
 function cargaGuiaApp() { fetch('GUIA-APP.md').then(r => r.ok ? r.text() : Promise.reject()).then(t => { GUIA_MD = t; renderLuego(); }).catch(() => { GUIA_MD = ''; renderLuego(); }); }
@@ -2893,6 +2895,26 @@ function viewGuiaApp() {
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-guiaapp]'); if (!b || !GUIA_MD) return;
   if (b.dataset.guiaapp === 'copiar') copiar(GUIA_MD); else compartirArchivo('GUIA-APP.md', GUIA_MD, 'text/markdown'); });
+// ---------- 🥢 Probados: comidas y bebidas típicas para marcar (user.probados[hangul]; también en Planes → Platos típicos) ----------
+const probado = ko => !!(u().probados || {})[ko];
+const probItem = ([es, ko, d]) => `<div class="card prob ${probado(ko) ? 'ok' : ''}"><button class="hd-ck ${probado(ko) ? 'on' : ''}" data-prob="${esc(ko)}" aria-label="Probado">${probado(ko) ? '✓' : ''}</button>
+  <div class="prob-t"><b>${esc(es)}</b> <span class="ko-s">${esc(ko)}</span>${btnHabla(ko)}<small>${esc(d)}</small></div></div>`;
+const probGrupos = () => typeof PROBAR !== 'undefined' ? PROBAR : [];
+function probCiudad(k) {
+  const g = probGrupos().find(x => x[2] === k); if (!g) return '';
+  const n = g[3].filter(x => probado(x[1])).length;
+  return `<div class="qv-grupo">🥢 ¿Lo habéis probado? · ${n} de ${g[3].length}</div>${g[3].map(probItem).join('')}`;
+}
+function viewProbados() {
+  const gs = probGrupos(), tot = gs.reduce((a, g) => a + g[3].length, 0), hechos = gs.reduce((a, g) => a + g[3].filter(x => probado(x[1])).length, 0);
+  const hoyK = trip && arr(trip.dias).find(d => d.fecha === todayISO()) ? ck(arr(trip.dias).find(d => d.fecha === todayISO()).ciudad) : '';
+  return `<h2>🥢 Probados</h2><p class="muted centro">${hechos} de ${tot} probados · marcad la casilla al probarlo (también en Planes → 🥢 Platos típicos de cada ciudad).</p>
+    <div class="prob-barra"><i style="width:${tot ? Math.round(hechos / tot * 100) : 0}%"></i></div>
+    ${gs.map(([t, ic, k, xs]) => { const n = xs.filter(x => probado(x[1])).length, key = 'prob:' + t;
+      return `<details class="card prob-g" data-key="${esc(key)}" ${abierto(key, k === hoyK || (!k && !hoyK && t === gs[0][0])) ? 'open' : ''}><summary>${ic} <b>${esc(t)}</b> <small class="muted">${n} de ${xs.length}</small></summary>${xs.map(probItem).join('')}</details>`; }).join('')}`;
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-prob]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+  const U = u(); U.probados = U.probados || {}; const k = b.dataset.prob; if (U.probados[k]) delete U.probados[k]; else U.probados[k] = 1; saveUser(); render(); }, true);
 function viewMas() {
   const pend = trip ? pendientesVerificar().reduce((a, [, ls]) => a + ls.filter(x => !verificado(x.key)).length, 0) : 0;
   const subs = trip ? MAS_SUB : MAS_SUB.filter(([k]) => k === 'datos' || k === 'guiaapp');
@@ -2906,6 +2928,7 @@ function viewMas() {
   else if (masSub === 'escala') c = viewEscala();
   else if (masSub === 'regalos') c = viewRegalos();
   else if (masSub === 'resumen') c = viewResumen();
+  else if (masSub === 'probados') c = viewProbados();
   else if (masSub === 'guiaapp') c = viewGuiaApp();
   else if (masSub === 'notas') c = `<h2>📝 Notas</h2><textarea data-notas rows="10" placeholder="Escribe aquí… (se guarda solo)">${esc(u().notas)}</textarea>${diarioResumen()}`;
   else c = `<h2>Datos del viaje</h2>

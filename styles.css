@@ -1674,5 +1674,16 @@ details.tras-dia.tras-hoy > summary::after { position: absolute; right: 2px; top
 .irmap[data-irmap]::after { font-size: .55rem; color: var(--muted); margin-top: 2px; font-weight: 600; }
 .irmap[data-irmap="naver"]::after { content: 'Naver'; }
 .irmap[data-irmap="google"]::after { content: 'Google'; }
+/* v242: 🥢 Probados */
+.prob { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; margin: 6px 0; }
+.prob .hd-ck { flex: none; }
+.prob-t { flex: 1; min-width: 0; }
+.prob-t small { display: block; color: var(--muted); font-size: .8rem; margin-top: 2px; }
+.prob.ok { opacity: .75; } .prob.ok .prob-t b { text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--ok) 70%, transparent); }
+.prob-g > summary { cursor: pointer; padding: 4px 0; }
+.prob-barra { height: 8px; border-radius: 99px; background: color-mix(in srgb, var(--muted) 20%, transparent); overflow: hidden; margin: 4px 0 10px; }
+.prob-barra i { display: block; height: 100%; background: var(--ok); }
+/* v242: el ☰ de Más (texto, no emoji) se veía del mismo color que la pastilla activa */
+nav#tabs button.on span { color: #fff !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v241"; }
+:root { --css-ver: "v242"; }
