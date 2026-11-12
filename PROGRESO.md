@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v235
+Caché del service worker: corea-v236
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -288,6 +288,7 @@ Caché del service worker: corea-v235
 - v233: añadida la cafetería Dongbaek 104 Rooftop Café (동백104, Busan, junto al Sky Capsule; recomendada por el usuario, 4,7 ★ con 171 reseñas en Google). Coordenadas aproximadas por la dirección (Dalmaji-gil 104beon-gil); horario VERIFICAR.
 - v234: ARREGLO URGENTE. La v233 subió styles.css y sw.js vacíos (el script de cambio de versión abría el archivo para escribir antes de leerlo), y la app se veía sin estilos. Restaurados desde la v232. [Lección] Antes de cada commit, comprobar que ningún archivo del repositorio queda vacío.
 - v235: el Mercado tradicional de Haeundae (해운대시장) pasa también a ser sitio del CATALOGO de Busan (con «buscar» y coordenadas), para que cuente como parada de la Ruta del día; en comer.json lleva el mismo hangul. Día 12 (trip.json privado): isla Dongbaekseom → playa de Haeundae → mercado → Gwangalli.
+- v236: añadido el restaurante Mindeulle Eondeok (민들레언덕, bibimbap vegano, Gunam-ro 21, Haeundae; 4,9 ★ con 208 reseñas en Google Maps), del usuario. Coordenadas aproximadas por la dirección.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

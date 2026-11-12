@@ -2570,5 +2570,25 @@
 "fuente": "Google",
 "fecha": "2026-11-13"
 }
+},
+{
+"id": "bs-mindeulle",
+"ciudad": "busan",
+"nombre": "Mindeulle Eondeok (bibimbap vegano)",
+"ko": "민들레언덕",
+"tipo": "restaurante",
+"plato": "bibimbap, también vegano",
+"direccion": "Gunam-ro 21, 경동리인뷰 2차 301동 117호, Haeundae-gu (cerca de la playa de Haeundae)",
+"horario": "Cierra a las 0:00 (Google Maps, 12/11); resto VERIFICAR",
+"precio": "10.000-20.000 ₩ por persona (Google)",
+"fuente": "propio",
+"url": null,
+"nota": "Restaurante coreano de bibimbap con opción vegana; según las reseñas, el bibimbap vegano es excelente y el personal muy amable. Accesible en silla de ruedas. Lo añadió el usuario desde Google Maps el 12/11.",
+"opiniones": {
+"v": 4.9,
+"n": 208,
+"fuente": "Google Maps",
+"fecha": "2026-11-12"
+}
 }
 ]
