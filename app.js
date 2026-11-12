@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v254';
+const VERSION = 'v255';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2597,6 +2597,10 @@ const NAVER_TOP = {
   busan: ['해운대해수욕장 맛집', '마린시티 맛집', '해운대 시장 맛집', '동백섬 카페', '광안리 맛집', '남포동 맛집', '자갈치 맛집'],
   jeonju: ['전주 한옥마을 맛집', '전주 남부시장 맛집', '전주 한옥마을 카페', '전주 빵집']
 };
+// 📍 Alrededor de donde estáis ahora: abre la app de Naver Map con la búsqueda hecha; la app busca en torno a vuestra posición.
+const AQUI_NAVER = [['🍽️', 'Comer', '맛집'], ['☕', 'Café', '카페'], ['🏪', 'Tienda 24 h', '편의점'], ['💊', 'Farmacia', '약국'], ['🧺', 'Lavandería', '코인세탁']];
+const aquiNaver = () => `<div class="card aqui-nv"><b>📍 Alrededor de donde estáis ahora</b> <small class="muted">· en la app de Naver Map, con la ubicación del móvil</small>
+  <div class="acciones">${AQUI_NAVER.map(([ic, t, q]) => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">${ic} ${t}</a>`).join('')}</div></div>`;
 function naverTop(k) {
   const qs = NAVER_TOP[k]; if (!qs) return '';
   const key = 'ntop:' + k;
@@ -2639,7 +2643,7 @@ function viewComer(dentro = false) {
     <div class="chips qv-fila">${chipN('data-ct', 'todos', 'Todo', lugaresComer().filter(l => enC(l) && !(dentro && l.tipo === 'plato')).length, comerTipo === 'todos', 'Todo')}${tipos.map(([t, nt]) => chipN('data-ct', t, IC_COMER[t] || t, nt, comerTipo === t, t[0].toUpperCase() + t.slice(1))).join('')}</div>
     <div class="chips qv-fila"><button class="chip qv-ord" data-co="${sigOrd[comerOrden] || 'rec'}" title="Orden: ${esc(ord[comerOrden] || ord.rec)} (tocar para cambiar)">⇅${(ordIc[comerOrden] || ordIc.rec)}</button><span class="qv-sep"></span>${chipN('data-ce', 'cerca', '📏', base.filter(l => distKm(l) <= 1.2).length, comerEstado === 'cerca', 'Cerca del hotel (≤1,2 km)')}${chipN('data-ce', 'quiero', '🔖', n('quiero'), comerEstado === 'quiero', 'Quiero ir')}${chipN('data-ce', 'visitado', '✅', n('visitado'), comerEstado === 'visitado', 'Visitados')}${chipN('data-ce', 'pendiente', '☐', base.filter(l => !est(l)).length, comerEstado === 'pendiente', 'Sin marcar')}</div>
     <p class="muted mini-nota c2-leyenda">⇅ ${esc(ord[comerOrden] || ord.rec)} · ${lista.length} lugares</p>
-    ${muchoOjo(comerCiudad)}${naverTop(comerCiudad)}
+    ${muchoOjo(comerCiudad)}${aquiNaver()}${naverTop(comerCiudad)}
     ${lista.map((l, i) => (comerFuera(l) && !(i && comerFuera(lista[i - 1])) ? `<div class="qv-grupo">👎 Descartados y cerrados · ${lista.filter(comerFuera).length}</div>` : '') + cardComer(l)).join('') || '<p class="muted">No hay lugares con este filtro.</p>'}
     ${comerForm ? formComer() : '<button class="sec" data-act="comer-nuevo">＋ Añadir lugar</button>'}`;
 }

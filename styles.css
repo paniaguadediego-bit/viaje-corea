@@ -1711,5 +1711,7 @@ nav#tabs button.on span { color: #fff !important; }
 #full .habla.grande { background: #e8f0fb !important; color: #0047a0 !important; border: 1.5px solid #0047a0; }
 #full .pron { overflow-wrap: anywhere; word-break: break-word; max-width: 100%; }
 #full .enorme { overflow-wrap: anywhere; }
+/* v255: botones «Alrededor de donde estáis ahora» */
+.aqui-nv { text-align: center; } .aqui-nv .acciones { justify-content: center; flex-wrap: wrap; margin-top: 6px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v254"; }
+:root { --css-ver: "v255"; }
