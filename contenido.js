@@ -6,6 +6,9 @@
 const CATALOGO = {
   seul: [
     { es: 'Ikseon-dong', ko: '익선동', romanizacion: 'Ikseon-dong' },
+    { es: 'Paseo del muro de piedra de Deoksugung', ko: '덕수궁 돌담길', romanizacion: 'Deoksugung Doldamgil', tipo: 'Paseo', buscar: ['deoksugunggil', 'muro de piedra'], desc: 'El paseo arbolado junto al muro del palacio Deoksugung, con edificios de principios del siglo XX; en noviembre, con las hojas de otoño.' },
+    { es: 'Roof Cat Me (cafetería de gatos, junto al hostal)', ko: '루프캣미 명동점', romanizacion: 'Rupeu Kaet Mi Myeongdong-jeom', tipo: 'Curioso', buscar: ['roof cat me'], desc: 'Cafetería de gatos en Myeongdong, a 5 min del hostal: entrada con bebida (más datos en Planes → Curioso).' },
+    { es: 'Daehak-ro (barrio de teatros)', ko: '대학로', romanizacion: 'Daehangno', tipo: 'Barrio', buscar: ['daehakro'], desc: 'Al bajar de la muralla de Naksan: barrio universitario y de teatros pequeños, con el parque Marronnier, bares y sitios baratos para cenar.' },
     { es: 'Barrio Seochon', ko: '서촌', romanizacion: 'Seochon' },
     { es: 'Mercado Namdaemun', ko: '남대문시장', romanizacion: 'Namdaemun Sijang' },
     { es: 'Hongdae', ko: '홍대', romanizacion: 'Hongdae' },
