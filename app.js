@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v251';
+const VERSION = 'v252';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -138,6 +138,8 @@ const hotelFixKey = a => 'hotel:' + (a.id || a.nombre);
 const hotelDe = k => { const U = typeof user !== 'undefined' && user && user.coordsFix || {};
   const hs = arr(trip && trip.alojamientos).filter(a => a && ck(a.ciudad) === k), f = hs.find(a => U[hotelFixKey(a)]); if (f) return U[hotelFixKey(f)];
   const h = hs.find(a => a.lat != null && a.lon != null); return h ? [Number(h.lat), Number(h.lon)] : null; };
+// Alojamiento con su ubicación corregida (📌) si la hay: lo usan la Ruta del día, sus tramos y el mapa del día.
+const conFixHotel = a => { if (!a) return a; const U = typeof user !== 'undefined' && user && user.coordsFix || {}, f = U[hotelFixKey(a)]; return f ? { ...a, lat: f[0], lon: f[1] } : a; };
 const fmtDist = d => d < 0.95 ? Math.max(100, Math.round(d * 10) * 100) + ' m' : d.toLocaleString('es-ES', { maximumFractionDigits: d < 10 ? 1 : 0 }) + ' km';
 function distHotel(l, k) {
   const h = hotelDe(k), p = coordsLugar(l); if (!h || !p) return '';
@@ -740,7 +742,7 @@ function listaDiaBase(d) {
 }
 // ＊ Sitios cercanos que no estaban en el plan: desde v218 entran en el itinerario, en el hueco donde menos desvío hacen,
 // numerados como el resto (✕ los quita: van a A.del). Se calculan para todos los días a la vez para no repetir uno en dos días.
-const hotCoordsDia = d => { const k = ck(d.ciudad), al = alojDe(d.fecha), h = al.noche && al.noche.lat != null && ck(al.noche.ciudad) === k ? al.noche : (al.sale && al.sale.lat != null && ck(al.sale.ciudad) === k ? al.sale : null); return h ? [Number(h.lat), Number(h.lon)] : null; };
+const hotCoordsDia = d => { const k = ck(d.ciudad), al0 = alojDe(d.fecha), al = { noche: conFixHotel(al0.noche), sale: conFixHotel(al0.sale) }, h = al.noche && al.noche.lat != null && ck(al.noche.ciudad) === k ? al.noche : (al.sale && al.sale.lat != null && ck(al.sale.ciudad) === k ? al.sale : null); return h ? [Number(h.lat), Number(h.lon)] : null; };
 let _sugC = { k: '', m: {} };
 function sugsDia(d) {
   const clave = [Object.keys(COORDS_LUGARES).length, JSON.stringify((user && user.agenda) || {}), JSON.stringify((user && user.coordsFix) || {}), arr(trip && trip.dias).length].join('|');
@@ -947,7 +949,7 @@ function sitiosDia(d) {
   if (!todos.length) return '';
   const auto = autoConSug(d), sgK = new Set(sugsDia(d).map(g => hKey(g.l)));
   const D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}; const G = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
-  const al = alojDe(d.fecha), hot = al.noche && al.noche.lat != null && ck(al.noche.ciudad) === k ? al.noche : (al.sale && al.sale.lat != null && ck(al.sale.ciudad) === k ? al.sale : null);
+  const al0 = alojDe(d.fecha), al = { noche: conFixHotel(al0.noche), sale: conFixHotel(al0.sale) }, hot = al.noche && al.noche.lat != null && ck(al.noche.ciudad) === k ? al.noche : (al.sale && al.sale.lat != null && ck(al.sale.ciudad) === k ? al.sale : null);
   let prev = hot ? [Number(hot.lat), Number(hot.lon)] : null, prevN = hot ? hot.nombre : '';
   const num = {}, naverTras = {}; // número de cada parada (el del mapa) y tramos de Naver que salen tras ella
   const fila = (l, extra) => {
@@ -3327,7 +3329,7 @@ document.addEventListener('click', e => {
     if (!navigator.geolocation) { alert('Este móvil no da la ubicación.'); return; }
     gpsb.textContent = '📌 …';
     navigator.geolocation.getCurrentPosition(pos => { const { latitude: la, longitude: lo, accuracy: ac } = pos.coords;
-      if (confirm(`¿Guardar tu posición actual (precisión ±${Math.round(ac)} m) como la ubicación de «${n}»?\nHazlo solo si estás delante del sitio.`)) { const U = u(); U.coordsFix = U.coordsFix || {}; U.coordsFix[h] = [+la.toFixed(5), +lo.toFixed(5)]; saveUser(); }
+      if (confirm(`¿Guardar tu posición actual (precisión ±${Math.round(ac)} m) como la ubicación de «${n}»?\nHazlo solo si estás delante del sitio.`)) { const U = u(); U.coordsFix = U.coordsFix || {}; U.coordsFix[h] = [+la.toFixed(5), +lo.toFixed(5)]; saveUser(); saveUser(); }
       render(); }, () => { alert('No se pudo obtener la ubicación (¿permiso de ubicación activado?).'); render(); }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
     return; }
   const esm = e.target.closest('button[data-esmas]');
