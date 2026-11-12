@@ -436,7 +436,7 @@
 "precio": null,
 "fuente": "itinerario",
 "url": null,
-"nota": "Cena especial del 14/11. Sin investigar sitios concretos."
+"nota": "Para la cena del 14/11 en Gwangalli. Dónde probarlos, según la LP 2024: Haeundae Milmyeon y el callejón del dwaeji gukbap de Seomyeon (abajo)."
 },
 {
 "id": "waengi",
@@ -1161,11 +1161,14 @@
 "tipo": "café",
 "plato": "bingsu",
 "direccion": "Metro Haeundae, salida 5 (Lonely) · ubicación aproximada",
-"horario": "10.30am-10.30pm (LP 2016)",
+"horario": "10:00-22:30 (LP 2024)",
 "precio": "₩ barato (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 190 · ★ elección del autor"
+"nota": "Lonely Planet Korea 2016, p. 190 · ★ elección del autor También en la Lonely Planet Corea 2024 (en español), p. 160.",
+"lp24": {
+"p": 160
+}
 },
 {
 "id": "lp-dolgorae",
@@ -1175,11 +1178,14 @@
 "tipo": "restaurante",
 "plato": "cocina coreana",
 "direccion": "Metro Nampo, salida 1, junto al mercado Gukje (Lonely) · ubicación aproximada",
-"horario": "7am-10pm (LP 2016)",
+"horario": "7:00-22:00 (LP 2024)",
 "precio": "₩ barato (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016"
+"nota": "Lonely Planet Korea 2016 También en la Lonely Planet Corea 2024 (en español), p. 159.",
+"lp24": {
+"p": 159
+}
 },
 {
 "id": "lp-boribap-cheonggukjang",
@@ -1203,11 +1209,14 @@
 "tipo": "restaurante",
 "plato": "marisco a la parrilla",
 "direccion": null,
-"horario": "2pm-sunrise (LP 2016)",
+"horario": "24 h (LP 2024)",
 "precio": "₩₩ medio (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016 · ★ elección del autor"
+"nota": "Lonely Planet Korea 2016 · ★ elección del autor También en la Lonely Planet Corea 2024 (en español), p. 163.",
+"lp24": {
+"p": 163
+}
 },
 {
 "id": "lp-gukje-market",
@@ -1221,7 +1230,10 @@
 "precio": null,
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 194"
+"nota": "Lonely Planet Korea 2016, p. 194 También en la Lonely Planet Corea 2024 (en español), p. 163.",
+"lp24": {
+"p": 163
+}
 },
 {
 "id": "lp-hyundai-ok",
@@ -2163,6 +2175,380 @@
 "n": 2000,
 "fuente": "Naver Map",
 "fecha": "2026-11-10"
+}
+},
+{
+"id": "lp24-guksu-bossam",
+"ciudad": "busan",
+"nombre": "Guksu and Bossam",
+"ko": null,
+"tipo": "restaurante",
+"plato": "bossam y gogi guksu",
+"direccion": "Daeyeon (mapa de la LP 2024) · ubicación aproximada",
+"horario": "11:00-21:30 (LP 2024)",
+"precio": "₩ económico",
+"fuente": "lonely24",
+"url": null,
+"nota": "Bossam (cerdo hervido), chashu de cerdo con arroz y gogi guksu (sopa de cerdo con fideos), con kimchi casero. Servicio amable. Lonely Planet Corea 2024 (en español), p. 156. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 156
+}
+},
+{
+"id": "lp24-jingukjeong",
+"ciudad": "busan",
+"nombre": "Jingukjeong Dwaeji Gukbap",
+"ko": null,
+"tipo": "restaurante",
+"plato": "dwaeji gukbap",
+"direccion": "Daeyeon-Namcheon (mapa de la LP 2024) · ubicación aproximada",
+"horario": "8:30-15:00 y 16:00-22:00 (LP 2024)",
+"precio": "₩ económico",
+"fuente": "lonely24",
+"url": null,
+"nota": "Dwaeji gukbap (sopa de cerdo con arroz) con distintas carnes a elegir y kimchi casero. Lonely Planet Corea 2024 (en español), p. 156. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 156
+}
+},
+{
+"id": "lp24-ecotopia",
+"ciudad": "busan",
+"nombre": "Ecotopia",
+"ko": null,
+"tipo": "café",
+"plato": "vegetariano y vegano",
+"direccion": "Namcheon (mapa de la LP 2024) · ubicación aproximada",
+"horario": "11:00-15:00 y 17:00-19:00 ma-sa; 10:00-15:00 do (LP 2024)",
+"precio": "₩ económico",
+"fuente": "lonely24",
+"url": null,
+"nota": "Café ecológico, luminoso y elegante, con platos vegetarianos y veganos: bibimbap de tofu con berros y gratinado de verduras. Lonely Planet Corea 2024 (en español), p. 156. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 156
+}
+},
+{
+"id": "lp24-nyureoumen",
+"ciudad": "busan",
+"nombre": "Nyureoumen Gwanjeu",
+"ko": null,
+"tipo": "restaurante",
+"plato": "fideos taiwaneses con ternera",
+"direccion": "Daeyeon-Namcheon (mapa de la LP 2024) · ubicación aproximada",
+"horario": "11:30-15:00 y 16:00-20:30 ma-do (LP 2024)",
+"precio": "₩ económico",
+"fuente": "lonely24",
+"url": null,
+"nota": "Taiwanés especializado en fideos con ternera; en la Guía Michelin. Cerveza taiwanesa. Suele haber cola. Lonely Planet Corea 2024 (en español), p. 156. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 156
+}
+},
+{
+"id": "lp24-byeong-jip",
+"ciudad": "busan",
+"nombre": "Byeong Jip",
+"ko": null,
+"tipo": "restaurante",
+"plato": "anguila de mar",
+"direccion": "Nampo (cerca del metro Jagalchi) (mapa de la LP 2024) · ubicación aproximada",
+"horario": "10:00-22:00 (LP 2024)",
+"precio": "₩₩ medio",
+"fuente": "lonely24",
+"url": null,
+"nota": "Especializado en anguila de mar: a la parrilla, marinada, sin marinar o en sopa. Lonely Planet Corea 2024 (en español), p. 159. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 159
+}
+},
+{
+"id": "lp24-ddoongbo-jip",
+"ciudad": "busan",
+"nombre": "Ddoongbo Jip",
+"ko": null,
+"tipo": "restaurante",
+"plato": "jjukkumi (pulpito picante) y bossam",
+"direccion": "Nampo (mapa de la LP 2024) · ubicación aproximada",
+"horario": "11:30-23:00 (LP 2024)",
+"precio": "₩₩ medio",
+"fuente": "lonely24",
+"url": null,
+"nota": "Con solera y ambiente animado: generosas raciones de jjukkumi (pulpo pequeño picante) a la parrilla y bossam. Lonely Planet Corea 2024 (en español), p. 159. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 159
+}
+},
+{
+"id": "lp24-jackys",
+"ciudad": "busan",
+"nombre": "Jacky’s Seafood",
+"ko": null,
+"tipo": "restaurante",
+"plato": "marisco del mercado",
+"direccion": "Mercado Jagalchi, 2ª planta (mapa de la LP 2024) · ubicación aproximada",
+"horario": "11:00-24:00 (LP 2024)",
+"precio": "₩₩ medio",
+"fuente": "lonely24",
+"url": null,
+"nota": "Marisquería de la lonja: Jacky, el dueño, habla inglés y facilita comprar el pescado para cenar. Lonely Planet Corea 2024 (en español), p. 159. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 159
+}
+},
+{
+"id": "lp24-beer-sharp",
+"ciudad": "busan",
+"nombre": "Beer Sharp",
+"ko": null,
+"tipo": "bar",
+"plato": "pastrami, ddeokbokki, ramen y cerveza",
+"direccion": "Seomyeon-Jeonpo (mapa de la LP 2024) · ubicación aproximada",
+"horario": "17:00-24:00 mi-do (LP 2024)",
+"precio": "₩ económico",
+"fuente": "lonely24",
+"url": null,
+"nota": "Propuestas a base de pastrami, sándwiches, ddeokbokki y ramen, con cerveza. Lonely Planet Corea 2024 (en español), p. 160. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 160
+}
+},
+{
+"id": "lp24-sol-taphouse",
+"ciudad": "busan",
+"nombre": "Sol Taphouse",
+"ko": null,
+"tipo": "bar",
+"plato": "pizza, pasta y cerveza de barril",
+"direccion": "Seomyeon (mapa de la LP 2024) · ubicación aproximada",
+"horario": "12:00-24:00 (LP 2024)",
+"precio": "₩₩ medio",
+"fuente": "lonely24",
+"url": null,
+"nota": "Pub con pizzas y pastas al estilo de Nueva York y cerveza artesana de barril. Lonely Planet Corea 2024 (en español), p. 160. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 160
+}
+},
+{
+"id": "lp24-wildcat",
+"ciudad": "busan",
+"nombre": "Wildcat Brewing",
+"ko": null,
+"tipo": "bar",
+"plato": "cerveza artesana, cerdo mechado, fish & chips",
+"direccion": "Seomyeon (cerca del metro y del tren) (mapa de la LP 2024) · ubicación aproximada",
+"horario": "17:00-24:00 do-vi; 16:00-24:30 sa (LP 2024)",
+"precio": "₩₩ medio",
+"fuente": "lonely24",
+"url": null,
+"nota": "Cerveza artesana, cerdo mechado, salchichas y fish & chips, a un corto paseo de las estaciones de metro y tren. Lonely Planet Corea 2024 (en español), p. 160. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 160
+}
+},
+{
+"id": "lp24-haeundae-milmyeon",
+"ciudad": "busan",
+"nombre": "Haeundae Milmyeon",
+"ko": null,
+"tipo": "restaurante",
+"plato": "milmyeon",
+"direccion": "Haeundae (mapa de la LP 2024) · ubicación aproximada",
+"horario": "10:30-20:30 (LP 2024)",
+"precio": "₩ económico",
+"fuente": "lonely24",
+"url": null,
+"nota": "Especializado en milmyeon, el plato típico de Busan: fideos de trigo artesanos en caldo picante de carne, frío. Perfecto con empanadillas al vapor. Lonely Planet Corea 2024 (en español), p. 163. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 163
+}
+},
+{
+"id": "lp24-home-bistro",
+"ciudad": "busan",
+"nombre": "Home Bistro",
+"ko": null,
+"tipo": "restaurante",
+"plato": "vegetariano: sándwiches, ensaladas, pizza",
+"direccion": "Haeundae (mapa de la LP 2024) · ubicación aproximada",
+"horario": "17:00-24:00 ma-sa (LP 2024)",
+"precio": "₩₩ medio",
+"fuente": "lonely24",
+"url": null,
+"nota": "Hogareño restaurante vegetariano con sándwiches, ensaladas, pastas, pizzas y buena selección de vinos. Lonely Planet Corea 2024 (en español), p. 163. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 163
+}
+},
+{
+"id": "lp24-somunnan-galbi",
+"ciudad": "busan",
+"nombre": "Haeundae Somunnan Amso Galbi Jip",
+"ko": "해운대소문난암소갈비집",
+"tipo": "restaurante",
+"plato": "galbi de ternera",
+"direccion": "Haeundae (mapa de la LP 2024) · ubicación aproximada",
+"horario": "11:30-15:15 y 16:30-22:00 (LP 2024)",
+"precio": "₩₩₩ caro",
+"fuente": "lonely24",
+"url": null,
+"nota": "Popular por su galbi (costillas de ternera) desde 1964 y su gamja guksu (fideos de patata) para rebañar la salsa. Lonely Planet Corea 2024 (en español), p. 163. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 163
+}
+},
+{
+"id": "lp24-ggulggeok",
+"ciudad": "busan",
+"nombre": "Ggulggeok House",
+"ko": null,
+"tipo": "bar",
+"plato": "makgeolli",
+"direccion": "Gwangan (mapa de la LP 2024) · ubicación aproximada",
+"horario": "18:00-24:00 lu, mi y ju; 16:00-24:00 sa y do (LP 2024)",
+"precio": "₩₩ medio",
+"fuente": "lonely24",
+"url": null,
+"nota": "Sencilla pero magnífica carta maridada con un makgeolli único que cambia cada estación. Hay botellas para llevar. Lonely Planet Corea 2024 (en español), p. 164. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 164
+}
+},
+{
+"id": "lp24-ama",
+"ciudad": "busan",
+"nombre": "Ama",
+"ko": null,
+"tipo": "restaurante",
+"plato": "paella y platos españoles",
+"direccion": "Gwangan (mapa de la LP 2024) · ubicación aproximada",
+"horario": "12:00-15:00 y 17:00-21:00 lu-sa (LP 2024)",
+"precio": "₩₩ medio",
+"fuente": "lonely24",
+"url": null,
+"nota": "Paella, gambas y otros platos españoles con vino, en un acogedor ambiente de cocina rústica. Lonely Planet Corea 2024 (en español), p. 164. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 164
+}
+},
+{
+"id": "lp24-millak",
+"ciudad": "busan",
+"nombre": "Millak Town Raw Fish Centre",
+"ko": "민락회센터",
+"tipo": "mercado",
+"plato": "pescado crudo (hoe)",
+"direccion": "Millak, junto a Gwangalli (mapa de la LP 2024) · ubicación aproximada",
+"horario": "10:30-24:00 mi-lu (LP 2024)",
+"precio": "₩₩ medio",
+"fuente": "lonely24",
+"url": null,
+"nota": "Se compra el pescado (unos 30.000 ₩) y lo preparan en la 1ª planta. Ojo: ver «Mucho ojo con…». Lonely Planet Corea 2024 (en español), p. 164. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 164
+}
+},
+{
+"id": "lp24-ean",
+"ciudad": "busan",
+"nombre": "Brunch Cafe Ean",
+"ko": null,
+"tipo": "café",
+"plato": "brunch",
+"direccion": "Gwangan (mapa de la LP 2024) · ubicación aproximada",
+"horario": "10:00-16:00 (LP 2024)",
+"precio": "₩ económico",
+"fuente": "lonely24",
+"url": null,
+"nota": "Coqueto y pequeño café en una casa reformada: tostadas francesas, platos de brunch y ensaladas. Lonely Planet Corea 2024 (en español), p. 164. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 164
+}
+},
+{
+"id": "lp24-galmegi",
+"ciudad": "busan",
+"nombre": "Galmegi Brewing",
+"ko": null,
+"tipo": "bar",
+"plato": "cerveza artesana",
+"direccion": "Gwangalli (uno de varios locales) (mapa de la LP 2024) · ubicación aproximada",
+"horario": "16:00-1:00 lu-sa (LP 2024)",
+"precio": "₩₩ medio",
+"fuente": "lonely24",
+"url": null,
+"nota": "La primera cervecería artesanal del país: cervezas de negras a pales y rubias, pizza y fish & chips. Lonely Planet Corea 2024 (en español), p. 161. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 161
+}
+},
+{
+"id": "lp24-hq-gwangan",
+"ciudad": "busan",
+"nombre": "HQ Gwangan",
+"ko": null,
+"tipo": "bar",
+"plato": "pub con vistas al puente",
+"direccion": "Gwangalli (mapa de la LP 2024) · ubicación aproximada",
+"horario": "16:00-1:00 lu-sa (LP 2024)",
+"precio": "₩₩ medio",
+"fuente": "lonely24",
+"url": null,
+"nota": "Concurrido bar de expatriados con chupitos baratos, comida de pub, noches de Trivial, deportes y una vista fabulosa del puente Gwangan. Lonely Planet Corea 2024 (en español), p. 161. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 161
+}
+},
+{
+"id": "lp24-gorilla",
+"ciudad": "busan",
+"nombre": "Gorilla Brewing",
+"ko": null,
+"tipo": "bar",
+"plato": "cerveza artesana y barbacoa",
+"direccion": "Gwangan (mapa de la LP 2024) · ubicación aproximada",
+"horario": "17:00-23:00 do-ju; 17:00-24:00 vi y sa (LP 2024)",
+"precio": "₩₩ medio",
+"fuente": "lonely24",
+"url": null,
+"nota": "Cervezas artesanas fijas y de temporada, comida a la barbacoa y bocados de bar. Lonely Planet Corea 2024 (en español), p. 161. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 161
+}
+},
+{
+"id": "lp24-thursday",
+"ciudad": "busan",
+"nombre": "Thursday Party",
+"ko": null,
+"tipo": "bar",
+"plato": "bar de copas",
+"direccion": "Varios locales en Busan (Gwangalli, Seomyeon, Haeundae…) (mapa de la LP 2024) · ubicación aproximada",
+"horario": "19:00-5:00 (LP 2024)",
+"precio": "₩ económico",
+"fuente": "lonely24",
+"url": null,
+"nota": "Cadena popular de bares, con dos docenas de locales en Corea; nació en Busan. Lonely Planet Corea 2024 (en español), p. 161. Hangul y ubicación exacta: VERIFICAR en Naver.",
+"lp24": {
+"p": 161
+}
+},
+{
+"id": "lp24-seomyeon-gukbap",
+"ciudad": "busan",
+"nombre": "Callejón del dwaeji gukbap (mercado de Seomyeon)",
+"ko": "서면시장 돼지국밥골목",
+"tipo": "plato",
+"plato": "dwaeji gukbap",
+"direccion": "Mercado de Seomyeon · ubicación aproximada",
+"horario": "Varios locales; algunos 24 h (LP 2024)",
+"precio": "₩ económico",
+"fuente": "lonely24",
+"url": null,
+"nota": "El plato estrella de Busan no es marisco: sopa de cerdo con arroz, de caldo de huesos, soja fermentada, vino de arroz, soja y sésamo; nació en Busan durante la Guerra de Corea. Para elegir entre muchos, este callejón. Lonely Planet Corea 2024 (en español), p. 161.",
+"lp24": {
+"p": 161
 }
 }
 ]

@@ -55,7 +55,16 @@ const CATALOGO = {
     { es: 'Templo Haedong Yonggungsa', ko: '해동용궁사', romanizacion: 'Haedong Yonggungsa' },
     { es: 'Aldea cultural Huinnyeoul', ko: '흰여울문화마을', romanizacion: 'Huinnyeoul Munhwa Maeul' },
     { es: 'Sky Capsule de Blueline (y tren de la playa)', ko: '해운대 블루라인파크', romanizacion: 'Beullurain' },
-    { es: 'Estación de Busan', ko: '부산역', romanizacion: 'Busan-yeok' }
+    { es: 'Estación de Busan', ko: '부산역', romanizacion: 'Busan-yeok' },
+    { es: 'Teleférico de Songdo (Busan Air Cruise)', ko: '송도해상케이블카', romanizacion: 'Songdo Haesang Keibeulka', tipo: 'Teleférico', desc: 'El primer teleférico de Corea: 1,62 km sobre el mar desde la playa de Songdo hasta el parque Amnam, con cabinas de suelo de cristal.' },
+    { es: 'Playa de Songjeong (surf)', ko: '송정해수욕장', romanizacion: 'Songjeong Haesuyokjang', tipo: 'Playa', desc: 'La mejor playa de Busan para surfear, con escuelas y cafés surferos; al final del sendero de Blueline.' },
+    { es: 'Museo del Cine de Busan', ko: '부산영화체험박물관', romanizacion: 'Busan Yeonghwa Cheheom Bakmulgwan', tipo: 'Museo', desc: 'Museo interactivo de cine junto al parque Yongdusan: croma, doblaje y Museo de las Ilusiones Ópticas.' },
+    { es: 'Oryukdo Skywalk', ko: '오륙도 스카이워크', romanizacion: 'Oryukdo Seukaiwokeu', tipo: 'Mirador', desc: 'Mirador de suelo transparente sobre el acantilado, al final del sendero de Igidae.' },
+    { es: 'Isla de Eulsukdo y Museo de Arte Contemporáneo', ko: '을숙도', romanizacion: 'Eulsukdo', tipo: 'Naturaleza', desc: 'Isla en la desembocadura del Nakdong con parque de aves migratorias y el Museo de Arte Contemporáneo de Busan.' },
+    { es: 'Playa de Dadaepo', ko: '다대포해수욕장', romanizacion: 'Dadaepo Haesuyokjang', tipo: 'Playa', desc: 'Playa famosa por sus puestas de sol, con pasarela sobre las rocas y fuente iluminada.' },
+    { es: 'Busan Cinema Center', ko: '영화의전당', romanizacion: 'Yeonghwaui Jeondang', tipo: 'Arquitectura', desc: 'Sede del festival de cine BIFF, con un enorme tejado en voladizo cubierto de LED que de noche da espectáculo.' },
+    { es: 'Calle de cafés de Jeonpo', ko: '전포카페거리', romanizacion: 'Jeonpo Kape Geori', tipo: 'Cafés', desc: 'Antiguo barrio de ferreterías junto a Seomyeon, hoy lleno de cafés.' },
+    { es: 'Calle de cafés de Oncheoncheon', ko: '온천천 카페거리', romanizacion: 'Oncheoncheon Kape Geori', tipo: 'Cafés', desc: 'Cafés y bares junto al arroyo Oncheon, con cerezos y carril bici.' }
   ],
   jeonju: [
     { es: 'Aldea Hanok de Jeonju', ko: '전주한옥마을', romanizacion: 'Jeonju Hanok Maeul' },
@@ -155,6 +164,76 @@ const LP24_RUTA_DAEREUNG = { ciudad: 'gyeongju', t: 'Recorrido a pie por Daereun
 const LP24_RUTAS = [LP24_RUTA_DAEREUNG];
 const LP24_SITIOS = new Set(['대릉원', '노서동고분', '천마총', '첨성대', '동궁과월지', '반월성', '계림', '내물왕릉', '경주향교', '월정교']);
 LP24_INDISP['석굴암'] = { p: 178, items: [['Estatua de Buda de Seokguram', '석굴암 본존불', 'El gran Buda sedente de granito de la gruta, tras un cristal y mirando al mar del Este, rodeado de relieves de guardianes y discípulos. Dentro no se permiten fotos.']] };
+// Busan · Lonely Planet Corea 2024 (en español), pp. 154-164: recuadro rosa en cada sitio (manda sobre la LP 2016).
+const L24B = (p, items, t) => ({ p, t: t || `📕 Lonely Planet 2024, p. ${p}`, items });
+Object.assign(LP24_INDISP, {
+  '범어사': L24B(154, [
+    ['Refugio espiritual', '범어사', 'Uno de los enclaves religiosos más importantes del país; su arquitectura destaca contra la montaña, a años luz de la jungla urbana.'],
+    ['Cuatro Tesoros Nacionales', '삼층석탑 · 대웅전', 'La pagoda de piedra de tres niveles, la sala principal Daeungjeon, la tríada de Budas de madera (pasado, presente y futuro) y la puerta de un solo pilar, símbolo de humildad al entrar en lugar sagrado.'],
+    ['Consejo', '금정산', 'Fines de semana y festivos, lleno. Desde el templo sale un sendero al norte de Geumjeongsan; antes de volver, pajeon (tortitas de cebolleta) en los restaurantes junto a la parada del bus.']], '📕 Indispensable · Lonely Planet 2024, p. 154'),
+  '태종대유원지': L24B(156, [
+    ['Sendero circular de 4,5 km', '태종대', 'Por la costa escarpada del extremo sur de Yeongdo, desde la puerta principal. El Danubi Train (no circula los lunes; billete para el trayecto) para en los sitios de interés y en playas de guijarros con ferris.'],
+    ['Observatorio y faro de Yeongdo', '영도등대', 'Cafés, un espacio cultural y un escenario al aire libre. Acantilados de 150 m; en días despejados se ve la isla japonesa de Tsushima, a 56 km. Junto al faro, las rocas Sinseon-bawi y Mangbuseok.'],
+    ['Templos', '구명사 · 태종사', 'Gumyeong-sa y Taejong-sa, preciosos con las hortensias de junio y julio.']]),
+  '송도해상케이블카': L24B(156, [
+    ['El primer teleférico de Corea', '송도해상케이블카', 'De 1964; cerró en 1988 y volvió en 2017. 1,62 km sobre el mar desde la playa de Songdo: 39 cabinas, 13 con suelo de cristal. Ida, o ida y vuelta.'],
+    ['Bay Station y Sky Station', '송림공원 · 암남공원', 'Sale junto al parque Songnim (este) y llega a un observatorio en el parque Amnam (oeste), ambos con cafés y puestos de comida.'],
+    ['Puente Songdo Yonggung y Cloud Walk', '송도용궁구름다리 · 송도구름산책로', 'Desde Amnam, puente colgante al islote deshabitado de Dongseom, muy bonito iluminado de noche. Se combina con el Songdo Cloud Walk, pasarela elevada de 365 m sobre el océano.']]),
+  '감천문화마을': L24B(157, [
+    ['Comunidad multicolor', '감천문화마을', 'Barrio de refugiados de la guerra en una ladera (1955). En 2009 estudiantes lo pintaron en tonos pastel con detalles en escaleras y callejones. Callejones laberínticos con cafés, galerías y tiendas: un par de horas.'],
+    ['Consejos', '안내센터', 'Comprad el plano en el centro de información. Muchas cuestas y escalones: calzado cómodo. Sigue siendo un barrio: sin ruido, sin drones y en transporte público.'],
+    ['Negocios de la comunidad', '감천문화마을', 'Gamnae Cafe, Gamcheon Bakery, restaurantes Gamnae Matjib y Gamcheon Ajimae Babjip, y Gamnaegol Happy Power Station (talleres de alfarería, carpintería o caricaturas, 10.000-15.000 ₩).']]),
+  '자갈치시장': L24B(157, [
+    ['La mayor lonja de Corea', '자갈치시장', 'Platijas, cangrejos, ostras, erizos de mar, anguilas… Una hora para curiosear, comprar lo que apetezca y subirlo a la 2ª planta para que lo preparen: crudo, al vapor, a la plancha, frito o en sopa.'],
+    ['Jacky’s Seafood', '자갈치시장 2층', 'Marisquería de la 2ª planta: Jacky habla inglés y facilita comprar el pescado para cenar.'],
+    ['Cierre', '휴무', 'La LP 2016 decía que cerraba el 1.º y el 3.er martes de cada mes: VERIFICAR.']], '📕 Indispensable · Lonely Planet 2024, pp. 157-158'),
+  '송정해수욕장': L24B(158, [
+    ['De ola en ola', '송정해수욕장', 'De las siete playas de Busan, la mejor para surfear: tiendas, escuelas, bares y cafés surferos. Nomad Her organiza campamentos solo para mujeres.']]),
+  '용두산공원': L24B(158, [
+    ['Torre, pabellón y museos', '용두산공원', 'En Nampo-dong, verde y con reloj floral. Pabellón de la Campana de los Ciudadanos, cascada artificial, pequeño templo, centro de hanbok y estatuas de Ahn Huijae y del almirante Yi Sun-sin.'],
+    ['Torre de Busan', '부산타워', 'Si la bruma deja, se ve el puerto y su tráfico. Tienda libre de impuestos. Al lado, el Museo del Cine de Busan (2017).']]),
+  '부산영화체험박물관': L24B(158, [
+    ['Museo del Cine de Busan', '부산영화체험박물관', 'El primer centro de exposiciones de cine de Corea: se participa en una película (croma, voz en off, doblaje). En el mismo edificio, el Museo de las Ilusiones Ópticas (entrada aparte o conjunta).']]),
+  '부산근대역사관': L24B(159, [
+    ['Museo de Historia Moderna', '부산근대역사관', 'Al noroeste del parque Yongdusan: inmersión en la época colonial japonesa, en un edificio de entonces. Abajo, un café.']]),
+  '해운대블루라인파크': L24B(159, [
+    ['Las líneas verde y azul', '해운대 블루라인파크', 'El «Ferrocarril Verde» es un sendero de tablones de 4,8 km de Mipo a Songjeong: dos faros, el observatorio Cheongsapo Daritdol (suelo transparente) y el túnel de Dalmaji. El parque Jukdo, el mejor sitio para el atardecer.'],
+    ['Tren de la playa y Sky Capsule', '해변열차 · 스카이캡슐', 'La línea azul: el tren paralelo al sendero, con varias paradas, y la Sky Capsule elevada sin paradas. Quien quiera más, 5 km de sendero forestal.']]),
+  '재한유엔기념공원': L24B(159, [
+    ['Único cementerio de la ONU', '재한유엔기념공원', 'Descansan 2.300 combatientes de 11 países de la Guerra de Corea (1950-1953). Junto a él, el Parque de Esculturas de la ONU, el arboreto Daeyeon y el Museo de Busan (45.000 piezas).']]),
+  '해동용궁사': L24B(160, [
+    ['Templo junto al mar', '해동용궁사', 'Uno de los pocos templos de costa: vistas de jardines y mar, altares, estatuas de los animales del zodiaco y un Buda de oro gigante. Fines de semana, muy concurrido.'],
+    ['Llegar y después', '오시리아', 'Taxi o bus y subida a pie por una carretera de montaña. Cerca, el complejo OSIRIA: Lotte World Adventure, Skyline Luge, centro comercial, museo de la ciencia y piscina infinita.']]),
+  '금강공원케이블카': L24B(161, [
+    ['Aventura en la cima', '금강공원 케이블카', 'Panorámica de valles verdes y, si está despejado, del puente Gwangan. Desde el metro Oncheonjang, 15 min a pie (salida 1). En el parque, el Museo de Historia Natural Marina.'],
+    ['Fortaleza, templo y regreso', '금정산성 · 석불사', 'Arriba, la fortaleza de Geumjeong (17 km de murallas) y, por una pista empinada, la ermita Seokbul-sa con budas tallados en la roca. Bajad a Mandeok (línea 3) o volved en teleférico; junto al teleférico, mesas con bibimbap, jeon y makgeolli.']], '📕 Indispensable · Lonely Planet 2024, pp. 161-163'),
+  '해운대해수욕장': L24B(163, [
+    ['Diversión asegurada', '해운대해수욕장', 'La playa más famosa de Corea: SUP, yoga en tabla, surf de remo o descansar con un libro. ClubD Oasis: spa de lujo con piscina infinita y bar en la azotea.']]),
+  '이기대': L24B(164, [
+    ['Sendero de Igidae', '이기대 해안산책로', 'Ruta costera de 4,7 km (2½ h) por bosques y rocas, con vistas de Haeundae. Es un tramo del Galmaetgil (23 tramos, 278 km) y llega al Oryukdo Skywalk, con suelo transparente sobre el acantilado.']]),
+  '광안리해수욕장': L24B(160, [
+    ['Cafés de la calle Gwangalli', '광안리', 'Frente a una de las mejores playas: cafés y bares con vistas al mar (y al puente Gwangan).'],
+    ['Fuegos artificiales (noviembre)', '부산불꽃축제', 'El Festival Internacional de Fuegos Artificiales de Busan ilumina la playa en noviembre. Fecha de 2026: VERIFICAR.']], '📕 Lonely Planet 2024, pp. 160-161'),
+  '부산시티투어버스': L24B(156, [
+    ['Autobús turístico', '부산 시티투어', 'Tres circuitos desde la estación de Busan, 12 paradas cada uno (9 diarios, mi-do). Roja: Gwangan, Haeundae y Centum City. Verde: Huinnyeoul, Taejongdae y Oryukdo. Naranja: Gamcheon, Dadaepo y Eulsukdo. 20.000 ₩ (48 h); transbordo 5.000 ₩. Se paga a bordo.'],
+    ['Busan Pass', '부산', 'Para muchos atractivos: 24 o 48 h, o 3-5 sitios a elegir entre más de 30 (visitbusanpass.com).']]),
+  '오륙도스카이워크': L24B(164, [
+    ['Oryukdo Skywalk', '오륙도 스카이워크', 'Mirador de suelo transparente sobre el borde del acantilado, al final del sendero de Igidae.']]),
+  '을숙도': L24B(164, [
+    ['Isla ecológica', '을숙도', 'En la desembocadura del Nakdong: parque de aves migratorias con observatorio, parque de esculturas y cafés.'],
+    ['Museo de Arte Contemporáneo de Busan', 'Tres plantas de exposiciones y un jardín.']]),
+  '다대포해수욕장': L24B(164, [
+    ['Atardecer en la playa', '다대포해수욕장', 'Famosa por sus puestas de sol: senderos por el parque y el arroyo, pasarela de madera sobre las rocas y miradores en el bosque. Al ponerse el sol, la fuente de Dadaepo se ilumina de colores.']]),
+  '영화의전당': L24B(159, [
+    ['Busan Cinema Center', '영화의전당', 'Sede del Festival Internacional de Cine de Busan (BIFF, octubre): estructura en voladizo con 127.000 LED que de noche dan espectáculo. Entradas del BIFF con antelación en biff.kr.']]),
+  '전포카페거리': L24B(160, [
+    ['Cafés de la calle Jeonpo', '전포카페거리', 'Cerca de Seomyeon y Jeonpo: antiguo barrio de ferreterías, hoy lleno de cafés.']]),
+  '온천천카페거리': L24B(160, [
+    ['Cafés de la calle Oncheoncheon', '온천천 카페거리', 'Junto al arroyo Oncheon, con cerezos, cafeterías, bares y carril bici.']]),
+  '흰여울문화마을': L24B(160, [
+    ['Calle Huinnyeoul', '흰여울길', 'En Yeongdo, la ruta costera de Jeoryeong pasa por esta calle llena de cafés.']])
+});
+['송도해상케이블카', '송정해수욕장', '용두산공원', '부산영화체험박물관', '부산근대역사관', '해운대블루라인파크', '재한유엔기념공원', '해동용궁사', '금강공원케이블카', '금정산성', '석불사', '해운대해수욕장', '이기대', '광안리해수욕장', '태종대유원지', '범어사', '감천문화마을', '자갈치시장', '국제시장', '부전시장', '오륙도스카이워크', '을숙도', '다대포해수욕장', '영화의전당', '전포카페거리', '온천천카페거리', '흰여울문화마을', '부산시티투어버스'].forEach(k => LP24_SITIOS.add(k));
 
 const GUIA = [
   ['T-money y transporte', [
@@ -489,7 +568,7 @@ const WIKI = {
   '경기전': 'Gyeonggijeon', '전주향교': 'Jeonju_Hyanggyo', '풍남문': 'Pungnammun', '오목대': 'Omokdae', '모악산도립공원': 'Moaksan'
 };
 // Alias para reconocer sitios en el texto del itinerario cuando el nombre no basta.
-const ALIAS = { '서울역사박물관': ['museo de historia'], '국립중앙박물관': ['museo nacional de corea'], '전주한옥마을': ['hanok village'], 'N서울타워': ['n seoul tower', 'namsan'], '동궁과 월지': ['donggung', 'wolji'],
+const ALIAS = { '송도해상케이블카': ['air cruise', 'teleferico de songdo'], '서울역사박물관': ['museo de historia'], '국립중앙박물관': ['museo nacional de corea'], '전주한옥마을': ['hanok village'], 'N서울타워': ['n seoul tower', 'namsan'], '동궁과 월지': ['donggung', 'wolji'],
   '대릉원': ['daereungwon', 'cheonmachong'], '안동 하회마을': ['hahoe'], '하회마을': ['hahoe'], '해운대해수욕장': ['playa de haeundae'], '전동성당': ['jeondong'],
   '황리단길': ['hwangnidan'], '국립경주박물관': ['museo nacional de gyeongju'] };
 

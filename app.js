@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v227';
+const VERSION = 'v228';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2553,10 +2553,14 @@ function naverTop(k) {
 }
 // 🥢 Platos típicos de la ciudad (Planes): las fichas de Comer que son platos, no locales, y los «Sabores» de la lectura de la ciudad.
 function platosDe(k, hay = false) {
-  const ps = lugaresComer().filter(l => l.ciudad === k && l.tipo === 'plato');
+  const todos = lugaresComer().filter(l => l.ciudad === k && l.tipo === 'plato');
+  // Sin ubicación (p. ej. «Platos de Busan a probar») no es un sitio: va como línea del texto de arriba.
+  const sitio = l => !!(COORDS_LUGARES[l.id] || (l.ko && COORDS_LUGARES[l.ko]));
+  const ps = todos.filter(sitio), sueltos = todos.filter(l => !sitio(l));
   const sab = typeof CIUDAD_INFO !== 'undefined' && arr(CIUDAD_INFO[k]).find(([ic]) => ic === '🍜');
-  if (hay) return ps.length > 0 || !!sab;
-  return `${sab ? `<div class="card guia-txt platos-ciudad"><b>🥢 Qué probar en ${esc(nombreCiudad(k))}</b>${sab[2].map(p => `<p>${resaltar(p, true)}</p>`).join('')}</div>` : ''}
+  if (hay) return todos.length > 0 || !!sab;
+  const lin = sueltos.map(l => `<p>🍽️ <b>${esc(l.plato || l.nombre)}</b>${l.nota ? ` — ${esc(l.nota)}` : ''}</p>`).join('');
+  return `${sab || lin ? `<div class="card guia-txt platos-ciudad"><b>🥢 Qué probar en ${esc(nombreCiudad(k))}</b>${sab ? sab[2].map(p => `<p>${resaltar(p, true)}</p>`).join('') : ''}${lin}</div>` : ''}
     ${ps.length ? `<div class="qv-grupo">📌 Dónde probarlos</div>${ps.map(cardComer).join('')}` : ''}`;
 }
 function viewComer(dentro = false) {
