@@ -56,6 +56,7 @@ const CATALOGO = {
     { es: 'Aldea cultural Huinnyeoul', ko: '흰여울문화마을', romanizacion: 'Huinnyeoul Munhwa Maeul' },
     { es: 'Sky Capsule de Blueline (y tren de la playa)', ko: '해운대 블루라인파크', romanizacion: 'Beullurain' },
     { es: 'Estación de Busan', ko: '부산역', romanizacion: 'Busan-yeok' },
+    { es: 'Mercado tradicional de Haeundae', ko: '해운대시장', romanizacion: 'Haeundae Sijang', tipo: 'Mercado', buscar: ['mercado tradicional de haeundae', 'mercado de haeundae'], desc: 'Callejón de puestos a 300 m del hotel: tteokbokki, hotteok, eomuk y pescado. Bueno para cenar barato y picar de puesto en puesto.' },
     { es: 'Teleférico de Songdo (Busan Air Cruise)', ko: '송도해상케이블카', romanizacion: 'Songdo Haesang Keibeulka', buscar: ['air cruise', 'teleferico de songdo', 'songdo cable'], tipo: 'Teleférico', desc: 'El primer teleférico de Corea: 1,62 km sobre el mar desde la playa de Songdo hasta el parque Amnam, con cabinas de suelo de cristal.' },
     { es: 'Playa de Songjeong (surf)', ko: '송정해수욕장', romanizacion: 'Songjeong Haesuyokjang', buscar: ['songjeong'], tipo: 'Playa', desc: 'La mejor playa de Busan para surfear, con escuelas y cafés surferos; al final del sendero de Blueline.' },
     { es: 'Museo del Cine de Busan', ko: '부산영화체험박물관', romanizacion: 'Busan Yeonghwa Cheheom Bakmulgwan', buscar: ['museo del cine'], tipo: 'Museo', desc: 'Museo interactivo de cine junto al parque Yongdusan: croma, doblaje y Museo de las Ilusiones Ópticas.' },
