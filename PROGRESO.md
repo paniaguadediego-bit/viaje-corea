@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v258
+Caché del service worker: corea-v259
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -311,6 +311,7 @@ Caché del service worker: corea-v258
 - v256: corregido el recuadro LP24 de Gwangalli: el Festival de Fuegos Artificiales de Busan de 2026 fue el sábado 7 de noviembre (ya pasado), en lugar de «VERIFICAR».
 - v257: Busan → Curioso: parque Millak Waterfront (pescado frente al puente; sin alcohol de 21 a 2 h), paseo en yate al anochecer (bahía de Suyeong o The Bay 101; drones desde el mar el sábado) y Spa Land Centum City (jjimjilbang). Y «🐱 Cafeterías de gatos y perros» (ANIMAL_BUSQ) con búsquedas de Naver en Busan, Seúl y Jeonju: en internet no hay cafés de animales de Busan con datos fiables y actuales, y desde diciembre de 2023 la ley coreana no deja abrir cafés con animales salvajes.
 - v258: Busan → Curioso: Catch Catch Cat Cafe (캐치캣치, 우동 829-9; entrada 15.000 ₩; cierra a las 21:00; 407 reseñas en Naver), del usuario. Coordenadas aproximadas.
+- v259: Lotte Department Store Gwangbok (롯데백화점 광복점, azotea con vistas) y Nampo-dong (남포동) entran en el catálogo de Busan con «buscar»: estaban en el texto del día 13 pero no salían como paradas de la Ruta del día. Ahora el 13 acaba en Gukje → Lotte (atardecer) → Nampo-dong (cena).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
