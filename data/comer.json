@@ -2595,7 +2595,7 @@
 "id": "bs-moemiljip",
 "ciudad": "busan",
 "nombre": "Moemiljip (fideos de alforfón)",
-"ko": "모밀집",
+"ko": "뫼밀집",
 "tipo": "restaurante",
 "plato": "fideos de alforfón 100 % coreano, molido en casa",
 "direccion": "2.ª planta del Orange Plaza (오렌지 상가), Marine City 3-ro 23, Haeundae-gu",
@@ -2603,12 +2603,54 @@
 "precio": null,
 "fuente": "guia",
 "url": "https://guide.michelin.com/sg/en/article/michelin-guide-ceremony/korea-bib-gourmand-2026",
-"nota": "Bib Gourmand de la Guía Michelin Seúl y Busan 2026: buen comer a precio razonable. En Marine City, cruzando desde el oeste de la playa de Haeundae.",
+"nota": "Bib Gourmand de la Guía Michelin Seúl y Busan 2026: buen comer a precio razonable. En Marine City, cruzando desde el oeste de la playa de Haeundae. Nombre en coreano según la Guía Michelin (뫼밀집).",
 "guias": [
 {
 "g": "michelin",
 "d": "Bib Gourmand",
 "anio": 2026
+}
+]
+},
+{
+"id": "bs-haemok",
+"ciudad": "busan",
+"nombre": "Haemok (arroz con anguila)",
+"ko": "해목",
+"tipo": "restaurante",
+"plato": "hitsumabushi (anguila a la parrilla sobre arroz)",
+"direccion": "Gunam-ro 24beon-gil 8, Haeundae-gu (cerca de la playa)",
+"horario": "VERIFICAR en Naver",
+"precio": null,
+"fuente": "guia",
+"url": null,
+"nota": "Bib Gourmand de la Guía Michelin 2024 y 2025. Suele haber cola: id pronto o apuntaos en la lista de la puerta. Hangul y horario: VERIFICAR en Naver.",
+"guias": [
+{
+"g": "michelin",
+"d": "Bib Gourmand",
+"anio": 2025
+}
+]
+},
+{
+"id": "bs-nagahama",
+"ciudad": "busan",
+"nombre": "Nagahama Mangetsu (ramen tonkotsu)",
+"ko": null,
+"tipo": "restaurante",
+"plato": "ramen tonkotsu al estilo de Hakata",
+"direccion": "Udong 1-ro 57, Haeundae-gu (zona de Haeridan-gil)",
+"horario": "VERIFICAR en Naver",
+"precio": "₩ económico (Michelin)",
+"fuente": "guia",
+"url": null,
+"nota": "Bib Gourmand de la Guía Michelin 2024 y 2025; primer local en Corea de esta casa de ramen. No se reserva. Hangul: VERIFICAR en Naver.",
+"guias": [
+{
+"g": "michelin",
+"d": "Bib Gourmand",
+"anio": 2025
 }
 ]
 }
