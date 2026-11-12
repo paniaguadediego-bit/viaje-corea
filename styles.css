@@ -1655,5 +1655,13 @@ details.tras-dia.tras-hoy > summary::after { position: absolute; right: 2px; top
 .c2-acc > .c2-est { flex: 1 1 calc(25% - 3px); min-width: 0; }
 .c2-acc > .c2-est small { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .c2-acc > button.mini[data-full] { flex: 1 1 auto; }
+/* v238: 한 = Enseñar en coreano, icono arriba a la derecha de las fichas (Comer, Hotel, Curioso, PC, Ropa, Lavandería) */
+.con-ko { position: relative; }
+.ko-ic { position: absolute; top: 6px; right: 6px; z-index: 2; width: 34px; height: 34px; min-height: 0 !important; padding: 0; margin: 0;
+  border-radius: 50%; border: 1.5px solid var(--acc); background: var(--card) !important; color: var(--acc); font-weight: 800; font-size: 1rem; line-height: 1; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+.ko-ic:active { background: var(--acc) !important; color: #fff; }
+.c2.con-ko .c2-nom, .aloj.con-ko .big { padding-right: 38px; }
+.plan-card.con-ko .sd-tit { padding-right: 38px; }
+.plan-card.con-ko .foto.banda + .sd-tit { padding-right: 0; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v237"; }
+:root { --css-ver: "v238"; }

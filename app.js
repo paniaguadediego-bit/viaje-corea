@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v237';
+const VERSION = 'v238';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -498,7 +498,9 @@ function alojDe(f) {
 const estrDe = k => Number(((u().estrellas || {})[k] || {}).v) || 0;
 const estrTxt = v => v ? '★'.repeat(v) + '☆'.repeat(5 - v) : '';
 const estrBox = (k, nombre) => { const v = estrDe(k); return `<div class="estrellas">Nuestra valoración: ${[1, 2, 3, 4, 5].map(n => `<button class="star ${v >= n ? 'on' : ''}" data-stk="${esc(k)}" data-stn="${esc(nombre || '')}" data-sv="${n}" aria-label="${n} estrellas">★</button>`).join('')}</div>`; };
-const alojCard = (a, sale, sinTit = false) => `<div class="card aloj">
+// 한 Enseñar en coreano: icono arriba a la derecha de la ficha, solo si hay hangul (sin hangul no sirve de nada).
+const btnKo = (key, ko) => ko ? `<button class="ko-ic" data-full="${esc(key)}" title="Enseñar en coreano (pantalla completa)" aria-label="Enseñar en coreano">한</button>` : '';
+const alojCard = (a, sale, sinTit = false) => `<div class="card aloj con-ko">${btnKo('h:' + (a.id || a.nombre), a.ko)}
     ${sinTit ? '' : `<div class="big">🛏️ ${esc(a.nombre)} ${ver(a)}</div>`}${sale ? '<div class="badge pend">Hoy dejáis este alojamiento</div>' : ''}
     ${a.ko ? `<div class="ko">${esc(a.ko)}</div>` : ''}
     ${a.direccion_ko ? `<div>${esc(a.direccion_ko)}</div>` : ''}
@@ -2071,6 +2073,11 @@ function showFull(key) {
     return full(`<div class="enorme">${esc(fraseTaxi(l.ko))}</div>${pronHTML(fraseTaxi(l.ko))}${l.direccion_ko ? `<div class="dir">${esc(l.direccion_ko)}</div>` : ''}
       <div class="es">${esc(l.es)}${l.direccion_en ? '<br>' + esc(l.direccion_en) : ''}</div>`);
   }
+  if (t === 'h') {
+    const h = arr(trip && trip.alojamientos).find(x => String(x.id || x.nombre) === key.slice(2)); if (!h || !h.ko) return;
+    return full(`<div class="enorme">${esc(fraseTaxi(h.ko))}</div>${pronHTML(fraseTaxi(h.ko))}${h.direccion_ko ? `<div class="dir">${esc(h.direccion_ko)}</div>` : ''}
+      <div class="es">${esc(h.nombre)}${h.direccion_en ? '<br>' + esc(h.direccion_en) : ''}</div>`);
+  }
   if (t === 'k') {
     const c = lugaresComer().find(x => String(x.id) === key.slice(2)); if (!c) return;
     return full(`${c.ko ? `<div class="enorme">${esc(c.ko)}</div>${pronHTML(c.ko)}` : '<div class="falta">falta hangul: copiar de Naver Map</div>'}
@@ -2414,7 +2421,7 @@ function planesDe(k, cat) {
     const c = coordsLugar(p), i = P.indexOf(p);
     const otros = c ? P.filter(o => o !== p && o.ciudad === k && coordsLugar(o)).map(o => [o, km(c, coordsLugar(o))]).filter(([, d]) => d <= 1.5).sort((a, b) => a[1] - b[1]) : [];
     const plan = c ? sitios.map(l => [l, km(c, coordsLugar(l)), enPlan(l, k)]).filter(([, d, e]) => d <= 1 && e).sort((a, b) => a[2].n - b[2].n || a[1] - b[1]).slice(0, 4) : [];
-    return `<div class="card plan-card ${p.cat} ${hecho(p, k) ? 'hecho-card' : ''}">
+    return `<div class="card plan-card con-ko ${p.cat} ${hecho(p, k) ? 'hecho-card' : ''}">${btnKo('pl:' + i, p.ko)}
       ${wikiDe(p) ? `<div class="foto banda" data-wiki="${esc(wikiDe(p))}"><span>${icPlan(p)}</span></div>` : ''}
       <div class="sd-tit">${btnHecho(p, k)}<b>${icPlan(p)} ${esc(p.es)}${ojoSup(p)}</b></div>
       <div class="ko-s">${esc(p.ko)}${distHotel(p, k)}</div>
@@ -2426,7 +2433,7 @@ function planesDe(k, cat) {
       ${otros.length || plan.length ? `<details class="pl-cerca" data-key="plc:${esc(p.id)}" ${abierto('plc:' + p.id, false) ? 'open' : ''}><summary>📏 Cerca${otros.length ? `: ${otros.length} ${otros.length === 1 ? 'plan' : 'planes'}` : ''}${plan.length ? ` · 📅 ${plan.length} de vuestro plan` : ''}</summary>
         ${otros.length ? `<div class="cerca">${otros.map(([o, d]) => `${icPlan(o)} ${esc(o.es)} <span class="muted">${fmtDist(d)}</span>`).join(' · ')}</div>` : ''}
         ${plan.length ? `<div class="cerca">📅 ${plan.map(([l, d, e]) => `${esc(l.es)} <span class="muted">(día ${e.n}, ${fmtDist(d)})</span>`).join(' · ')}</div>` : ''}</details>` : ''}
-      <div class="acciones">${naver(p)}<button class="mini" data-full="pl:${i}">Enseñar</button></div>${estrBox(hKey(p), icPlan(p) + ' ' + p.es)}</div>`;
+      <div class="acciones">${naver(p)}</div>${estrBox(hKey(p), icPlan(p) + ' ' + p.es)}</div>`;
   };
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
@@ -2667,7 +2674,7 @@ function cardComer0(l) {
   const ciudad = (CIUDADES_COMER.find(c => c[0] === l.ciudad) || [])[1] || l.ciudad || '';
   const w = wikiDe(l), meta = [l.plato, l.precio ? '💰 ' + l.precio + precioEur(l.precio).replace(/<[^>]+>/g, '') : '', l.horario ? '🕒 ' + l.horario : '', comerCiudad === 'todas' ? ciudad : ''].filter(Boolean);
   const comp = l.comprobado ? { activo: '🟢 Abierto (fuentes recientes)', existe: '🟡 En listados actuales', dudoso: '🟠 Dudoso', 'no encontrado': '🔴 No encontrado' }[l.comprobado.estado] : '';
-  return `<div class="card comer c2 ${tipoClase(l.tipo)} est-${esc(e.estado || '')}">
+  return `<div class="card comer c2 con-ko ${tipoClase(l.tipo)} est-${esc(e.estado || '')}">${btnKo('k:' + id, l.ko)}
     <div class="c2-top">
       ${w ? `<div class="foto mini c2-foto" data-wiki="${esc(w)}"><span>${IC_COMER[l.tipo] || '🍽️'}</span></div>` : `<div class="c2-ic">${IC_COMER[l.tipo] || '🍽️'}</div>`}
       <div class="c2-txt">
@@ -2680,7 +2687,6 @@ function cardComer0(l) {
     </div>
     <div class="c2-acc">
       ${ESTADOS.map(([k, t]) => `<button class="c2-est ${e.estado === k ? 'on' : ''} e-${k}" data-est="${esc(id)}" data-v="${k}" title="${t}">${{ quiero: '🔖', visitado: '✅', descartado: '👎', cerrado: '🚫' }[k]}<small>${t}</small></button>`).join('')}
-      <button class="mini" data-full="k:${esc(id)}">Enseñar</button>
       ${q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢</a>${googleMaps((l.ko || l.nombre || '') + ' ' + ciudad, 'G')}` : ''}
     </div>
     <details class="c2-mas" data-key="cm:${esc(id)}" ${abierto('cm:' + id, false) ? 'open' : ''}><summary>Más detalles${e.nota ? ' · 📝' : ''}${Number(e.val) ? ' · ' + '★'.repeat(Number(e.val)) : ''}</summary>

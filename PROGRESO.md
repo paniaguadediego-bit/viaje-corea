@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v237
+Caché del service worker: corea-v238
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -290,6 +290,7 @@ Caché del service worker: corea-v237
 - v235: el Mercado tradicional de Haeundae (해운대시장) pasa también a ser sitio del CATALOGO de Busan (con «buscar» y coordenadas), para que cuente como parada de la Ruta del día; en comer.json lleva el mismo hangul. Día 12 (trip.json privado): isla Dongbaekseom → playa de Haeundae → mercado → Gwangalli.
 - v236: añadido el restaurante Mindeulle Eondeok (민들레언덕, bibimbap vegano, Gunam-ro 21, Haeundae; 4,9 ★ con 208 reseñas en Google Maps), del usuario. Coordenadas aproximadas por la dirección.
 - v237: en las fichas de Comer, los 4 estados (Quiero, Visitado, Descartado, Cerrado) van en su propia fila, un cuarto cada uno, y Enseñar, Naver y Google debajo: con la letra grande del móvil (Android e iPhone) «Descartado» se salía del botón. Revisado con una prueba automática (pantalla de 360 px y letra al 118 %) que busca textos que se salen de botones, chips y pestañas en todas las vistas: no queda ninguno más.
+- v238: «Enseñar» deja de ser un botón grande: ahora es el icono redondo 한 arriba a la derecha de las fichas de Comer, Hotel (Planes → Hotel; nueva clave h:<id> en showFull) y Curioso, PC, Ropa y Lavandería, y solo sale si hay hangul. Abre la pantalla completa de siempre. La lista de Idioma → Enseñar no cambia. Icono nuevo en la lista de iconos: 한 = enseñar en coreano.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
