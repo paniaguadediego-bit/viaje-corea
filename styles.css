@@ -1706,5 +1706,10 @@ nav#tabs button.on span { color: #fff !important; }
 .esc-urg .es-sub { font-weight: 700; margin: 10px 0 4px; }
 .esc-urg .ay-tels { display: flex; flex-wrap: wrap; gap: 6px; }
 .esc-urg ul { margin-top: 10px; }
+/* v247: 🔊 pequeño en los recuadros (LP24, Probados) y pantalla completa legible también en tema oscuro */
+.lp24 .habla, .prob .habla { width: 30px !important; height: 30px; min-height: 30px !important; font-size: .85rem; margin: 0 0 2px 6px; }
+#full .habla.grande { background: #e8f0fb !important; color: #0047a0 !important; border: 1.5px solid #0047a0; }
+#full .pron { overflow-wrap: anywhere; word-break: break-word; max-width: 100%; }
+#full .enorme { overflow-wrap: anywhere; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v246"; }
+:root { --css-ver: "v247"; }
