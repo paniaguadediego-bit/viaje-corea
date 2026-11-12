@@ -1714,4 +1714,4 @@ nav#tabs button.on span { color: #fff !important; }
 /* v255: botones «Alrededor de donde estáis ahora» */
 .aqui-nv { text-align: center; } .aqui-nv .acciones { justify-content: center; flex-wrap: wrap; margin-top: 6px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v255"; }
+:root { --css-ver: "v256"; }

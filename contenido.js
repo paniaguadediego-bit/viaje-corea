@@ -217,7 +217,7 @@ Object.assign(LP24_INDISP, {
     ['Sendero de Igidae', '이기대 해안산책로', 'Ruta costera de 4,7 km (2½ h) por bosques y rocas, con vistas de Haeundae. Es un tramo del Galmaetgil (23 tramos, 278 km) y llega al Oryukdo Skywalk, con suelo transparente sobre el acantilado.']]),
   '광안리해수욕장': L24B(160, [
     ['Cafés de la calle Gwangalli', '광안리', 'Frente a una de las mejores playas: cafés y bares con vistas al mar (y al puente Gwangan).'],
-    ['Fuegos artificiales (noviembre)', '부산불꽃축제', 'El Festival Internacional de Fuegos Artificiales de Busan ilumina la playa en noviembre. Fecha de 2026: VERIFICAR.']], '📕 Lonely Planet 2024, pp. 160-161'),
+    ['Fuegos artificiales (noviembre)', '부산불꽃축제', 'El Festival Internacional de Fuegos Artificiales de Busan ilumina la playa en noviembre. En 2026 fue el sábado 7 de noviembre, antes de vuestra llegada (prensa de Busan).']], '📕 Lonely Planet 2024, pp. 160-161'),
   '부산시티투어버스': L24B(156, [
     ['Autobús turístico', '부산 시티투어', 'Tres circuitos desde la estación de Busan, 12 paradas cada uno (9 diarios, mi-do). Roja: Gwangan, Haeundae y Centum City. Verde: Huinnyeoul, Taejongdae y Oryukdo. Naranja: Gamcheon, Dadaepo y Eulsukdo. 20.000 ₩ (48 h); transbordo 5.000 ₩. Se paga a bordo.'],
     ['Busan Pass', '부산', 'Para muchos atractivos: 24 o 48 h, o 3-5 sitios a elegir entre más de 30 (visitbusanpass.com).']]),

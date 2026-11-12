@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v255
+Caché del service worker: corea-v256
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -308,6 +308,7 @@ Caché del service worker: corea-v255
 - v253: barrido por el hotel de Busan recolocado (oeste de la playa): todo lo que estaba «cerca» sigue a ≤1 km y se queda (Mindeulle 4,9, Halmae Gukbap, mercado, Haeundae Milmyeon…). Añadidos: Moemiljip (모밀집, fideos de alforfón, Bib Gourmand Michelin 2026, Marine City 3-ro 23; horario VERIFICAR), The Bay 101 (더베이101, vista nocturna de Marine City) en el catálogo, búsquedas de Naver de la zona nueva en Comer (해운대해수욕장, 마린시티, 동백섬 카페), «🧺 Más lavanderías cerca del hotel» (LAV_BUSQ, búsquedas de Naver) y el PC방 de la playa en lugar del de la estación.
 - v254: más cosas junto al hotel de Busan: Haemok (해목, arroz con anguila, Gunam-ro 24beon-gil 8) y Nagahama Mangetsu (ramen, Udong 1-ro 57), Bib Gourmand Michelin 2024-2025; APEC Nurimaru y la Calle del Cine de Marine City en el catálogo. Corregido el hangul de Moemiljip: 뫼밀집 (así lo escribe la Guía Michelin). La web de Michelin no se puede abrir desde aquí: datos de buscadores, horarios VERIFICAR.
 - v255: en Comer (todas las ciudades), «📍 Alrededor de donde estáis ahora» (AQUI_NAVER): botones que abren la app de Naver Map con 맛집, 카페, 편의점, 약국 o 코인세탁 buscados en torno a la ubicación del móvil. Motivo: junto al hotel de Busan (zona de la estación de Dongbaek, de hoteles y viviendas) no hay sitios con datos fiables a menos de 300 m.
+- v256: corregido el recuadro LP24 de Gwangalli: el Festival de Fuegos Artificiales de Busan de 2026 fue el sábado 7 de noviembre (ya pasado), en lugar de «VERIFICAR».
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
