@@ -2550,5 +2550,25 @@
 "lp24": {
 "p": 161
 }
+},
+{
+"id": "bs-dongbaek104",
+"ciudad": "busan",
+"nombre": "Dongbaek 104 Rooftop Café",
+"ko": "동백104",
+"tipo": "café",
+"plato": "café y postres en terraza con vistas al Sky Capsule y al mar",
+"direccion": "18-19 Dalmaji-gil 104beon-gil, Haeundae-gu (Jung-dong, junto a las vías del Blueline)",
+"horario": "VERIFICAR",
+"precio": "₩1-10.000 por persona (Google)",
+"fuente": "propio",
+"url": null,
+"nota": "Pequeña cafetería con azotea famosa por las vistas de las cabinas de colores del Sky Capsule pasando junto al mar; también bonita de noche. Recomendada: la añadió el usuario desde Google el 13/11. Cerca del Sky Capsule de Mipo.",
+"opiniones": {
+"v": 4.7,
+"n": 171,
+"fuente": "Google",
+"fecha": "2026-11-13"
+}
 }
 ]
