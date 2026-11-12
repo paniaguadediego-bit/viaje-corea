@@ -5,7 +5,7 @@ const DICC = [
 ['Básico', [
 ['hola','안녕하세요','annyeonghaseyo'],['adiós (al que se va)','안녕히 가세요','annyeonghi gaseyo'],
 ['adiós (al que se queda)','안녕히 계세요','annyeonghi gyeseyo'],['gracias','감사합니다','gamsahamnida'],
-['gracias (más cercano)','고마워요','gomawoyo'],['de nada','천만에요','cheonmaneyo'],
+['gracias (más cercano)','고마워요','gomawoyo'],['de nada','아니에요','anieyo'],
 ['perdón, lo siento','죄송합니다','joesonghamnida'],['lo siento (cercano)','미안해요','mianhaeyo'],
 ['disculpe (con permiso)','실례합니다','sillyehamnida'],['¡perdone! (llamar a alguien)','저기요','jeogiyo'],
 ['sí','네','ne'],['no','아니요','aniyo'],['vale, está bien (me gusta)','좋아요','joayo'],
