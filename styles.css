@@ -1685,5 +1685,15 @@ details.tras-dia.tras-hoy > summary::after { position: absolute; right: 2px; top
 .prob-barra i { display: block; height: 100%; background: var(--ok); }
 /* v242: el ☰ de Más (texto, no emoji) se veía del mismo color que la pastilla activa */
 nav#tabs button.on span { color: #fff !important; }
+/* v243: foto y valoración (1-5 ★ o NS/NR) en cada plato de Probados */
+.prob { align-items: center; }
+.prob-foto { flex: none; width: 58px !important; height: 58px !important; border-radius: 10px; }
+.prob-val { display: flex; align-items: center; gap: 2px; margin-top: 4px; flex-wrap: wrap; }
+.prob-val .star { flex: none !important; width: auto !important; font-size: 1.15rem; padding: 0 2px; min-height: 0 !important; background: none !important; border: 0; box-shadow: none; color: color-mix(in srgb, var(--muted) 45%, transparent); }
+.prob-val .star.on { color: #f2b705; }
+.prob-ns { flex: none !important; width: auto !important; font-size: .7rem; padding: 2px 8px; min-height: 0 !important; margin-left: 6px; border-radius: 99px; border: 1px solid var(--line); background: var(--card) !important; color: var(--muted); box-shadow: none; }
+.prob-ns.on { background: var(--muted) !important; color: #fff; border-color: var(--muted); }
+.prob.ok .prob-t b { text-decoration: none; }
+.prob.ok { opacity: 1; background: color-mix(in srgb, var(--ok) 8%, var(--card)) !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v242"; }
+:root { --css-ver: "v243"; }

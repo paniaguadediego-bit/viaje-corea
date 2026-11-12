@@ -1135,7 +1135,7 @@ const PROBAR = [
     ['Bulgogi', '불고기', 'Ternera marinada en láminas a la parrilla.'],
     ['Samgyeopsal', '삼겹살', 'Panceta a la parrilla en la mesa, envuelta en lechuga.'],
     ['Galbi', '갈비', 'Costillas marinadas a la parrilla.'],
-    ['Pollo frito coreano', '치킨', 'Crujiente, con salsa dulce y picante; con cerveza es el «chimaek».'],
+    ['Pollo frito coreano', '치킨', 'Crujiente, con salsa dulce y picante; con cerveza es el «chimaek».', 'Korean_fried_chicken'],
     ['Kimchi jjigae', '김치찌개', 'Guiso de kimchi con cerdo y tofu.'],
     ['Doenjang jjigae', '된장찌개', 'Guiso de pasta de soja fermentada.'],
     ['Sundubu jjigae', '순두부찌개', 'Guiso picante de tofu sedoso.'],
@@ -1162,7 +1162,7 @@ const PROBAR = [
     ['Dalgona', '달고나', 'Caramelo de azúcar y bicarbonato con un dibujo.'],
     ['Bingsu', '빙수', 'Hielo raspado con fruta, leche o alubia roja.'],
     ['Ramyeon de tienda', '라면', 'Fideos instantáneos hechos en la máquina de la tienda.'],
-    ['Samgak gimbap', '삼각김밥', 'Triángulo de arroz y alga de las tiendas 24 h.']]],
+    ['Samgak gimbap', '삼각김밥', 'Triángulo de arroz y alga de las tiendas 24 h.', 'Samgak-gimbap']]],
   ['Bebidas', '🍶', '', [
     ['Soju', '소주', 'El aguardiente nacional, en botellita verde.'],
     ['Makgeolli', '막걸리', 'Vino de arroz turbio y suave.'],
@@ -1171,7 +1171,7 @@ const PROBAR = [
     ['Yuja-cha', '유자차', 'Té de cítrico yuzu con miel, caliente.'],
     ['Omija-cha', '오미자차', 'Té de la «baya de los cinco sabores».'],
     ['Sujeonggwa', '수정과', 'Ponche frío de canela y jengibre.'],
-    ['Leche de plátano', '바나나우유', 'La de botellita panzuda amarilla de las tiendas.']]],
+    ['Leche de plátano', '바나나우유', 'La de botellita panzuda amarilla de las tiendas.', 'Binggrae_Banana_Flavored_Milk']]],
   ['Seúl', '🏙️', 'seul', [
     ['Bindaetteok', '빈대떡', 'Tortita de soja molida del mercado Gwangjang.'],
     ['Mayak gimbap', '마약김밥', 'Minigimbap «adictivo» de Gwangjang.'],
@@ -1202,6 +1202,6 @@ const PROBAR = [
     ['Bibimbap de Jeonju', '전주비빔밥', 'El bibimbap de su cuna.'],
     ['Kongnamul gukbap', '콩나물국밥', 'Sopa de brotes de soja con arroz.'],
     ['Moju', '모주', 'Makgeolli caliente con canela y jengibre.'],
-    ['Makgeolli del callejón', '막걸리골목', 'Tetera de makgeolli con la mesa llena de platillos, en sus callejones.'],
+    ['Makgeolli del callejón', '막걸리골목', 'Tetera de makgeolli con la mesa llena de platillos, en sus callejones.', 'ko:막걸리'],
     ['Choco Pie de PNB', '초코파이', 'El de la pastelería PNB, mucho más grande que el de tienda.']]]
 ];
