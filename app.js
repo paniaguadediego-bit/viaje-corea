@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v244';
+const VERSION = 'v245';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1386,7 +1386,7 @@ function pintarFotos() {
 }
 // Descarga las fotos (y la versión grande de los banners de cada día) para usarlas sin conexión.
 async function descargarFotos(prog) {
-  const ts = [...new Set([...Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat().map(l => l.wiki), ...Object.values(typeof WIKI !== 'undefined' ? WIKI : {}), ...(typeof PLANES !== 'undefined' ? PLANES : []).map(p => p.wiki), ...Object.values(LP).flat().map(l => l.wiki), ...HIST_WIKI].filter(Boolean))];
+  const ts = [...new Set([...(typeof PROBAR !== 'undefined' ? PROBAR : []).flatMap(g => g[3].map(x => x[3] || 'ko:' + x[1].replace(/\s+/g, ''))), ...Object.values(typeof IMPRES !== 'undefined' ? IMPRES : {}).flat().map(l => l.wiki), ...Object.values(typeof WIKI !== 'undefined' ? WIKI : {}), ...(typeof PLANES !== 'undefined' ? PLANES : []).map(p => p.wiki), ...Object.values(LP).flat().map(l => l.wiki), ...HIST_WIKI].filter(Boolean))];
   const banners = new Set(arr(trip && trip.dias).map(d => listaDia(d).map(wikiDe).find(Boolean)).filter(Boolean));
   let n = 0, hechas = 0, i = 0;
   const uno = async t => {
@@ -3195,7 +3195,7 @@ function render() {
   setTimeout(usoVistos, 0);
   if (cambia) { const v = $('#view'); v.classList.remove('entra'); void v.offsetWidth; v.classList.add('entra'); } // fundido suave al cambiar de pestaña
   filas($('#view')).forEach((f, i) => { if (posX[i]) { f.style.scrollBehavior = 'auto'; f.scrollLeft = posX[i]; f.style.scrollBehavior = ''; } });
-  if (['ciudades', 'hoy', 'corea', 'historia'].includes(tab)) pintarFotos();
+  if (['ciudades', 'hoy', 'corea', 'historia', 'mas'].includes(tab)) pintarFotos(); // 'mas': fotos de 🥢 Probados
   if (['ciudades', 'hoy', 'mapas'].includes(tab)) pintarMapas();
   const ch = tab === 'hoy' && document.querySelector('#tira .dchip.on');
   if (ch) { const t = ch.parentElement, obj = ch.offsetLeft - t.clientWidth / 2 + ch.offsetWidth / 2; t.style.scrollBehavior = 'auto'; t.scrollLeft = tiraX != null ? tiraX : obj; if (tiraX != null) requestAnimationFrame(() => { t.style.scrollBehavior = 'smooth'; t.scrollLeft = obj; }); }

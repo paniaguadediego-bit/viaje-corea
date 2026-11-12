@@ -1701,4 +1701,4 @@ nav#tabs button.on span { color: #fff !important; }
 .doc-fig.usado { opacity: .55; }
 .doc-usados { margin-top: 12px; } .doc-usados > summary { cursor: pointer; font-weight: 700; color: var(--muted); text-align: center; padding: 6px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v244"; }
+:root { --css-ver: "v245"; }

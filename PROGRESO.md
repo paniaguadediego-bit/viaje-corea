@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v244
+Caché del service worker: corea-v245
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -297,6 +297,7 @@ Caché del service worker: corea-v244
 - v242: Más → 🥢 Probados: 67 comidas y bebidas típicas (PROBAR en contenido.js) en grupos plegables (Imprescindibles de Corea, De la calle y de la tienda 24 h, Bebidas, y lo típico de Seúl, Andong, Gyeongju, Busan y Jeonju), con hangul, 🔊, una línea y casilla; barra de progreso; se abre el grupo de la ciudad de hoy. La marca (user.probados[hangul]) se comparte con Planes → 🥢 Platos típicos, donde sale la lista de esa ciudad al final, va al pasar marcas y al Resumen (texto, Word y PDF: «🥢 Lo que probamos»). [Supuesto] Recuadro en Más (como Regalos) y no en Corea → Comida, porque es una lista personal para marcar. Arreglado también: el ☰ de la pestaña Más activa no se veía.
 - v243: cada plato de 🥢 Probados lleva foto (Wikipedia en coreano por el hangul y, si no, Wikimedia Commons; 4.º campo de PROBAR = artículo en inglés cuando el coreano no vale: pollo frito, samgak gimbap, leche de plátano) y valoración 1-5 ★ o «NS/NR» (no sabe / no recuerda) en user.probVal[hangul]; valorar lo marca como probado; tocar la misma lo quita. Va al pasar marcas y al Resumen (★ o NS/NR junto a cada plato). [Supuesto] Las fotos no se pudieron comprobar desde aquí (Wikipedia bloqueada en el entorno): si alguna sale mal o no sale, se ajusta su artículo.
 - v244: en Más → Documentos y billetes, cada foto o PDF tiene una casilla «ya usado» arriba a la izquierda (user.docUsado[id], solo en ese móvil, como las propias fotos); los usados pasan, atenuados, a «✓ Ya usados · n», plegado al final. Tocar la casilla otra vez lo devuelve.
+- v245: arreglo: las fotos de 🥢 Probados no salían porque pintarFotos() solo se llamaba en Hoy, Planes, Corea e Historia; ahora también en Más. «Preparar para viajar» descarga también las fotos de los platos.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
