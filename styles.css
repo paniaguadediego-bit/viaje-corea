@@ -1700,5 +1700,11 @@ nav#tabs button.on span { color: #fff !important; }
 .doc-ck { position: absolute; top: 6px; left: 6px; z-index: 2; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
 .doc-fig.usado { opacity: .55; }
 .doc-usados { margin-top: 12px; } .doc-usados > summary { cursor: pointer; font-weight: 700; color: var(--muted); text-align: center; padding: 6px; }
+/* v246: Escala Pekín, yuan ↔ euro y «Si algo sale mal» */
+.esc-cambio .par { display: flex; gap: 6px; align-items: center; margin: 8px 0; } .esc-cambio .par input { flex: 1; min-width: 0; }
+.esc-tabla { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 4px 0 6px; font-size: .9rem; }
+.esc-urg .es-sub { font-weight: 700; margin: 10px 0 4px; }
+.esc-urg .ay-tels { display: flex; flex-wrap: wrap; gap: 6px; }
+.esc-urg ul { margin-top: 10px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v245"; }
+:root { --css-ver: "v246"; }

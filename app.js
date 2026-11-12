@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v245';
+const VERSION = 'v246';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2798,15 +2798,16 @@ const miniTiempo = (k, f) => { const t = tiempoDe(k, f); return t ? `<span class
 
 async function actualizarCambio(forzar) {
   const U = u();
-  if (!navigator.onLine || (U.cambioManual && !forzar)) return;
-  if (!forzar && U.cambioTs && Date.now() - U.cambioTs < 6 * 3600e3) return;
-  const urls = ['https://api.frankfurter.dev/v1/latest?base=EUR&symbols=KRW', 'https://api.frankfurter.app/latest?from=EUR&to=KRW'];
+  if (!navigator.onLine || (U.cambioManual && !forzar && U.cambioCny)) return;
+  if (!forzar && U.cambioTs && U.cambioCny && Date.now() - U.cambioTs < 6 * 3600e3) return;
+  const urls = ['https://api.frankfurter.dev/v1/latest?base=EUR&symbols=KRW,CNY', 'https://api.frankfurter.app/latest?from=EUR&to=KRW,CNY'];
   for (const url of urls) {
     try {
       const d = await (await fetch(url, { cache: 'no-store' })).json();
       const r = d && d.rates && Number(d.rates.KRW);
       if (r > 0) {
-        Object.assign(U, { cambio: Math.round(r * 100) / 100, cambioFecha: d.date || todayISO(), cambioTs: Date.now(), cambioManual: false });
+        if (!U.cambioManual || forzar) Object.assign(U, { cambio: Math.round(r * 100) / 100, cambioFecha: d.date || todayISO(), cambioTs: Date.now(), cambioManual: false });
+        if (Number(d.rates.CNY) > 0) Object.assign(U, { cambioCny: Number(d.rates.CNY), cambioCnyFecha: d.date || todayISO() });
         saveUser(); refrescarConv(); if (tab === 'conv') renderLuego(); return true;
       }
     } catch { /* probar la siguiente */ }
@@ -3117,6 +3118,37 @@ const ESCALA_INFO = [
   ['💴', 'Dinero', [
     'No hace falta cambiar: la moneda es el yuan (CNY, ¥). Muchas tiendas del aeropuerto aceptan Visa/Mastercard.',
     'En China casi todo se paga con Alipay o WeChat Pay. Alipay admite tarjetas extranjeras, pero para 2 h no merece la pena instalarlo.']]];
+// 💱 Yuan ↔ euro (cambio del BCE, el mismo aviso que el de wones; se guarda para offline).
+function escCambio() {
+  const U = u(), c = Number(U.cambioCny); if (!c) actualizarCambio(false);
+  return `<div class="card esc-cambio"><b>💱 Yuan ↔ euro</b>
+    ${c ? `<div class="par"><input data-cny="CNY" type="number" inputmode="decimal" placeholder="¥ yuanes"><span>⇄</span><input data-cny="EUR" type="number" inputmode="decimal" placeholder="€ euros"></div>
+      <div class="esc-tabla">${[10, 20, 50, 100, 200, 500].map(y => `<span><b>${y} ¥</b> ≈ ${(y / c).toLocaleString('es-ES', { maximumFractionDigits: 2 })} €</span>`).join('')}</div>
+      <div class="muted">1 € = ${c.toLocaleString('es-ES', { maximumFractionDigits: 3 })} ¥ · cambio oficial del ${esc(U.cambioCnyFecha || '')} (BCE). Al pagar con tarjeta, elegid cobrar en yuanes (CNY), no en euros.</div>`
+      : '<div class="muted">Abrid esta pantalla una vez con conexión para guardar el cambio del día.</div>'}</div>`;
+}
+// 🆘 Si algo sale mal en Pekín. Datos del Ministerio de Asuntos Exteriores (exteriores.gob.es, consultados en noviembre de 2026).
+function escUrgencias() {
+  const s = (trip && trip.seguro) || {}, as = s.asistencia || {};
+  return `<details class="card esc-sec esc-urg" data-key="esc:urg" ${abierto('esc:urg', false) ? 'open' : ''}><summary><b>🆘 Si algo sale mal</b></summary>
+    <div class="ay-tels">${telLink('110', '🚓 110 · Policía')}${telLink('120', '🚑 120 · Ambulancia')}${telLink('119', '🚒 119 · Bomberos')}</div>
+    <div class="es-sub">🇪🇸 Emergencia consular (24 h, solo emergencias graves)</div>
+    <div class="ay-tels">${telLink('+8613911461886', '🆘 +86 139 1146 1886')}</div>
+    <div class="es-sub">🛂 Consulado General de España (pasaporte perdido o robado)</div>
+    <div class="ay-tels">${telLink('+861065320780', '📞 +86 10 6532 0780', 'sec')}</div>
+    <div class="muted">9 Sanlitun Dongsijie, Chaoyang · 三里屯东四街9号 · cog.pekin@maec.es. Expide el documento de viaje provisional si perdéis el pasaporte.</div>
+    <div class="es-sub">🏛️ Embajada de España</div>
+    <div class="ay-tels">${telLink('+861065323629', '📞 +86 10 6532 3629', 'sec')}</div>
+    <div class="muted">Sanlitun Lu 9, Chaoyang · 三里屯路9号 · emb.pekin@maec.es</div>
+    ${as.telefono ? `<div class="es-sub">🛡️ Seguro${s.producto ? ' · ' + esc(s.producto) : ''}</div><div class="ay-tels">${telLink(String(as.telefono), '📞 ' + esc(as.telefono))}</div>` : ''}
+    <ul>
+      <li><b>Si perdéis la conexión</b> por retraso del primer vuelo: con un solo billete de Air China os recolocan en el siguiente sin coste. Id al mostrador de tránsito de Air China («Transfer») antes del control y pedid el cambio y el vale de comida u hotel si toca.</li>
+      <li><b>Si os quedáis una noche</b>: salir de la zona internacional exige pasar inmigración (España entra en el tránsito sin visado de China); lo gestiona Air China. VERIFICAR las condiciones en el mostrador.</li>
+      <li><b>Maleta perdida</b> al llegar a Seúl o Madrid: parte en el mostrador de equipajes antes de salir de la sala (PIR), con la etiqueta de la maleta y la tarjeta de embarque.</li>
+      <li>Guardad en Documentos las tarjetas de embarque y una foto del pasaporte: sin internet no podréis bajarlas.</li>
+    </ul>
+    <div class="muted">Teléfonos y direcciones: Ministerio de Asuntos Exteriores (exteriores.gob.es), noviembre de 2026.</div></details>`;
+}
 function viewEscala() {
   const ahora = new Date(), hPek = ahora.toLocaleTimeString('es-ES', { timeZone: 'Asia/Shanghai', hour: '2-digit', minute: '2-digit' });
   // Vuestras escalas en Pekín (del trip.json, solo en el móvil).
@@ -3132,6 +3164,7 @@ function viewEscala() {
       <div>🛬 Llegáis a las <b>${e.lleg.slice(11)}</b> en el ${esc(e.de.vuelo)} (terminal ${esc(e.de.a_terminal || '?')})</div>
       <div>🛫 Sale el <b>${esc(e.a.vuelo)}</b> a las <b>${e.sal.slice(11)}</b> (terminal ${esc(e.a.de_terminal || '?')}) → ${esc(e.a.a_nombre || e.a.a)}</div>
       <div class="esc-con ${e.min < 150 ? 'justa' : ''}">⏱️ Conexión de <b>${hm(e.min)}</b>${e.min < 150 ? ': id directos al tránsito, sin paradas' : ''}</div></div>`).join('')}
+    ${escCambio()}${escUrgencias()}
     ${ESCALA_INFO.map(([ic, t, ls]) => `<details class="card esc-sec" data-key="esc:${esc(t)}" ${abierto('esc:' + t, t.startsWith('Paso')) ? 'open' : ''}><summary><b>${ic} ${esc(t)}</b></summary><ul>${ls.map(x => `<li>${resaltar(x, true)}</li>`).join('')}</ul></details>`).join('')}
     <h2>🗣️ Frases en chino (toca para enseñar)</h2>
     ${FRASES_CN.map((f, i) => `<div class="card lugar" data-full="cn:${i}"><div><div>${esc(f[0])}</div><div class="muted">${esc(f[2])}</div></div><div class="ko">${esc(f[1])}</div></div>`).join('')}
@@ -3490,6 +3523,10 @@ document.addEventListener('input', e => {
   else if (t.dataset.conv) {
     const otro = document.querySelector(`[data-conv="${t.dataset.conv === 'KRW' ? 'EUR' : 'KRW'}"]`), v = Number(t.value), c = cambio();
     otro.value = !t.value || !c ? '' : t.dataset.conv === 'KRW' ? (v / c).toFixed(2) : Math.round(v * c);
+  }
+  else if (t.dataset.cny) {
+    const c = Number(u().cambioCny), otro = document.querySelector(`[data-cny="${t.dataset.cny === 'CNY' ? 'EUR' : 'CNY'}"]`), v = Number(t.value);
+    if (otro) otro.value = !t.value || !c ? '' : t.dataset.cny === 'CNY' ? (v / c).toFixed(2) : (v * c).toFixed(2);
   }
   else if (t.dataset.notas !== undefined) { u().notas = t.value; saveUser(); }
   else if (t.dataset.diario) { const U = u(); U.diario = U.diario || {}; (U.diario[t.dataset.diario] = U.diario[t.dataset.diario] || {}).nota = t.value; saveUser(); }

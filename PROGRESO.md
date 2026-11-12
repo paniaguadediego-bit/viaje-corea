@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v245
+Caché del service worker: corea-v246
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -298,6 +298,7 @@ Caché del service worker: corea-v245
 - v243: cada plato de 🥢 Probados lleva foto (Wikipedia en coreano por el hangul y, si no, Wikimedia Commons; 4.º campo de PROBAR = artículo en inglés cuando el coreano no vale: pollo frito, samgak gimbap, leche de plátano) y valoración 1-5 ★ o «NS/NR» (no sabe / no recuerda) en user.probVal[hangul]; valorar lo marca como probado; tocar la misma lo quita. Va al pasar marcas y al Resumen (★ o NS/NR junto a cada plato). [Supuesto] Las fotos no se pudieron comprobar desde aquí (Wikipedia bloqueada en el entorno): si alguna sale mal o no sale, se ajusta su artículo.
 - v244: en Más → Documentos y billetes, cada foto o PDF tiene una casilla «ya usado» arriba a la izquierda (user.docUsado[id], solo en ese móvil, como las propias fotos); los usados pasan, atenuados, a «✓ Ya usados · n», plegado al final. Tocar la casilla otra vez lo devuelve.
 - v245: arreglo: las fotos de 🥢 Probados no salían porque pintarFotos() solo se llamaba en Hoy, Planes, Corea e Historia; ahora también en Más. «Preparar para viajar» descarga también las fotos de los platos.
+- v246: Escala Pekín: «💱 Yuan ↔ euro» (cambio del BCE vía frankfurter, que ya pedía KRW y ahora también CNY; se guarda para offline; tabla de 10 a 500 ¥ y aviso de pagar en yuanes) y «🆘 Si algo sale mal» plegable: 110 policía, 120 ambulancia, 119 bomberos; emergencia consular +86 139 1146 1886, Consulado General (+86 10 6532 0780, 9 Sanlitun Dongsijie, para pasaporte perdido) y Embajada (+86 10 6532 3629, Sanlitun Lu 9), según exteriores.gob.es; teléfono del seguro del trip.json; qué hacer si se pierde la conexión, si hay que dormir en Pekín (VERIFICAR) o si no llega la maleta. Si el cambio de wones está fijado a mano, ya no se pisa al pedir el del yuan.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
