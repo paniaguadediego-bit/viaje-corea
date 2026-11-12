@@ -1716,4 +1716,4 @@ nav#tabs button.on span { color: #fff !important; }
 /* v262: puntitos del carrusel ocultos si hay muchas fotos */
 .dia-puntos[hidden] { display: none !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v262"; }
+:root { --css-ver: "v263"; }

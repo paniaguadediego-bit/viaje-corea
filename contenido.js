@@ -950,9 +950,9 @@ const PLANES = [
   // v223: más Curioso y Ropa en Busan y Jeonju (ubicaciones aproximadas; lo dudoso, VERIFICAR).
   { id: 'pl-catchcatch', wiki: 'Cat_café', ic: '🐱', ciudad: 'busan', cat: 'curioso', es: 'Catch Catch Cat Cafe (cafetería de gatos)', ko: '캐치캣치', romanizacion: 'Kaechi Kaetchi', aprox: true,
     precio: 'Entrada 15.000 ₩ por persona (cartel del local en Naver).', resenas: '407 reseñas en Naver Map (13/11/2026).',
-    direccion_ko: '부산 해운대구 우동 829-9', direccion_en: '829-9 U-dong, Haeundae-gu',
+    direccion_ko: '부산 해운대구 해운대로 543', direccion_en: 'Haeun-daero 543 (829-9 U-dong), Haeundae-gu; a unos 230 m del hotel',
     desc: 'Cafetería de gatos en U-dong: muchos gatos para jugar y acariciar. La encontrasteis vosotros en Naver.',
-    nota: 'Cierra a las 21:00 (Naver, 13/11). La promoción «4+1» del cartel era hasta octubre. Ubicación aproximada: si el icono sale mal, arrastradlo en el mapa.' },
+    nota: 'Cierra a las 21:00 (Naver, 13/11). La promoción «4+1» del cartel era hasta octubre. Ubicación sacada del mapa de Naver: si el icono no cae justo, arrastradlo en el mapa.' },
   { id: 'pl-millak-park', wiki: 'Gwangan_Bridge', ic: '🐟', ciudad: 'busan', cat: 'curioso', es: 'Parque Millak Waterfront (pescado frente al puente)', ko: '민락수변공원', romanizacion: 'Millak Subyeon Gongwon', aprox: true,
     precio: 'Gratis. El pescado se compra en el Millak Town Raw Fish Centre, al lado (unos 30.000 ₩ según la LP 2024; preguntad el precio por kilo).',
     direccion_en: 'Millak-dong, Suyeong-gu (entre Haeundae y Gwangalli)',
