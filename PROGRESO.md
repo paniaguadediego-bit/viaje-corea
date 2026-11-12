@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v250
+Caché del service worker: corea-v251
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -303,6 +303,7 @@ Caché del service worker: corea-v250
 - v248: en Hoy, el desplegable del hotel plegado dice solo «🛏️ Hotel» (o «🛏️ Hoteles» los días de cambio), en una fila; los nombres salen al abrirlo.
 - v249: en el Diccionario, «de nada» pasa a ser 아니에요 (anieyo), lo que se oye en el día a día, en lugar de 천만에요 (cheonmaneyo), más formal (petición del usuario).
 - v250: «De nada · 아니에요 · anieyo» también en Idioma → Frases → Básicas, justo después de Gracias. Como las favoritas de frases se guardan por posición (f:n), una migración única (user.mig250) sube una las de f:2 en adelante para que sigan apuntando a su frase. [Lección, repetida] Nunca escribir open(f,'w').write(open(f).read()…): vacía el archivo; cambiar versiones solo con sed.
+- v251: revisadas las 72 frases y las expresiones del Diccionario buscando formas «de libro»: las frases ya usaban lo que se oye (…주세요, …있어요?, 카드 돼요?…). Cambiados en el Diccionario: «me llamo» 제 이름은 …입니다 → 저는 …예요/이에요; «¡salud!» 건배 → 짠! / 건배; «muy» 아주 → 진짜 / 아주; y 잠시만요 también como «¡con permiso!» para pasar entre la gente.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
