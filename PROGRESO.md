@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v230
+Caché del service worker: corea-v231
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -283,6 +283,7 @@ Caché del service worker: corea-v230
 - v228: Platos típicos: lo que no tiene ubicación en coords.json (p. ej. «Platos de Busan a probar») ya no es ficha: va como línea 🍽️ dentro de «Qué probar en <ciudad>»; en «Dónde probarlos» solo sitios reales. Busan con la Lonely Planet 2024 (pp. 154-164): recuadro rosa LP24 (LP24_INDISP con t, manda sobre la LP 2016) en 26 sitios (Beomeo-sa, Taejongdae, teleférico de Songdo, Gamcheon, Jagalchi, Yongdusan, Blueline, Haedong Yonggungsa, Geumgang, Igidae, Gwangalli con los fuegos artificiales de noviembre, bus turístico y Busan Pass…); sitios nuevos en CATALOGO (teleférico de Songdo con alias «air cruise», Songjeong, Museo del Cine, Oryukdo Skywalk, Eulsukdo, Dadaepo, Busan Cinema Center, cafés de Jeonpo y Oncheoncheon); 21 restaurantes y bares nuevos en comer.json (fuente lonely24, hangul null y ubicación aproximada: VERIFICAR) y el callejón del dwaeji gukbap de Seomyeon en Platos típicos; Dolgorae, Sulbing, Noran Mahura y Gukje con lp24 y horario de 2024.
 - v229: itinerario eficiente, por zonas. Los ＊ ya no van en el hueco de menor desvío de todo el día (el 13 metía Yongdusan y los museos de Nampo entre el hotel y Gamcheon, y luego se volvía a Nampo), sino pegados a la parada del plan (o al hotel) que tienen más cerca, antes o después según lo que menos desvíe. Cotejado con el itinerario original: el 13 ya iba Gamcheon → Songdo → Nampo; el 16 (Jeonju) pasa a Jaman → Gyeonggijeon → mercado Nambu (en el trip.json privado). Los sitios nuevos de la LP24 de Busan llevan «buscar» propio: Eulsukdo se colaba en el día 12 por la palabra «isla».
 - v230: Más → 🛠️ Guía de la app (también sin trip.json): muestra GUIA-APP.md (precacheado en sw.js) con un lector de markdown propio (mdHtml), apartados plegables, 📋 Copiar y ⬇️ Descargar .md. GUIA-APP.md explica cada pestaña, cómo está hecha (archivos, del país o genéricos, datos, versiones, reglas) y el paso a paso para hacer otra app para otro país, con un encargo para Claude listo para pegar. [Supuesto] Un solo archivo (GUIA-APP.md) en vez de varios: la misma fuente para el repositorio y para la app; README.md enlaza a él.
+- v231: «Primero, el traslado» de Hoy es una sola ficha (trasladoHoy): plegada y centrada, con lo esencial (ciudad → ciudad, horas grandes, tren y asientos, y €✓ = comprado en vez de «comprado (tren)»); al tocar en cualquier parte se abre todo: clase y precio, nota, pasos (sin su desplegable), frase en coreano, hotel de llegada y, abajo, 🛣️ estación → hotel en Naver. En Ruta sigue trasladoCard. Quitado «E-ticket con QR…» de las notas del trip.json privado. Arreglado: los estilos de v230 (Guía de la app) no se habían añadido porque el marcador del final de styles.css es «/* Versión de esta hoja (igual…».
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

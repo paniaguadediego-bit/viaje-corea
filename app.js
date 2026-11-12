@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v230';
+const VERSION = 'v231';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -650,7 +650,7 @@ function viewHoy() {
   const secs = [
     // El traslado va dentro de Sitios, como primer tramo de la ruta del día.
     ['sitios', '📖 Sitios', (tr.length ? (() => { const hk = 'tras:' + (tr[0].id || d.fecha), ok = !!u().hecho[hk], key = 'trd:' + d.fecha, ab = abierto(key, !ok);
-      return `<details class="tras-dia ${ok ? 'hecho-card' : ''}" data-key="${key}" ${ab ? 'open' : ''}><summary class="tras-dia-tit"><button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hk)}" data-v="${ok ? 0 : 1}" aria-label="Hecho">${ok ? '✓' : ''}</button>${medio(tr[0])[0]} Primero, el traslado</summary>${tr.map(t => trasladoCard(t, false, true)).join('')}</details>`; })() : ''), sitiosDia(d)],
+      return trasladoHoy(tr, { hk, ok, key, ab }); })() : ''), sitiosDia(d)],
     ['hotel', '🛏️ Hotel', al.sale && al.noche && al.sale !== al.noche ? hotelLinea(al.sale, 'Hoy dejáis') + hotelLinea(al.noche, 'Esta noche') : (al.noche || al.sale) ? hotelLinea(al.noche || al.sale, '') : ''],
   ];
   // Sin botones (no se usaban): Sitios siempre a la vista; Hotel y Diario, plegados al final.
@@ -1043,6 +1043,32 @@ function llegadaHotel(t) {
   const h = alojDe(t.fecha).noche; if (!h) return '';
   const c = hotelDe(ck(h.ciudad)) || (h.lat != null ? [Number(h.lat), Number(h.lon)] : null); if (!c) return '';
   return `<div class="lleg-h"><button class="btn mini" data-irab="${e.lat},${e.lon}|${esc(e.ko || e.nombre)}|${c[0]},${c[1]}|${esc(h.ko || h.nombre)}|public">🛣️ ${esc(e.nombre)} → ${esc(h.nombre)} en Naver</button>${e.verificar ? ' <span class="ver">VERIFICAR punto de salida</span>' : ''}</div>`;
+}
+// v231: «Primero, el traslado» en Hoy = una sola ficha. Plegada, lo esencial y centrado (ciudades, horas, tren y asientos);
+// al tocarla se abre todo: precio, nota, pasos (sin desplegable propio), frase, hotel de llegada y 🛣️ estación → hotel.
+const ciudadDe = x => { const m = String(x || '').match(/\(([^)]+)\)\s*$/); return m ? m[1] : String(x || ''); };
+function compradoIc(t) {
+  if (isPend(t)) return `<span class="badge pend">${esc(t.estado)}</span>`;
+  if (isOk(t)) return `<span class="eur-ok" title="${esc(t.estado || 'Comprado')}" aria-label="Comprado">€<i>✓</i></span>`;
+  return t.estado ? `<span class="badge otro">${esc(t.estado)}</span>` : '';
+}
+function trasladoHoy(tr, { hk, ok, key, ab }) {
+  return tr.map((t, i) => { const b = billete(t) || {}, [ic] = medio(t), h = alojDe(t.fecha).noche;
+    const as = Object.entries(b.asientos || {});
+    return `<details class="tras-dia card tras-hoy ${ok ? 'hecho-card' : ''}" data-key="${key}${i ? ':' + i : ''}" ${ab ? 'open' : ''}>
+    <summary><div class="th-cab">${i ? '' : `<button class="hd-ck ${ok ? 'on' : ''}" data-hk="${esc(hk)}" data-v="${ok ? 0 : 1}" aria-label="Hecho">${ok ? '✓' : ''}</button>`}<span class="th-tit">${ic} Primero, el traslado</span></div>
+      <div class="th-ruta">${esc(ciudadDe(t.de))} <i>→</i> ${esc(ciudadDe(t.a))}</div>
+      ${b.salida || b.llegada ? `<div class="th-horas">${esc(b.salida || '?')} <i>→</i> ${esc(b.llegada || '?')}</div>` : ''}
+      <div class="th-bil">${b.numero ? `<b class="nvuelo">${esc(b.numero)}</b>` : ''}${as.length ? ` · 💺 ${b.coche ? `<b>${esc(b.coche)}</b> · ` : ''}${as.map(([n, a]) => `<span title="${esc(n)}">${esc(a)}</span>`).join(' ')}` : ''} ${compradoIc(t)} ${ver(t)}${b.comprado === false ? ' <em class="badge pend">billete sin comprar</em>' : ''}</div></summary>
+    <div class="th-cuerpo">
+      ${b.clase || b.precio ? `<div class="muted">${[b.clase, b.precio].filter(Boolean).map(esc).join(' · ')}</div>` : ''}
+      ${as.length ? `<div class="muted">${b.coche ? `Coche ${esc(b.coche)} · ` : ''}${as.map(([n, a]) => `${esc(n)} ${esc(a)}`).join(' · ')}</div>` : ''}
+      ${b.nota ? `<div class="muted">${resaltar(b.nota)}</div>` : ''}
+      ${arr(t.pasos).length ? `<ol class="th-pasos">${arr(t.pasos).map(p => `<li>${resaltar(p)}</li>`).join('')}</ol>` : ''}
+      ${t.frase_ko ? `<div class="ko">${esc(t.frase_ko)}</div>${t.romanizacion ? `<div class="muted">${esc(t.romanizacion)}</div>` : ''}` : ''}
+      ${h ? `<div class="th-hotel">🛏️ <b>${esc(h.nombre)}</b>${h.ko ? ` <span class="ko-s">${esc(h.ko)}</span>` : ''}</div>` : ''}
+      ${llegadaHotel(t)}
+    </div></details>`; }).join('');
 }
 function trasladoCard(t, pleg = false, sinFecha = false) {
   const tren = billete(t) || {}, [ic, nom] = medio(t), pend = isPend(t);
