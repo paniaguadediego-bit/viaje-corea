@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v256';
+const VERSION = 'v257';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2399,6 +2399,9 @@ const PCATS = [['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['l
 // 🖥️ PC: cibercafés (PC방) junto a los hoteles. No se han encontrado nombres fiables, así que se buscan en Naver por zona.
 const PC_BUSQ = { seul: ['명동 PC방', '회현역 PC방', '충무로 PC방'], busan: ['해운대해수욕장 PC방', '해운대 PC방', '광안리 PC방'] };
 // v253: lavanderías de autoservicio junto al hotel (búsquedas de Naver, porque no hay datos fiables de cada una desde aquí).
+// v257: cafeterías con animales: búsquedas de Naver por zona (en internet no hay datos fiables y actuales de cada una).
+const ANIMAL_BUSQ = { busan: ['해운대 고양이카페', '광안리 고양이카페', '서면 고양이카페', '해운대 강아지카페'], seul: ['명동 고양이카페', '홍대 동물카페'], jeonju: ['전주 고양이카페'] };
+const animalBusca = k => ANIMAL_BUSQ[k] ? `<div class="card guia-txt"><b>🐱 Cafeterías de gatos y perros</b><p class="muted">Toca una zona para verlas en Naver con su nota y horario. Desde diciembre de 2023 Corea no deja abrir cafés con animales salvajes (mapaches, suricatas…) y los que quedan van cerrando: mejor los de gatos y perros.</p><div class="acciones">${ANIMAL_BUSQ[k].map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 ${esc(q)}</a>`).join('')}</div></div>` : '';
 const LAV_BUSQ = { busan: ['해운대해수욕장 코인세탁', '해운대 빨래방', '마린시티 코인세탁'] };
 const lavBusca = k => LAV_BUSQ[k] ? `<div class="card guia-txt"><b>🧺 Más lavanderías cerca del hotel</b><p class="muted">Toca una zona para verlas en Naver con su horario y reseñas.</p><div class="acciones">${LAV_BUSQ[k].map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 ${esc(q)}</a>`).join('')}</div></div>` : '';
 const pcBusca = k => PC_BUSQ[k] ? `<div class="card guia-txt"><b>🖥️ Cibercafés (PC방) cerca del hotel</b><p class="muted">Cibercafés de barrio, casi siempre 24 h y por horas (unos 1.000-2.000 ₩/h: VERIFICAR). Toca una zona para verlos en Naver con su nota y reseñas; si os gusta uno, mandadme la captura y lo añado.</p>
@@ -2454,7 +2457,7 @@ function planesDe(k, cat) {
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
   return `<p class="muted">Horarios de webs (nov 2026): compruébalos antes de ir.</p>
-    ${(cat === 'lol' ? worldsCard() + pcBusca(k) + PCBANG : '') + grupo(cat, '') + (cat === 'servicio' ? lavBusca(k) : '')}`;
+    ${(cat === 'lol' ? worldsCard() + pcBusca(k) + PCBANG : '') + grupo(cat, '') + (cat === 'servicio' ? lavBusca(k) : '') + (cat === 'curioso' ? animalBusca(k) : '')}`;
 }
 
 // ---------- Seguro ----------
