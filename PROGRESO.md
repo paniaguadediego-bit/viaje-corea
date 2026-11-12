@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v236
+Caché del service worker: corea-v237
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -289,6 +289,7 @@ Caché del service worker: corea-v236
 - v234: ARREGLO URGENTE. La v233 subió styles.css y sw.js vacíos (el script de cambio de versión abría el archivo para escribir antes de leerlo), y la app se veía sin estilos. Restaurados desde la v232. [Lección] Antes de cada commit, comprobar que ningún archivo del repositorio queda vacío.
 - v235: el Mercado tradicional de Haeundae (해운대시장) pasa también a ser sitio del CATALOGO de Busan (con «buscar» y coordenadas), para que cuente como parada de la Ruta del día; en comer.json lleva el mismo hangul. Día 12 (trip.json privado): isla Dongbaekseom → playa de Haeundae → mercado → Gwangalli.
 - v236: añadido el restaurante Mindeulle Eondeok (민들레언덕, bibimbap vegano, Gunam-ro 21, Haeundae; 4,9 ★ con 208 reseñas en Google Maps), del usuario. Coordenadas aproximadas por la dirección.
+- v237: en las fichas de Comer, los 4 estados (Quiero, Visitado, Descartado, Cerrado) van en su propia fila, un cuarto cada uno, y Enseñar, Naver y Google debajo: con la letra grande del móvil (Android e iPhone) «Descartado» se salía del botón. Revisado con una prueba automática (pantalla de 360 px y letra al 118 %) que busca textos que se salen de botones, chips y pestañas en todas las vistas: no queda ninguno más.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
