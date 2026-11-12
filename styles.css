@@ -1608,5 +1608,8 @@ nav#tabs button.on::before { content: ""; position: absolute; top: 0; left: 18%;
 .exsubs7 button { width: 100%; height: 54px; min-height: 54px !important; margin: 0 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 4px 2px !important; font-size: .72rem !important; line-height: 1.12; white-space: normal; text-align: center; }
 .exsubs7 .hs-i { font-size: 1.15rem; line-height: 1; }
 .ciudad .ojo-card { margin: 8px; background: color-mix(in srgb, #f2c94c 16%, var(--card)) !important; border: 1px solid color-mix(in srgb, #d4a017 45%, var(--line)) !important; border-left: 4px solid #d4a017 !important; }
+/* v224: botones de la ciudad centrados (la fila incompleta va al centro) */
+.exsubs7 { display: flex !important; flex-wrap: wrap; justify-content: center; }
+.exsubs7 button { flex: 0 0 calc(25% - 3px); width: auto !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v223"; }
+:root { --css-ver: "v224"; }
