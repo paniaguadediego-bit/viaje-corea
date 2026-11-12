@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v249
+Caché del service worker: corea-v250
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -302,6 +302,7 @@ Caché del service worker: corea-v249
 - v247: el 🔊 de los recuadros LP24 y de Probados es más pequeño (30 px); en la pantalla completa de Enseñar, el botón «🔊 Escuchar» se veía negro sobre oscuro con el tema oscuro (ahora azul sobre claro siempre) y la pronunciación larga se corta en líneas en vez de salirse de la pantalla.
 - v248: en Hoy, el desplegable del hotel plegado dice solo «🛏️ Hotel» (o «🛏️ Hoteles» los días de cambio), en una fila; los nombres salen al abrirlo.
 - v249: en el Diccionario, «de nada» pasa a ser 아니에요 (anieyo), lo que se oye en el día a día, en lugar de 천만에요 (cheonmaneyo), más formal (petición del usuario).
+- v250: «De nada · 아니에요 · anieyo» también en Idioma → Frases → Básicas, justo después de Gracias. Como las favoritas de frases se guardan por posición (f:n), una migración única (user.mig250) sube una las de f:2 en adelante para que sigan apuntando a su frase. [Lección, repetida] Nunca escribir open(f,'w').write(open(f).read()…): vacía el archivo; cambiar versiones solo con sed.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
