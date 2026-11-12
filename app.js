@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v252';
+const VERSION = 'v253';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2397,7 +2397,10 @@ let planesCat = 'curioso';
 // Orden alfabético (Curioso es además la que se abre por defecto).
 const PCATS = [['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
 // 🖥️ PC: cibercafés (PC방) junto a los hoteles. No se han encontrado nombres fiables, así que se buscan en Naver por zona.
-const PC_BUSQ = { seul: ['명동 PC방', '회현역 PC방', '충무로 PC방'], busan: ['해운대역 PC방', '해운대 PC방', '광안리 PC방'] };
+const PC_BUSQ = { seul: ['명동 PC방', '회현역 PC방', '충무로 PC방'], busan: ['해운대해수욕장 PC방', '해운대 PC방', '광안리 PC방'] };
+// v253: lavanderías de autoservicio junto al hotel (búsquedas de Naver, porque no hay datos fiables de cada una desde aquí).
+const LAV_BUSQ = { busan: ['해운대해수욕장 코인세탁', '해운대 빨래방', '마린시티 코인세탁'] };
+const lavBusca = k => LAV_BUSQ[k] ? `<div class="card guia-txt"><b>🧺 Más lavanderías cerca del hotel</b><p class="muted">Toca una zona para verlas en Naver con su horario y reseñas.</p><div class="acciones">${LAV_BUSQ[k].map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 ${esc(q)}</a>`).join('')}</div></div>` : '';
 const pcBusca = k => PC_BUSQ[k] ? `<div class="card guia-txt"><b>🖥️ Cibercafés (PC방) cerca del hotel</b><p class="muted">Cibercafés de barrio, casi siempre 24 h y por horas (unos 1.000-2.000 ₩/h: VERIFICAR). Toca una zona para verlos en Naver con su nota y reseñas; si os gusta uno, mandadme la captura y lo añado.</p>
   <div class="acciones">${PC_BUSQ[k].map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 ${esc(q)}</a>`).join('')}</div></div>` : '';
 // Calendario del Mundial de LoL con la ciudad donde estaréis cada día.
@@ -2451,7 +2454,7 @@ function planesDe(k, cat) {
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
   return `<p class="muted">Horarios de webs (nov 2026): compruébalos antes de ir.</p>
-    ${(cat === 'lol' ? worldsCard() + pcBusca(k) + PCBANG : '') + grupo(cat, '')}`;
+    ${(cat === 'lol' ? worldsCard() + pcBusca(k) + PCBANG : '') + grupo(cat, '') + (cat === 'servicio' ? lavBusca(k) : '')}`;
 }
 
 // ---------- Seguro ----------
@@ -2591,7 +2594,7 @@ const NAVER_TOP = {
   seul: ['명동 맛집', '을지로 맛집', '익선동 맛집', '광장시장 맛집', '남대문시장 맛집', '서울 빵집'],
   andong: ['안동 맛집', '안동 구시장 찜닭'],
   gyeongju: ['황리단길 맛집', '경주 황남동 맛집', '황리단길 카페', '황리단길 디저트', '불국사 맛집'],
-  busan: ['해운대 맛집', '해운대 시장 맛집', '광안리 맛집', '남포동 맛집', '자갈치 맛집', '해운대 카페'],
+  busan: ['해운대해수욕장 맛집', '마린시티 맛집', '해운대 시장 맛집', '동백섬 카페', '광안리 맛집', '남포동 맛집', '자갈치 맛집'],
   jeonju: ['전주 한옥마을 맛집', '전주 남부시장 맛집', '전주 한옥마을 카페', '전주 빵집']
 };
 function naverTop(k) {

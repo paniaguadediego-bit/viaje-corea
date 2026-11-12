@@ -56,6 +56,7 @@ const CATALOGO = {
     { es: 'Aldea cultural Huinnyeoul', ko: '흰여울문화마을', romanizacion: 'Huinnyeoul Munhwa Maeul' },
     { es: 'Sky Capsule de Blueline (y tren de la playa)', ko: '해운대 블루라인파크', romanizacion: 'Beullurain' },
     { es: 'Estación de Busan', ko: '부산역', romanizacion: 'Busan-yeok' },
+    { es: 'The Bay 101 (vistas de Marine City)', ko: '더베이101', romanizacion: 'Deo Bei 101', tipo: 'Mirador', buscar: ['bay 101'], desc: 'Complejo junto al club náutico, en la punta de Dongbaek: terraza con la mejor vista nocturna de los rascacielos de Marine City reflejados en el agua; cafés, bares y fish & chips.' },
     { es: 'Mercado tradicional de Haeundae', ko: '해운대시장', romanizacion: 'Haeundae Sijang', tipo: 'Mercado', buscar: ['mercado tradicional de haeundae', 'mercado de haeundae'], desc: 'Callejón de puestos a 300 m del hotel: tteokbokki, hotteok, eomuk y pescado. Bueno para cenar barato y picar de puesto en puesto.' },
     { es: 'Teleférico de Songdo (Busan Air Cruise)', ko: '송도해상케이블카', romanizacion: 'Songdo Haesang Keibeulka', buscar: ['air cruise', 'teleferico de songdo', 'songdo cable'], tipo: 'Teleférico', desc: 'El primer teleférico de Corea: 1,62 km sobre el mar desde la playa de Songdo hasta el parque Amnam, con cabinas de suelo de cristal.' },
     { es: 'Playa de Songjeong (surf)', ko: '송정해수욕장', romanizacion: 'Songjeong Haesuyokjang', buscar: ['songjeong'], tipo: 'Playa', desc: 'La mejor playa de Busan para surfear, con escuelas y cafés surferos; al final del sendero de Blueline.' },

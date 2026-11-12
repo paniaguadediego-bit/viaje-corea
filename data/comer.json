@@ -2590,5 +2590,26 @@
 "fuente": "Google Maps",
 "fecha": "2026-11-12"
 }
+},
+{
+"id": "bs-moemiljip",
+"ciudad": "busan",
+"nombre": "Moemiljip (fideos de alforfón)",
+"ko": "모밀집",
+"tipo": "restaurante",
+"plato": "fideos de alforfón 100 % coreano, molido en casa",
+"direccion": "2.ª planta del Orange Plaza (오렌지 상가), Marine City 3-ro 23, Haeundae-gu",
+"horario": "Mediodía y tarde con descanso; lunes cerrado según una fuente. Las fuentes no coinciden: VERIFICAR en Naver",
+"precio": null,
+"fuente": "guia",
+"url": "https://guide.michelin.com/sg/en/article/michelin-guide-ceremony/korea-bib-gourmand-2026",
+"nota": "Bib Gourmand de la Guía Michelin Seúl y Busan 2026: buen comer a precio razonable. En Marine City, cruzando desde el oeste de la playa de Haeundae.",
+"guias": [
+{
+"g": "michelin",
+"d": "Bib Gourmand",
+"anio": 2026
+}
+]
 }
 ]
