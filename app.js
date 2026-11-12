@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v224';
+const VERSION = 'v225';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -940,7 +940,7 @@ function sitiosDia(d) {
     const n = num[h];
     // Ficha plegable: se pliega sola al marcarla como visitada (y la foto, a la derecha, arriba).
     const key = 'sd:' + d.fecha + '|' + h, ab = abierto(key, !hecho(l, k));
-    return `${t}${extra ? encaje(l) : ''}<details class="sd ${sgK.has(h) ? 'sd-cerca' : ''} ${hecho(l, k) ? 'hecho-card' : noVamos(l) ? 'novamos-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}<span class="sd-qv">${irQV(l, k, true)}</span>${btnHecho(l, k)}${irMapas(l)}<span class="sd-lp">${lpPill(l)}</span><br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${sgK.has(h) ? '<span class="sug-etq" title="Cercano añadido">＊</span>' : ''}${icSitio(l.es)} ${esc(l.es)}</b> <span class="ko-s">${esc(l.ko || '')}</span>${extra || sgK.has(h) ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
+    return `${t}${extra ? encaje(l) : ''}<details class="sd ${sgK.has(h) ? 'sd-cerca' : ''} ${hecho(l, k) ? 'hecho-card' : noVamos(l) ? 'novamos-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}<span class="sd-qv">${irQV(l, k, true)}</span>${btnHecho(l, k)}${irMapas(l)}<span class="sd-lp">${lpPill(l)}</span><br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${sgK.has(h) ? '<span class="sug-etq" title="Cercano añadido">＊</span>' : ''}${icSitio(l.es)} ${esc(l.es)}${ojoSup(l)}</b> <span class="ko-s">${esc(l.ko || '')}</span>${extra || sgK.has(h) ? `<button class="sd-x" data-agdel="${esc(h)}" aria-label="Quitar de este día">✕</button>` : ''}</summary>
       <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${lp24(l)}</div></details>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
@@ -1247,7 +1247,7 @@ function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) 
   const h = hKey(l), key = 'qv:' + h, w = l.sinFoto ? '' : (l.wiki || wikiDe(l) || (l.ko ? 'ko:' + l.ko : '')), ic = icSitio((l.tipo || '') + ' ' + l.es);
   return `<details class="qv ${clase} ${hecho(l, k) ? 'hecho-card' : noVamos(l) ? 'novamos-card' : ''}" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}>
     <summary>${w ? `<div class="foto mini qv-f" data-wiki="${esc(w)}"><span>${ic}</span></div>` : `<div class="foto mini qv-f vacia"><span>${ic}</span></div>`}
-      <span class="qv-cab"><b>${esc(l.es)}${lpPill(l)}</b><small>${plan ? `<span class="qv-dia">📅 ${fmtCorto(plan.fecha)}</span> ` : ''}${esc(breve(desc || l.nota || l.desc))}</small></span>
+      <span class="qv-cab"><b>${esc(l.es)}${ojoSup(l)}${lpPill(l)}</b><small>${plan ? `<span class="qv-dia">📅 ${fmtCorto(plan.fecha)}</span> ` : ''}${esc(breve(desc || l.nota || l.desc))}</small></span>
       <button class="hd-ck qv-ck ${hecho(l, k) ? 'on' : noVamos(l) ? 'no' : ''}" data-hk="${esc(hKey(l))}" data-v="${sigHk(l, k)}" aria-label="Visitado / No vamos">${hecho(l, k) ? '✓' : noVamos(l) ? '✗' : ''}</button></summary>
     <div class="qv-cuerpo">${w ? `<div class="foto" data-wiki="${esc(w)}"><span>📷</span></div><div class="credito" data-cred="${esc(w)}"></div>` : ''}
       <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}${btnGps(l)}</div>${estrBox(hKey(l), l.es)}
@@ -2386,7 +2386,7 @@ function planesDe(k, cat) {
     const plan = c ? sitios.map(l => [l, km(c, coordsLugar(l)), enPlan(l, k)]).filter(([, d, e]) => d <= 1 && e).sort((a, b) => a[2].n - b[2].n || a[1] - b[1]).slice(0, 4) : [];
     return `<div class="card plan-card ${p.cat} ${hecho(p, k) ? 'hecho-card' : ''}">
       ${wikiDe(p) ? `<div class="foto banda" data-wiki="${esc(wikiDe(p))}"><span>${icPlan(p)}</span></div>` : ''}
-      <div class="sd-tit">${btnHecho(p, k)}<b>${icPlan(p)} ${esc(p.es)}</b></div>
+      <div class="sd-tit">${btnHecho(p, k)}<b>${icPlan(p)} ${esc(p.es)}${ojoSup(p)}</b></div>
       <div class="ko-s">${esc(p.ko)}${distHotel(p, k)}</div>
       <div class="muted">${resaltar(p.desc, true)}</div>
       ${p.direccion_en ? `<div class="muted">🏠 ${esc(p.direccion_en)}</div>` : ''}
@@ -2525,6 +2525,8 @@ const estadoDe = id => (u().comer && user.comer[id]) || {};
 
 // ⚠️ Mucho ojo con…: aviso en la tarjeta o ficha del sitio y desplegable con todos los de la ciudad.
 const ojoDe = (id, ko) => (typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).find(o => (id && o.ids.includes(String(id))) || (ko && String(ko).replace(/\s+/g, '') === o.ko));
+// ⚠️ en superíndice junto al nombre si el sitio tiene un «Mucho ojo con» asociado (por id de Comer o por hangul).
+const ojoSup = l => { const o = l && ojoDe(l.id, l.ko); return o ? `<sup class="ojo-sup" title="Mucho ojo: ${esc(o.es)}" aria-label="Tiene aviso de Mucho ojo con">⚠️</sup>` : ''; };
 const ojoLinea = o => o ? `<div class="ojo">⚠️ <b>Mucho ojo:</b> ${esc(o.txt)}</div>` : '';
 // tipo: 'comer' (por defecto, en Comer) o 'planes' (en Planes, arriba de cada ciudad).
 function muchoOjo(ciudad, tipo = 'comer') {
@@ -2627,7 +2629,7 @@ function cardComer0(l) {
     <div class="c2-top">
       ${w ? `<div class="foto mini c2-foto" data-wiki="${esc(w)}"><span>${IC_COMER[l.tipo] || '🍽️'}</span></div>` : `<div class="c2-ic">${IC_COMER[l.tipo] || '🍽️'}</div>`}
       <div class="c2-txt">
-        <div class="c2-nom"><b>${esc(l.nombre || 'Sin nombre')}</b>${lpPill(l)}</div>
+        <div class="c2-nom"><b>${esc(l.nombre || 'Sin nombre')}${ojoSup(l)}</b>${lpPill(l)}</div>
         <div class="c2-sub">${l.ko ? `<span class="ko-s">${esc(l.ko)}</span>` : ''}${distHotel(l, l.ciudad)}</div>
         ${meta.length ? `<div class="c2-meta">${meta.map(esc).join(' · ')}</div>` : ''}${ojoLinea(ojoDe(l.id))}
         ${arr(l.guias).map(g => `<span class="c2-guia ${g.g}" title="${g.g === 'michelin' ? 'Guía Michelin Seúl y Busan' : 'Blue Ribbon Survey'}">${g.g === 'michelin' ? '🔴 Michelin' : '🎗️ Blue Ribbon'} ${esc(g.d)}${g.anio ? ' ' + esc(g.anio) : ''}${g.verificar ? ' <span class="ver">VERIFICAR</span>' : ''}</span>`).join('')}

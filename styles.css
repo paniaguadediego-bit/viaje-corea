@@ -1611,5 +1611,7 @@ nav#tabs button.on::before { content: ""; position: absolute; top: 0; left: 18%;
 /* v224: botones de la ciudad centrados (la fila incompleta va al centro) */
 .exsubs7 { display: flex !important; flex-wrap: wrap; justify-content: center; }
 .exsubs7 button { flex: 0 0 calc(25% - 3px); width: auto !important; }
+/* v225: ⚠️ en superíndice si hay «Mucho ojo con» */
+.ojo-sup { font-size: .62em; margin-left: 2px; vertical-align: super; line-height: 0; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v224"; }
+:root { --css-ver: "v225"; }
