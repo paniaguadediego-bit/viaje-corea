@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v260
+Caché del service worker: corea-v261
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -313,6 +313,7 @@ Caché del service worker: corea-v260
 - v258: Busan → Curioso: Catch Catch Cat Cafe (캐치캣치, 우동 829-9; entrada 15.000 ₩; cierra a las 21:00; 407 reseñas en Naver), del usuario. Coordenadas aproximadas.
 - v259: Lotte Department Store Gwangbok (롯데백화점 광복점, azotea con vistas) y Nampo-dong (남포동) entran en el catálogo de Busan con «buscar»: estaban en el texto del día 13 pero no salían como paradas de la Ruta del día. Ahora el 13 acaba en Gukje → Lotte (atardecer) → Nampo-dong (cena).
 - v260: revisados Jeonju y Seúl frente al itinerario original: no falta ningún sitio, pero tres que estaban en el texto no salían como paradas; entran en el catálogo de Seúl con «buscar»: paseo del muro de piedra de Deoksugung (덕수궁 돌담길) y Daehak-ro (대학로) el 18, y Roof Cat Me (루프캣미 명동점, mismo hangul que su ficha de Curioso, así comparten la marca de visitado) el 17.
+- v261: revisados Andong y Gyeongju frente al itinerario original: no falta nada (los restaurantes ya estaban en Comer). Dos sitios del texto no eran parada y entran en el catálogo: el mercado viejo de Andong (안동구시장, «almuerzo/cena en el mercado» del 9) y el solar del templo Hwangnyongsa (황룡사지, el 10, entre el museo y Bunhwangsa).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

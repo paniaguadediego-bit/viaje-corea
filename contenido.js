@@ -27,12 +27,14 @@ const CATALOGO = {
     { es: 'Aeropuerto de Incheon', ko: '인천국제공항', romanizacion: 'Incheon Gukje Gonghang' }
   ],
   andong: [
+    { es: 'Mercado viejo de Andong (calle del jjimdak)', ko: '안동구시장', romanizacion: 'Andong Gusijang', tipo: 'Mercado', buscar: ['en el mercado'], desc: 'El mercado del centro, con su callejón de restaurantes de jjimdak y puestos de caballa salada (ganjogoe).' },
     { es: 'Templo Bongjeongsa', ko: '봉정사', romanizacion: 'Bongjeongsa' },
     { es: 'Acantilado Buyongdae', ko: '부용대', romanizacion: 'Buyongdae' },
     { es: 'Academia Dosan Seowon', ko: '도산서원', romanizacion: 'Dosan Seowon' },
     { es: 'Estación de Andong', ko: '안동역', romanizacion: 'Andong-yeok' }
   ],
   gyeongju: [
+    { es: 'Solar del templo Hwangnyongsa', ko: '황룡사지', romanizacion: 'Hwangnyongsaji', tipo: 'Ruinas', buscar: ['hwangnyongsa'], desc: 'Explanada con las bases del mayor templo de Silla, que tuvo una pagoda de madera de nueve pisos y unos 80 m; lo quemaron los mongoles en 1238. Entre Bunhwangsa y el museo.' },
     { es: 'Aldea Gyochon', ko: '교촌마을', romanizacion: 'Gyochon Maeul' },
     { es: 'Puente Woljeonggyo', ko: '월정교', romanizacion: 'Woljeonggyo' },
     { es: 'Templo Bulguksa', ko: '불국사', romanizacion: 'Bulguksa' },
