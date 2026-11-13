@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v266';
+const VERSION = 'v267';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1642,7 +1642,7 @@ function mpDibujar(el, m) {
   if (hilos.length) h += `<svg class="mp-hilo" width="${W}" height="${H}">${hilos.map(o => `<line x1="${o.x0.toFixed(1)}" y1="${o.y0.toFixed(1)}" x2="${o.x.toFixed(1)}" y2="${o.y.toFixed(1)}"/>`).join('')}</svg>`
     + [...new Set(hilos.map(o => o.x0.toFixed(0) + ',' + o.y0.toFixed(0)))].map(k => { const [x, y] = k.split(','); return `<span class="mp-ancla" style="left:${x}px;top:${y}px"></span>`; }).join('');
   vis.sort((a, b) => orden[a.p.capa] - orden[b.p.capa]).forEach(({ p, i, x, y }) => {
-    h += `<button class="mp-pt c-${p.capa} ${p.hecho ? 'hecho' : p.pasado ? 'pasado' : ''} ${m.sel === i ? 'sel' : ''}" data-mpp="${i}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${p.num != null ? `<b>${esc(p.num)}</b>` : p.ic}</button>`;
+    h += `<button class="mp-pt c-${p.capa} ${p.hecho ? 'hecho' : p.l && p.capa !== 'hotel' && noVamos(p.l) ? 'novamos' : p.pasado ? 'pasado' : ''} ${m.sel === i ? 'sel' : ''}" data-mpp="${i}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${p.num != null ? `<b>${esc(p.num)}</b>` : p.ic}</button>`;
   });
   if (m.yo) { const [x, y] = P(m.yo); h += `<span class="mp-yo" style="left:${x}px;top:${y}px"></span>`; }
   const capa = el.querySelector('.mp-capa'); capa.style.transform = ''; capa.innerHTML = h;
