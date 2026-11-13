@@ -1731,4 +1731,4 @@ nav#tabs button.on span { color: #fff !important; }
 .seg-guia > summary { cursor: pointer; } .seg-guia ol { padding-left: 1.3em; } .seg-guia li { margin: 6px 0; }
 .seg-fr { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); cursor: pointer; } .seg-fr .habla { float: none; margin: 0; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v273"; }
+:root { --css-ver: "v274"; }

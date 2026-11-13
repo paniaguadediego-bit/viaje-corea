@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v273';
+const VERSION = 'v274';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2183,8 +2183,8 @@ function dResultados(q) {
   return res.length ? res.slice(0, 80).join('') : '<p class="muted">Sin resultados. Prueba con otra palabra.</p>';
 }
 
-const icGuia = t => [[/snack/i, '🍪'], [/dinero/i, '💰'], [/t-money|transporte/i, '🚇'], [/taxi/i, '🚕'], [/propina/i, '💸'], [/zapato/i, '👟'], [/enchufe/i, '🔌'], [/^apps/i, '📱'], [/pago/i, '💳'],
-  [/hangul/i, '🔤'], [/metro y ktx/i, '🚄'], [/clima/i, '🍂'], [/24 h/i, '🏪'], [/baños/i, '🚻'], [/internet/i, '📶'], [/tax free/i, '🛍️'], [/farmacia/i, '💊'], [/beber/i, '🍶'], [/^templos/i, '🛕'], [/fechas/i, '📅'], [/^comida/i, '🍜'], [/^etiqueta/i, '🙇'], [/seguridad|emergencia/i, '🚨'], [/entrada/i, '🛂'], [/básico/i, '🇰🇷'], [/consejos/i, '💡'], [/llevar/i, '🎒'], [/mesa/i, '🥢'], [/saber estar/i, '🤝']]
+const icGuia = t => [[/snack/i, '🍪'], [/dinero/i, '💶'], [/t-money|transporte/i, '🎫'], [/taxi/i, '🚕'], [/propina/i, '💸'], [/zapato/i, '👟'], [/enchufe/i, '🔌'], [/^apps/i, '📱'], [/pago/i, '💳'],
+  [/hangul/i, '🔤'], [/metro y ktx/i, '🚄'], [/clima/i, '🍂'], [/24 h/i, '🏪'], [/baños/i, '🚻'], [/internet/i, '📶'], [/tax free/i, '🛍️'], [/farmacia/i, '💊'], [/beber/i, '🍶'], [/^templos/i, '🛕'], [/fechas/i, '📅'], [/^comida/i, '🍜'], [/^etiqueta/i, '🙇'], [/seguridad|emergencia/i, '🚨'], [/entrada/i, '🛂'], [/básico/i, 'ℹ️'], [/consejos/i, '💡'], [/llevar/i, '🎒'], [/mesa/i, '🥄'], [/regalos/i, '💝'], [/saber estar/i, '🤝']]
   .find(([r]) => r.test(t))?.[1] || '📌';
 // Hoteles que se pagan allí (de trip.json, solo en el móvil): reservad efectivo por si no aceptan tarjeta.
 function pagoAlli() {
@@ -2379,7 +2379,7 @@ function viewIdioma() {
 const GUIA_BLOQUES = [
   ['🚇 Moverse', ['T-money y transporte', 'Metro y KTX', 'Taxis', 'Apps', 'Internet y móvil', 'Entrada al país']],
   ['💳 Dinero y compras', ['Dinero y pagos', 'Compras, tax free y último día', 'Propinas', 'Tiendas 24 h']],
-  ['🎁 Regalos top', ['Regalos top']],
+  ['💝 Regalos top', ['Regalos top']],
   ['🍜 Comida', ['Comida', 'platos', 'snacks', 'En la mesa (Lonely Planet)', 'Beber a la coreana']],
   ['🙇 Costumbres y cultura', ['Etiqueta', 'Saber estar (Lonely Planet)', 'Zapatos', 'Templos', 'Fechas de vuestro viaje']],
   ['🚨 Salud, seguridad y práctico', ['Seguridad y emergencias', 'Salud y farmacias', 'Baños', 'Enchufes', 'Clima en noviembre', 'Qué llevar (Lonely Planet)', 'Lo básico (Lonely Planet)', 'Consejos de la Lonely Planet']],
@@ -2527,7 +2527,7 @@ function viewSeguro() {
 // 🩺 «Qué hacer si…»: pasos sencillos y frases para el hospital (SEGURO_GUIAS y FRASES_MED en contenido.js).
 function seguroGuias() {
   if (typeof SEGURO_GUIAS === 'undefined') return '';
-  return `<h2>🩺 Qué hacer si…</h2><p class="muted">Paso a paso. Regla de oro: <b>primero llamad al seguro</b> (teléfono de arriba), salvo que corra peligro la vida: entonces <b>119</b>.</p>
+  return `<h2>🚑 Qué hacer si…</h2><p class="muted">Paso a paso. Regla de oro: <b>primero llamad al seguro</b> (teléfono de arriba), salvo que corra peligro la vida: entonces <b>119</b>.</p>
     ${SEGURO_GUIAS.map(([ic, t, ps], i) => `<details class="card seg-guia" data-key="sg:${i}" ${abierto('sg:' + i, false) ? 'open' : ''}><summary><b>${ic} ${esc(t)}</b></summary><ol>${ps.map(p => `<li>${resaltar(p, true)}</li>`).join('')}</ol></details>`).join('')}
     <details class="card seg-guia" data-key="sg:fr" ${abierto('sg:fr', false) ? 'open' : ''}><summary><b>🗣️ Frases para el hospital</b> <small class="muted">· toca para enseñarla en grande</small></summary>
       ${FRASES_MED.map(([es, ko]) => `<div class="seg-fr" data-full="m:${esc(ko)}"><div><b>${esc(es)}</b><div class="ko-s">${esc(ko)}</div></div>${btnHabla(ko)}</div>`).join('')}</details>`;
@@ -2938,7 +2938,7 @@ function viewVerificar() {
 // Más con rejilla de iconos, como la Guía de Corea: se toca un tema y sale debajo.
 let masSub = 'maleta';
 const MAS_SUB = [['maleta', 'Maleta', '🧳'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'],
-  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['probados', 'Probados', '🥢'], ['resumen', 'Resumen del viaje', '🧾'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️'], ['bloqueo', 'Bloquear marcas', '🔒'], ['guiaapp', 'Guía de la app', '🛠️']];
+  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['probados', 'Probados', '😋'], ['resumen', 'Resumen del viaje', '🧾'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️'], ['bloqueo', 'Bloquear marcas', '🔒'], ['guiaapp', 'Guía de la app', '🛠️']];
 // ---------- 🛠️ Guía de la app: GUIA-APP.md (precacheado), también sin viaje; sirve para hacer otra app de otro país ----------
 let GUIA_MD = null;
 function cargaGuiaApp() { fetch('GUIA-APP.md').then(r => r.ok ? r.text() : Promise.reject()).then(t => { GUIA_MD = t; renderLuego(); }).catch(() => { GUIA_MD = ''; renderLuego(); }); }
@@ -2987,12 +2987,12 @@ const probGrupos = () => typeof PROBAR !== 'undefined' ? PROBAR : [];
 function probCiudad(k) {
   const g = probGrupos().find(x => x[2] === k); if (!g) return '';
   const n = g[3].filter(x => probado(x[1])).length;
-  return `<div class="qv-grupo">🥢 ¿Lo habéis probado? · ${n} de ${g[3].length}</div>${g[3].map(probItem).join('')}`;
+  return `<div class="qv-grupo">😋 ¿Lo habéis probado? · ${n} de ${g[3].length}</div>${g[3].map(probItem).join('')}`;
 }
 function viewProbados() {
   const gs = probGrupos(), tot = gs.reduce((a, g) => a + g[3].length, 0), hechos = gs.reduce((a, g) => a + g[3].filter(x => probado(x[1])).length, 0);
   const hoyK = trip && arr(trip.dias).find(d => d.fecha === todayISO()) ? ck(arr(trip.dias).find(d => d.fecha === todayISO()).ciudad) : '';
-  return `<h2>🥢 Probados</h2><p class="muted centro">${hechos} de ${tot} probados · marcad la casilla al probarlo (también en Planes → 🥢 Platos típicos de cada ciudad).</p>
+  return `<h2>😋 Probados</h2><p class="muted centro">${hechos} de ${tot} probados · marcad la casilla al probarlo (también en Planes → 🥢 Platos típicos de cada ciudad).</p>
     <div class="prob-barra"><i style="width:${tot ? Math.round(hechos / tot * 100) : 0}%"></i></div>
     ${gs.map(([t, ic, k, xs]) => { const n = xs.filter(x => probado(x[1])).length, key = 'prob:' + t;
       return `<details class="card prob-g" data-key="${esc(key)}" ${abierto(key, k === hoyK || (!k && !hoyK && t === gs[0][0])) ? 'open' : ''}><summary>${ic} <b>${esc(t)}</b> <small class="muted">${n} de ${xs.length}</small></summary>${xs.map(probItem).join('')}</details>`; }).join('')}`;

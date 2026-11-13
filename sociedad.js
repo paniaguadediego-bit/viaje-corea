@@ -39,7 +39,7 @@ const PAIS = [
       ['The Teams: España n.º 1 para viajeros coreanos', 'https://www.theteams.kr/news/detail/5325'], ['Elle Korea: el Camino de Santiago', 'https://www.elle.co.kr/article/1893239'],
       ['MTN: Temporada de Corea en España (2025)', 'https://news.mtn.co.kr/news-detail/2025062711493690334']] },
 
-  { id: 'educacion', ic: '🎒', t: 'Educación',
+  { id: 'educacion', ic: '🎓', t: 'Educación',
     intro: 'Uno de los sistemas más competitivos del mundo: casi todo gira en torno a un examen, el suneung, que este año es justo el día que volvéis (19 de noviembre).',
     bloques: [
       ['Las etapas (6-3-3-4)', [
