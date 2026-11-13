@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v276';
+const VERSION = 'v277';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1016,7 +1016,7 @@ function sitiosDia(d) {
     ${hot ? `<div class="sd-hotel">🛏️ ${esc(hot.nombre)}</div>${sugTras(0)}` : ''}
     ${auto.map(l => fila(l, false) + sugTras(num[hKey(l)])).join('')}
     ${extras.length ? `<div class="sd-anadidos">➕ Añadidos desde Ciudades</div>${extras.map(l => fila(l, true) + sugTras(num[hKey(l)])).join('')}` : ''}
-    ${sgK.size ? '<div class="muted mini-nota sug-ley"><span class="sug-etq">＊</span> Sitio cercano que no estaba en el plan: se ha metido donde os pilla de paso. Con ✕ se quita de este día.</div>' : ''}
+    ${sgK.size ? '<div class="muted mini-nota sug-ley"><span class="sug-etq">＊</span> Sitio cercano que no estaba en el plan: se ha metido donde os pilla de paso.</div>' : ''}
     ${A.del.length ? `<button class="sec mini sd-reset" data-agreset="${d.fecha}">↺ Volver al itinerario</button>` : ''}
     <div class="muted mini-nota">Metro de Seúl © OpenStreetMap (ODbL).</div></div>`;
 }

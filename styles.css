@@ -1740,4 +1740,4 @@ nav#tabs button.on span { color: #fff !important; }
 .sitios-dia details.sd.con-fondo .lp24 { background: rgba(255,255,255,.92); color: #222; }
 .sitios-dia details.sd.con-fondo .lp24 b { color: inherit !important; text-shadow: none; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v276"; }
+:root { --css-ver: "v277"; }
