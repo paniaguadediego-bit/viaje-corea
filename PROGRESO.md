@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v275
+Caché del service worker: corea-v276
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -328,6 +328,7 @@ Caché del service worker: corea-v275
 - v273: iconos repetidos en Comer: los mercados usaban 🧺, el mismo que Lavandería; ahora 🛒 (en Comer, sus filtros, el mapa y las paradas de mercados). El filtro «Cerca del hotel» usaba 📏, igual que el orden por distancia; ahora 🛏️.
 - v274: sin iconos repetidos en Corea y Más: En la mesa 🥢→🥄 (🥢 = Platos típicos), Educación 🎒→🎓 (🎒 = Qué llevar), Regalos top 📌→💝 (📌 = fijar ubicación), T-money 🚇→🎫 (🚇 = metro), Dinero y pagos 💰→💶 (💰 = precio), Lo básico 🇰🇷→ℹ️ (🇰🇷 = pestaña Corea), Probados 🥢→😋 y «Qué hacer si…» del Seguro 🩺→🚑 (🩺 = Ser médico). Comprobado con una prueba automática que lista el primer icono de cada recuadro.
 - v275: [Prueba] en Hoy, la foto de cada parada hace de fondo de su ficha (oscurecida con un degradado para leer el texto en blanco) y se quita la miniatura de la derecha para ganar espacio; los recuadros claros de dentro (LP24) siguen con su fondo y texto oscuro. Sin foto, la ficha queda como antes. Se activa al cargar la foto (clase con-fondo).
+- v276: quitada la ✕ de las paradas de Hoy que no estaban en el itinerario (las ＊ cercanas y las añadidas): ya se distinguen por el asterisco, y si no se va se marca ✗ No vamos en su casilla. Las añadidas desde Planes se quitan con su 📅.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
