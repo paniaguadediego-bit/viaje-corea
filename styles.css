@@ -1739,5 +1739,10 @@ nav#tabs button.on span { color: #fff !important; }
 .sitios-dia details.sd.con-fondo .sd-cuerpo :not(button):not(a):not(.lp24):not(.lp24 *):not(.badge):not(.ver):not(.btn) { color: inherit !important; }
 .sitios-dia details.sd.con-fondo .lp24 { background: rgba(255,255,255,.92); color: #222; }
 .sitios-dia details.sd.con-fondo .lp24 b { color: inherit !important; text-shadow: none; }
+/* v278: foto de fondo más visible: plegada, sombra solo abajo donde va el nombre; abierta, más oscura para leer el texto */
+.sitios-dia details.sd.con-fondo:not([open]) { background: linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,.2) 40%, rgba(0,0,0,.62) 100%), var(--sd-bg) center / cover no-repeat !important; }
+.sitios-dia details.sd.con-fondo[open] { background: linear-gradient(180deg, rgba(0,0,0,.15) 0%, rgba(10,14,22,.62) 30%, rgba(10,14,22,.8) 100%), var(--sd-bg) center top / cover no-repeat !important; }
+.sitios-dia details.sd.con-fondo > summary b, .sitios-dia details.sd.con-fondo > summary .ko-s { text-shadow: 0 1px 2px rgba(0,0,0,.9), 0 0 8px rgba(0,0,0,.6) !important; }
+.sitios-dia details.sd.con-fondo.hecho-card > summary > *, .sitios-dia details.sd.con-fondo.novamos-card > summary > * { opacity: .85; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v277"; }
+:root { --css-ver: "v278"; }

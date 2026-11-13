@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v277
+Caché del service worker: corea-v278
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -330,6 +330,7 @@ Caché del service worker: corea-v277
 - v275: [Prueba] en Hoy, la foto de cada parada hace de fondo de su ficha (oscurecida con un degradado para leer el texto en blanco) y se quita la miniatura de la derecha para ganar espacio; los recuadros claros de dentro (LP24) siguen con su fondo y texto oscuro. Sin foto, la ficha queda como antes. Se activa al cargar la foto (clase con-fondo).
 - v276: quitada la ✕ de las paradas de Hoy que no estaban en el itinerario (las ＊ cercanas y las añadidas): ya se distinguen por el asterisco, y si no se va se marca ✗ No vamos en su casilla. Las añadidas desde Planes se quitan con su 📅.
 - v277: en la leyenda del ＊ de la Ruta del día se quita «Con ✕ se quita de este día» (ya no hay ✕).
+- v278: la foto de fondo de las paradas de Hoy se ve mucho más: plegada, el oscurecido va solo abajo (donde está el nombre) y el texto lleva sombra marcada; abierta, se oscurece más para leer el contenido.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
