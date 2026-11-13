@@ -1304,6 +1304,19 @@ const SEGURO_GUIAS = [
     'Bloquea las tarjetas desde la app del banco al momento.',
     'Si había dinero o documentos: denuncia en la policía (copia para el seguro, que a veces cubre robos).',
     'Pagad con la otra persona mientras tanto: llevad siempre tarjetas repartidas entre los dos.']],
+  ['🌙', 'Me pongo malo de noche (y no es para el 119)', [
+    'Tienda 24 h (GS25, CU, 7-Eleven): venden medicinas básicas sin receta las 24 h: paracetamol (Tylenol, 타이레놀), antigripales, digestivos y parches. Pregunta «상비약 있어요?» (¿tenéis medicinas?).',
+    'Farmacias de noche: muchas ciudades tienen «farmacias públicas nocturnas» (공공심야약국) abiertas hasta la 1 de la madrugada más o menos. Búscalas en Naver Map con «심야약국».',
+    'Si dudas de si es grave: llama al seguro (24 h) y cuéntalo; te dicen si ir ya a urgencias o esperar a mañana. El 119 también da consejo médico por teléfono si no sabes qué hacer.',
+    'Si hay que ir: urgencias (응급실) de un hospital grande abre toda la noche. Pide a la recepción del hotel que te llame un taxi y enseña «응급실로 가 주세요». Por la noche cuesta más que de día, pero el seguro lo cubre si es urgencia.',
+    'Intérprete: 1330, 24 h.']],
+  ['✈️', 'Vuelo retrasado, cancelado o pierdo la conexión', [
+    'No salgas de la zona del mostrador: ve al de la aerolínea (Air China) y pide que os recoloquen en el siguiente vuelo. Con un solo billete, la conexión perdida es cosa suya, sin coste.',
+    'Si la espera es larga, pide vales de comida y, si hay que hacer noche, hotel y traslado: si el vuelo sale de Madrid (la ida), las normas europeas obligan a dártelos.',
+    'Pide por escrito el motivo y la duración del retraso o la cancelación, y guarda tarjetas de embarque, tiques y facturas de lo que gastes (comida, hotel, taxi).',
+    'Compensación: si el vuelo sale de Madrid (la ida) y llegáis con más de 3 horas de retraso o te lo cancelan con poco aviso, puede corresponder una compensación europea (unos 600 € por persona en vuelos largos). Reclámala con AirHelp+ (mirad arriba si lo tenéis incluido). En la vuelta desde Seúl con Air China las normas europeas no aplican.',
+    'El seguro de viaje suele cubrir además los gastos por retraso de varias horas o el equipaje que no llega: llama a asistencia y mira «Coberturas clave» arriba. Importes: VERIFICAR en la póliza.',
+    'Escala en Pekín: si la pierdes, todo lo de Más → Escala Pekín (🆘 Si algo sale mal).']],
   ['🏥', 'Dónde ir (hospitales con atención a extranjeros)', [
     'Seúl (cerca del hostal): Centro Médico Nacional (국립중앙의료원), en Euljiro. Otros grandes: Hospital Severance (세브란스병원) y Hospital de la Universidad Nacional de Seúl (서울대학교병원).',
     'Busan (cerca del hotel): Hospital Haeundae Paik (해운대백병원). En el centro: Hospital de la Universidad Nacional de Pusan (부산대학교병원).',
