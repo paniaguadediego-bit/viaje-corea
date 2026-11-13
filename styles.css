@@ -1747,4 +1747,4 @@ nav#tabs button.on span { color: #fff !important; }
 /* v279: en iPhone, Safari solo avisa de toques en zonas «pulsables»: el contenido de una parada abierta lo es (al tocarlo se pliega) */
 .sitios-dia details.sd[open], .sitios-dia details.sd[open] > .sd-cuerpo, .sitios-dia details.sd[open] > .sd-cuerpo * { cursor: pointer; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v279"; }
+:root { --css-ver: "v281"; }

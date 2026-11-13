@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v279';
+const VERSION = 'v281';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2589,8 +2589,15 @@ document.addEventListener('click', e => {
   if (e.target.closest('button, a, input, textarea, select, label, .foto, img, audio, video')) return;
   if (e.target.closest('details') !== dt) return; // dentro de un desplegable interior: no
   const sel = window.getSelection && window.getSelection(); if (sel && !sel.isCollapsed && dt.contains(sel.anchorNode)) return; // seleccionando texto de esta ficha
-  dt.open = false;
+  if (dt.dataset.key) abiertos[dt.dataset.key] = false; // v280: apuntarlo ya, por si algo redibuja antes del evento «toggle»
+  e.preventDefault(); plegadoSd = { dt, t: Date.now() }; dt.open = false;
 });
+// v280: algunos Android mandan un segundo «clic fantasma» justo después: si cae en la cabecera de la ficha recién plegada, la volvería a abrir.
+let plegadoSd = null;
+document.addEventListener('click', e => {
+  if (!plegadoSd || Date.now() - plegadoSd.t > 600) return;
+  const s = e.target.closest('summary'); if (s && s.parentElement === plegadoSd.dt) { e.preventDefault(); e.stopPropagation(); }
+}, true);
 document.addEventListener('toggle', e => { const k = e.target.dataset && e.target.dataset.key; if (k) abiertos[k] = e.target.open; }, true);
 
 // ---------- "Hecho / visitado": una sola marca por sitio para toda la app ----------
