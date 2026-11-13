@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v274';
+const VERSION = 'v275';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1414,7 +1414,9 @@ function pintarFotos() {
     const f = await fotoWiki(el.dataset.wiki);
     if (!f) { if (f === null) el.classList.add('sinfoto'); return; }
     const img = new Image(); img.alt = '';
-    img.onload = () => { el.innerHTML = ''; el.appendChild(img); el.classList.add('ok'); };
+    img.onload = () => { el.innerHTML = ''; el.appendChild(img); el.classList.add('ok');
+      // v275: en las paradas de Hoy, la foto también hace de fondo de su ficha (oscurecida para leer el texto).
+      const sd = el.classList.contains('mini') && el.closest('.sitios-dia details.sd'); if (sd) { sd.style.setProperty('--sd-bg', `url("${img.src.replace(/"/g, '%22')}")`); sd.classList.add('con-fondo'); } };
     // En banners se pide una versión más grande; si falla (p. ej. sin conexión), la miniatura guardada.
     const grande = (el.classList.contains('dia-foto') || el.classList.contains('banda')) && /\/\d+px-/.test(f.src) ? f.src.replace(/\/\d+px-/, '/800px-') : null;
     img.onerror = () => { if (grande && img.src !== f.src) img.src = f.src; else el.classList.add('sinfoto'); };

@@ -1730,5 +1730,14 @@ nav#tabs button.on span { color: #fff !important; }
 .toast-lock { position: fixed; left: 50%; bottom: calc(80px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 99; background: #222; color: #fff; padding: 8px 14px; border-radius: 999px; font-size: .85rem; box-shadow: 0 2px 10px rgba(0,0,0,.3); max-width: 90vw; text-align: center; }
 .seg-guia > summary { cursor: pointer; } .seg-guia ol { padding-left: 1.3em; } .seg-guia li { margin: 6px 0; }
 .seg-fr { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); cursor: pointer; } .seg-fr .habla { float: none; margin: 0; }
+/* v275: foto del sitio como fondo de su ficha en Hoy */
+.sitios-dia details.sd.con-fondo { background: linear-gradient(180deg, rgba(10,14,22,.55), rgba(10,14,22,.78)), var(--sd-bg) center / cover no-repeat !important; color: #fff; }
+.sitios-dia details.sd.con-fondo > summary .foto.mini { display: none; }
+.sitios-dia details.sd.con-fondo > summary b, .sitios-dia details.sd.con-fondo > summary .ko-s { color: #fff !important; text-shadow: 0 1px 3px rgba(0,0,0,.7); }
+.sitios-dia details.sd.con-fondo .lp24 .ko-s { color: #555 !important; text-shadow: none; }
+.sitios-dia details.sd.con-fondo .muted, .sitios-dia details.sd.con-fondo .sd-cuerpo { color: rgba(255,255,255,.88) !important; }
+.sitios-dia details.sd.con-fondo .sd-cuerpo :not(button):not(a):not(.lp24):not(.lp24 *):not(.badge):not(.ver):not(.btn) { color: inherit !important; }
+.sitios-dia details.sd.con-fondo .lp24 { background: rgba(255,255,255,.92); color: #222; }
+.sitios-dia details.sd.con-fondo .lp24 b { color: inherit !important; text-shadow: none; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v274"; }
+:root { --css-ver: "v275"; }
