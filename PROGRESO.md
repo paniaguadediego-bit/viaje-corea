@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v264
+Caché del service worker: corea-v265
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -317,6 +317,7 @@ Caché del service worker: corea-v264
 - v262: en Hoy, las paradas de la Ruta del día salen plegadas por defecto y, abiertas, se pliegan al tocar su contenido (no los botones, enlaces, 🔊 ni la foto). El carrusel del día suma hasta 2 fotos más de cada artículo de Wikipedia (prefijo mm:<idioma>:<título>:<n>, de su media-list) y va en orden aleatorio: la primera es una foto principal al azar; el orden se mantiene mientras la app sigue abierta (CARR_ORDEN). Con más de 12 fotos se ocultan los puntitos.
 - v263: Catch Catch Cat Cafe recolocado con la captura de Naver del usuario (Haeun-daero 543, a unos 230 m al noroeste del hotel); antes estaba puesto a ojo a 1,2 km.
 - v264: nuevo grupo de Frases «Cafetería» (al final, para no mover las favoritas guardadas por posición): 2 cafés con leche calientes para llevar (따뜻한 카페라테 두 잔 테이크아웃이요), con hielo, americano, para llevar / tomar aquí, tamaño grande, descafeinado, sin sirope, leche de avena (오트밀크) y lo que os preguntarán (드시고 가세요?, 따뜻한 거요, 아이스요?).
+- v265: «Cafetería» pasa a ir justo después de «Básicas» en Frases. Las favoritas de frases (f:n, por posición) se reajustan solas al abrir por su hangul, así el orden de las frases ya puede cambiar sin descolocarlas. Gamcheon: los negocios de la comunidad de la LP 2024 (p. 157): Gamnae Cafe, Gamcheon Bakery, Gamnae Matjib y Gamcheon Ajimae Babjip en Comer, y Gamnaegol Happy Power Station (talleres de 10.000-15.000 ₩) en Curioso; sin hangul y con ubicación aproximada dentro de la aldea (VERIFICAR).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

@@ -96,6 +96,15 @@ const FRASES_SIT = [
     ['¿Habla inglés?', '영어 하세요?', 'yeongeo haseyo?'], ['Más despacio, por favor', '천천히 말해 주세요', 'cheoncheonhi malhae juseyo'],
     ['Soy de España', '스페인 사람이에요', 'seupein saramieyo'], ['¿Dónde está el baño?', '화장실 어디예요?', 'hwajangsil eodiyeyo?'],
     ['¡Maravilloso!', '정말 멋져요!', 'jeongmal meotjyeoyo!']]],
+  ['Cafetería', [
+    ['2 cafés con leche calientes, para llevar', '따뜻한 카페라테 두 잔 테이크아웃이요', 'ttatteutan kapelatte du jan teikeuausiyo'],
+    ['1 café con leche caliente, para tomar aquí', '따뜻한 카페라테 한 잔 마시고 갈게요', 'ttatteutan kapelatte han jan masigo galgeyo'],
+    ['2 americanos con hielo, para llevar', '아이스 아메리카노 두 잔 테이크아웃이요', 'aiseu amerikano du jan teikeuausiyo'],
+    ['1 americano caliente, por favor', '따뜻한 아메리카노 한 잔 주세요', 'ttatteutan amerikano han jan juseyo'],
+    ['Para llevar', '테이크아웃이요', 'teikeuausiyo'], ['Para tomar aquí', '여기서 마실게요', 'yeogiseo masilgeyo'],
+    ['Tamaño grande, por favor', '큰 사이즈로 주세요', 'keun saijeuro juseyo'], ['Descafeinado, por favor', '디카페인으로 주세요', 'dikapeineuro juseyo'],
+    ['Sin azúcar ni sirope, por favor', '시럽 빼 주세요', 'sireop ppae juseyo'], ['Con leche de avena, por favor', '오트밀크로 바꿔 주세요', 'oteumilkeuro bakkwo juseyo'],
+    ['Os preguntarán: ¿para tomar aquí?', '드시고 가세요?', 'deusigo gaseyo?'], ['Os preguntarán: ¿caliente o con hielo?', '따뜻한 거요, 아이스요?', 'ttatteutan geoyo, aiseuyo?']]],
   ['Taxi', [
     ['A esta dirección, por favor', '이 주소로 가 주세요', 'i jusoro ga juseyo'], ['Pare aquí, por favor', '여기 세워 주세요', 'yeogi sewo juseyo'],
     ['Me bajo aquí', '여기서 내릴게요', 'yeogiseo naerilgeyo'], ['Abra el maletero, por favor', '트렁크 열어 주세요', 'teureongkeu yeoreo juseyo'],
@@ -131,16 +140,7 @@ const FRASES_SIT = [
   ['Emergencia', [
     ['¡Ayuda!', '도와주세요', 'dowajuseyo'], ['Llame a la policía', '경찰 불러 주세요', 'gyeongchal bulleo juseyo'],
     ['Llame a una ambulancia', '구급차 불러 주세요', 'gugeupcha bulleo juseyo'], ['Estoy perdido/a', '길을 잃었어요', 'gireul ireosseoyo'],
-    ['He perdido el pasaporte', '여권을 잃어버렸어요', 'yeogwoneul ireobeoryeosseoyo'], ['He perdido la cartera', '지갑을 잃어버렸어요', 'jigabeul ireobeoryeosseoyo']]],
-  ['Cafetería', [
-    ['2 cafés con leche calientes, para llevar', '따뜻한 카페라테 두 잔 테이크아웃이요', 'ttatteutan kapelatte du jan teikeuausiyo'],
-    ['1 café con leche caliente, para tomar aquí', '따뜻한 카페라테 한 잔 마시고 갈게요', 'ttatteutan kapelatte han jan masigo galgeyo'],
-    ['2 americanos con hielo, para llevar', '아이스 아메리카노 두 잔 테이크아웃이요', 'aiseu amerikano du jan teikeuausiyo'],
-    ['1 americano caliente, por favor', '따뜻한 아메리카노 한 잔 주세요', 'ttatteutan amerikano han jan juseyo'],
-    ['Para llevar', '테이크아웃이요', 'teikeuausiyo'], ['Para tomar aquí', '여기서 마실게요', 'yeogiseo masilgeyo'],
-    ['Tamaño grande, por favor', '큰 사이즈로 주세요', 'keun saijeuro juseyo'], ['Descafeinado, por favor', '디카페인으로 주세요', 'dikapeineuro juseyo'],
-    ['Sin azúcar ni sirope, por favor', '시럽 빼 주세요', 'sireop ppae juseyo'], ['Con leche de avena, por favor', '오트밀크로 바꿔 주세요', 'oteumilkeuro bakkwo juseyo'],
-    ['Os preguntarán: ¿para tomar aquí?', '드시고 가세요?', 'deusigo gaseyo?'], ['Os preguntarán: ¿caliente o con hielo?', '따뜻한 거요, 아이스요?', 'ttatteutan geoyo, aiseuyo?']]]
+    ['He perdido el pasaporte', '여권을 잃어버렸어요', 'yeogwoneul ireobeoryeosseoyo'], ['He perdido la cartera', '지갑을 잃어버렸어요', 'jigabeul ireobeoryeosseoyo']]]
 ];
 const FRASES = FRASES_SIT.flatMap(([, fs]) => fs);
 
@@ -957,6 +957,11 @@ const PLANES = [
     desc: 'Otra lavandería de autoservicio de la misma cadena, en Jwa-dong (barrio residencial al este de Haeundae): alternativa si la de Jung-dong no os encaja.',
     nota: '365 días, 24 h según su ficha: VERIFICAR. Coordenadas aproximadas.' },
   // v223: más Curioso y Ropa en Busan y Jeonju (ubicaciones aproximadas; lo dudoso, VERIFICAR).
+  { id: 'pl-happypower', wiki: 'Gamcheon_Culture_Village', ic: '🎨', ciudad: 'busan', cat: 'curioso', es: 'Gamnaegol Happy Power Station (talleres en Gamcheon)', aprox: true,
+    precio: 'Talleres de 10.000-15.000 ₩ (LP 2024).',
+    direccion_en: 'Aldea cultural de Gamcheon (plano del centro de información)',
+    desc: 'Talleres de la comunidad de la aldea: alfarería, carpintería o caricaturas. Un recuerdo hecho por vosotros y el dinero se queda en el barrio.',
+    nota: 'Lonely Planet Corea 2024 (en español), p. 157. Horario y hangul: VERIFICAR en el centro de información de la aldea.' },
   { id: 'pl-catchcatch', wiki: 'Cat_café', ic: '🐱', ciudad: 'busan', cat: 'curioso', es: 'Catch Catch Cat Cafe (cafetería de gatos)', ko: '캐치캣치', romanizacion: 'Kaechi Kaetchi', aprox: true,
     precio: 'Entrada 15.000 ₩ por persona (cartel del local en Naver).', resenas: '407 reseñas en Naver Map (13/11/2026).',
     direccion_ko: '부산 해운대구 해운대로 543', direccion_en: 'Haeun-daero 543 (829-9 U-dong), Haeundae-gu; a unos 230 m del hotel',

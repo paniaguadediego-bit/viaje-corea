@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v264';
+const VERSION = 'v265';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -26,6 +26,9 @@ const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 let trip = load(K_TRIP, null);
 let user = load(K_USER, { gastos: [], checklist: {}, notas: '' });
 // v250: «De nada» entró como 3.ª frase: las favoritas guardadas por posición (f:2 en adelante) suben una.
+// v265: las favoritas de frases se reajustan por su hangul (por si cambia el orden de las frases).
+if (user && typeof FRASES !== 'undefined') { let cambia = false; (user.favs || []).forEach(f => { const m = /^f:(\d+)$/.exec(f.k || ''); if (!m || !f.ko || (FRASES[+m[1]] && FRASES[+m[1]][1] === f.ko)) return;
+  const i = FRASES.findIndex(x => x[1] === f.ko); if (i >= 0) { f.k = 'f:' + i; cambia = true; } }); if (cambia) { user.mig250 = 1; try { localStorage.setItem(K_USER, JSON.stringify(user)); } catch {} } }
 if (user && !user.mig250) { (user.favs || []).forEach(f => { const m = /^f:(\d+)$/.exec(f.k || ''); if (m && +m[1] >= 2) f.k = 'f:' + (+m[1] + 1); }); user.mig250 = 1; try { localStorage.setItem(K_USER, JSON.stringify(user)); } catch {} }
 let tab = 'hoy';
 // Historial de pestañas para el botón atrás (el de la app y el de Android).
