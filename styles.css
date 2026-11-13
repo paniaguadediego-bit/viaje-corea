@@ -1718,5 +1718,8 @@ nav#tabs button.on span { color: #fff !important; }
 /* v267: en los mapas, «✗ No vamos» = icono gris, atenuado y con ✗ roja */
 .mp-pt.novamos { background: #9aa0a6 !important; border: 2px solid #fff !important; opacity: .6; }
 .mp-pt.novamos::after { content: "✗"; position: absolute; right: -5px; top: -5px; width: 14px; height: 14px; border-radius: 50%; background: #fff; color: #c62828; font-size: 10px; font-weight: 900; line-height: 14px; text-align: center; box-shadow: 0 0 0 1px #c62828; }
+/* v268: en las paradas de Hoy, el hangul justo debajo del nombre */
+.sitios-dia details.sd > summary .ko-s { display: block; margin-top: 1px; line-height: 1.25; padding-right: 92px; min-height: 26px; }
+.sitios-dia details.sd > summary { padding-bottom: 8px !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v267"; }
+:root { --css-ver: "v268"; }

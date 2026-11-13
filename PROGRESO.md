@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v267
+Caché del service worker: corea-v268
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -320,6 +320,7 @@ Caché del service worker: corea-v267
 - v265: «Cafetería» pasa a ir justo después de «Básicas» en Frases. Las favoritas de frases (f:n, por posición) se reajustan solas al abrir por su hangul, así el orden de las frases ya puede cambiar sin descolocarlas. Gamcheon: los negocios de la comunidad de la LP 2024 (p. 157): Gamnae Cafe, Gamcheon Bakery, Gamnae Matjib y Gamcheon Ajimae Babjip en Comer, y Gamnaegol Happy Power Station (talleres de 10.000-15.000 ₩) en Curioso; sin hangul y con ubicación aproximada dentro de la aldea (VERIFICAR).
 - v266: con el plano oficial de Gamcheon («Stamp Map») que fotografió el usuario: hangul y posición de Gamnae Cafe (감내카페), Gamcheon Bakery (감천제빵소), Gamnae Matjib (감내맛집), Ajimae (아지매식당) y Happy Power Station (감내골행복발전소); y en el recuadro LP24 de Gamcheon, las 3 rutas recomendadas y los puntos de sellos.
 - v267: en los mapas (pestaña Mapas y mapa del día), lo marcado «✗ No vamos» sale con el icono gris, medio transparente y una ✗ roja en la esquina (como el ✓ verde de los visitados).
+- v268: en las paradas de Hoy, el nombre en hangul va justo debajo del nombre en castellano, y la pastilla «▾ más / ▴ menos» sube a esa misma fila, así la ficha no crece.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
