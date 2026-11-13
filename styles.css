@@ -1744,5 +1744,7 @@ nav#tabs button.on span { color: #fff !important; }
 .sitios-dia details.sd.con-fondo[open] { background: linear-gradient(180deg, rgba(0,0,0,.15) 0%, rgba(10,14,22,.62) 30%, rgba(10,14,22,.8) 100%), var(--sd-bg) center top / cover no-repeat !important; }
 .sitios-dia details.sd.con-fondo > summary b, .sitios-dia details.sd.con-fondo > summary .ko-s { text-shadow: 0 1px 2px rgba(0,0,0,.9), 0 0 8px rgba(0,0,0,.6) !important; }
 .sitios-dia details.sd.con-fondo.hecho-card > summary > *, .sitios-dia details.sd.con-fondo.novamos-card > summary > * { opacity: .85; }
+/* v279: en iPhone, Safari solo avisa de toques en zonas «pulsables»: el contenido de una parada abierta lo es (al tocarlo se pliega) */
+.sitios-dia details.sd[open], .sitios-dia details.sd[open] > .sd-cuerpo, .sitios-dia details.sd[open] > .sd-cuerpo * { cursor: pointer; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v278"; }
+:root { --css-ver: "v279"; }

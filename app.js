@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v278';
+const VERSION = 'v279';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2588,7 +2588,7 @@ document.addEventListener('click', e => {
   const dt = e.target.closest('details.sd[open]'); if (!dt || e.target.closest('summary')) return;
   if (e.target.closest('button, a, input, textarea, select, label, .foto, img, audio, video')) return;
   if (e.target.closest('details') !== dt) return; // dentro de un desplegable interior: no
-  if (window.getSelection && String(window.getSelection())) return; // seleccionando texto
+  const sel = window.getSelection && window.getSelection(); if (sel && !sel.isCollapsed && dt.contains(sel.anchorNode)) return; // seleccionando texto de esta ficha
   dt.open = false;
 });
 document.addEventListener('toggle', e => { const k = e.target.dataset && e.target.dataset.key; if (k) abiertos[k] = e.target.open; }, true);
