@@ -1721,5 +1721,9 @@ nav#tabs button.on span { color: #fff !important; }
 /* v268: en las paradas de Hoy, el hangul justo debajo del nombre */
 .sitios-dia details.sd > summary .ko-s { display: block; margin-top: 1px; line-height: 1.25; padding-right: 92px; min-height: 26px; }
 .sitios-dia details.sd > summary { padding-bottom: 8px !important; }
+/* v269: pastilla «más / menos» sólida (legible en oscuro) y sin atenuar en las paradas visitadas (se atenúa el resto) */
+.sitios-dia details.sd > summary::after { background: var(--acc) !important; color: #fff !important; border-color: transparent !important; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+.sitios-dia details.sd.hecho-card, .sitios-dia details.sd.novamos-card { opacity: 1 !important; }
+.sitios-dia details.sd.hecho-card > summary > *, .sitios-dia details.sd.hecho-card > .sd-cuerpo, .sitios-dia details.sd.novamos-card > summary > *, .sitios-dia details.sd.novamos-card > .sd-cuerpo { opacity: .6; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v268"; }
+:root { --css-ver: "v269"; }

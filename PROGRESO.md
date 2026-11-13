@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v268
+Caché del service worker: corea-v269
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -321,6 +321,7 @@ Caché del service worker: corea-v268
 - v266: con el plano oficial de Gamcheon («Stamp Map») que fotografió el usuario: hangul y posición de Gamnae Cafe (감내카페), Gamcheon Bakery (감천제빵소), Gamnae Matjib (감내맛집), Ajimae (아지매식당) y Happy Power Station (감내골행복발전소); y en el recuadro LP24 de Gamcheon, las 3 rutas recomendadas y los puntos de sellos.
 - v267: en los mapas (pestaña Mapas y mapa del día), lo marcado «✗ No vamos» sale con el icono gris, medio transparente y una ✗ roja en la esquina (como el ✓ verde de los visitados).
 - v268: en las paradas de Hoy, el nombre en hangul va justo debajo del nombre en castellano, y la pastilla «▾ más / ▴ menos» sube a esa misma fila, así la ficha no crece.
+- v269: la pastilla «▾ más / ▴ menos» de las paradas de Hoy es sólida (fondo del color de la pestaña y letra blanca), legible en tema oscuro; en las paradas visitadas o «no vamos» ya no se atenúa la ficha entera sino su contenido, así la pastilla se ve igual de bien.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
