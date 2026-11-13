@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v263
+Caché del service worker: corea-v264
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -316,6 +316,7 @@ Caché del service worker: corea-v263
 - v261: revisados Andong y Gyeongju frente al itinerario original: no falta nada (los restaurantes ya estaban en Comer). Dos sitios del texto no eran parada y entran en el catálogo: el mercado viejo de Andong (안동구시장, «almuerzo/cena en el mercado» del 9) y el solar del templo Hwangnyongsa (황룡사지, el 10, entre el museo y Bunhwangsa).
 - v262: en Hoy, las paradas de la Ruta del día salen plegadas por defecto y, abiertas, se pliegan al tocar su contenido (no los botones, enlaces, 🔊 ni la foto). El carrusel del día suma hasta 2 fotos más de cada artículo de Wikipedia (prefijo mm:<idioma>:<título>:<n>, de su media-list) y va en orden aleatorio: la primera es una foto principal al azar; el orden se mantiene mientras la app sigue abierta (CARR_ORDEN). Con más de 12 fotos se ocultan los puntitos.
 - v263: Catch Catch Cat Cafe recolocado con la captura de Naver del usuario (Haeun-daero 543, a unos 230 m al noroeste del hotel); antes estaba puesto a ojo a 1,2 km.
+- v264: nuevo grupo de Frases «Cafetería» (al final, para no mover las favoritas guardadas por posición): 2 cafés con leche calientes para llevar (따뜻한 카페라테 두 잔 테이크아웃이요), con hielo, americano, para llevar / tomar aquí, tamaño grande, descafeinado, sin sirope, leche de avena (오트밀크) y lo que os preguntarán (드시고 가세요?, 따뜻한 거요, 아이스요?).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

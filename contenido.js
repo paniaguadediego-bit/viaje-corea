@@ -131,7 +131,16 @@ const FRASES_SIT = [
   ['Emergencia', [
     ['¡Ayuda!', '도와주세요', 'dowajuseyo'], ['Llame a la policía', '경찰 불러 주세요', 'gyeongchal bulleo juseyo'],
     ['Llame a una ambulancia', '구급차 불러 주세요', 'gugeupcha bulleo juseyo'], ['Estoy perdido/a', '길을 잃었어요', 'gireul ireosseoyo'],
-    ['He perdido el pasaporte', '여권을 잃어버렸어요', 'yeogwoneul ireobeoryeosseoyo'], ['He perdido la cartera', '지갑을 잃어버렸어요', 'jigabeul ireobeoryeosseoyo']]]
+    ['He perdido el pasaporte', '여권을 잃어버렸어요', 'yeogwoneul ireobeoryeosseoyo'], ['He perdido la cartera', '지갑을 잃어버렸어요', 'jigabeul ireobeoryeosseoyo']]],
+  ['Cafetería', [
+    ['2 cafés con leche calientes, para llevar', '따뜻한 카페라테 두 잔 테이크아웃이요', 'ttatteutan kapelatte du jan teikeuausiyo'],
+    ['1 café con leche caliente, para tomar aquí', '따뜻한 카페라테 한 잔 마시고 갈게요', 'ttatteutan kapelatte han jan masigo galgeyo'],
+    ['2 americanos con hielo, para llevar', '아이스 아메리카노 두 잔 테이크아웃이요', 'aiseu amerikano du jan teikeuausiyo'],
+    ['1 americano caliente, por favor', '따뜻한 아메리카노 한 잔 주세요', 'ttatteutan amerikano han jan juseyo'],
+    ['Para llevar', '테이크아웃이요', 'teikeuausiyo'], ['Para tomar aquí', '여기서 마실게요', 'yeogiseo masilgeyo'],
+    ['Tamaño grande, por favor', '큰 사이즈로 주세요', 'keun saijeuro juseyo'], ['Descafeinado, por favor', '디카페인으로 주세요', 'dikapeineuro juseyo'],
+    ['Sin azúcar ni sirope, por favor', '시럽 빼 주세요', 'sireop ppae juseyo'], ['Con leche de avena, por favor', '오트밀크로 바꿔 주세요', 'oteumilkeuro bakkwo juseyo'],
+    ['Os preguntarán: ¿para tomar aquí?', '드시고 가세요?', 'deusigo gaseyo?'], ['Os preguntarán: ¿caliente o con hielo?', '따뜻한 거요, 아이스요?', 'ttatteutan geoyo, aiseuyo?']]]
 ];
 const FRASES = FRASES_SIT.flatMap(([, fs]) => fs);
 
