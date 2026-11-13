@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v269
+Caché del service worker: corea-v270
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -322,6 +322,7 @@ Caché del service worker: corea-v269
 - v267: en los mapas (pestaña Mapas y mapa del día), lo marcado «✗ No vamos» sale con el icono gris, medio transparente y una ✗ roja en la esquina (como el ✓ verde de los visitados).
 - v268: en las paradas de Hoy, el nombre en hangul va justo debajo del nombre en castellano, y la pastilla «▾ más / ▴ menos» sube a esa misma fila, así la ficha no crece.
 - v269: la pastilla «▾ más / ▴ menos» de las paradas de Hoy es sólida (fondo del color de la pestaña y letra blanca), legible en tema oscuro; en las paradas visitadas o «no vamos» ya no se atenúa la ficha entera sino su contenido, así la pastilla se ve igual de bien.
+- v270: (1) Más → Seguro: «🩺 Qué hacer si…» (SEGURO_GUIAS en contenido.js) con pasos sencillos para caída o posible fractura, fiebre con dolor abdominal (¿apendicitis?), vómitos o diarrea, reacción alérgica, dolor de muelas, pasaporte perdido, cartera robada, hospitales con atención a extranjeros en Seúl, Busan y Jeonju (VERIFICAR con el seguro) y «Siempre, pase lo que pase»; más 12 frases para el hospital (FRASES_MED, a pantalla completa con la clave m:<hangul>). (2) Más → 🔒 Bloquear marcas (localStorage corea.lock, solo en ese móvil): con la app bloqueada, un listener en captura anula los toques en todo lo que marca o desmarca (SEL_MARCA) y el arrastre de iconos del mapa; sale un 🔒 junto al título que desbloquea con confirmación y un aviso flotante si se toca algo bloqueado. (3) Corea → «🎁 Regalos top»: ideas de regalo según guías y blogs de viaje (gim, ginseng rojo, Olive Young, snacks exclusivos, tés, calcetines, palillos de acero, hanji y celadón, Kakao Friends, recuerdos de vuestras ciudades, Daiso y aduana).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

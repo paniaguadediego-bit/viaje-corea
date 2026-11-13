@@ -1725,5 +1725,10 @@ nav#tabs button.on span { color: #fff !important; }
 .sitios-dia details.sd > summary::after { background: var(--acc) !important; color: #fff !important; border-color: transparent !important; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
 .sitios-dia details.sd.hecho-card, .sitios-dia details.sd.novamos-card { opacity: 1 !important; }
 .sitios-dia details.sd.hecho-card > summary > *, .sitios-dia details.sd.hecho-card > .sd-cuerpo, .sitios-dia details.sd.novamos-card > summary > *, .sitios-dia details.sd.novamos-card > .sd-cuerpo { opacity: .6; }
+/* v270: bloqueo de marcas y guías del seguro */
+#lockbtn { flex: none; }
+.toast-lock { position: fixed; left: 50%; bottom: calc(80px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 99; background: #222; color: #fff; padding: 8px 14px; border-radius: 999px; font-size: .85rem; box-shadow: 0 2px 10px rgba(0,0,0,.3); max-width: 90vw; text-align: center; }
+.seg-guia > summary { cursor: pointer; } .seg-guia ol { padding-left: 1.3em; } .seg-guia li { margin: 6px 0; }
+.seg-fr { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); cursor: pointer; } .seg-fr .habla { float: none; margin: 0; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v269"; }
+:root { --css-ver: "v270"; }

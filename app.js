@@ -1,13 +1,27 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v269';
+const VERSION = 'v270';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
   const l = document.querySelector('link[rel="stylesheet"][href^="styles.css"]');
   if (l && v !== VERSION && navigator.onLine) l.href = 'styles.css?v=' + VERSION;
 } catch {} });
+
+document.addEventListener('click', e => { const b = e.target.closest('[data-lock]'); if (!b) return;
+  if (b.dataset.lock === '1') { try { localStorage.setItem(K_LOCK, '1'); } catch {} } else if (confirm('¿Desbloquear? Volverás a poder marcar y desmarcar.')) { try { localStorage.removeItem(K_LOCK); } catch {} }
+  if (typeof render === 'function') render(); });
+// 🔒 Bloqueo de marcas (Más → Bloquear): con la app bloqueada, nada que marque o desmarque responde al toque. Solo en este móvil.
+const K_LOCK = 'corea.lock';
+const bloqueado = () => { try { return localStorage.getItem(K_LOCK) === '1'; } catch { return false; } };
+const SEL_MARCA = '[data-hk],[data-est],[data-val],[data-stk],[data-sv],[data-prob],[data-prv],[data-docuso],[data-rgok],[data-rgdel],[data-rgadd],[data-cara],[data-etq],[data-avok],[data-hgleida],[data-verif],[data-fav],[data-agtog],[data-agdel],[data-delcomer],[data-delfoto],[data-gps],[data-gpsdel],.sug-add,.sd-x';
+let avisoLock = 0;
+document.addEventListener('click', e => {
+  if (!bloqueado() || !e.target.closest(SEL_MARCA)) return;
+  e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+  if (Date.now() - avisoLock > 1500) { avisoLock = Date.now(); const t = document.createElement('div'); t.className = 'toast-lock'; t.textContent = '🔒 Marcas bloqueadas: toca el candado de arriba para desbloquear'; document.body.appendChild(t); setTimeout(() => t.remove(), 2200); }
+}, true);
 
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
@@ -1676,7 +1690,7 @@ function mpGestos(el, m) {
   const v = el.querySelector('.mp-vista'), capa = () => el.querySelector('.mp-capa');
   const ps = new Map(); let ini = null, movido = false, pinch = null, arr0 = null, larga = 0;
   // ✋ Mantener pulsado un icono (½ s) y arrastrarlo: se guarda donde se suelte como su ubicación buena (user.coordsFix).
-  const arrastrable = b => { const p = b && m.pts[Number(b.dataset.mpp)]; return p && p.l && p.capa !== 'hotel' ? p : null; };
+  const arrastrable = b => { if (bloqueado()) return null; const p = b && m.pts[Number(b.dataset.mpp)]; return p && p.l && p.capa !== 'hotel' ? p : null; };
   const mover = (dx, dy, s = 1) => { capa().style.transform = `translate(${dx}px,${dy}px) scale(${s})`; };
   v.addEventListener('pointerdown', e => {
     v.setPointerCapture(e.pointerId); ps.set(e.pointerId, [e.clientX, e.clientY]);
@@ -2091,6 +2105,8 @@ function showFull(key) {
     const f = FRASES_CN[a]; if (!f) return;
     return full(`<div class="enorme">${esc(f[1])}</div><div class="es">${esc(f[2])}</div><div class="es">${esc(f[0])}</div>`);
   }
+  if (t === 'm') { const ko = key.slice(2), f = (typeof FRASES_MED !== 'undefined' ? FRASES_MED : []).find(x => x[1] === ko); if (!f) return;
+    return full(`<div class="enorme">${esc(f[1])}</div>${pronHTML(f[1])}<div class="es">${esc(f[0])}</div>`); }
   if (t === 'hc') {
     const ko = key.slice(3), c = (typeof HG_CARTELES !== 'undefined' ? HG_CARTELES : []).find(x => x[0] === ko); if (!c) return;
     return full(`<div class="enorme">${esc(c[0])}</div>${pronHTML(c[0])}<div class="es">${esc(c[1])}</div>`);
@@ -2363,6 +2379,7 @@ function viewIdioma() {
 const GUIA_BLOQUES = [
   ['🚇 Moverse', ['T-money y transporte', 'Metro y KTX', 'Taxis', 'Apps', 'Internet y móvil', 'Entrada al país']],
   ['💳 Dinero y compras', ['Dinero y pagos', 'Compras, tax free y último día', 'Propinas', 'Tiendas 24 h']],
+  ['🎁 Regalos top', ['Regalos top']],
   ['🍜 Comida', ['Comida', 'platos', 'snacks', 'En la mesa (Lonely Planet)', 'Beber a la coreana']],
   ['🙇 Costumbres y cultura', ['Etiqueta', 'Saber estar (Lonely Planet)', 'Zapatos', 'Templos', 'Fechas de vuestro viaje']],
   ['🚨 Salud, seguridad y práctico', ['Seguridad y emergencias', 'Salud y farmacias', 'Baños', 'Enchufes', 'Clima en noviembre', 'Qué llevar (Lonely Planet)', 'Lo básico (Lonely Planet)', 'Consejos de la Lonely Planet']],
@@ -2504,7 +2521,16 @@ function viewSeguro() {
     </div>
     ${lista('Coberturas clave', s.coberturas_clave)}
     ${s.airhelp_plus != null ? `<div class="card">AirHelp+: <b>${air}</b></div>` : ''}
-    ${lista('Cómo reclamar', s.como_reclamar, 'ol')}`;
+    ${lista('Cómo reclamar', s.como_reclamar, 'ol')}
+    ${seguroGuias()}`;
+}
+// 🩺 «Qué hacer si…»: pasos sencillos y frases para el hospital (SEGURO_GUIAS y FRASES_MED en contenido.js).
+function seguroGuias() {
+  if (typeof SEGURO_GUIAS === 'undefined') return '';
+  return `<h2>🩺 Qué hacer si…</h2><p class="muted">Paso a paso. Regla de oro: <b>primero llamad al seguro</b> (teléfono de arriba), salvo que corra peligro la vida: entonces <b>119</b>.</p>
+    ${SEGURO_GUIAS.map(([ic, t, ps], i) => `<details class="card seg-guia" data-key="sg:${i}" ${abierto('sg:' + i, false) ? 'open' : ''}><summary><b>${ic} ${esc(t)}</b></summary><ol>${ps.map(p => `<li>${resaltar(p, true)}</li>`).join('')}</ol></details>`).join('')}
+    <details class="card seg-guia" data-key="sg:fr" ${abierto('sg:fr', false) ? 'open' : ''}><summary><b>🗣️ Frases para el hospital</b> <small class="muted">· toca para enseñarla en grande</small></summary>
+      ${FRASES_MED.map(([es, ko]) => `<div class="seg-fr" data-full="m:${esc(ko)}"><div><b>${esc(es)}</b><div class="ko-s">${esc(ko)}</div></div>${btnHabla(ko)}</div>`).join('')}</details>`;
 }
 function copiar(t) {
   const ok = () => alert('Copiado: ' + t);
@@ -2912,7 +2938,7 @@ function viewVerificar() {
 // Más con rejilla de iconos, como la Guía de Corea: se toca un tema y sale debajo.
 let masSub = 'maleta';
 const MAS_SUB = [['maleta', 'Maleta', '🧳'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'],
-  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['probados', 'Probados', '🥢'], ['resumen', 'Resumen del viaje', '🧾'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️'], ['guiaapp', 'Guía de la app', '🛠️']];
+  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['probados', 'Probados', '🥢'], ['resumen', 'Resumen del viaje', '🧾'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️'], ['bloqueo', 'Bloquear marcas', '🔒'], ['guiaapp', 'Guía de la app', '🛠️']];
 // ---------- 🛠️ Guía de la app: GUIA-APP.md (precacheado), también sin viaje; sirve para hacer otra app de otro país ----------
 let GUIA_MD = null;
 function cargaGuiaApp() { fetch('GUIA-APP.md').then(r => r.ok ? r.text() : Promise.reject()).then(t => { GUIA_MD = t; renderLuego(); }).catch(() => { GUIA_MD = ''; renderLuego(); }); }
@@ -2991,6 +3017,9 @@ function viewMas() {
   else if (masSub === 'resumen') c = viewResumen();
   else if (masSub === 'probados') c = viewProbados();
   else if (masSub === 'guiaapp') c = viewGuiaApp();
+  else if (masSub === 'bloqueo') c = `<h2>🔒 Bloquear marcas</h2><div class="card centro"><p>${bloqueado() ? '<b>Ahora está BLOQUEADA.</b> Nada se marca ni se desmarca al tocar: visitados, ✗, estrellas, probados, documentos usados, regalos, diario, favoritas…' : 'Bloquéala cuando solo vayáis a mirar (en el metro, enseñándola a alguien…): así no se marca ni desmarca nada por un toque sin querer.'}</p>
+    <button class="${bloqueado() ? 'sec' : ''}" data-lock="${bloqueado() ? 0 : 1}">${bloqueado() ? '🔓 Desbloquear' : '🔒 Bloquear marcas'}</button>
+    <p class="muted">Mientras está bloqueada, sale un 🔒 arriba, junto al título: tocándolo se desbloquea. Se puede seguir mirando, abriendo fichas, buscando y usando Naver. Solo en este móvil.</p></div>`;
   else if (masSub === 'notas') c = `<h2>📝 Notas</h2><textarea data-notas rows="10" placeholder="Escribe aquí… (se guarda solo)">${esc(u().notas)}</textarea>${diarioResumen()}`;
   else c = `<h2>Datos del viaje</h2>
     <button data-act="import">📂 Importar viaje</button>
@@ -3236,6 +3265,7 @@ function anclar(el) {
 function render() {
   applyTheme();
   $('#title').textContent = String((trip && trip.meta && trip.meta.titulo) || 'Viaje a Corea').replace(/ del Sur\b/i, ''); // «Corea 2026»: se sobreentiende
+  { let lb = document.getElementById('lockbtn'); if (bloqueado() && !lb) { lb = document.createElement('button'); lb.id = 'lockbtn'; lb.className = 'sec'; lb.dataset.lock = '0'; lb.textContent = '🔒'; lb.setAttribute('aria-label', 'Marcas bloqueadas: tocar para desbloquear'); $('#title').after(lb); } else if (!bloqueado() && lb) lb.remove(); }
   $('#back').hidden = !pila.length;
   $('#tabs').innerHTML = TABS.map(([id, label, ic]) =>
     `<button data-tab="${id}" class="${tab === id || (id === 'mas' && EN_MAS.some(m => m[0] === tab)) ? 'on' : ''}"><span>${ic}</span>${label}</button>`).join('');

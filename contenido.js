@@ -342,6 +342,20 @@ const GUIA = [
     'Último día: devolved el saldo de la T-money en una tienda 24 h (GS25, CU, 7-Eleven), hasta 20.000 ₩ y unos 500 ₩ de comisión. VERIFICAR. La tarjeta no se devuelve.',
     'Gastad los wones sueltos (las monedas no se cambian en España) y recoged en el aeropuerto lo comprado en duty free online.'
   ]],
+  ['Regalos top', [
+    'Gim (algas tostadas) en paquetitos: ligero, barato y gusta a casi todos. Los de aceite de oliva o de sésamo son los más pedidos. En cualquier súper o tienda 24 h.',
+    'Ginseng rojo (홍삼): en sobres o palitos para beber (los más cómodos para la maleta), caramelos o miel con ginseng. La marca de referencia es Jeong Kwan Jang (정관장). Ojo: no conviene a quien toma anticoagulantes o tiene la tensión alta.',
+    'Cosmética coreana de Olive Young: mascarillas de tela en packs, cremas solares, bálsamos de labios y cushions. Es el regalo estrella: pesa poco y hay ofertas «1+1». Con más de unos 15.000 ₩ por tique, tax free en caja con el pasaporte.',
+    'Snacks que solo hay allí: Honey Butter Chip, Pepero y Choco Pie de sabores coreanos, Market O (brownies), Turtle Chips, Homerun Ball. Mejor en supermercados (Lotte Mart, E-Mart) que en tiendas de aeropuerto.',
+    'Tés en tarro o en sobres: yuja-cha (yuzu con miel), omija o de cebada. Para quien no toma té, el tteokbokki instantáneo (Yopokki) o los ramyeon (Shin, Buldak).',
+    'Calcetines con dibujos (personajes, cuadros famosos, K-pop): muy baratos en Myeongdong, Namdaemun y los mercados; regalo pequeño que siempre hace gracia.',
+    'Palillos y cuchara de acero coreanos (sujeo), a veces con estuche bordado: útil y muy de Corea. En Insadong o Namdaemun; más baratos en Daiso.',
+    'Artesanía para algo especial: papel hanji (abanicos, cajitas, separadores), cerámica de celadón, nudos maedeup. Insadong y Ssamziegil en Seúl; Jeonju es la capital del hanji (Aldea Hanok).',
+    'Para quien le guste la cultura pop: merchandising de Kakao Friends o Line Friends, álbumes de K-pop y bolsas de tela con hangul (los museos, como el Museo Nacional, tienen tiendas muy cuidadas).',
+    'Recuerdos de vuestras ciudades: hwangnam-ppang de Gyeongju (dura pocos días), caballa salada de Andong envasada al vacío, eomuk de Samjin en Busan (caja de regalo, consumir pronto) y hanji o moju de Jeonju.',
+    'Daiso: todo a precios fijos de unos 1.000-5.000 ₩, con sección de recuerdos, papelería y cosmética barata. Perfecto para «detallitos» en cantidad.',
+    'Truco de maleta: los líquidos y cremas, mejor en la facturada; el ginseng y los alimentos envasados se pueden llevar a España si son para uso personal y vienen cerrados (VERIFICAR carnes y lácteos, que no se permiten).'
+  ]],
   ['Salud y farmacias', [
     'Farmacia = 약국 (yakguk). Hay muchas, pero cierran pronto y algunos domingos; en zonas turísticas suele haber alguna abierta.',
     'Los medicamentos básicos (analgésicos, resfriado) se piden en el mostrador: frases en Corea → Frases → Farmacia.',
@@ -1249,4 +1263,63 @@ const PROBAR = [
     ['Moju', '모주', 'Makgeolli caliente con canela y jengibre.'],
     ['Makgeolli del callejón', '막걸리골목', 'Tetera de makgeolli con la mesa llena de platillos, en sus callejones.', 'ko:막걸리'],
     ['Choco Pie de PNB', '초코파이', 'El de la pastelería PNB, mucho más grande que el de tienda.']]]
+];
+
+
+// 🩺 Seguro → «Qué hacer si…»: pasos sencillos, de uno en uno. [icono, título, [pasos]]. Las frases en coreano van en FRASES_MED.
+const SEGURO_GUIAS = [
+  ['🦴', 'Me caigo y creo que me he roto algo', [
+    'Para. No apoyes ni muevas la zona. Si sangra, aprieta con algo limpio.',
+    'Si no puedes moverte, el dolor es muy fuerte, hay herida abierta, te diste en la cabeza o te mareas: llama al 119 (ambulancia gratis). Di «구급차 불러 주세요» o enseña la frase.',
+    'Si puedes moverte: llama primero al teléfono de asistencia del seguro (arriba). Ellos te dicen a qué hospital ir y a veces pagan directamente.',
+    'Ve a urgencias de un hospital grande (응급실), mejor en taxi: enseña «응급실로 가 주세요». Las clínicas pequeñas no siempre tienen rayos.',
+    'Lleva el pasaporte y la tarjeta con la que pagar: en Corea casi siempre se paga al salir.',
+    'Antes de irte pide el informe en inglés (진단서 영어로) y las facturas detalladas (영수증). Sin eso el seguro no te devuelve el dinero.',
+    'Hazles fotos a todo y súbelo a la app del seguro o guárdalo en Más → Documentos.']],
+  ['🤒', 'Fiebre y dolor de barriga fuerte (¿apendicitis?)', [
+    'Señales de alarma: dolor que empieza en el ombligo y baja a la derecha, que empeora al andar o al toser, con fiebre, vómitos o sin ganas de comer. Si es así, no esperes a mañana.',
+    'No comas ni bebas nada (por si hay que operar) y no tomes analgésicos fuertes: pueden tapar el dolor.',
+    'Llama al seguro: te dirán a qué hospital ir. Si el dolor es muy fuerte o te desmayas, llama directamente al 119.',
+    'Ve a urgencias de un hospital grande (응급실). Di «배가 많이 아파요, 열이 나요» (me duele mucho la barriga y tengo fiebre).',
+    'Si necesitas intérprete, llama al 1330 (turismo, 24 h): te traducen por teléfono con el médico.',
+    'Guarda informes en inglés y facturas para el seguro, igual que en una caída.']],
+  ['🤢', 'Vómitos o diarrea (comida o agua)', [
+    'Bebe poco a poco y a menudo: agua o bebidas isotónicas (Pocari Sweat, en cualquier tienda 24 h).',
+    'En la farmacia (약국) pide algo para la diarrea: «지사제 주세요».',
+    'Ve al médico si hay sangre, fiebre alta, no retienes ni el agua o dura más de 2 días. Llama antes al seguro.']],
+  ['🐝', 'Reacción alérgica (hinchazón, ronchas, ahogo)', [
+    'Si se hincha la cara o la lengua, cuesta respirar o tragar: llama al 119 ya. Es una urgencia.',
+    'Si solo son ronchas con picor: farmacia y pide un antihistamínico; vigila durante unas horas.',
+    'Di «알레르기가 있어요» (tengo alergia) y enseña qué has comido o tomado.']],
+  ['🦷', 'Dolor de muelas o se rompe un diente', [
+    'Analgésico de farmacia (진통제) para aguantar.',
+    'Llama al seguro: suelen cubrir solo urgencias dentales hasta un tope; ellos te dirán a qué dentista (치과) ir.',
+    'Guarda la factura y el informe.']],
+  ['🛂', 'Pierdo el pasaporte o me lo roban', [
+    'Denúncialo en una comisaría (경찰서) o caseta de policía (파출소) y pide la copia de la denuncia.',
+    'Llama a la Embajada de España en Seúl (Hoy → 🆘 Ayuda): te harán un pasaporte provisional para volver. Lleva fotos de carné y la denuncia.',
+    'Tened siempre una foto del pasaporte en Más → Documentos: acelera todo.',
+    'Avisa a la aerolínea si el vuelo es en pocos días.']],
+  ['💳', 'Pierdo la cartera o me roban las tarjetas', [
+    'Bloquea las tarjetas desde la app del banco al momento.',
+    'Si había dinero o documentos: denuncia en la policía (copia para el seguro, que a veces cubre robos).',
+    'Pagad con la otra persona mientras tanto: llevad siempre tarjetas repartidas entre los dos.']],
+  ['🏥', 'Dónde ir (hospitales con atención a extranjeros)', [
+    'Seúl (cerca del hostal): Centro Médico Nacional (국립중앙의료원), en Euljiro. Otros grandes: Hospital Severance (세브란스병원) y Hospital de la Universidad Nacional de Seúl (서울대학교병원).',
+    'Busan (cerca del hotel): Hospital Haeundae Paik (해운대백병원). En el centro: Hospital de la Universidad Nacional de Pusan (부산대학교병원).',
+    'Jeonju: Hospital de la Universidad Nacional de Jeonbuk (전북대학교병원).',
+    'Los hospitales grandes tienen centro internacional con personal que habla inglés (horario de oficina); de noche y en fin de semana, urgencias (응급실). Datos: VERIFICAR con el seguro, que es quien decide a dónde ir.']],
+  ['📋', 'Siempre, pase lo que pase', [
+    'Primero el seguro (salvo peligro para la vida: entonces 119). Su teléfono está arriba.',
+    'Pasaporte encima. En Corea se paga en el hospital al salir: guarda todas las facturas (영수증) y pide el informe en inglés (진단서 영어로).',
+    'Haz fotos de todo y súbelas a la app del seguro el mismo día.',
+    '1330 hace de intérprete por teléfono las 24 h (también desde el móvil español: 02-1330).']]
+];
+const FRASES_MED = [
+  ['¡Llame a una ambulancia!', '구급차 불러 주세요'], ['Lléveme a urgencias, por favor', '응급실로 가 주세요'],
+  ['Me he caído', '넘어졌어요'], ['Creo que me he roto el hueso', '뼈가 부러진 것 같아요'],
+  ['Me duele aquí', '여기 아파요'], ['Me duele mucho la barriga', '배가 많이 아파요'], ['Tengo fiebre', '열이 나요'],
+  ['Tengo alergia', '알레르기가 있어요'], ['¿Hay algún médico que hable inglés?', '영어 하는 의사 있어요?'],
+  ['Tengo seguro de viaje', '여행자 보험이 있어요'], ['El informe médico en inglés, por favor', '진단서 영어로 주세요'],
+  ['La factura detallada, por favor', '영수증 주세요']
 ];

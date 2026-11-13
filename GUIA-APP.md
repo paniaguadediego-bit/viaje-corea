@@ -35,6 +35,7 @@ Una comparación útil: la app es una **libreta de viaje con dos tipos de hojas*
 - **Más:**
   - Maleta, Seguro, Verificar, Documentos (fotos y PDF guardados solo en el móvil), Notas, Regalos, Resumen del viaje (Word y PDF) y Escala;
   - Datos y app: importar, exportar, pasar marcas al otro móvil, preparar para viajar y actualizar;
+  - 🔒 Bloquear marcas, para que un toque sin querer no marque ni desmarque nada (se desbloquea con el 🔒 de arriba);
   - esta guía.
 - **Arriba:** 🔍 busca en toda la app y 💱 abre el conversor de moneda.
 
