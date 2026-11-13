@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v272
+Caché del service worker: corea-v273
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -325,6 +325,7 @@ Caché del service worker: corea-v272
 - v270: (1) Más → Seguro: «🩺 Qué hacer si…» (SEGURO_GUIAS en contenido.js) con pasos sencillos para caída o posible fractura, fiebre con dolor abdominal (¿apendicitis?), vómitos o diarrea, reacción alérgica, dolor de muelas, pasaporte perdido, cartera robada, hospitales con atención a extranjeros en Seúl, Busan y Jeonju (VERIFICAR con el seguro) y «Siempre, pase lo que pase»; más 12 frases para el hospital (FRASES_MED, a pantalla completa con la clave m:<hangul>). (2) Más → 🔒 Bloquear marcas (localStorage corea.lock, solo en ese móvil): con la app bloqueada, un listener en captura anula los toques en todo lo que marca o desmarca (SEL_MARCA) y el arrastre de iconos del mapa; sale un 🔒 junto al título que desbloquea con confirmación y un aviso flotante si se toca algo bloqueado. (3) Corea → «🎁 Regalos top»: ideas de regalo según guías y blogs de viaje (gim, ginseng rojo, Olive Young, snacks exclusivos, tés, calcetines, palillos de acero, hanji y celadón, Kakao Friends, recuerdos de vuestras ciudades, Daiso y aduana).
 - v271: dos guías más en Seguro → «Qué hacer si…»: «🌙 Me pongo malo de noche» (medicinas básicas 24 h en tiendas, farmacias nocturnas 공공심야약국, consejo del seguro o del 119, urgencias toda la noche, 1330) y «✈️ Vuelo retrasado, cancelado o pierdo la conexión» (recolocación, vales, papeles, compensación europea solo en la ida desde Madrid vía AirHelp+, seguro, escala de Pekín).
 - v272: añadido Haeundae Obok (해운대오복돼지국밥, Gunam-ro 15), del usuario, para probar el dwaeji gukbap el 14/11. Ubicación aproximada junto a Mindeulle (Gunam-ro 21).
+- v273: iconos repetidos en Comer: los mercados usaban 🧺, el mismo que Lavandería; ahora 🛒 (en Comer, sus filtros, el mapa y las paradas de mercados). El filtro «Cerca del hotel» usaba 📏, igual que el orden por distancia; ahora 🛏️.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
