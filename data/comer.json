@@ -2658,15 +2658,15 @@
 "id": "gc-gamnae-cafe",
 "ciudad": "busan",
 "nombre": "Gamnae Cafe",
-"ko": null,
+"ko": "감내카페",
 "tipo": "café",
 "plato": "café",
-"direccion": "Aldea cultural de Gamcheon (plano del centro de información) · ubicación aproximada",
+"direccion": "Junto al camino principal, pasado el centro de información (n.º 59 del plano). Aldea cultural de Gamcheon.",
 "horario": "VERIFICAR",
 "precio": null,
 "fuente": "lonely24",
 "url": null,
-"nota": "Café gestionado por los vecinos. Negocio de la comunidad de la aldea: lo que gastáis aquí se queda en el barrio. Lonely Planet Corea 2024 (en español), p. 157. Hangul y ubicación: VERIFICAR en Naver o en el plano.",
+"nota": "Café gestionado por los vecinos. Negocio de la comunidad de la aldea: lo que gastáis aquí se queda en el barrio. Lonely Planet Corea 2024 (en español), p. 157. Hangul y posición según el plano oficial de la aldea («Stamp Map»).",
 "lp24": {
 "p": 157
 }
@@ -2675,15 +2675,15 @@
 "id": "gc-bakery",
 "ciudad": "busan",
 "nombre": "Gamcheon Bakery",
-"ko": null,
+"ko": "감천제빵소",
 "tipo": "café",
 "plato": "panadería y bollería",
-"direccion": "Aldea cultural de Gamcheon (plano del centro de información) · ubicación aproximada",
+"direccion": "Parte alta del camino principal (n.º 30 del plano; punto de sellos). Aldea cultural de Gamcheon.",
 "horario": "VERIFICAR",
 "precio": null,
 "fuente": "lonely24",
 "url": null,
-"nota": "Panadería de la comunidad. Negocio de la comunidad de la aldea: lo que gastáis aquí se queda en el barrio. Lonely Planet Corea 2024 (en español), p. 157. Hangul y ubicación: VERIFICAR en Naver o en el plano.",
+"nota": "Panadería de la comunidad. Negocio de la comunidad de la aldea: lo que gastáis aquí se queda en el barrio. Lonely Planet Corea 2024 (en español), p. 157. Hangul y posición según el plano oficial de la aldea («Stamp Map»).",
 "lp24": {
 "p": 157
 }
@@ -2692,15 +2692,15 @@
 "id": "gc-matjib",
 "ciudad": "busan",
 "nombre": "Gamnae Matjib",
-"ko": null,
+"ko": "감내맛집",
 "tipo": "restaurante",
 "plato": "comida casera coreana",
-"direccion": "Aldea cultural de Gamcheon (plano del centro de información) · ubicación aproximada",
+"direccion": "Parte alta, junto a Gamcheon Bakery (n.º 08 del plano). Aldea cultural de Gamcheon.",
 "horario": "VERIFICAR",
 "precio": null,
 "fuente": "lonely24",
 "url": null,
-"nota": "Restaurante de la comunidad. Negocio de la comunidad de la aldea: lo que gastáis aquí se queda en el barrio. Lonely Planet Corea 2024 (en español), p. 157. Hangul y ubicación: VERIFICAR en Naver o en el plano.",
+"nota": "Restaurante de la comunidad. Negocio de la comunidad de la aldea: lo que gastáis aquí se queda en el barrio. Lonely Planet Corea 2024 (en español), p. 157. Hangul y posición según el plano oficial de la aldea («Stamp Map»).",
 "lp24": {
 "p": 157
 }
@@ -2709,15 +2709,15 @@
 "id": "gc-ajimae",
 "ciudad": "busan",
 "nombre": "Gamcheon Ajimae Babjip",
-"ko": null,
+"ko": "아지매식당",
 "tipo": "restaurante",
 "plato": "menú casero («la casa de comidas de las vecinas»)",
-"direccion": "Aldea cultural de Gamcheon (plano del centro de información) · ubicación aproximada",
+"direccion": "Abajo, junto al mercado Gamcheon 2-dong, al final de la ruta (n.º 18 del plano). Aldea cultural de Gamcheon.",
 "horario": "VERIFICAR",
 "precio": null,
 "fuente": "lonely24",
 "url": null,
-"nota": "Restaurante de la comunidad, de comida casera. Negocio de la comunidad de la aldea: lo que gastáis aquí se queda en el barrio. Lonely Planet Corea 2024 (en español), p. 157. Hangul y ubicación: VERIFICAR en Naver o en el plano.",
+"nota": "Restaurante de la comunidad, de comida casera. Negocio de la comunidad de la aldea: lo que gastáis aquí se queda en el barrio. Lonely Planet Corea 2024 (en español), p. 157. Hangul y posición según el plano oficial de la aldea («Stamp Map»).",
 "lp24": {
 "p": 157
 }

@@ -202,6 +202,7 @@ Object.assign(LP24_INDISP, {
   '감천문화마을': L24B(157, [
     ['Comunidad multicolor', '감천문화마을', 'Barrio de refugiados de la guerra en una ladera (1955). En 2009 estudiantes lo pintaron en tonos pastel con detalles en escaleras y callejones. Callejones laberínticos con cafés, galerías y tiendas: un par de horas.'],
     ['Consejos', '안내센터', 'Comprad el plano en el centro de información. Muchas cuestas y escalones: calzado cómodo. Sigue siendo un barrio: sin ruido, sin drones y en transporte público.'],
+    ['El plano de sellos («Stamp Map»)', '스탬프 지도', 'Del centro de información, a la entrada (Start). Trae 3 rutas recomendadas por los abuelos del barrio (la B, 1 h 40 min; la C, 2 h) y 12 puntos de sellos: Little Museum, mirador Haneul Maru, Gamcheon Bakery, la tienda de Asteroid B612, la estatua del Principito, House of Hope, Happy Power Station… Sale por abajo, junto al mercado Gamcheon 2-dong (Finish).'],
     ['Negocios de la comunidad', '감천문화마을', 'Gamnae Cafe, Gamcheon Bakery, restaurantes Gamnae Matjib y Gamcheon Ajimae Babjip, y Gamnaegol Happy Power Station (talleres de alfarería, carpintería o caricaturas, 10.000-15.000 ₩).']]),
   '자갈치시장': L24B(157, [
     ['La mayor lonja de Corea', '자갈치시장', 'Platijas, cangrejos, ostras, erizos de mar, anguilas… Una hora para curiosear, comprar lo que apetezca y subirlo a la 2ª planta para que lo preparen: crudo, al vapor, a la plancha, frito o en sopa.'],
@@ -957,11 +958,11 @@ const PLANES = [
     desc: 'Otra lavandería de autoservicio de la misma cadena, en Jwa-dong (barrio residencial al este de Haeundae): alternativa si la de Jung-dong no os encaja.',
     nota: '365 días, 24 h según su ficha: VERIFICAR. Coordenadas aproximadas.' },
   // v223: más Curioso y Ropa en Busan y Jeonju (ubicaciones aproximadas; lo dudoso, VERIFICAR).
-  { id: 'pl-happypower', wiki: 'Gamcheon_Culture_Village', ic: '🎨', ciudad: 'busan', cat: 'curioso', es: 'Gamnaegol Happy Power Station (talleres en Gamcheon)', aprox: true,
+  { id: 'pl-happypower', wiki: 'Gamcheon_Culture_Village', ic: '🎨', ciudad: 'busan', cat: 'curioso', es: 'Gamnaegol Happy Power Station (talleres en Gamcheon)', ko: '감내골행복발전소', romanizacion: 'Gamnaegol Haengbok Baljeonso', aprox: true,
     precio: 'Talleres de 10.000-15.000 ₩ (LP 2024).',
-    direccion_en: 'Aldea cultural de Gamcheon (plano del centro de información)',
+    direccion_en: 'Lado oeste de la aldea, sobre el aparcamiento (n.º 13 del plano; punto de sellos)',
     desc: 'Talleres de la comunidad de la aldea: alfarería, carpintería o caricaturas. Un recuerdo hecho por vosotros y el dinero se queda en el barrio.',
-    nota: 'Lonely Planet Corea 2024 (en español), p. 157. Horario y hangul: VERIFICAR en el centro de información de la aldea.' },
+    nota: 'Lonely Planet Corea 2024 (en español), p. 157; hangul del plano oficial de la aldea. Horario: VERIFICAR.' },
   { id: 'pl-catchcatch', wiki: 'Cat_café', ic: '🐱', ciudad: 'busan', cat: 'curioso', es: 'Catch Catch Cat Cafe (cafetería de gatos)', ko: '캐치캣치', romanizacion: 'Kaechi Kaetchi', aprox: true,
     precio: 'Entrada 15.000 ₩ por persona (cartel del local en Naver).', resenas: '407 reseñas en Naver Map (13/11/2026).',
     direccion_ko: '부산 해운대구 해운대로 543', direccion_en: 'Haeun-daero 543 (829-9 U-dong), Haeundae-gu; a unos 230 m del hotel',
