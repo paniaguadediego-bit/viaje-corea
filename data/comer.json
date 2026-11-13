@@ -2721,5 +2721,19 @@
 "lp24": {
 "p": 157
 }
+},
+{
+"id": "bs-obok",
+"ciudad": "busan",
+"nombre": "Haeundae Obok (dwaeji gukbap)",
+"ko": "해운대오복돼지국밥",
+"tipo": "restaurante",
+"plato": "dwaeji gukbap (sopa de cerdo con arroz)",
+"direccion": "Gunam-ro 15, Haeundae-gu (cerca de la playa, junto a Mindeulle)",
+"horario": "VERIFICAR en Naver",
+"precio": null,
+"fuente": "propio",
+"url": null,
+"nota": "Para probar el plato estrella de Busan: lo eligió el usuario para el 14/11. Truco: se añade al gusto puerro (부추), gambitas saladas (새우젓) y un poco de salsa picante; el arroz se echa dentro de la sopa."
 }
 ]
