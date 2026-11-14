@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v281';
+const VERSION = 'v282';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1087,6 +1087,14 @@ function llegadaHotel(t) {
   const c = hotelDe(ck(h.ciudad)) || (h.lat != null ? [Number(h.lat), Number(h.lon)] : null); if (!c) return '';
   return `<div class="lleg-h"><button class="btn mini" data-irab="${e.lat},${e.lon}|${esc(e.ko || e.nombre)}|${c[0]},${c[1]}|${esc(h.ko || h.nombre)}|public">🛣️ ${esc(e.nombre)} → ${esc(h.nombre)} en Naver</button>${e.verificar ? ' <span class="ver">VERIFICAR punto de salida</span>' : ''}</div>`;
 }
+// v282: el mismo botón al revés, en el paso de salida: hotel que se deja → estación o terminal (t.salida, privado en trip.json).
+function salidaHotel(t) {
+  const e = t && t.salida; if (!e || e.lat == null) return '';
+  const h = alojDe(t.fecha).sale; if (!h) return '';
+  const c = hotelDe(ck(h.ciudad)) || (h.lat != null ? [Number(h.lat), Number(h.lon)] : null); if (!c) return '';
+  return `<div class="lleg-h"><button class="btn mini" data-irab="${c[0]},${c[1]}|${esc(h.ko || h.nombre)}|${e.lat},${e.lon}|${esc(e.ko || e.nombre)}|public">🛣️ ${esc(h.nombre)} → ${esc(e.nombre)} en Naver</button>${e.verificar ? ' <span class="ver">VERIFICAR punto de llegada</span>' : ''}</div>`;
+}
+const pasoSal = (t, i) => i === ((t.salida || {}).paso || 0) ? salidaHotel(t) : '';
 // v231: «Primero, el traslado» en Hoy = una sola ficha. Plegada, lo esencial y centrado (ciudades, horas, tren y asientos);
 // al tocarla se abre todo: precio, nota, pasos (sin desplegable propio), frase, hotel de llegada y 🛣️ estación → hotel.
 const ciudadDe = x => { const m = String(x || '').match(/\(([^)]+)\)\s*$/); return m ? m[1] : String(x || ''); };
@@ -1107,7 +1115,7 @@ function trasladoHoy(tr, { hk, ok, key, ab }) {
       ${b.clase || b.precio ? `<div class="muted">${[b.clase, b.precio].filter(Boolean).map(esc).join(' · ')}</div>` : ''}
       ${as.length ? `<div class="muted">${b.coche ? `Coche ${esc(b.coche)} · ` : ''}${as.map(([n, a]) => `${esc(n)} ${esc(a)}`).join(' · ')}</div>` : ''}
       ${b.nota ? `<div class="muted">${resaltar(b.nota)}</div>` : ''}
-      ${arr(t.pasos).length ? `<ol class="th-pasos">${arr(t.pasos).map(p => `<li>${resaltar(p)}</li>`).join('')}</ol>` : ''}
+      ${arr(t.pasos).length ? `<ol class="th-pasos">${arr(t.pasos).map((p, i) => `<li>${resaltar(p)}${pasoSal(t, i)}</li>`).join('')}</ol>` : ''}
       ${t.frase_ko ? `<div class="ko">${esc(t.frase_ko)}</div>${t.romanizacion ? `<div class="muted">${esc(t.romanizacion)}</div>` : ''}` : ''}
       ${h ? `<div class="th-hotel">🛏️ <b>${esc(h.nombre)}</b>${h.ko ? ` <span class="ko-s">${esc(h.ko)}</span>` : ''}</div>` : ''}
       ${llegadaHotel(t)}
@@ -1129,7 +1137,7 @@ function trasladoCard(t, pleg = false, sinFecha = false) {
         ${Object.keys(tren.asientos || {}).length ? `<div>💺 ${tren.coche ? `Coche <b>${esc(tren.coche)}</b> · ` : ''}${Object.entries(tren.asientos).map(([n, a]) => `${esc(n)} <b>${esc(a)}</b>`).join(' · ')}</div>` : ''}${tren.nota ? `<div class="muted">${esc(tren.nota)}</div>` : ''}</div>` : ''}
       ${arr(t.pasos).length ? (() => { const k = 'p:' + (t.id || t.fecha + t.de), ab = k in pasosAb ? pasosAb[k] : pend;
         return `<div class="tl-pasos"><button class="tl-pasos-btn" data-pasos="${esc(k)}" data-v="${ab ? 0 : 1}">${ab ? '▾' : '▸'} Paso a paso (${arr(t.pasos).length})</button>
-        ${ab ? `<ol>${arr(t.pasos).map((p, i) => `<li>${resaltar(p)}${i === (t.llegada || {}).paso ? llegadaHotel(t) : ''}</li>`).join('')}</ol>` : llegadaHotel(t)}</div>`; })() : ''}
+        ${ab ? `<ol>${arr(t.pasos).map((p, i) => `<li>${resaltar(p)}${pasoSal(t, i)}${i === (t.llegada || {}).paso ? llegadaHotel(t) : ''}</li>`).join('')}</ol>` : llegadaHotel(t)}</div>`; })() : ''}
       ${t.frase_ko ? `<div class="ko">${esc(t.frase_ko)}</div>` : ''}
       ${t.romanizacion ? `<div class="muted">${esc(t.romanizacion)}</div>` : ''}
     ${pleg ? '</details>' : ''}</div>

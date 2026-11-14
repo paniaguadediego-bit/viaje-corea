@@ -111,7 +111,7 @@ ciudades[{id,nombre,ko,desde,hasta,lat?,lon?,interes[]?}]
 traslados[{id,fecha,de,a,estado,pasos[],frase_ko,
  romanizacion,tren{salida,llegada,comprado,numero?,clase?,precio?,
  coche?,asientos?{nombre:asiento},nota?},bus?{mismos campos que tren},
- llegada?{nombre,ko,lat,lon,paso,verificar?},verificar}]  (billete: privado; llegada = estación o parada donde termina el tren/bus: en Hoy, «🛣️ estación → hotel en Naver» en el paso «paso» y visible con los pasos plegados)
+ llegada?{nombre,ko,lat,lon,paso,verificar?},salida?{nombre,ko,lat,lon,paso?,verificar?},verificar}]  (billete: privado; llegada = estación o parada donde termina el tren/bus: en Hoy, «🛣️ estación → hotel en Naver» en el paso «paso» y visible con los pasos plegados); salida = estación o terminal de partida: desde v282, «🛣️ hotel que se deja → estación en Naver» dentro del paso «paso» (por defecto el 1)
 dias[{fecha,dia,ciudad,titulo,items[{hora?,texto}],llegada?(hh:mm a la 1ª parada),
  levantarse?(hh:mm)}]
 lugares[{id,es,ko,romanizacion,direccion_ko,direccion_en,

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v281
+Caché del service worker: corea-v282
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -333,6 +333,7 @@ Caché del service worker: corea-v281
 - v278: la foto de fondo de las paradas de Hoy se ve mucho más: plegada, el oscurecido va solo abajo (donde está el nombre) y el texto lleva sombra marcada; abierta, se oscurece más para leer el contenido.
 - v279: plegar una parada de Hoy tocando su contenido abierto fallaba en algunos móviles: (1) en iPhone, Safari no manda el toque de zonas que no parecen pulsables (ahora cursor: pointer en el contenido abierto); (2) si quedaba texto seleccionado en cualquier parte de la pantalla no se plegaba (ahora solo cuenta la selección dentro de esa ficha).
 - v280-v281: en el Xiaomi la parada se plegaba y se reabría al instante («como un obturador»). Ahora, al plegarla tocando el contenido, se apunta ya como plegada (abiertos[key] = false, por si algo redibuja antes del evento toggle) y durante 0,6 s se ignora un segundo «clic fantasma» que caiga en su cabecera.
+- v282: el botón «🛣️ estación → hotel en Naver» del traslado va con el texto centrado. Nuevo campo privado traslados[].salida (estación o terminal de partida): en el paso 1 sale «🛣️ hotel que se deja → estación en Naver» (transporte público; usa el 📌 del hotel si lo hay). Puesto en trip.json para el 15 (Terminal Central de Busan) y el 17 (estación de Jeonju), con VERIFICAR del punto.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
