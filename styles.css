@@ -1751,4 +1751,4 @@ nav#tabs button.on span { color: #fff !important; }
 .estac-tit { display: flex; gap: 10px; align-items: center; }
 .estac-ic { font-size: 26px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v284"; }
+:root { --css-ver: "v285"; }

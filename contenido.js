@@ -1029,7 +1029,13 @@ const PLANES = [
   { id: 'pl-gaeksa-gil', wiki: 'Jeonju', ic: '👕', ciudad: 'jeonju', cat: 'ropa', es: 'Gaeksa-gil (calle de tiendas juveniles)', ko: '객사길', romanizacion: 'Gaeksa-gil', aprox: true,
     precio: 'Ropa y accesorios asequibles.', direccion_en: 'Alrededor de Jeonju Gaeksa, al norte de la puerta Pungnammun',
     desc: 'El barrio de compras de los jóvenes de Jeonju, alrededor del antiguo pabellón de huéspedes Gaeksa: tiendas de ropa, zapatillas, cafés y fotomatones. A 10-15 min a pie de la aldea hanok.',
-    nota: 'Tiendas cambiantes: mirad Naver para lo que esté abierto.' }
+    nota: 'Tiendas cambiantes: mirad Naver para lo que esté abierto.' },
+  // v285: peluquería y head spa (💇, apartado propio). Dirección según varias webs (Trazy, Lifeguin); precio sin confirmar.
+  { id: 'pl-ecojardin', wiki: 'Hairdresser', ciudad: 'seul', cat: 'pelu', es: 'EcoJardin Myeongdong (peluquería y head spa)', ko: '에코쟈뎅 명동', romanizacion: 'Ekojadeng Myeongdong', aprox: true,
+    direccion_en: '3.ª planta, 8-10 Myeongdong 8-gil, Jung-gu (a unos 5 min a pie del hostal)',
+    desc: 'Peluquería con tratamientos de cuero cabelludo y head spa (su tratamiento estrella es un head spa de 18 pasos). Muy valorada por turistas y con reserva previa.',
+    precio: 'Reserva con señal desde 5.000 ₩ (Creatrip); el precio del tratamiento depende del menú: VERIFICAR en la reserva.',
+    resenas: '4,8 ★ con unas 2.400 reseñas en Google (captura de nov. 2026).' },
 ];
 
 // Mundial de League of Legends 2026 (Worlds), en hora de Corea (KST). Datos de webs a 1 nov 2026:

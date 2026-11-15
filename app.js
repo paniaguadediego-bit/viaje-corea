@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v284';
+const VERSION = 'v285';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1566,8 +1566,8 @@ function abrirAyuda() {
 // Qué ver (antes Explorar y Ciudades): por ciudad, Puntos de interés y Planes. El mapa de cada ciudad va en la pestaña Mapas.
 let ciudadSel = null, historiaAbierta = false, exSub = 'puntos';
 // Desde v223, lo que era Miscelánea se desgrana al mismo nivel: 7 apartados (los de Miscelánea solo si la ciudad tiene algo).
-const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['platos', '🥢 Platos típicos'], ['hotel', '🛏️ Hotel'], ['estac', '🚉 Estaciones'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
-const CATS_MISC = new Set(['curioso', 'servicio', 'lol', 'ropa']);
+const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['platos', '🥢 Platos típicos'], ['hotel', '🛏️ Hotel'], ['estac', '🚉 Estaciones'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['pelu', '💇 Peluquería'], ['ropa', '👕 Ropa']];
+const CATS_MISC = new Set(['curioso', 'servicio', 'lol', 'pelu', 'ropa']);
 // Mapas: el mapa de cada ciudad (itinerario, más sitios, Comer, Planes y hotel). Al tocar un icono, su ficha enlaza con Qué ver o Comer.
 function viewMapas() {
   const botones = botonesCiudad(); if (!botones) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
@@ -1585,9 +1585,8 @@ function viewCiudades() {
   return buscadorHTML('qcs', qCiu, 'Buscar sitio en todas las ciudades', resCiudades(qCiu)) + botones + `<div class="card ciudad" id="c-${esc(c.id)}" style="${varsTema(k)}">
     <div class="ciudad-hero">
       <div class="ciudad-ko">${esc(c.ko || '')}</div>
-      <div class="ciudad-top"><span class="ciudad-ic">${t.ic}</span></div>
       <div class="ciudad-num">${i + 1}</div>
-      <div class="ciudad-nom">${esc(nombreCiudad(k))}</div>
+      <div class="ciudad-nom"><span class="ciudad-ic">${t.ic}</span> ${esc(nombreCiudad(k))}</div>
       ${(() => { const pob = typeof POBLACION !== 'undefined' && POBLACION[k], pr = c.ko ? pronuncia(c.ko) : '';
         return pob || pr ? `<div class="ciudad-pob">${c.ko ? `${esc(c.ko)} ${pr ? `🗣️ «${esc(pr)}»` : ''} ${btnHabla(c.ko)}` : ''}${pob ? ` · 👥 ${esc(pob)}` : ''}</div>` : ''; })()}
       ${t.lema ? `<div class="ciudad-lema">${esc(t.lema)}</div>` : ''}
@@ -2465,7 +2464,7 @@ function viewCorea() {
 // ---------- Planes: League of Legends y cosmética ----------
 let planesCat = 'curioso';
 // Orden alfabético (Curioso es además la que se abre por defecto).
-const PCATS = [['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
+const PCATS = [['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['pelu', '💇 Peluquería'], ['ropa', '👕 Ropa']];
 // 🖥️ PC: cibercafés (PC방) junto a los hoteles. No se han encontrado nombres fiables, así que se buscan en Naver por zona.
 const PC_BUSQ = { seul: ['명동 PC방', '회현역 PC방', '충무로 PC방'], busan: ['해운대해수욕장 PC방', '해운대 PC방', '광안리 PC방'] };
 // v253: lavanderías de autoservicio junto al hotel (búsquedas de Naver, porque no hay datos fiables de cada una desde aquí).
@@ -2498,7 +2497,7 @@ function worldsCard() {
     <div class="muted">${esc(WORLDS.nota)} <span class="ver">VERIFICAR</span></div>
     <div class="muted">Dónde verlo en grupo: T1 Base Camp (Hongdae, Gangnam y Busan, 24 h) y LoL Park en Seúl. Final: el T1 Base Camp de Busan está a unos 300 m del hotel.</div></details>`;
 }
-const icPlan = p => p.ic || ({ lol: '🎮', servicio: '🧺', curioso: '✨', ropa: '👕' })[p.cat] || '🔹';
+const icPlan = p => p.ic || ({ lol: '🎮', servicio: '🧺', curioso: '✨', pelu: '💇', ropa: '👕' })[p.cat] || '🔹';
 function planesDe(k, cat) {
   planesCat = cat;
   const P = typeof PLANES !== 'undefined' ? PLANES : [];
