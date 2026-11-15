@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v293';
+const VERSION = 'v294';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1028,6 +1028,24 @@ function medio(t) {
 const pasosAb = {};
 // 🛏️ Planes → Hotel: toda la información de los alojamientos de la ciudad (antes estaba en Hoy).
 // 🚉 Estaciones y aeropuerto del viaje (v283): de ESTACIONES (contenido.js), solo las que nombran vuestros traslados o vuelos.
+// 🎟️ Eventos de esos días (v294): EVENTOS en contenido.js; arriba, búsquedas en Naver y las agendas oficiales.
+function eventosCiudad(k) {
+  const c = arr(trip.ciudades).filter(x => ck(x.nombre) === k), hoy = todayISO(), ko = (c[0] || {}).ko || '';
+  const enDias = e => c.flatMap(x => { const a = e.desde > x.desde ? e.desde : x.desde, b = e.hasta < x.hasta ? e.hasta : x.hasta; return a <= b ? [[a, b]] : []; });
+  const rango = (a, b) => a === b ? fmtCorto(a) : `${fmtCorto(a)} → ${fmtCorto(b)}`;
+  const ev = (typeof EVENTOS !== 'undefined' ? EVENTOS : []).filter(e => e.ciudad === k && enDias(e).length).sort((a, b) => (b.nota ? 1 : 0) - (a.nota ? 1 : 0) || a.desde.localeCompare(b.desde));
+  const busca = ko ? [`${ko} 공연`, `${ko} 축제`, `${ko} 무료 행사`].map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 ${esc(q)}</a>`).join('') : '';
+  const webs = ((typeof EVENTOS_WEB !== 'undefined' && EVENTOS_WEB[k]) || []).map(([t, u]) => `<a class="btn sec mini" href="${esc(u)}" target="_blank" rel="noopener">🌐 ${esc(t)}</a>`).join('');
+  const tarjeta = e => { const d0 = enDias(e), fut = d0.filter(([, b]) => b >= hoy), d = fut.length ? fut : d0, pas = !fut.length;
+    return `<div class="card evento ${e.nota ? 'ev-nota' : ''} ${pas ? 'pasado' : ''}"><div class="ev-cab">${e.nota ? '💡' : '🎟️'} <b>${esc(e.es)}</b>${e.gratis ? ' <span class="badge ok">Gratis</span>' : ''}${e.verificar ? ' <span class="ver">VERIFICAR</span>' : ''}</div>
+      ${e.nota ? '' : `<div class="ev-fecha">📅 ${d.map(([a, b]) => rango(a, b)).join(' · ')}${e.hora ? ` · 🕒 ${esc(e.hora)}` : ''}</div>`}
+      ${e.lugar ? `<div class="muted">🏠 ${esc(e.lugar)}${e.ko ? ` <span class="ko-s">${esc(e.ko)}</span>` : ''}</div>` : ''}
+      <div>${resaltar(e.desc || '')}</div>
+      <div class="acciones">${e.ko ? naver({ ko: e.ko }) : ''}${e.fuente ? `<a class="btn sec mini" href="${esc(e.fuente)}" target="_blank" rel="noopener">🔗 Fuente</a>` : ''}</div></div>`; };
+  return `<p class="muted centro">Lo que solo pasa los días que estáis aquí. Buscado el 15 nov; con conexión, mirad también:</p>
+    <div class="acciones centro">${busca}${webs}</div>
+    ${ev.length ? ev.map(tarjeta).join('') : '<p class="muted centro">No hemos encontrado nada especial para vuestros días en esta ciudad.</p>'}`;
+}
 const IC_EST = { tren: '🚆', bus: '🚌', avion: '✈️' };
 const sinTilde = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 function estacionesViaje(k) {
@@ -1569,7 +1587,7 @@ function abrirAyuda() {
 // Qué ver (antes Explorar y Ciudades): por ciudad, Puntos de interés y Planes. El mapa de cada ciudad va en la pestaña Mapas.
 let ciudadSel = null, historiaAbierta = false, exSub = 'puntos';
 // Desde v223, lo que era Miscelánea se desgrana al mismo nivel: 7 apartados (los de Miscelánea solo si la ciudad tiene algo).
-const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['platos', '🥢 Platos típicos'], ['hotel', '🛏️ Hotel'], ['estac', '🚉 Estaciones'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['pelu', '💇 Peluquería'], ['ropa', '👕 Ropa']];
+const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['platos', '🥢 Platos típicos'], ['hotel', '🛏️ Hotel'], ['estac', '🚉 Estaciones'], ['eventos', '🎟️ Eventos'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['pelu', '💇 Peluquería'], ['ropa', '👕 Ropa']];
 const CATS_MISC = new Set(['curioso', 'servicio', 'lol', 'pelu', 'ropa']);
 // Mapas: el mapa de cada ciudad (itinerario, más sitios, Comer, Planes y hotel). Al tocar un icono, su ficha enlaza con Qué ver o Comer.
 function viewMapas() {
@@ -1602,7 +1620,7 @@ function viewCiudades() {
       const [ic, ...r] = tt.split(' '); // v286: sin nada en esta ciudad = botón apagado (se ve, pero no se puede tocar).
       return hay ? `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>` : `<button class="sec vacio" disabled aria-disabled="true" title="Nada apuntado en esta ciudad"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>
     ${exSub === 'puntos' ? rutasLP24(k) : ''}
-    ${CATS_MISC.has(exSub) ? planesDe(k, exSub) : ''}${exSub === 'platos' ? platosDe(k) : ''}${exSub === 'hotel' ? hotelesDe(k) : ''}${exSub === 'estac' ? estacionesDe(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
+    ${CATS_MISC.has(exSub) ? planesDe(k, exSub) : ''}${exSub === 'platos' ? platosDe(k) : ''}${exSub === 'hotel' ? hotelesDe(k) : ''}${exSub === 'estac' ? estacionesDe(k) : ''}${exSub === 'eventos' ? eventosCiudad(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
     ${exSub !== 'puntos' ? '</div>' : ''}${exSub === 'puntos' ? `
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
       ${INTRO_LP[k].plan ? `<details data-key="lp:${k}" ${abierto("lp:" + k, false) ? "open" : ""}><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}

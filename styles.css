@@ -1761,5 +1761,14 @@ details.quiero-card { box-shadow: inset 4px 0 0 #d4a017; }
 /* v293: títulos de las paradas de Hoy más grandes y con el color de la pestaña (la línea del hangul, algo más pegada para no crecer). */
 .sitios-dia details.sd > summary > b { display: inline-block; font-size: 1.22rem; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; color: var(--acc); margin-top: 2px; }
 .sitios-dia details.sd > summary .ko-s { margin-top: 0; }
+/* v294: títulos de las paradas en modo oscuro con el color aclarado (--acc2). Eventos en Planes. */
+.sitios-dia details.sd > summary > b { color: var(--acc2); }
+.evento { display: grid; gap: 5px; }
+.evento .ev-cab { font-size: 1.02rem; }
+.evento .ev-fecha { font-weight: 700; color: var(--acc2); }
+.evento.ev-nota { background: color-mix(in srgb, #f4c430 14%, var(--card)); }
+.evento.pasado { opacity: .5; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sitios-dia details.sd > summary > b { color: color-mix(in srgb, var(--acc) 35%, white); } }
+:root[data-theme="dark"] .sitios-dia details.sd > summary > b { color: color-mix(in srgb, var(--acc) 35%, white); }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v293"; }
+:root { --css-ver: "v294"; }

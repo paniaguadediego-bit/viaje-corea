@@ -1284,6 +1284,53 @@ const ESTACIONES = [
   { ciudad: 'jeonju', tipo: 'tren', es: 'Estación de Jeonju', ko: '전주역', buscar: ['전주역', 'estacion de jeonju'], nota: 'KTX hacia Seúl (Yongsan); a unos 7-8 min en taxi de la Aldea Hanok.', verificar: true },
 ];
 
+// 🎟️ Eventos (Planes, desde v294): cosas que solo pasan esos días (conciertos, deporte, actos gratis en la calle…).
+// Buscado el 15 nov 2026 en webs municipales, prensa coreana y agendas; [desde, hasta] inclusive. Precio u hora dudosos = VERIFICAR.
+// nota: true = aviso, no un evento. ko = lugar en hangul (para Naver).
+const EVENTOS = [
+  { ciudad: 'jeonju', desde: '2026-11-15', hasta: '2026-11-17', nota: true, es: 'Ojo: entre semana Jeonju va tranquila',
+    desc: 'La procesión de música tradicional del maeul solo salía los sábados hasta el 31 de octubre, y el «cine de medianoche» del maeul es los viernes y sábados. No hemos encontrado conciertos ni fiestas para el 15-16 en la agenda municipal: miradla vosotros por si sale algo de última hora.',
+    fuente: 'https://tour.jeonju.go.kr/index.jeonju?menuCd=DOM_000000102002000000' },
+  { ciudad: 'jeonju', desde: '2026-11-16', hasta: '2026-12-06', es: 'Exposición de cultura ferroviaria en la estación de Jeonju', ko: '전주역', lugar: 'Estación de Jeonju',
+    desc: 'Korail monta una muestra sobre el ferrocarril en la propia estación desde el 16 (ese día, inauguración y viaje en un tren Mugunghwa remodelado a Suncheon). Os pilla de paso el 17 antes del KTX. Horario y precio: VERIFICAR (probablemente gratis).', verificar: true,
+    fuente: 'https://www.seoul.co.kr/news/life/2026/11/13/20261113500047' },
+  { ciudad: 'seul', desde: '2026-11-06', hasta: '2027-01-31', gratis: true, es: 'Vídeo de Navidad en la fachada de Shinsegae', ko: '신세계백화점 본점', lugar: 'Shinsegae, edificio principal (Myeongdong)', hora: 'Todos los días, 17:00-24:00',
+    desc: 'La fachada del gran almacén se convierte en una pantalla gigante: vídeo navideño de 3 min 40 s en bucle. A un paseo del hostal; mejor de noche.',
+    fuente: 'https://www.ajunews.com/view/20261105092644012' },
+  { ciudad: 'seul', desde: '2026-11-01', hasta: '2026-11-30', gratis: true, es: 'Cambio de guardia real en Deoksugung', ko: '덕수궁 대한문', lugar: 'Puerta Daehanmun de Deoksugung', hora: '11:00, 14:00 y 15:30; no hay los lunes (VERIFICAR)',
+    desc: 'Desfile de la guardia con trajes de Joseon delante de la puerta del palacio. Gratis y en la calle; dura unos 30-40 min.', verificar: true,
+    fuente: 'https://chukjemoa.co.kr/seoul/free/' },
+  { ciudad: 'seul', desde: '2026-11-01', hasta: '2026-11-30', gratis: true, es: 'Ceremonia de la guardia en Sungnyemun (Namdaemun)', ko: '숭례문', lugar: 'Puerta Sungnyemun', hora: 'Horario: VERIFICAR',
+    desc: 'Ceremonia de guardia en la gran puerta del sur, a 10 min a pie del hostal. Gratis.', verificar: true,
+    fuente: 'https://chukjemoa.co.kr/seoul/free/' },
+  { ciudad: 'seul', desde: '2026-11-04', hasta: '2026-11-29', es: 'Misión nocturna en el palacio Unhyeongung', ko: '운현궁', lugar: 'Unhyeongung (Insadong)', hora: '18:30-20:00 o 19:00-20:50, solo algunos días (VERIFICAR el 17 y el 18)',
+    desc: 'Juego de pistas de noche por la residencia del regente Heungseon: buscar el sello real perdido con pruebas y cultura tradicional. Con reserva; probablemente en coreano. Precio: VERIFICAR.', verificar: true,
+    fuente: 'https://culture.seoul.go.kr/night/sub/program/view.do?pgmId=6942' },
+  { ciudad: 'seul', desde: '2026-11-18', hasta: '2026-11-18', es: 'Kings of Convenience en concierto (SJF at the Theater)', ko: '세종문화회관', lugar: 'Sejong Center (Gwanghwamun)',
+    desc: 'El dúo noruego de folk-pop, dentro del ciclo de jazz y pop del Sejong Center. De pago: entradas y hora en la web del Sejong Center (VERIFICAR).', verificar: true,
+    fuente: 'https://thesoulofseoul.net/korea-events-calendar/' },
+  { ciudad: 'seul', desde: '2026-11-18', hasta: '2026-11-18', es: 'Baloncesto KBL: Seoul Samsung Thunders - Changwon LG', ko: '잠실학생체육관', lugar: 'Pabellón Jamsil Students (Jamsil)', hora: '19:00',
+    desc: 'Partido de la liga coreana de baloncesto, con animación al estilo coreano. Entradas en taquilla o en la web de la KBL (precio: VERIFICAR). Metro línea 2, Sports Complex.', verificar: true,
+    fuente: 'https://sports.daum.net/schedule/kbl?season=20262027&teamId=601459' },
+  { ciudad: 'seul', desde: '2026-11-17', hasta: '2026-11-18', es: 'Teodor Currentzis y Utopia en el Lotte Concert Hall', ko: '롯데콘서트홀', lugar: 'Lotte Concert Hall (Jamsil)',
+    desc: 'La orquesta Utopia actúa el 17 y el 18; el 18, dirigida por Teodor Currentzis. De pago; una agenda daba entradas desde 20.000 ₩ el 17 (VERIFICAR).', verificar: true,
+    fuente: 'https://koreagenda.com/ko/calendar/2026-11/seoul' },
+  { ciudad: 'seul', desde: '2026-11-17', hasta: '2026-11-30', es: 'Festival de teatro World 2-Person (Daehak-ro)', ko: '대학로', lugar: 'Teatros de Daehak-ro',
+    desc: 'Obras de dos actores en las salas de Daehak-ro, el barrio de los teatros. En coreano; interesante por el ambiente del barrio. Fechas y precio: VERIFICAR.', verificar: true,
+    fuente: 'https://koreagenda.com/ko/calendar/2026-11/seoul' },
+  { ciudad: 'seul', desde: '2026-11-17', hasta: '2026-11-19', nota: true, es: 'Ojo: el festival de farolillos del Cheonggyecheon no llega',
+    desc: 'El Seoul Lantern Festival de 2026 empieza el 11 de diciembre. El arroyo sigue bonito de noche, pero sin farolillos.',
+    fuente: 'https://festival.seoul.go.kr/festival/main/festivalView.do?festacode=360' }
+];
+// Dónde seguir buscando (con conexión): agendas oficiales de cada ciudad.
+const EVENTOS_WEB = {
+  seul: [['Agenda de Seúl (Visit Seoul)', 'https://festival.seoul.go.kr/'], ['Noches culturales de Seúl', 'https://culture.seoul.go.kr/']],
+  jeonju: [['Agenda de Jeonju (ayuntamiento)', 'https://tour.jeonju.go.kr/index.jeonju?menuCd=DOM_000000102002000000'], ['Fundación Cultural de Jeonju', 'https://jjcf.or.kr/main/inner.php?sMenu=F7000']],
+  busan: [['Agenda de Busan (Visit Busan)', 'https://www.visitbusan.net/']],
+  gyeongju: [['Turismo de Gyeongju', 'https://www.gyeongju.go.kr/tour/']],
+  andong: [['Turismo de Andong', 'https://www.andong.go.kr/tour/']]
+};
+
 // 🥢 Probados (Más): comidas y bebidas típicas para marcar si las habéis probado (user.probados[hangul]).
 // [grupo, icono, clave de ciudad o '', [[nombre, hangul, una línea]]]. Hangul de uso corriente; la marca se comparte con Planes → 🥢 Platos típicos.
 const PROBAR = [
