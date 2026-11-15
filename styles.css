@@ -1751,5 +1751,6 @@ nav#tabs button.on span { color: #fff !important; }
 .estac-tit { display: flex; gap: 10px; align-items: center; }
 .estac-ic { font-size: 26px; }
 .exsubs7 button.vacio { opacity: .38; filter: grayscale(1); box-shadow: none; border-style: dashed; cursor: default; }
+.avisos li .hd-ck { flex: 0 0 auto; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v286"; }
+:root { --css-ver: "v287"; }

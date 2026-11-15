@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v286';
+const VERSION = 'v287';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -655,10 +655,6 @@ function barajaDia(f, princ, extra) {
 function viewHoy() {
   const dias = arr(trip.dias).slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   let html = `<div class="hoy-top"><button class="sos" data-act="ayuda">🆘 Ayuda</button></div>` + ahora() + pendingAlert();
-  const avisos = arr(trip.avisos);
-  // Avisos: se tachan con la casilla (user.avisosOk, por texto) y el número solo cuenta los pendientes.
-  const avOk = u().avisosOk || {}, pend = avisos.filter(a => !avOk[a]);
-  const avisosHTML = () => `<details class="card avisos" data-key="avisos" ${abierto("avisos", false) ? "open" : ""}><summary><b>⚠️ Avisos (${pend.length}${pend.length < avisos.length ? ' de ' + avisos.length : ''})</b></summary><ul>${[...pend, ...avisos.filter(a => avOk[a])].map(a => `<li class="${avOk[a] ? 'tachado' : ''}"><button class="hd-ck ${avOk[a] ? 'on' : ''}" data-avok="${esc(a)}" aria-label="Hecho">${avOk[a] ? '✓' : ''}</button><span>${esc(a)}</span></li>`).join('')}</ul></details>`;
   if (!dias.length) return html + '<p class="muted">El viaje no tiene días (clave "dias").</p>';
 
   if (dayIdx === null) {
@@ -669,8 +665,6 @@ function viewHoy() {
   }
   dayIdx = Math.min(Math.max(dayIdx, 0), dias.length - 1);
   const d = dias[dayIdx], hoy = todayISO(), enViaje = hoy >= dias[0].fecha;
-  // Ya en el viaje, los avisos (estaciones, buses) solo salen en los días con traslado.
-  if (avisos.length && (!enViaje || arr(trip.traslados).some(t => t.fecha === d.fecha))) html += avisosHTML();
 
   // Tira de días: se desliza y se toca el día.
   html += `<div class="dias-tira" id="tira">${dias.map((x, i) => { const f = new Date(x.fecha + 'T12:00:00');
@@ -2976,9 +2970,16 @@ function viewVerificar() {
         <button class="mini ${verificado(x.key) ? 'sec' : ''}" data-verif="${esc(x.key)}">${verificado(x.key) ? 'Deshacer' : '✓'}</button></div></div>`).join('')}</details>`; }).join('')}`;
 }
 
+// 📢 Avisos (desde v287 en Más, antes en Hoy): se tachan con la casilla (user.avisosOk, por texto); pendientes primero.
+const avisosPend = () => { const ok = u().avisosOk || {}; return arr(trip && trip.avisos).filter(a => !ok[a]).length; };
+function viewAvisos() {
+  const avisos = arr(trip.avisos), ok = u().avisosOk || {}, pend = avisos.filter(a => !ok[a]);
+  if (!avisos.length) return '<h2>📢 Avisos</h2><p class="muted centro">No hay avisos en el viaje.</p>';
+  return `<h2>📢 Avisos (${pend.length}${pend.length < avisos.length ? ' de ' + avisos.length : ''})</h2><div class="card avisos"><ul>${[...pend, ...avisos.filter(a => ok[a])].map(a => `<li class="${ok[a] ? 'tachado' : ''}"><button class="hd-ck ${ok[a] ? 'on' : ''}" data-avok="${esc(a)}" aria-label="Hecho">${ok[a] ? '✓' : ''}</button><span>${resaltar(a)}</span></li>`).join('')}</ul></div>`;
+}
 // Más con rejilla de iconos, como la Guía de Corea: se toca un tema y sale debajo.
 let masSub = 'maleta';
-const MAS_SUB = [['maleta', 'Maleta', '🧳'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'],
+const MAS_SUB = [['maleta', 'Maleta', '🧳'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'], ['avisos', 'Avisos', '📢'],
   ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['probados', 'Probados', '😋'], ['resumen', 'Resumen del viaje', '🧾'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️'], ['bloqueo', 'Bloquear marcas', '🔒'], ['guiaapp', 'Guía de la app', '🛠️']];
 // ---------- 🛠️ Guía de la app: GUIA-APP.md (precacheado), también sin viaje; sirve para hacer otra app de otro país ----------
 let GUIA_MD = null;
@@ -3047,11 +3048,12 @@ function viewMas() {
   const pend = trip ? pendientesVerificar().reduce((a, [, ls]) => a + ls.filter(x => !verificado(x.key)).length, 0) : 0;
   const subs = trip ? MAS_SUB : MAS_SUB.filter(([k]) => k === 'datos' || k === 'guiaapp');
   if (!subs.some(([k]) => k === masSub)) masSub = subs[0][0];
-  const rej = `<div class="guia-rej">${subs.map(([k, t, ic]) => `<button class="guia-t ${k === masSub ? 'on' : ''}" data-ms="${k}"><span>${ic}</span>${t}${k === 'verificar' && pend ? `<small>${pend}</small>` : ''}</button>`).join('')}</div>`;
+  const rej = `<div class="guia-rej">${subs.map(([k, t, ic]) => `<button class="guia-t ${k === masSub ? 'on' : ''}" data-ms="${k}"><span>${ic}</span>${t}${k === 'verificar' && pend ? `<small>${pend}</small>` : ''}${k === 'avisos' && avisosPend() ? `<small>${avisosPend()}</small>` : ''}</button>`).join('')}</div>`;
   let c = '';
   if (masSub === 'maleta') { const docs = arr(trip.checklist_documentos).map((d, i) => ({ id: d.id || 'd' + i, texto: d.texto, url: d.url })); c = `<h2>🧳 Maleta y documentos</h2>${checks('docs', docs)}`; }
   else if (masSub === 'seguro') c = viewSeguro();
   else if (masSub === 'verificar') c = viewVerificar();
+  else if (masSub === 'avisos') c = viewAvisos();
   else if (masSub === 'docs') c = viewFotos();
   else if (masSub === 'escala') c = viewEscala();
   else if (masSub === 'regalos') c = viewRegalos();
