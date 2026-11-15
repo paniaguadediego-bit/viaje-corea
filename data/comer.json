@@ -500,11 +500,11 @@
 "tipo": "restaurante",
 "plato": "bibimbap",
 "direccion": null,
-"horario": "10:30-20:00 aprox. (según guías)",
+"horario": "10:30-20:00 (LP 2024)",
 "precio": null,
 "fuente": "guia",
 "url": "https://ie.hotels.com/go/south-korea/kr-best-local-restaurants-jeonju",
-"nota": "Cerca de Hanok Village.",
+"nota": "Cerca de Hanok Village. En la LP 2024 como «Family House Jeonju Bibimbap»: tres generaciones sirviendo bibimbap en un restaurante estilo hanok desde 1979 (p. 213, ₩₩).",
 "comprobado": {
 "fecha": "2026-10-31",
 "estado": "existe",
@@ -516,6 +516,9 @@
 "n": 18,
 "fuente": "Polle",
 "fecha": "2026-11"
+},
+"lp24": {
+"p": 213
 }
 },
 {
@@ -1243,16 +1246,19 @@
 "tipo": "restaurante",
 "plato": "kongnamul gukbap",
 "direccion": "Nambu Market 2-74, Wansan-gu",
-"horario": "6am-2pm (LP 2016)",
+"horario": "6:00-14:00 (LP 2024)",
 "precio": "₩ barato (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 267",
+"nota": "Local original de la cadena nacional, dentro del mercado de Nambu: sopa de brotes de soja (kongnamul gukbap) desde 1979, siempre lleno. Lonely Planet Corea 2024 (en español), p. 213; también en la de 2016, p. 267.",
 "opiniones": {
 "v": 4.3,
 "n": 63,
 "fuente": "Polle (sucursal del mercado Nambu)",
 "fecha": "2026-11"
+},
+"lp24": {
+"p": 213
 }
 },
 {
@@ -1263,16 +1269,19 @@
 "tipo": "restaurante",
 "plato": "kalguksu",
 "direccion": "135 Gyeonggijeon-gil, Wansan-gu",
-"horario": "9am-9.30pm (LP 2016)",
+"horario": "9:00-20:00 (LP 2024)",
 "precio": "₩ barato (LP 2016)",
 "fuente": "lonely",
 "url": null,
-"nota": "Lonely Planet Korea 2016, p. 267",
+"nota": "Incondicional de la escena culinaria de Jeonju: mandu (dumplings) y kalguksu (fideos). Lonely Planet Corea 2024 (en español), p. 213 (₩); también en la de 2016, p. 267.",
 "opiniones": {
 "v": 3.9,
 "n": 97,
 "fuente": "Polle",
 "fecha": "2026-11"
+},
+"lp24": {
+"p": 213
 }
 },
 {
@@ -2735,5 +2744,193 @@
 "fuente": "propio",
 "url": null,
 "nota": "Para probar el plato estrella de Busan: lo eligió el usuario para el 14/11. Truco: se añade al gusto puerro (부추), gambitas saladas (새우젓) y un poco de salsa picante; el arroz se echa dentro de la sopa."
+},
+{
+"direccion": "Junto a Gyeonggijeon, al norte (plano de la LP) · ubicación aproximada",
+"url": null,
+"precio": "₩₩ (LP 2024)",
+"fuente": "lonely24",
+"ciudad": "jeonju",
+"id": "l24-gyeonggijeon-charcoal",
+"nombre": "Gyeonggijeon Jungang Charcoal",
+"ko": null,
+"tipo": "restaurante",
+"plato": "barbacoa coreana al carbón",
+"horario": "11:30-15:00 y 16:30-21:30 (LP 2024)",
+"nota": "Modesto y popular, especializado en barbacoa con braseros de carbón. Lonely Planet Corea 2024 (en español), p. 213. Nombre en hangul: buscadlo en Naver.",
+"lp24": {
+"p": 213
+}
+},
+{
+"direccion": "Al norte del maeul (plano de la LP) · ubicación aproximada",
+"url": null,
+"precio": "₩₩ (LP 2024)",
+"fuente": "lonely24",
+"ciudad": "jeonju",
+"id": "l24-namno-galbi",
+"nombre": "Namno Galbi",
+"ko": "남노갈비",
+"tipo": "restaurante",
+"plato": "costillas de cerdo con gochujang",
+"horario": "11:00-22:00 (LP 2024)",
+"nota": "Desde 1972: estofado de costillas de cerdo o costillas hervidas con gochujang y verduras. Lonely Planet Corea 2024 (en español), p. 213. Hangul VERIFICAR en Naver.",
+"verificar": true,
+"lp24": {
+"p": 213
+}
+},
+{
+"direccion": "Fuera del maeul, al oeste (plano de los alrededores de la LP) · ubicación aproximada",
+"url": null,
+"precio": null,
+"fuente": "lonely24",
+"ciudad": "jeonju",
+"id": "l24-goong",
+"nombre": "Goong (hanjeongsik)",
+"ko": null,
+"tipo": "restaurante",
+"plato": "hanjeongsik (banquete coreano)",
+"horario": "12:00-21:00 (LP 2024)",
+"nota": "Para probar el hanjeongsik, versión comercial de los menús de las cortes Goryeo y Joseon; a cargo de la chef Yoo In-ja, discípula de Hwang Hye-seong, experta en cocina de la corte. Lonely Planet Corea 2024 (en español), p. 213.",
+"lp24": {
+"p": 213
+}
+},
+{
+"direccion": "Samcheon-dong, al suroeste (fuera del maeul; taxi) · ubicación aproximada",
+"url": null,
+"precio": null,
+"fuente": "lonely24",
+"ciudad": "jeonju",
+"id": "l24-samcheon-makgeolli",
+"nombre": "Calleja Samcheon-dong Makgeolli",
+"ko": "삼천동 막걸리골목",
+"tipo": "bar",
+"plato": "makgeolli con menú de platillos",
+"horario": null,
+"nota": "Por la noche: menús para dos (ensalada de calamar, tortitas, kimchi, tofu…) con teteras de 2,5 l de makgeolli. Lonely Planet Corea 2024 (en español), p. 213.",
+"lp24": {
+"p": 213
+}
+},
+{
+"direccion": "Edificio de 4 plantas en el maeul, cerca de Omokdae (plano de la LP) · ubicación aproximada",
+"url": null,
+"precio": "₩₩ (LP 2024)",
+"fuente": "lonely24",
+"ciudad": "jeonju",
+"id": "l24-jeonmang",
+"nombre": "Jeonmang (café-azotea)",
+"ko": null,
+"tipo": "café",
+"plato": "café y bebidas con vistas",
+"horario": "9:00-23:00 (LP 2024)",
+"nota": "En la azotea de un edificio de cuatro plantas: el café más popular del maeul, con vistas magníficas; final del paseo de la LP. Lonely Planet Corea 2024 (en español), p. 210 y 212.",
+"lp24": {
+"p": 210
+}
+},
+{
+"direccion": "Hanok al sureste del maeul (plano de la LP) · ubicación aproximada",
+"url": null,
+"precio": "₩₩ (LP 2024)",
+"fuente": "lonely24",
+"ciudad": "jeonju",
+"id": "l24-cafe1322",
+"nombre": "Cafe 1322",
+"ko": null,
+"tipo": "café",
+"plato": "café de especialidad, tés y batidos",
+"horario": "11:00-20:00 (LP 2024)",
+"nota": "En un hanok con jardín tranquilo y porches de madera. Lonely Planet Corea 2024 (en español), p. 210.",
+"lp24": {
+"p": 210
+}
+},
+{
+"direccion": "Pueblo de murales de Jaman · ubicación aproximada",
+"url": null,
+"precio": "₩ (LP 2024)",
+"fuente": "lonely24",
+"ciudad": "jeonju",
+"id": "l24-kkojittappong",
+"nombre": "Kko-ji-tta-ppong Cafe",
+"ko": null,
+"tipo": "café",
+"plato": "café con terraza",
+"horario": "9:30-20:30 (LP 2024)",
+"nota": "Paredes de colores intensos, muñecas Barbie, terraza preciosa y un muñeco de ET de tamaño natural. Lonely Planet Corea 2024 (en español), p. 210; la de 2016 ya lo recomendaba.",
+"lp24": {
+"p": 210
+}
+},
+{
+"direccion": "Fuera del maeul, al oeste (plano de la LP) · ubicación aproximada",
+"url": null,
+"precio": "₩₩ (LP 2024)",
+"fuente": "lonely24",
+"ciudad": "jeonju",
+"id": "l24-hyangyu",
+"nombre": "Hyangyu Gallery Café",
+"ko": null,
+"tipo": "café",
+"plato": "cannoli caseros",
+"horario": "11:30-22:00, cierra los lunes (LP 2024)",
+"nota": "Café neo noir de luz tenue con cannoli caseros y una galería de arte. Lonely Planet Corea 2024 (en español), p. 210.",
+"lp24": {
+"p": 210
+}
+},
+{
+"direccion": "Pueblo artístico de Seohak-dong, junto a la tienda Vintage · ubicación aproximada",
+"url": null,
+"precio": null,
+"fuente": "lonely24",
+"ciudad": "jeonju",
+"id": "l24-jeokyo",
+"nombre": "Cafe Jeokyo Soom Shida",
+"ko": null,
+"tipo": "café",
+"plato": "espresso, vinilos y libros",
+"horario": "11:00-18:00 (LP 2024)",
+"nota": "Del pintor Lee Jeok Yo, junto a su tienda Vintage: estilo retro, discos de vinilo, muchos libros y una máquina de espresso excelente; estudio y galería detrás. Lonely Planet Corea 2024 (en español), p. 210.",
+"lp24": {
+"p": 210
+}
+},
+{
+"direccion": "Fuera del maeul, al noroeste (plano de la LP) · ubicación aproximada",
+"url": null,
+"precio": null,
+"fuente": "lonely24",
+"ciudad": "jeonju",
+"id": "l24-jeonil",
+"nombre": "Jeonil Super",
+"ko": null,
+"tipo": "bar",
+"plato": "cerveza, tortilla enrollada y abadejo a la parrilla",
+"horario": null,
+"nota": "«Rincón secreto» de la LP: pequeño colmado con zona de asientos que atrae a legiones de jóvenes con su cerveza, sus tortillas enrolladas y su abadejo a la parrilla. Lonely Planet Corea 2024 (en español), p. 213.",
+"lp24": {
+"p": 213
+}
+},
+{
+"direccion": "Al sureste de la ciudad, fuera del maeul (plano de la LP) · ubicación aproximada",
+"url": null,
+"precio": null,
+"fuente": "lonely24",
+"ciudad": "jeonju",
+"id": "l24-saekjang",
+"nombre": "Saekjang Rice Mill (café)",
+"ko": null,
+"tipo": "café",
+"plato": "café entre antigüedades",
+"horario": null,
+"nota": "«Rincón secreto» de la LP: antiguo molino de arroz, hoy café tranquilo que poca gente conoce, lleno de antigüedades y obras de arte. Lonely Planet Corea 2024 (en español), p. 213.",
+"lp24": {
+"p": 213
+}
 }
 ]

@@ -82,7 +82,24 @@ const CATALOGO = {
     { es: 'Santuario Gyeonggijeon', ko: '경기전', romanizacion: 'Gyeonggijeon' },
     { es: 'Catedral de Jeondong', ko: '전동성당', romanizacion: 'Jeondong Seongdang' },
     { es: 'Mercado Nambu', ko: '남부시장', romanizacion: 'Nambu Sijang' },
-    { es: 'Estación de Jeonju', ko: '전주역', romanizacion: 'Jeonju-yeok' }
+    { es: 'Estación de Jeonju', ko: '전주역', romanizacion: 'Jeonju-yeok' },
+    // v291: sitios de la Lonely Planet Corea 2024 (pp. 208-213) que no teníamos.
+    { es: 'Jeolla Gamyeong (antiguo gobierno provincial)', ko: '전라감영', romanizacion: 'Jeolla Gamyeong', tipo: 'Histórico', desc: 'Sede del gobierno de Jeolla y Jeju durante más de 500 años de la dinastía Joseon, restaurada en 2018. Gratis; visitas guiadas en inglés a las 11:00 y las 14:00 (LP 2024).' },
+    { es: 'Haengwon (café tradicional en un hanok)', ko: '행원', romanizacion: 'Haengwon', tipo: 'Casa de té', desc: 'Hanok con estructura japonesa y estanque, que fue de la última gisaeng de Jeonju y refugio de músicos durante la guerra. Hoy es un café tradicional con representaciones de pansori (LP 2024).' },
+    { es: 'Biblioteca de Viajeros Daga', ko: '다가여행자도서관', romanizacion: 'Daga Yeohaengja Doseogwan', tipo: 'Biblioteca', desc: 'Tres plantas llenas de literatura de viajes y libros ilustrados, con zonas de lectura y una piscina para refrescar los pies (LP 2024).' },
+    { es: 'Museo de Retratos Reales', ko: '어진박물관', romanizacion: 'Eojin Bangmulgwan', tipo: 'Museo', desc: 'Dentro del recinto de Gyeonggijeon, en su parte trasera: guarda la réplica del retrato de Yi Seong-gye, fundador de la dinastía Joseon (LP 2024).' },
+    { es: 'Centro Cultural del Abanico', ko: '전주부채문화관', romanizacion: 'Jeonju Buchae Munhwagwan', tipo: 'Museo', desc: 'Dedicado a los abanicos tradicionales, una de las artesanías típicas de Jeonju. Gratis (LP 2024).' },
+    { es: 'Museo de Literatura Choi Myung Hee', ko: '최명희문학관', romanizacion: 'Choe Myeonghui Munhakgwan', tipo: 'Museo', desc: 'Dedicado a la autora de la novela «Honbul». Gratis (LP 2024).' },
+    { es: 'Centro Cultural del Kimchi de Jeonju', ko: '전주김치문화관', romanizacion: 'Jeonju Gimchi Munhwagwan', tipo: 'Museo', verificar: true, desc: 'Para conocer cómo se elabora el kimchi. Gratis (LP 2024; nombre en hangul VERIFICAR).' },
+    { es: 'Museo de Arte Gyodong', ko: '교동미술관', romanizacion: 'Gyodong Misulgwan', tipo: 'Museo', desc: 'Antigua fábrica de ropa interior: exposiciones de artistas coreanos contemporáneos y prendas de la fábrica. Gratis (LP 2024).' },
+    { es: 'Pueblo artístico de Seohak-dong', ko: '서학동예술마을', romanizacion: 'Seohakdong Yesul Maeul', tipo: 'Barrio', desc: 'Al sur del maeul, cruzando el río por la glorieta Cheongyeonru: callejuelas donde vivían maestros, hoy llenas de galerías, estudios y cafés. Imprescindible de la LP 2024.' },
+    { es: 'Glorieta Cheongyeonru', ko: '청연루', romanizacion: 'Cheongyeonru', tipo: 'Mirador', desc: 'Pabellón de madera sobre el puente del río Jeonjucheon, con vistas al río; paso hacia Seohak-dong (LP 2024).' },
+    { es: 'Calle Gaekridan-gil', ko: '객리단길', romanizacion: 'Gaengnidan-gil', tipo: 'Barrio', desc: 'Calle moderna con los cafés de moda; acoge el Festival Internacional de Cine de Jeonju (LP 2024).' },
+    { es: 'Parque Deokjin', ko: '덕진공원', romanizacion: 'Deokjin Gongwon', tipo: 'Parque', desc: 'Senderos alrededor de un lago que en julio se llena de flores de loto; dentro, la biblioteca Yeonhwajeong, un hanok en forma de L (LP 2024). En el norte de la ciudad.' },
+    { es: 'Palbok Art Factory', ko: '팔복예술공장', romanizacion: 'Palbok Yesul Gongjang', tipo: 'Arte', desc: 'Antigua fábrica de casetes convertida en 2018 en centro de arte: exposiciones, estudio y parque infantil, rodeado de álamos. 10:00-17:30, cierra los lunes, gratis. Desde el maeul, bus 684, 644 o 1002 (1 h) o taxi (LP 2024).' },
+    { es: 'Wansan Chilbong', ko: '완산칠봉', romanizacion: 'Wansan Chilbong', tipo: 'Parque', desc: 'Colina-jardín con flores: cerezos rosas en primavera, azaleas y, en otoño, hojas rojas (LP 2024).' },
+    { es: 'Lago Ajung', ko: '아중호수', romanizacion: 'Ajung Hosu', tipo: 'Parque', desc: 'Lago al este de la ciudad, para pasear (LP 2024).' },
+    { es: 'Santuario del monte de los Mártires de Chimyeongjasan', ko: '치명자산성지', romanizacion: 'Chimyeongjasan Seongji', tipo: 'Santuario', desc: 'Monte con cementerio de mártires católicos de Jeonju y una gran cruz; desde arriba, vistas de la ciudad (LP 2024).' }
   ]
 };
 
@@ -255,6 +272,65 @@ Object.assign(LP24_INDISP, {
     ['Calle Huinnyeoul', '흰여울길', 'En Yeongdo, la ruta costera de Jeoryeong pasa por esta calle llena de cafés.']])
 });
 ['송도해상케이블카', '송정해수욕장', '용두산공원', '부산영화체험박물관', '부산근대역사관', '해운대블루라인파크', '재한유엔기념공원', '해동용궁사', '금강공원케이블카', '금정산성', '석불사', '해운대해수욕장', '이기대', '광안리해수욕장', '태종대유원지', '범어사', '감천문화마을', '자갈치시장', '국제시장', '부전시장', '오륙도스카이워크', '을숙도', '다대포해수욕장', '영화의전당', '전포카페거리', '온천천카페거리', '흰여울문화마을', '부산시티투어버스'].forEach(k => LP24_SITIOS.add(k));
+// Jeonju · Lonely Planet Corea 2024 (en español), pp. 208-213 (v291). Resumen propio; precios y horas, VERIFICAR.
+Object.assign(LP24_INDISP, {
+  '전주한옥마을': L24B(210, [
+    ['El mayor pueblo tradicional de Corea', '전주한옥마을', 'Más de 700 hanok, casi todos pensiones, restaurantes, cafés y tiendas. Merece al menos medio día.'],
+    ['Pasear en hanbok', '한복', 'Muchos alquilan el traje tradicional (20.000-30.000 ₩ las 3 h) y recorren las callejuelas buscando fotos.'],
+    ['Museos gratis del maeul', '전주부채문화관 · 최명희문학관', 'Centro Cultural del Abanico, Museo de Literatura Choi Myung Hee, Museo Coreano del Licor (gayangju), Centro Cultural del Kimchi y Museo de Arte Gyodong.'],
+    ['Consejo', '오목대 관광안내소', 'La oficina de turismo de Omokdae tiene wifi gratis, aseos y taquillas que funcionan con una moneda de 1.000 ₩ que se recupera al sacar el equipaje.']], '📕 Indispensable · Lonely Planet 2024, p. 210'),
+  '풍남문': L24B(208, [
+    ['La gran puerta del sur', '풍남문', 'La más meridional de las cuatro puertas de la ciudad (1734, restaurada), en medio de una plaza donde en 1781 y 1801 se ejecutó a muchos católicos.'],
+    ['Mapa mural de la antigua Jeonju', '', 'Dos pasos al norte, en la pared oeste de la comisaría de Wansan, un gran mapa antiguo de la ciudad pintado como mural.'],
+    ['Inicio del paseo de la LP', '', 'Desde aquí arranca el «Paseo por Jeonju» (ficha 🚶 de Planes).']]),
+  '전동성당': L24B(208, [
+    ['Iglesia católica de Jeondong', '전동성당', 'Frente a Pungnammun, con su campanario de ladrillo rojo; la levantó el misionero francés Xavier Baudounet donde murieron los mártires.']]),
+  '경기전': L24B(208, [
+    ['Palacio de Gyeonggijeon', '경기전', 'Erigido en 1410 y reconstruido en 1614, lleno de santuarios y salas de guardia de los rituales confucianos.'],
+    ['Museo de Retratos Reales', '어진박물관', 'En la parte posterior: réplica del retrato de Yi Seong-gye, fundador de la dinastía Joseon, cuya familia era de Jeonju.']]),
+  '전라감영': L24B(209, [
+    ['Antiguo ayuntamiento de Jeolla y Jeju', '전라감영', '9:00-21:00, gratis. Restaurado en 2018; circuitos guiados en inglés a las 11:00 y las 14:00, a diario.']]),
+  '행원': L24B(209, [
+    ['Café tradicional con historia', '행원', '10:00-20:00, cierra los martes. Hanok de estructura japonesa con estanque; fue de la última gisaeng de Jeonju y, desde 1942, refugio de músicos. En 1983 la compró la cantante de pansori Seong Jun-suk. Té tradicional y, con suerte, pansori.']]),
+  '오목대': L24B(210, [
+    ['Mirador sobre el maeul', '오목대', 'Colina con un pabellón que recuerda la victoria del general Yi Seong-gye sobre los piratas japoneses en 1380. Vistas excepcionales, sobre todo al atardecer.'],
+    ['Paso elevado azul', '', 'Desde el mirador, un puente peatonal azul cruza a la colina de enfrente, al pueblo de murales de Jaman.']]),
+  '자만마을': L24B(210, [
+    ['Pueblo de murales de Jaman', '자만벽화마을', 'En la ladera, al pie del Seungamsan: docenas de murales, de Eduardo Manostijeras a John Lennon y personajes de anime. Algo descuidado, pero con cafés escondidos y acceso a rutas de senderismo.'],
+    ['Kko-ji-tta-ppong Cafe', '', 'Paredes de colores intensos, muñecas Barbie, terraza y un ET de tamaño natural. 9:30-20:30, ₩.']]),
+  '서학동예술마을': L24B(210, [
+    ['Pueblo artístico de Seohak-dong', '서학동예술마을', 'Al sur del maeul, pasada la glorieta Cheongyeonru: antiguas casas de maestros convertidas en galerías, estudios y cafés.'],
+    ['Vintage y Cafe Jeokyo Soom Shida', '', 'El pintor Lee Jeok Yo lleva la tienda Vintage y el café de al lado, de estilo retro, con vinilos, libros y buen espresso; estudio y galería detrás (11:00-18:00).']], '📕 Imprescindible · Lonely Planet 2024, p. 209'),
+  '남부시장': L24B(213, [
+    ['Mercado de Nambu', '남부시장', 'De 1905, a un corto paseo de Pungnammun: unos 800 puestos de fruta, verdura, pescado seco o seda y, escondidos, docenas de pequeños restaurantes de desayuno. Conviene ir temprano.'],
+    ['Hyundai-ok', '현대옥', 'El local original de la cadena (6:00-14:00), siempre lleno: sopa de brotes de soja desde 1979.']]),
+  '덕진공원': L24B(209, [
+    ['Parque Deokjin', '덕진공원', 'Senderos serenos alrededor de un lago que en julio se cubre de lotos. Dentro, la biblioteca Yeonhwajeong, en un hanok en forma de L con 1.850 títulos.']]),
+  '완산칠봉': L24B(209, [
+    ['Wansan Chilbong', '완산칠봉', 'Jardín de flores: cerezo rosa en primavera, azaleas y, en otoño, hojas rojas.']]),
+  '팔복예술공장': L24B(211, [
+    ['Palbok Art Factory', '팔복예술공장', 'Antigua fábrica de casetes, centro de arte desde 2018: exposiciones, estudio y parque infantil Palbok Yaho Art entre álamos. 10:00-17:30, cierra lu, gratis. Bus 684, 644 o 1002 (1 h) o taxi desde el maeul.']]),
+  '객리단길': L24B(213, [
+    ['Calle Gaekridan-gil', '객리단길', 'La calle moderna de los cafés de moda; sede del Festival Internacional de Cine de Jeonju.']]),
+  '청연루': L24B(210, [
+    ['Glorieta Cheongyeonru', '청연루', 'De madera y con vistas al río; se cruza para ir a Seohak-dong.']])
+});
+['전주한옥마을', '풍남문', '전동성당', '경기전', '어진박물관', '전라감영', '행원', '다가여행자도서관', '전주부채문화관', '최명희문학관', '전통술박물관', '전주김치문화관', '교동미술관', '오목대', '자만마을', '서학동예술마을', '청연루', '남부시장', '덕진공원', '완산칠봉', '팔복예술공장', '객리단길', '아중호수', '치명자산성지'].forEach(k => LP24_SITIOS.add(k));
+// 🚶 Paseo por Jeonju (LP 2024, p. 212): de Pungnammun al café Jeonmang. Sale en Planes → Jeonju y en Hoy los días que pasan por ≥3 paradas.
+LP24_RUTAS.push({ ciudad: 'jeonju', t: 'Paseo por Jeonju', items: [
+  ['Puerta Pungnammun', '풍남문', 'Inicio. Hacia el norte.'],
+  ['Haengwon', '행원', 'Centro cultural de la última gisaeng: té tradicional y, con suerte, pansori.'],
+  ['Mapa mural de la antigua Jeonju', '', 'En la pared oeste de la comisaría de Wansan, siguiendo al norte.'],
+  ['Jeolla Gamyeong', '전라감영', 'Antiguo ayuntamiento de Jeolla y Jeju en época Joseon.'],
+  ['Biblioteca de Viajeros Daga', '다가여행자도서관', 'A un corto paseo de Jeolla Gamyeong: literatura de viajes hasta el techo.'],
+  ['Mercado de Nambu', '남부시장', 'Volviendo hacia el maeul: los puestos ordenados y, fuera, filas de vendedores en la calle junto al río.'],
+  ['Catedral de Jeondong', '전동성당', 'Antes de explorar Gyeonggijeon.'],
+  ['Santuario de Gyeonggijeon', '경기전', 'Sus pabellones y el Museo de Retratos Reales.'],
+  ['Centro Cultural del Abanico', '전주부채문화관', 'Ya en los callejones del maeul.'],
+  ['Museo de Arte Gyodong', '교동미술관', 'Justo al lado.'],
+  ['Mirador Omok-dae', '오목대', 'Por el paseo entarimado; vistas excepcionales, mejor al atardecer.'],
+  ['Pueblo de murales de Jaman', '자만마을', 'Cruzando el puente elevado a la colina de enfrente: arte mural y cafés curiosos.'],
+  ['Jeonmang Cafe (final)', '', 'De vuelta al maeul: bar en la azotea con vistas, café y bebidas.']] });
 
 const GUIA = [
   ['T-money y transporte', [
@@ -1204,7 +1280,7 @@ const ESTACIONES = [
   { ciudad: 'gyeongju', tipo: 'tren', es: 'Estación de Gyeongju (KTX)', ko: '경주역', buscar: ['경주역', 'gyeongju station'], nota: 'Antes Singyeongju, a unos 10 km del centro.' },
   { ciudad: 'busan', tipo: 'tren', es: 'Estación de Busan', ko: '부산역', buscar: ['부산역', 'busan station'], nota: 'KTX; enfrente para el bus 1003 a Haeundae. Metro línea 1.' },
   { ciudad: 'busan', tipo: 'bus', es: 'Terminal Central de Autobuses de Busan', ko: '부산종합버스터미널', buscar: ['부산종합버스터미널', 'terminal central de autobuses'], nota: 'Junto a la estación de metro Nopo (노포, final de la línea 1).', verificar: true },
-  { ciudad: 'jeonju', tipo: 'bus', es: 'Terminal Exprés de Jeonju', ko: '전주고속버스터미널', buscar: ['전주고속버스터미널', 'terminal expres de jeonju'], nota: 'Autobuses exprés; al lado está la terminal interurbana.', verificar: true },
+  { ciudad: 'jeonju', tipo: 'bus', es: 'Terminal Exprés de Jeonju', ko: '전주고속버스터미널', buscar: ['전주고속버스터미널', 'terminal expres de jeonju'], nota: 'Autobuses exprés; la interurbana está a 3 min a pie. A la puerta Pungnammun, 10 min en taxi (o un corto trayecto en bus). El bus 79 la une con la estación KTX cada 30 min (LP 2024, p. 208).', verificar: true },
   { ciudad: 'jeonju', tipo: 'tren', es: 'Estación de Jeonju', ko: '전주역', buscar: ['전주역', 'estacion de jeonju'], nota: 'KTX hacia Seúl (Yongsan); a unos 7-8 min en taxi de la Aldea Hanok.', verificar: true },
 ];
 
