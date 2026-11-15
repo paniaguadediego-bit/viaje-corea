@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v288';
+const VERSION = 'v289';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1232,6 +1232,12 @@ function estanciaCard(c) {
     ${ds.map(d => `<button class="dad-dia ${d.fecha === hoy ? 'on' : ''} ${d.fecha < hoy ? 'pasado' : ''}" data-dia="${d.n - 1}"><span class="hora">${fmtCorto(d.fecha)}</span><span>${esc((dias[d.n - 1] || {}).titulo || '')}</span>${miniTiempo(k, d.fecha)}</button>`).join('')}</details></div>`;
 }
 
+// v289: al entrar en Ruta, se baja hasta el día de hoy (su línea dentro de la estancia), centrado en la pantalla.
+function rutaAHoy() {
+  const el = document.querySelector('.dad-dia.on'); if (!el) return;
+  const det = el.closest('details'); if (det && !det.open) det.open = true;
+  const y = el.getBoundingClientRect().top + window.scrollY - window.innerHeight / 3; window.scrollTo(0, Math.max(0, y));
+}
 function viewRuta() {
   const vuelos = arr(trip.vuelos).filter(v => v && typeof v === 'object').slice().sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
   const conTipo = vuelos.some(v => v.tipo);
@@ -3603,7 +3609,7 @@ document.addEventListener('click', e => {
   if (!b) return;
   if (b.dataset.sub) { coreaSub = b.dataset.sub; paisSel = null; }
   else if (b.dataset.sit) fraseSit = b.dataset.sit;
-  else if (b.dataset.tab) ir(b.dataset.tab);
+  else if (b.dataset.tab) { ir(b.dataset.tab); if (b.dataset.tab === 'ruta') setTimeout(rutaAHoy, 0); }
   else if (b.dataset.go) ir(b.dataset.go);
   else if (b.dataset.day) { dayIdx += Number(b.dataset.day); }
   else if (b.dataset.theme) { save(K_THEME, b.dataset.theme); }
