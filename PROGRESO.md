@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v291
+Caché del service worker: corea-v292
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -344,6 +344,7 @@ Caché del service worker: corea-v291
 - v290: si hoy hay traslado, Ruta se abre en el recuadro del traslado (arriba de la pantalla), no en la estancia de debajo.
 - (sin versión) Hotel de Jeonju: sus coordenadas privadas estaban desplazadas y la ruta 🛣️ de Naver no llegaba a él. Corregidas solo en el trip.json del usuario (nada al repo).
 - v291: Jeonju con la Lonely Planet Corea 2024 (pp. 208-213, fotos del usuario): recuadros LP24 en Aldea Hanok, Pungnammun, Jeondong, Gyeonggijeon, Omokdae, Jaman, Nambu y sitios nuevos; 16 sitios nuevos en CATALOGO (Jeolla Gamyeong, Haengwon, Biblioteca Daga, Museo de Retratos Reales, Centro del Abanico, Museo Choi Myung Hee, Centro del Kimchi, Museo Gyodong, Seohak-dong, Cheongyeonru, Gaekridan-gil, Deokjin, Palbok Art Factory, Wansan Chilbong, lago Ajung, Chimyeongjasan) con coordenadas aproximadas; ruta 🚶 «Paseo por Jeonju» (13 paradas, p. 212) en LP24_RUTAS; Comer: LP24 en Hyundai-ok, Veteran y Gajok (Family House), y 11 nuevos (Gyeonggijeon Jungang Charcoal, Namno Galbi, Goong, calleja Samcheon-dong Makgeolli, Jeonmang, Cafe 1322, Kko-ji-tta-ppong, Hyangyu Gallery, Jeokyo Soom Shida, Jeonil Super, Saekjang Rice Mill); nota de la LP en la Terminal Exprés (bus 79 a la estación KTX). [Supuesto] Sin hangul donde no hay certeza (cafés y Goong): se buscan por nombre en Naver; Namno Galbi y el Centro del Kimchi, con VERIFICAR.
+- v292: los sitios nuevos de Jeonju llevan «buscar» (palabras propias) para que el itinerario no los reconozca por palabras genéricas como «maeul» o «Wansan». Plan de Jeonju reorganizado en el trip.json privado según la LP 2024 (día 15: Hyanggyo, Omokdae al atardecer, Jaman y cena; día 16: el paseo de la p. 212 en orden, con desayuno en Nambu; sin hanbok).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
