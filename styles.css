@@ -757,6 +757,7 @@ header #tema { border-radius: 50% !important; background: var(--card) !important
 .mp-pt.c-sitios { background: #fff; border: 3px solid #1f4e8c; font-size: 13px; z-index: 2; }
 .mp-pt.c-comer { background: #d97706; }
 .mp-pt.c-planes { background: #7c3aed; }
+.mp-pt.c-estac { background: #0f766e; border-radius: 8px; }
 .mp-pt.c-hotel { background: #111; width: 32px; height: 32px; font-size: 16px; z-index: 4; border-radius: 8px; }
 /* v138: visitado = fondo verde con ✓ (mantiene su icono o número); día pasado sin visitar = medio transparente */
 .mp-pt.hecho { background: #1e8e3e !important; border: 2px solid #fff !important; color: #fff; opacity: 1; }
@@ -1746,5 +1747,8 @@ nav#tabs button.on span { color: #fff !important; }
 .sitios-dia details.sd.con-fondo.hecho-card > summary > *, .sitios-dia details.sd.con-fondo.novamos-card > summary > * { opacity: .85; }
 /* v279: en iPhone, Safari solo avisa de toques en zonas «pulsables»: el contenido de una parada abierta lo es (al tocarlo se pliega) */
 .sitios-dia details.sd[open], .sitios-dia details.sd[open] > .sd-cuerpo, .sitios-dia details.sd[open] > .sd-cuerpo * { cursor: pointer; }
+.estac-card { display: grid; gap: 6px; }
+.estac-tit { display: flex; gap: 10px; align-items: center; }
+.estac-ic { font-size: 26px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v282"; }
+:root { --css-ver: "v283"; }

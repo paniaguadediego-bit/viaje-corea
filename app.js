@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v282';
+const VERSION = 'v283';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1033,6 +1033,22 @@ function medio(t) {
 // Qué "Paso a paso" están abiertos (lo controla la app, no el navegador).
 const pasosAb = {};
 // 🛏️ Planes → Hotel: toda la información de los alojamientos de la ciudad (antes estaba en Hoy).
+// 🚉 Estaciones y aeropuerto del viaje (v283): de ESTACIONES (contenido.js), solo las que nombran vuestros traslados o vuelos.
+const IC_EST = { tren: '🚆', bus: '🚌', avion: '✈️' };
+const sinTilde = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+function estacionesViaje(k) {
+  if (typeof ESTACIONES === 'undefined' || !trip) return [];
+  const ts = [...arr(trip.traslados).map(t => ({ f: t.fecha, txt: sinTilde(JSON.stringify(t)) })), ...arr(trip.vuelos).map(v => ({ f: v.fecha, txt: sinTilde(JSON.stringify(v)) }))];
+  return ESTACIONES.filter(e => (!k || e.ciudad === k)).map(e => ({ ...e, fechas: [...new Set(ts.filter(t => e.buscar.some(b => t.txt.includes(sinTilde(b)))).map(t => t.f).filter(Boolean))].sort() })).filter(e => e.fechas.length);
+}
+function estacionesDe(k) {
+  const hot = hotelDe(k);
+  return estacionesViaje(k).map(e => { const c = coordsLugar(e), d = c && hot ? km(hot, c) : null;
+    return `<div class="card estac-card"><div class="estac-tit"><span class="estac-ic">${IC_EST[e.tipo] || '🚉'}</span><div><b>${esc(e.es)}</b>${e.verificar ? ' <span class="ver">VERIFICAR</span>' : ''}<div><span class="ko-s">${esc(e.ko)}</span> ${btnHabla(e.ko)}</div></div></div>
+      <div class="muted">${e.fechas.map(fmtCorto).join(' · ')}${d != null ? ` · 📏 ${fmtDist(d)} del hotel` : ''}</div>
+      ${e.nota ? `<div class="muted">${resaltar(e.nota)}</div>` : ''}
+      <div class="acciones">${irMapas(e)}${btnGps(e)}${btnGpsDel(e)}</div></div>`; }).join('') || '<p class="muted centro">Ninguna estación de vuestros traslados en esta ciudad.</p>';
+}
 function hotelesDe(k) {
   const hs = arr(trip.alojamientos).filter(a => ck(a.ciudad) === k);
   if (!hs.length) return '<p class="muted centro">No hay alojamiento apuntado en esta ciudad.</p>';
@@ -1547,7 +1563,7 @@ function abrirAyuda() {
 // Qué ver (antes Explorar y Ciudades): por ciudad, Puntos de interés y Planes. El mapa de cada ciudad va en la pestaña Mapas.
 let ciudadSel = null, historiaAbierta = false, exSub = 'puntos';
 // Desde v223, lo que era Miscelánea se desgrana al mismo nivel: 7 apartados (los de Miscelánea solo si la ciudad tiene algo).
-const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['platos', '🥢 Platos típicos'], ['hotel', '🛏️ Hotel'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
+const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['platos', '🥢 Platos típicos'], ['hotel', '🛏️ Hotel'], ['estac', '🚉 Estaciones'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
 const CATS_MISC = new Set(['curioso', 'servicio', 'lol', 'ropa']);
 // Mapas: el mapa de cada ciudad (itinerario, más sitios, Comer, Planes y hotel). Al tocar un icono, su ficha enlaza con Qué ver o Comer.
 function viewMapas() {
@@ -1575,9 +1591,9 @@ function viewCiudades() {
       <div class="ciudad-fechas">${fechas}</div>${linkHist(k)}
     </div>
     ${muchoOjo(k, 'planes')}
-    <div class="exsubs7">${EX_SUBS.filter(([x]) => x === 'platos' ? platosDe(k, true) : !CATS_MISC.has(x) || (typeof PLANES !== 'undefined' && PLANES.some(p => p.ciudad === k && p.cat === x)) || (x === 'lol' && PC_BUSQ[k])).map(([x, tt]) => { const [ic, ...r] = tt.split(' '); return `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>
+    <div class="exsubs7">${EX_SUBS.filter(([x]) => x === 'platos' ? platosDe(k, true) : x === 'estac' ? estacionesViaje(k).length : !CATS_MISC.has(x) || (typeof PLANES !== 'undefined' && PLANES.some(p => p.ciudad === k && p.cat === x)) || (x === 'lol' && PC_BUSQ[k])).map(([x, tt]) => { const [ic, ...r] = tt.split(' '); return `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>
     ${exSub === 'puntos' ? rutasLP24(k) : ''}
-    ${CATS_MISC.has(exSub) ? planesDe(k, exSub) : ''}${exSub === 'platos' ? platosDe(k) : ''}${exSub === 'hotel' ? hotelesDe(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
+    ${CATS_MISC.has(exSub) ? planesDe(k, exSub) : ''}${exSub === 'platos' ? platosDe(k) : ''}${exSub === 'hotel' ? hotelesDe(k) : ''}${exSub === 'estac' ? estacionesDe(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
     ${exSub !== 'puntos' ? '</div>' : ''}${exSub === 'puntos' ? `
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
       ${INTRO_LP[k].plan ? `<details data-key="lp:${k}" ${abierto("lp:" + k, false) ? "open" : ""}><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
@@ -1594,8 +1610,8 @@ const mpX = (lon, z) => (lon + 180) / 360 * MPT * 2 ** z;
 const mpY = (lat, z) => { const s = Math.sin(lat * Math.PI / 180); return (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * MPT * 2 ** z; };
 const mpLon = (x, z) => x / (MPT * 2 ** z) * 360 - 180;
 const mpLat = (y, z) => 180 / Math.PI * Math.atan(Math.sinh(Math.PI - 2 * Math.PI * y / (MPT * 2 ** z)));
-const MP_CAPAS = [['itin', 'Itinerario', '#cd2e3a'], ['sitios', '📍 Puntos de interés', '#1f4e8c'], ['comer', 'Comer', '#d97706'], ['planes', 'Miscelánea', '#7c3aed']];
-let mpCapas = new Set(['itin', 'sitios', 'comer', 'planes']), mapaCiudad = false, mpCapasDia = new Set();
+const MP_CAPAS = [['itin', 'Itinerario', '#cd2e3a'], ['sitios', '📍 Puntos de interés', '#1f4e8c'], ['comer', 'Comer', '#d97706'], ['planes', 'Miscelánea', '#7c3aed'], ['estac', '🚉 Estaciones', '#0f766e']];
+let mpCapas = new Set(['itin', 'sitios', 'comer', 'planes', 'estac']), mapaCiudad = false, mpCapasDia = new Set();
 const mapaDia = new Set();
 const recorta = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
 
@@ -1692,6 +1708,7 @@ const btnGps = l => `<button class="mini sec" data-gps="${esc(hKey(l))}" data-gp
 function mpEnlace(p, m) {
   const k = ck((p.l && p.l.ciudad) || '') || m.k || '';
   if (p.capa === 'hotel') return `<button class="mini" data-irhotel="${esc(m.k || '')}">🛏️ Ver el hotel</button>`;
+  if (p.capa === 'estac') return `<button class="mini" data-irestac="${esc(m.k || '')}">🚉 Ver en Planes</button>`;
   if (p.capa === 'comer') return `<button class="mini" data-ircomer="${esc(k)}" data-q="${esc(p.es)}">🍜 Ver en Comer</button>`;
   if (p.capa === 'planes') return `<button class="mini" data-irplan="${esc(k)}" data-cat="${esc((p.l && p.l.cat) || '')}">🧩 Ver en Miscelánea</button>`;
   return k ? (p.l && enQueVer(p.l, k) ? `<button class="mini" data-irqv="${esc(k)}" data-h="${esc(hKey(p.l))}">🏯 Ver en Planes</button>` : `<button class="mini" data-bcity="${esc(k)}" data-bq="${esc(p.es)}">🏯 Ver en Planes</button>`) : '';
@@ -1768,6 +1785,7 @@ function puntosCiudad(k) {
   lugaresComer().filter(c => c.ciudad === k && !['descartado', 'cerrado'].includes(estadoDe(String(c.id)).estado)).forEach(c =>
     add('comer', c, { es: c.nombre, ic: IC_COMER[c.tipo] || '🍴', sub: [c.plato, c.precio].filter(Boolean).join(' · '), txt: c.nota, lp: c.fuente === 'lonely', lp24: esLP24(c), hecho: hecho(c, k) }));
   (typeof PLANES !== 'undefined' ? PLANES : []).filter(p => p.ciudad === k).forEach(p => add('planes', p, { ic: icPlan(p), sub: p.direccion_en || '', txt: p.desc, hecho: hecho(p, k) }));
+  estacionesViaje(k).forEach(e => add('estac', e, { ic: IC_EST[e.tipo] || '🚉', sub: `${e.ko} · ${e.fechas.map(fmtCorto).join(' · ')}`, txt: e.nota }));
   if (hot) todos.push({ capa: 'hotel', c: hot, es: (arr(trip.alojamientos).find(a => ck(a.ciudad) === k) || {}).nombre || 'Hotel', ic: '🛏️', sub: 'Vuestro hotel' });
   return { hot, todos, cuenta };
 }
@@ -3458,9 +3476,10 @@ document.addEventListener('click', e => {
   const iq = e.target.closest('[data-irqv]');
   if (iq) { ciudadSel = iq.dataset.irqv; exSub = 'puntos'; qCiu = ''; qvFiltro = 'todos'; qvMarca = ''; abiertos['qv:' + iq.dataset.h] = true; ir('ciudades'); render();
     const el = document.querySelector(`details[data-key="${CSS.escape('qv:' + iq.dataset.h)}"]`); if (el) { el.scrollIntoView({ block: 'start' }); window.scrollBy(0, -80); } return; }
-  const irc = e.target.closest('[data-ircomer],[data-irplan],[data-irhotel]');
+  const irc = e.target.closest('[data-ircomer],[data-irplan],[data-irhotel],[data-irestac]');
   if (irc) {
-    if (irc.hasAttribute('data-irhotel')) { if (irc.dataset.irhotel) ciudadSel = irc.dataset.irhotel; exSub = 'hotel'; ir('ciudades'); }
+    if (irc.hasAttribute('data-irestac')) { if (irc.dataset.irestac) ciudadSel = irc.dataset.irestac; exSub = 'estac'; ir('ciudades'); }
+    else if (irc.hasAttribute('data-irhotel')) { if (irc.dataset.irhotel) ciudadSel = irc.dataset.irhotel; exSub = 'hotel'; ir('ciudades'); }
     else if (irc.dataset.ircomer != null) { if (irc.dataset.ircomer) comerCiudad = irc.dataset.ircomer; comerTipo = 'todos'; comerEstado = 'todos'; qCom = irc.dataset.q || ''; if (irc.dataset.ircomer) ciudadSel = irc.dataset.ircomer; exSub = 'comer'; ir('ciudades'); }
     else { if (irc.dataset.irplan) ciudadSel = irc.dataset.irplan; exSub = irc.dataset.cat || planesCat || 'curioso'; if (irc.dataset.cat) planesCat = irc.dataset.cat; ir('ciudades'); }
     render(); window.scrollTo(0, 0); return;

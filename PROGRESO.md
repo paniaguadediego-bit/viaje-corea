@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v282
+Caché del service worker: corea-v283
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -334,6 +334,7 @@ Caché del service worker: corea-v282
 - v279: plegar una parada de Hoy tocando su contenido abierto fallaba en algunos móviles: (1) en iPhone, Safari no manda el toque de zonas que no parecen pulsables (ahora cursor: pointer en el contenido abierto); (2) si quedaba texto seleccionado en cualquier parte de la pantalla no se plegaba (ahora solo cuenta la selección dentro de esa ficha).
 - v280-v281: en el Xiaomi la parada se plegaba y se reabría al instante («como un obturador»). Ahora, al plegarla tocando el contenido, se apunta ya como plegada (abiertos[key] = false, por si algo redibuja antes del evento toggle) y durante 0,6 s se ignora un segundo «clic fantasma» que caiga en su cabecera.
 - v282: el botón «🛣️ estación → hotel en Naver» del traslado va con el texto centrado. Nuevo campo privado traslados[].salida (estación o terminal de partida): en el paso 1 sale «🛣️ hotel que se deja → estación en Naver» (transporte público; usa el 📌 del hotel si lo hay). Puesto en trip.json para el 15 (Terminal Central de Busan) y el 17 (estación de Jeonju), con VERIFICAR del punto.
+- v283: 🚉 Estaciones en Planes (botón tras Hotel, solo en ciudades con alguna) y capa en Mapas (verde azulado, enlaza con Planes → Estaciones): estaciones de tren, terminales de autobús, la parada del bus 6015 y el aeropuerto de Incheon. Lista pública ESTACIONES en contenido.js (coordenadas en coords.json); la app solo enseña las que nombran los traslados o vuelos del trip.json, con sus fechas, distancia al hotel, 🧭 🌐 y 📌. [Supuesto] La Estación de Seúl sale por la opción B (AREX) del día 19.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

@@ -1185,6 +1185,23 @@ const MUCHO_OJO = [
 ];
 
 
+// 🚉 Estaciones (Planes y Mapas, desde v283): estaciones de tren, terminales de autobús y aeropuerto. Lista pública y genérica;
+// la app solo enseña las que nombran los traslados o vuelos de vuestro trip.json (buscar = palabras que lo delatan).
+// Coordenadas aproximadas en data/coords.json (clave = hangul); si están mal, «📌 Estoy aquí» o arrastrar en el mapa.
+const ESTACIONES = [
+  { ciudad: 'seul', tipo: 'avion', es: 'Aeropuerto de Incheon (Terminal 1)', ko: '인천국제공항 제1여객터미널', buscar: ['인천', 'incheon'], nota: 'Air China opera en la T1. El bus 6015 y el tren AREX salen desde la planta baja (B1 el AREX).' },
+  { ciudad: 'seul', tipo: 'bus', es: 'Parada del bus 6015 (Myeong-dong)', ko: '명동역 6015 정류장', buscar: ['6015'], nota: 'Parada del bus del aeropuerto junto a la estación de metro Myeong-dong (VERIFICAR el punto exacto en Naver).', verificar: true },
+  { ciudad: 'seul', tipo: 'tren', es: 'Estación de Cheongnyangni', ko: '청량리역', buscar: ['청량리', 'cheongnyangni'], nota: 'Salida de los KTX-Eum hacia Andong (este de Seúl).' },
+  { ciudad: 'seul', tipo: 'tren', es: 'Estación de Yongsan', ko: '용산역', buscar: ['용산역', 'yongsan'], nota: 'Llegada de los KTX de la línea de Honam (Jeonju). Al lado, metro Sinyongsan (línea 4).' },
+  { ciudad: 'seul', tipo: 'tren', es: 'Estación de Seúl', ko: '서울역', buscar: ['서울역', 'seoul station'], nota: 'Tren AREX al aeropuerto de Incheon.' },
+  { ciudad: 'andong', tipo: 'tren', es: 'Estación de Andong', ko: '안동역', buscar: ['안동역', 'estacion de andong'], nota: 'Nueva estación (desde dic. 2020), a las afueras; la terminal de autobuses está al lado.' },
+  { ciudad: 'gyeongju', tipo: 'tren', es: 'Estación de Gyeongju (KTX)', ko: '경주역', buscar: ['경주역', 'gyeongju station'], nota: 'Antes Singyeongju, a unos 10 km del centro.' },
+  { ciudad: 'busan', tipo: 'tren', es: 'Estación de Busan', ko: '부산역', buscar: ['부산역', 'busan station'], nota: 'KTX; enfrente para el bus 1003 a Haeundae. Metro línea 1.' },
+  { ciudad: 'busan', tipo: 'bus', es: 'Terminal Central de Autobuses de Busan', ko: '부산종합버스터미널', buscar: ['부산종합버스터미널', 'terminal central de autobuses'], nota: 'Junto a la estación de metro Nopo (노포, final de la línea 1).', verificar: true },
+  { ciudad: 'jeonju', tipo: 'bus', es: 'Terminal Exprés de Jeonju', ko: '전주고속버스터미널', buscar: ['전주고속버스터미널', 'terminal expres de jeonju'], nota: 'Autobuses exprés; al lado está la terminal interurbana.', verificar: true },
+  { ciudad: 'jeonju', tipo: 'tren', es: 'Estación de Jeonju', ko: '전주역', buscar: ['전주역', 'estacion de jeonju'], nota: 'KTX hacia Seúl (Yongsan); a unos 7-8 min en taxi de la Aldea Hanok.', verificar: true },
+];
+
 // 🥢 Probados (Más): comidas y bebidas típicas para marcar si las habéis probado (user.probados[hangul]).
 // [grupo, icono, clave de ciudad o '', [[nombre, hangul, una línea]]]. Hangul de uso corriente; la marca se comparte con Planes → 🥢 Platos típicos.
 const PROBAR = [
