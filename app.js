@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v287';
+const VERSION = 'v288';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -358,7 +358,7 @@ async function compartirArchivo(nombre, texto, tipo) {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 // Marcas: lo que cada uno apunta en su móvil. Se pasan en un archivo y se UNEN (nunca se borra nada).
-const MARCAS = ['hecho', 'noVamos', 'probados', 'probVal', 'estrellas', 'avisosOk', 'coordsFix', 'favs', 'diario', 'comer', 'agenda', 'hgLeidas', 'leidos', 'regalos', 'hdIni', 'hdLev', 'checklist'];
+const MARCAS = ['hecho', 'noVamos', 'quiero', 'probados', 'probVal', 'estrellas', 'avisosOk', 'coordsFix', 'favs', 'diario', 'comer', 'agenda', 'hgLeidas', 'leidos', 'regalos', 'hdIni', 'hdLev', 'checklist'];
 function exportMarcas() {
   const U = u(), m = {}; MARCAS.forEach(k => { if (U[k] != null) m[k] = U[k]; });
   compartirArchivo(`corea-marcas-${todayISO()}.json`, JSON.stringify({ tipo: 'corea-marcas', fecha: new Date().toISOString(), user: m }), 'application/json');
@@ -375,7 +375,7 @@ function fundirMarcas(o) {
     const nt = junta(m.nota, c.nota); if (nt) m.nota = nt; if (!m.op && c.op) m.op = c.op; if (JSON.stringify(m) !== antes) n.comer++; });
   U.agenda = U.agenda || {}; Object.entries(o.agenda || {}).forEach(([f, a]) => { const m = U.agenda[f] = U.agenda[f] || { add: [], del: [], orden: null };
     m.add = [...new Set([...arr(m.add), ...arr(a.add)])]; m.del = [...new Set([...arr(m.del), ...arr(a.del)])]; });
-  ['hgLeidas', 'leidos', 'hdIni', 'hdLev', 'noVamos', 'probados', 'probVal'].forEach(k => { U[k] = U[k] || {}; Object.entries(o[k] || {}).forEach(([a, b]) => { if (b && !U[k][a]) U[k][a] = b; }); });
+  ['hgLeidas', 'leidos', 'hdIni', 'hdLev', 'noVamos', 'quiero', 'probados', 'probVal'].forEach(k => { U[k] = U[k] || {}; Object.entries(o[k] || {}).forEach(([a, b]) => { if (b && !U[k][a]) U[k][a] = b; }); });
   U.regalos = arr(U.regalos); arr(o.regalos).forEach(r => { const x = U.regalos.find(x => x.id === r.id); if (!x) { U.regalos.push(r); n.regalos++; } else x.ok = x.ok || r.ok; });
   U.estrellas = U.estrellas || {}; Object.entries(o.estrellas || {}).forEach(([k, x]) => { if (x && Number(x.v) > 0 && !U.estrellas[k]) { U.estrellas[k] = x; n.estrellas = (n.estrellas || 0) + 1; } });
   U.coordsFix = U.coordsFix || {}; Object.entries(o.coordsFix || {}).forEach(([a, b]) => { if (b && !U.coordsFix[a]) U.coordsFix[a] = b; });
@@ -981,7 +981,7 @@ function sitiosDia(d) {
     const n = num[h];
     // Ficha plegable: se pliega sola al marcarla como visitada (y la foto, a la derecha, arriba).
     const key = 'sd:' + d.fecha + '|' + h, ab = abierto(key, false); // v262: plegadas por defecto
-    return `${t}${extra ? encaje(l) : ''}<details class="sd ${sgK.has(h) ? 'sd-cerca' : ''} ${hecho(l, k) ? 'hecho-card' : noVamos(l) ? 'novamos-card' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}<span class="sd-qv">${irQV(l, k, true)}</span>${btnHecho(l, k)}${irMapas(l)}<span class="sd-lp">${lpPill(l)}</span><br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${sgK.has(h) ? '<span class="sug-etq" title="Cercano añadido">＊</span>' : ''}${icSitio(l.es)} ${esc(l.es)}${ojoSup(l)}</b> <span class="ko-s">${esc(l.ko || '')}</span></summary>
+    return `${t}${extra ? encaje(l) : ''}<details class="sd ${sgK.has(h) ? 'sd-cerca' : ''} ${claseCard(l, k)}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}<span class="sd-qv">${irQV(l, k, true)}</span>${btnHecho(l, k)}${irMapas(l)}<span class="sd-lp">${lpPill(l)}</span><br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${sgK.has(h) ? '<span class="sug-etq" title="Cercano añadido">＊</span>' : ''}${icSitio(l.es)} ${esc(l.es)}${ojoSup(l)}</b> <span class="ko-s">${esc(l.ko || '')}</span></summary>
       <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${lp24(l)}</div></details>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
@@ -1321,7 +1321,7 @@ function qvPuntos(k, c) {
   const todos = qvLista(k, c), U = u();
   const F = { todos: () => true, itin: o => o.plan, lp: o => esLP(o.l), otros: o => !o.plan && !esLP(o.l) };
   // ✅ Marcados / ☐ No marcados: se suma al otro filtro (p. ej. Itinerario + No marcados = lo que os queda del plan).
-  const base = todos.filter(F[qvFiltro] || F.todos), M = { si: o => hecho(o.l, k), no: o => !hecho(o.l, k) && !noVamos(o.l) };
+  const base = todos.filter(F[qvFiltro] || F.todos), M = { si: o => hecho(o.l, k), qi: o => !hecho(o.l, k) && quiero(o.l), no: o => !hecho(o.l, k) && !noVamos(o.l) };
   let ls = base.filter(M[qvMarca] || F.todos);
   const cuenta = f => todos.filter(F[f]).length, vis = base.filter(M.si).length;
   const chips = (v, op, attr) => op.map(([x, t]) => `<button class="chip ${v === x ? 'on' : ''}" data-${attr}="${x}">${t}</button>`).join('');
@@ -1333,16 +1333,16 @@ function qvPuntos(k, c) {
   // Compacto: el orden es un solo botón que va cambiando; filtros y marcas en una fila con el número dentro.
   const ORD = [['itin', '📅', 'día'], ['tipo', '🏷️', 'tipo'], ['az', '🔤', 'A-Z']], oi = Math.max(0, ORD.findIndex(x => x[0] === qvOrden)), sig = ORD[(oi + 1) % ORD.length][0];
   const fil = [['todos', 'Todos', todos.length], ['itin', '📅', cuenta('itin')], ['lp', 'LP', cuenta('lp')], ['otros', 'Otros', cuenta('otros')]].filter(([x, , n]) => n || x === qvFiltro);
-  return `<div class="qv-ctrl"><div class="chips qv-fila"><button class="chip qv-ord" data-qvo="${sig}" title="Orden: ${ORD[oi][2]} (tocar para cambiar)">⇅${ORD[oi][1]}</button><span class="qv-sep"></span>${fil.map(([x, t, n]) => `<button class="chip ${qvFiltro === x ? 'on' : ''}" data-qvf="${x}">${t} <small>${n}</small></button>`).join('')}<span class="qv-sep"></span><button class="chip ${qvMarca === 'si' ? 'on' : ''}" data-qvm="si" title="Marcados">✅ <small>${vis}</small></button><button class="chip ${qvMarca === 'no' ? 'on' : ''}" data-qvm="no" title="No marcados">☐ <small>${base.filter(M.no).length}</small></button></div></div>
+  return `<div class="qv-ctrl"><div class="chips qv-fila"><button class="chip qv-ord" data-qvo="${sig}" title="Orden: ${ORD[oi][2]} (tocar para cambiar)">⇅${ORD[oi][1]}</button><span class="qv-sep"></span>${fil.map(([x, t, n]) => `<button class="chip ${qvFiltro === x ? 'on' : ''}" data-qvf="${x}">${t} <small>${n}</small></button>`).join('')}<span class="qv-sep"></span><button class="chip ${qvMarca === 'si' ? 'on' : ''}" data-qvm="si" title="Marcados">✅ <small>${vis}</small></button>${(n => n || qvMarca === 'qi' ? `<button class="chip ${qvMarca === 'qi' ? 'on' : ''}" data-qvm="qi" title="Quiero ir">🔖 <small>${n}</small></button>` : '')(base.filter(M.qi).length)}<button class="chip ${qvMarca === 'no' ? 'on' : ''}" data-qvm="no" title="No marcados">☐ <small>${base.filter(M.no).length}</small></button></div></div>
     ${ls.length ? grupos.map(([t, os]) => `${t ? `<div class="qv-grupo">${esc(t)}</div>` : ''}${os.map(o => fichaQV(o.l, k, { desc: o.desc, plan: o.plan, clase: o.l.top ? 'top' : '',
       extra: o.l.tipo && esLP(o.l) ? `<div class="lp-meta"><span class="lp-tipo">${esc(o.l.tipo)}</span>${o.l.top ? '<span class="lp-top">★ Elección del autor</span>' : ''}${ver(o.l)}</div>` : '' })).join('')}`).join('') : '<p class="muted">Nada con este filtro.</p>'}`;
 }
 function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) {
   const h = hKey(l), key = 'qv:' + h, w = l.sinFoto ? '' : (l.wiki || wikiDe(l) || (l.ko ? 'ko:' + l.ko : '')), ic = icSitio((l.tipo || '') + ' ' + l.es);
-  return `<details class="qv ${clase} ${hecho(l, k) ? 'hecho-card' : noVamos(l) ? 'novamos-card' : ''}" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}>
+  return `<details class="qv ${clase} ${claseCard(l, k)}" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}>
     <summary>${w ? `<div class="foto mini qv-f" data-wiki="${esc(w)}"><span>${ic}</span></div>` : `<div class="foto mini qv-f vacia"><span>${ic}</span></div>`}
       <span class="qv-cab"><b>${esc(l.es)}${ojoSup(l)}${lpPill(l)}</b><small>${plan ? `<span class="qv-dia">📅 ${fmtCorto(plan.fecha)}</span> ` : ''}${esc(breve(desc || l.nota || l.desc))}</small></span>
-      <button class="hd-ck qv-ck ${hecho(l, k) ? 'on' : noVamos(l) ? 'no' : ''}" data-hk="${esc(hKey(l))}" data-v="${sigHk(l, k)}" aria-label="Visitado / No vamos">${hecho(l, k) ? '✓' : noVamos(l) ? '✗' : ''}</button></summary>
+      <button class="hd-ck qv-ck ${estHk(l, k)}" data-hk="${esc(hKey(l))}" data-v="${sigHk(l, k)}" aria-label="Quiero ir / Visitado / No vamos">${hecho(l, k) ? '✓' : noVamos(l) ? '✗' : quiero(l) ? '🔖' : ''}</button></summary>
     <div class="qv-cuerpo">${w ? `<div class="foto" data-wiki="${esc(w)}"><span>📷</span></div><div class="credito" data-cred="${esc(w)}"></div>` : ''}
       <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}${btnGps(l)}</div>${estrBox(hKey(l), l.es)}
       <div class="ko-s">${esc(l.ko || '')}${distHotel(l, k)}</div>${extra}${ojoLinea(ojoDe(null, l.ko))}${horarioLinea(l)}
@@ -1682,7 +1682,7 @@ function mpDibujar(el, m) {
   if (hilos.length) h += `<svg class="mp-hilo" width="${W}" height="${H}">${hilos.map(o => `<line x1="${o.x0.toFixed(1)}" y1="${o.y0.toFixed(1)}" x2="${o.x.toFixed(1)}" y2="${o.y.toFixed(1)}"/>`).join('')}</svg>`
     + [...new Set(hilos.map(o => o.x0.toFixed(0) + ',' + o.y0.toFixed(0)))].map(k => { const [x, y] = k.split(','); return `<span class="mp-ancla" style="left:${x}px;top:${y}px"></span>`; }).join('');
   vis.sort((a, b) => orden[a.p.capa] - orden[b.p.capa]).forEach(({ p, i, x, y }) => {
-    h += `<button class="mp-pt c-${p.capa} ${p.hecho ? 'hecho' : p.l && p.capa !== 'hotel' && noVamos(p.l) ? 'novamos' : p.pasado ? 'pasado' : ''} ${m.sel === i ? 'sel' : ''}" data-mpp="${i}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${p.num != null ? `<b>${esc(p.num)}</b>` : p.ic}</button>`;
+    h += `<button class="mp-pt c-${p.capa} ${p.hecho ? 'hecho' : p.l && p.capa !== 'hotel' && noVamos(p.l) ? 'novamos' : p.l && p.capa !== 'hotel' && quiero(p.l) ? 'quiero' : p.pasado ? 'pasado' : ''} ${m.sel === i ? 'sel' : ''}" data-mpp="${i}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${p.num != null ? `<b>${esc(p.num)}</b>` : p.ic}</button>`;
   });
   if (m.yo) { const [x, y] = P(m.yo); h += `<span class="mp-yo" style="left:${x}px;top:${y}px"></span>`; }
   const capa = el.querySelector('.mp-capa'); capa.style.transform = ''; capa.innerHTML = h;
@@ -2652,10 +2652,14 @@ function marcarHecho(key, v) {
   saveUser();
 }
 const tick = (l, k) => hecho(l, k) ? ' <span class="badge ok">✅</span>' : '';
-// Casilla de tres pasos: vacía → ✓ visitado → ✗ no vamos (no nos interesa) → vacía. user.noVamos[hKey] = fecha.
+// Casilla de cuatro pasos (v288): vacía → 🔖 quiero ir → ✓ visitado → ✗ no vamos (no nos interesa) → vacía.
+// user.quiero[hKey] y user.noVamos[hKey] = fecha; visitado, en user.hecho.
 const noVamos = l => !!(u().noVamos || {})[hKey(l)];
-const sigHk = (l, k) => hecho(l, k) ? 'x' : noVamos(l) ? 0 : 1;
-const btnHecho = (l, k) => `<button class="hk ${hecho(l, k) ? 'on' : noVamos(l) ? 'no' : ''}" data-hk="${esc(hKey(l))}" data-v="${sigHk(l, k)}" aria-label="Visitado / No vamos">${hecho(l, k) ? '✅ Visitado' : noVamos(l) ? '✖️ No vamos' : '☐ Visitado'}</button>`;
+const quiero = l => !!(u().quiero || {})[hKey(l)];
+const sigHk = (l, k) => hecho(l, k) ? 'x' : noVamos(l) ? 0 : quiero(l) ? 1 : 'q';
+const estHk = (l, k) => hecho(l, k) ? 'on' : noVamos(l) ? 'no' : quiero(l) ? 'qi' : '';
+const claseCard = (l, k) => hecho(l, k) ? 'hecho-card' : noVamos(l) ? 'novamos-card' : quiero(l) ? 'quiero-card' : '';
+const btnHecho = (l, k) => `<button class="hk ${estHk(l, k)}" data-hk="${esc(hKey(l))}" data-v="${sigHk(l, k)}" aria-label="Quiero ir / Visitado / No vamos">${hecho(l, k) ? '✅ Visitado' : noVamos(l) ? '✖️ No vamos' : quiero(l) ? '🔖 Quiero ir' : '☐ Visitado'}</button>`;
 
 
 // ---------- Comer (data/comer.json + lugares propios) ----------
@@ -3455,8 +3459,9 @@ document.addEventListener('click', e => {
   if (avb) { e.preventDefault(); const U = u(), o = U.avisosOk = U.avisosOk || {}, a = avb.dataset.avok; if (o[a]) delete o[a]; else o[a] = todayISO(); saveUser(); render(); return; }
   const hk = e.target.closest('button[data-hk]');
   if (hk) { e.preventDefault(); const h = hk.dataset.hk, x = hk.dataset.v === 'x', v = hk.dataset.v === '1';
-    if (!h.startsWith('tras:')) { const U = u(); U.noVamos = U.noVamos || {}; if (x) U.noVamos[h] = todayISO(); else delete U.noVamos[h]; }
-    marcarHecho(h, v); if (x) saveUser();
+    const q = hk.dataset.v === 'q';
+    if (!h.startsWith('tras:')) { const U = u(); U.noVamos = U.noVamos || {}; U.quiero = U.quiero || {}; if (x) U.noVamos[h] = todayISO(); else delete U.noVamos[h]; if (q) U.quiero[h] = todayISO(); else delete U.quiero[h]; }
+    marcarHecho(h, v); if (x || q) saveUser();
     if (v) Object.keys(abiertos).concat('qv:' + h).forEach(k => { if (k === 'qv:' + h || k.endsWith('|' + h) || (h.startsWith('tras:') && k.startsWith('trd:'))) abiertos[k] = false; });
     render(); return; }
   const vf = e.target.closest('[data-verif]');
