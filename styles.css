@@ -1758,5 +1758,8 @@ button.hk.qi { color: #8a6200 !important; border-color: #d4a017 !important; back
 details.quiero-card { box-shadow: inset 4px 0 0 #d4a017; }
 .mp-pt.quiero { box-shadow: 0 0 0 3px #d4a017 !important; }
 .mp-pt.quiero::after { content: "🔖"; position: absolute; right: -7px; top: -7px; font-size: 12px; line-height: 1; }
+/* v293: títulos de las paradas de Hoy más grandes y con el color de la pestaña (la línea del hangul, algo más pegada para no crecer). */
+.sitios-dia details.sd > summary > b { display: inline-block; font-size: 1.22rem; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; color: var(--acc); margin-top: 2px; }
+.sitios-dia details.sd > summary .ko-s { margin-top: 0; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v292"; }
+:root { --css-ver: "v293"; }
