@@ -342,6 +342,7 @@ Caché del service worker: corea-v290
 - v288: la casilla de los sitios tiene cuatro pasos: vacía → 🔖 Quiero ir → ✓ Visitado → ✗ No vamos → vacía (user.quiero[hKey], va al pasar marcas). 🔖 en dorado en Planes, Hoy y Miscelánea; ficha con filo dorado; en el mapa, anillo dorado y 🔖 en la esquina; filtro 🔖 en Puntos de interés (si hay alguno). Icono 🔖 = Quiero, el mismo significado que en Comer.
 - v289: al tocar la pestaña Ruta, baja sola hasta la línea del día de hoy (dentro de su estancia, que se abre si estaba plegada), a un tercio de la pantalla. Antes o después del viaje se queda arriba.
 - v290: si hoy hay traslado, Ruta se abre en el recuadro del traslado (arriba de la pantalla), no en la estancia de debajo.
+- (sin versión) Hotel de Jeonju: sus coordenadas privadas estaban desplazadas y la ruta 🛣️ de Naver no llegaba a él. Corregidas solo en el trip.json del usuario (nada al repo).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
