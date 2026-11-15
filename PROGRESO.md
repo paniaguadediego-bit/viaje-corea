@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v285
+Caché del service worker: corea-v286
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -337,6 +337,7 @@ Caché del service worker: corea-v285
 - v283: 🚉 Estaciones en Planes (botón tras Hotel, solo en ciudades con alguna) y capa en Mapas (verde azulado, enlaza con Planes → Estaciones): estaciones de tren, terminales de autobús, la parada del bus 6015 y el aeropuerto de Incheon. Lista pública ESTACIONES en contenido.js (coordenadas en coords.json); la app solo enseña las que nombran los traslados o vuelos del trip.json, con sus fechas, distancia al hotel, 🧭 🌐 y 📌. [Supuesto] La Estación de Seúl sale por la opción B (AREX) del día 19.
 - v284: en Planes → Hotel, el mismo hotel en dos estancias (Starria, Seúl a la ida y a la vuelta) sale en una sola ficha con las dos fechas (se agrupa por nombre; manda la primera estancia para nota y estrellas).
 - v285: nuevo apartado 💇 Peluquería en Planes (cat 'pelu' de PLANES, entre PC y Ropa; también capa Miscelánea del mapa) con EcoJardin Myeongdong (에코쟈뎅 명동, 3.ª planta de 8-10 Myeongdong 8-gil; coordenadas aproximadas, precio VERIFICAR). En Planes, el icono de la ciudad va en la misma fila que su nombre.
+- v286: en Planes, los apartados sin nada en esa ciudad ya no desaparecen: salen apagados (gris, borde discontinuo, no se pueden tocar). Si se cambia a una ciudad donde el apartado abierto está vacío, se vuelve a Puntos de interés.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

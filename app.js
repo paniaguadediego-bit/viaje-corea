@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v285';
+const VERSION = 'v286';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1573,6 +1573,7 @@ function viewMapas() {
   const botones = botonesCiudad(); if (!botones) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
   return `<h2>🗺️ Mapas</h2>${botones}<div class="mapas-ciudad" style="${varsTema(ciudadSel)}">${mapaCiudadHTML(ciudadSel)}</div>`;
 }
+const hayCat = (k, x) => x === 'platos' ? platosDe(k, true) : x === 'estac' ? estacionesViaje(k).length : !CATS_MISC.has(x) || (typeof PLANES !== 'undefined' && PLANES.some(p => p.ciudad === k && p.cat === x)) || (x === 'lol' && PC_BUSQ[k]);
 function viewCiudades() {
   if (exSub === 'planes') exSub = planesCat || 'curioso';
   if (!EX_SUBS.some(([x]) => x === exSub)) exSub = 'puntos';
@@ -1580,6 +1581,7 @@ function viewCiudades() {
   if (!uniq.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
   const botones = botonesCiudad();
   const i = uniq.findIndex(c => ck(c.nombre) === ciudadSel), c = uniq[i], k = ciudadSel, t = tema(k);
+  if (!hayCat(k, exSub)) exSub = 'puntos'; // v286: al cambiar a una ciudad donde ese apartado está vacío
   const fechas = arr(trip.ciudades).filter(o => ck(o.nombre) === k).map(o => `${fmtCorto(o.desde)} → ${fmtCorto(o.hasta)}`).join(' · ');
   const h = typeof HISTORIA !== 'undefined' && HISTORIA[k];
   return buscadorHTML('qcs', qCiu, 'Buscar sitio en todas las ciudades', resCiudades(qCiu)) + botones + `<div class="card ciudad" id="c-${esc(c.id)}" style="${varsTema(k)}">
@@ -1593,7 +1595,9 @@ function viewCiudades() {
       <div class="ciudad-fechas">${fechas}</div>${linkHist(k)}
     </div>
     ${muchoOjo(k, 'planes')}
-    <div class="exsubs7">${EX_SUBS.filter(([x]) => x === 'platos' ? platosDe(k, true) : x === 'estac' ? estacionesViaje(k).length : !CATS_MISC.has(x) || (typeof PLANES !== 'undefined' && PLANES.some(p => p.ciudad === k && p.cat === x)) || (x === 'lol' && PC_BUSQ[k])).map(([x, tt]) => { const [ic, ...r] = tt.split(' '); return `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>
+    <div class="exsubs7">${EX_SUBS.map(([x, tt]) => { const hay = hayCat(k, x);
+      const [ic, ...r] = tt.split(' '); // v286: sin nada en esta ciudad = botón apagado (se ve, pero no se puede tocar).
+      return hay ? `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>` : `<button class="sec vacio" disabled aria-disabled="true" title="Nada apuntado en esta ciudad"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>
     ${exSub === 'puntos' ? rutasLP24(k) : ''}
     ${CATS_MISC.has(exSub) ? planesDe(k, exSub) : ''}${exSub === 'platos' ? platosDe(k) : ''}${exSub === 'hotel' ? hotelesDe(k) : ''}${exSub === 'estac' ? estacionesDe(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
     ${exSub !== 'puntos' ? '</div>' : ''}${exSub === 'puntos' ? `
