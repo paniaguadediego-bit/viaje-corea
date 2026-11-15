@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v283';
+const VERSION = 'v284';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1052,7 +1052,10 @@ function estacionesDe(k) {
 function hotelesDe(k) {
   const hs = arr(trip.alojamientos).filter(a => ck(a.ciudad) === k);
   if (!hs.length) return '<p class="muted centro">No hay alojamiento apuntado en esta ciudad.</p>';
-  return hs.map(a => `<div class="muted centro hotel-fechas">📅 ${esc(String(a.fechas || '').replace(/(\d{4})-(\d\d)-(\d\d)/g, (m0, y, mo, d) => fmtCorto(`${y}-${mo}-${d}`)))}${a.noches ? ` · ${a.noches} ${a.noches == 1 ? 'noche' : 'noches'}` : ''}</div>${alojCard(a, false)}`).join('');
+  // v284: el mismo hotel en dos estancias (Seúl a la ida y a la vuelta) = una sola ficha con las dos fechas.
+  const fch = a => `📅 ${esc(String(a.fechas || '').replace(/(\d{4})-(\d\d)-(\d\d)/g, (m0, y, mo, d) => fmtCorto(`${y}-${mo}-${d}`)))}${a.noches ? ` · ${a.noches} ${a.noches == 1 ? 'noche' : 'noches'}` : ''}`;
+  const grupos = new Map(); hs.forEach(a => { const g = norm(a.nombre) || a.id; if (!grupos.has(g)) grupos.set(g, []); grupos.get(g).push(a); });
+  return [...grupos.values()].map(g => `<div class="muted centro hotel-fechas">${g.map(fch).join('<br>')}</div>${alojCard(g[0], false)}`).join('');
 }
 // Hoy: hotel en una línea, como las paradas (🏯 lleva a Planes → Hotel; 🧭 y 🌐 para llegar).
 function hotelLinea(a, etiqueta) {
