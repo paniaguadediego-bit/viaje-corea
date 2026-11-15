@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v289
+Caché del service worker: corea-v290
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -341,6 +341,7 @@ Caché del service worker: corea-v289
 - v287: los avisos (trip.avisos) salen de Hoy y pasan a Más → 📢 Avisos (tras Verificar), con el número de pendientes en el icono, casilla para tacharlos (user.avisosOk) y los hechos al final.
 - v288: la casilla de los sitios tiene cuatro pasos: vacía → 🔖 Quiero ir → ✓ Visitado → ✗ No vamos → vacía (user.quiero[hKey], va al pasar marcas). 🔖 en dorado en Planes, Hoy y Miscelánea; ficha con filo dorado; en el mapa, anillo dorado y 🔖 en la esquina; filtro 🔖 en Puntos de interés (si hay alguno). Icono 🔖 = Quiero, el mismo significado que en Comer.
 - v289: al tocar la pestaña Ruta, baja sola hasta la línea del día de hoy (dentro de su estancia, que se abre si estaba plegada), a un tercio de la pantalla. Antes o después del viaje se queda arriba.
+- v290: si hoy hay traslado, Ruta se abre en el recuadro del traslado (arriba de la pantalla), no en la estancia de debajo.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

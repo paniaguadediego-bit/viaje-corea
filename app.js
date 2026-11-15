@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v289';
+const VERSION = 'v290';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1140,7 +1140,7 @@ function trasladoCard(t, pleg = false, sinFecha = false) {
   const plHecho = (t.fecha && t.fecha < todayISO()) || !!u().hecho['tras:' + (t.id || t.fecha)], plK = 'trr:' + (t.id || t.fecha) + (plHecho ? ':h' : '');
   const d = new Date(String(t.fecha) + 'T12:00:00');
   const dia = isNaN(d) ? esc(t.fecha || '') : `<b>${d.getDate()}</b><small>${d.toLocaleDateString('es-ES', { month: 'short' })}</small><small>${d.toLocaleDateString('es-ES', { weekday: 'short' })}</small>`;
-  return `<div class="tl ${pend ? 'pend' : isOk(t) ? 'ok' : ''} ${t.fecha && t.fecha < todayISO() ? 'pasado' : ''} ${sinFecha ? 'sin-fecha' : ''}">
+  return `<div class="tl ${pend ? 'pend' : isOk(t) ? 'ok' : ''} ${t.fecha && t.fecha < todayISO() ? 'pasado' : ''} ${sinFecha ? 'sin-fecha' : ''}" data-tlf="${esc(t.fecha || '')}">
     ${sinFecha ? '' : `<div class="tl-fecha">${dia}</div>`}
     <div class="tl-card card">
       ${pleg ? `<details class="tl-pl" data-key="${esc(plK)}" ${abierto(plK, !plHecho) ? 'open' : ''}><summary>` : ''}<div class="tl-top"><span class="tl-ic" title="${nom}">${ic}</span><div class="tl-ruta"><b>${esc(t.de)}</b><span class="tl-flecha">↓</span><b>${esc(t.a)}</b></div></div>${pleg ? '</summary>' : ''}
@@ -1233,7 +1233,10 @@ function estanciaCard(c) {
 }
 
 // v289: al entrar en Ruta, se baja hasta el día de hoy (su línea dentro de la estancia), centrado en la pantalla.
+// v290: si hoy hay traslado, se va a su recuadro (arriba de la pantalla), que es lo primero del día.
 function rutaAHoy() {
+  const tr = document.querySelector(`.tl[data-tlf="${todayISO()}"]`);
+  if (tr) { const cab = (document.querySelector('header') || { offsetHeight: 60 }).offsetHeight + 8; window.scrollTo(0, Math.max(0, tr.getBoundingClientRect().top + window.scrollY - cab)); return; }
   const el = document.querySelector('.dad-dia.on'); if (!el) return;
   const det = el.closest('details'); if (det && !det.open) det.open = true;
   const y = el.getBoundingClientRect().top + window.scrollY - window.innerHeight / 3; window.scrollTo(0, Math.max(0, y));
