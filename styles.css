@@ -1808,4 +1808,4 @@ select.hk-sel option { color: #222; background: #fff; }
 .t-h small.t-p { font-size: .56rem; font-weight: 800; letter-spacing: -.02em; }
 .dia2 .dia-banner { aspect-ratio: 2.3 / 1; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v306"; }
+:root { --css-ver: "v307"; }
