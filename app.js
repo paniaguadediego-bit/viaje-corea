@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v298';
+const VERSION = 'v299';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -898,7 +898,7 @@ function tramo(o, dst, nO, nD, op = {}) {
     const pie = c.k <= 3 ? Math.max(2, Math.round(c.k * 1.3 / 4.5 * 60)) : null, ops = [];
     if (pie) ops.push(['pie', `🚶 ${pie} min`]); if (r) ops.push(['metro', `🚇 ${r.min} min`]); if (c.k > 0.8) ops.push(['taxi', `🚕 ${c.taxi || Math.round(c.k * 1.3 / (c.k > 8 ? 40 : 22) * 60 + 8)} min`]); if (st) ops.push(['bus', '🚌 bus']);
     const chips = ops.map(([m, t]) => `<span class="tr-op ${m === c.modo ? 'mejor' : ''}">${t}</span>`).join('');
-    return `<details class="tramo tramo-${c.modo} tramo-pl" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary><span class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b> <small class="muted">· ${fmtDist(c.k)}</small> <button class="irmap tr-nv" data-irab="${o[0]},${o[1]}|${esc(nO || '')}|${dst[0]},${dst[1]}|${esc(nD || '')}|${c.modo === 'pie' ? 'walk' : 'public'}" title="Este tramo en Naver Map (de parada a parada)" aria-label="Este tramo en Naver">🛣️</button></span><span class="tr-ops">${chips}</span></summary>${sinTaxi}${pasos}${!sinTaxi && !pasos ? `<div class="muted mini-nota">${txt}</div>` : ''}</details>`; }
+    return `<details class="tramo tramo-${c.modo} tramo-pl ${op.hecho ? 'tramo-hecho' : ''}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary><span class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b> <small class="muted">· ${fmtDist(c.k)}</small> <button class="irmap tr-nv" data-irab="${o[0]},${o[1]}|${esc(nO || '')}|${dst[0]},${dst[1]}|${esc(nD || '')}|${c.modo === 'pie' ? 'walk' : 'public'}" title="Este tramo en Naver Map (de parada a parada)" aria-label="Este tramo en Naver">🛣️</button></span><span class="tr-ops">${chips}</span></summary>${sinTaxi}${pasos}${!sinTaxi && !pasos ? `<div class="muted mini-nota">${txt}</div>` : ''}</details>`; }
   return `<div class="tramo tramo-${c.modo}">${op.hasta ? `<div class="tramo-hasta">⬇️ Hasta <b>${esc(op.hasta)}</b></div>` : ''}${fila}${sinTaxi}${pasos}</div>`;
 }
 // Todo el día en Naver Map: hotel → paradas → hotel. Naver admite hasta 5 paradas intermedias por enlace
@@ -976,7 +976,7 @@ function sitiosDia(d) {
   const num = {}, naverTras = {}; // número de cada parada (el del mapa) y tramos de Naver que salen tras ella
   const fila = (l, extra) => {
     const h = hKey(l), mas = D[h.slice(2)] || D[h], txt = mas || l.desc || l.nota || G[h.slice(2)] || '', c = coordsLugar(l);
-    const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es, { hasta: l.es, aK: hKey(l), key: d.fecha + '|' + h, hecho: hecho(l, k) }) : '';
+    const t = c && prev ? tramo(prev, c, prevN, l.ko || l.es, { hasta: l.es, aK: hKey(l), key: d.fecha + '|' + h, hecho: hecho(l, k) || noVamos(l) }) : '';
     if (c) { prev = c; prevN = l.ko || l.es; }
     const n = num[h];
     // Ficha plegable: se pliega sola al marcarla como visitada (y la foto, a la derecha, arriba).

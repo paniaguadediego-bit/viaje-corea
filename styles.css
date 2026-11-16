@@ -1782,5 +1782,16 @@ details.audioguia .ag-play { margin: 6px 0 2px; }
 /* v298: sobre la foto, la audioguía en caja oscura (el texto de esas fichas va en blanco). */
 .sitios-dia details.sd.con-fondo details.audioguia { background: rgba(10,14,22,.72); border-color: rgba(255,255,255,.25); color: #fff; }
 .sitios-dia details.sd.con-fondo details.audioguia p, .sitios-dia details.sd.con-fondo details.audioguia summary, .sitios-dia details.sd.con-fondo details.audioguia b, .sitios-dia details.sd.con-fondo details.audioguia small { color: #fff !important; text-shadow: none !important; opacity: 1; }
+/* v299: paradas visitadas (o ✗ no vamos) y el tramo que lleva a ellas, compactados al mínimo: una línea fina. */
+.sitios-dia details.sd:is(.hecho-card,.novamos-card):not([open]) { padding: 4px 10px !important; margin: 3px 0 !important; min-height: 0 !important; background-image: none !important; background-color: color-mix(in srgb, var(--ok, #2e7d32) 10%, var(--card)) !important; box-shadow: none !important; }
+.sitios-dia details.sd:is(.hecho-card,.novamos-card):not([open]) > summary { display: flex !important; align-items: center; gap: 6px; flex-wrap: nowrap; padding: 0 !important; min-height: 0 !important; }
+.sitios-dia details.sd:is(.hecho-card,.novamos-card):not([open]) > summary > :is(.foto, .sd-qv, .irmap, .sd-lp, br, .ko-s, .sug-etq) { display: none !important; }
+.sitios-dia details.sd:is(.hecho-card,.novamos-card):not([open]) > summary > b { font-size: .95rem !important; font-weight: 700 !important; margin: 0 !important; color: inherit !important; text-shadow: none !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+.sitios-dia details.sd:is(.hecho-card,.novamos-card):not([open]) > summary .hk { flex: none; height: 22px !important; min-height: 22px !important; font-size: .68rem !important; padding: 0 6px !important; }
+.sitios-dia details.sd:is(.hecho-card,.novamos-card):not([open]) > summary::after { position: static !important; padding: 0 6px !important; font-size: .68rem !important; flex: none; }
+.sitios-dia details.sd.con-fondo:is(.hecho-card,.novamos-card):not([open]) > summary b { color: var(--ink, inherit) !important; }
+.sitios-dia details.tramo.tramo-hecho:not([open]) { padding: 1px 10px !important; margin: 0 auto !important; min-height: 0 !important; border-width: 1px !important; border-style: dotted !important; opacity: .55; width: 70%; }
+.sitios-dia details.tramo.tramo-hecho:not([open]) > summary { padding: 0 !important; min-height: 0 !important; font-size: .72rem; }
+.sitios-dia details.tramo.tramo-hecho:not([open]) > summary > :not(.tramo-hasta), .sitios-dia details.tramo.tramo-hecho:not([open]) .tr-nv { display: none !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v298"; }
+:root { --css-ver: "v299"; }

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v298
+Caché del service worker: corea-v299
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -351,6 +351,7 @@ Caché del service worker: corea-v298
 - v296: paseo de la LP 2024 de Jeonju completo como paradas: nuevos sitios «Mapa mural de la antigua Jeonju» (3) y «Café Jeonmang (azotea)» (13) en CATALOGO, y coordenadas de las 13 paradas sacadas del plano de la p. 212 (escala de 500 m; Biblioteca Daga mucho más al oeste). Día 16 del trip.json privado reescrito en el orden del paseo (desayuno en Nambu, 1→13, comida en Veteran o Gajok, Omokdae al atardecer, final en Jeonmang).
 - v297 (prueba para futuras apps): 🎧 Audioguía. audioguia.js (precacheado) con AUDIOGUIA: 31 paradas que quedan del viaje (Jeonju 16; Seúl 17 y 18), cada una en tres partes (por qué importa, qué ver, historia), escritas para oírse. Desplegable «🎧 Audioguía · n min» en la parada de Hoy y en la ficha de Planes, con ▶️ Escuchar / ⏹ Parar (speechSynthesis es-ES, sin conexión si el móvil tiene la voz española). [Supuesto] «Reproducir» = escuchar en voz alta con la voz del móvil.
 - v298: en las paradas con foto de fondo, la audioguía iba en caja blanca con el texto en blanco (no se leía). Ahora va en caja oscura semitransparente con texto blanco, en claro y en oscuro.
+- v299: en Hoy, cada parada marcada ✓ Visitado (o ✗ No vamos) y el tramo que lleva a ella se compactan a una línea fina (casilla, número, nombre y «más»; sin foto, botones ni hangul; el tramo, solo «⬇️ Hasta X», punteado y atenuado). Al abrirla («más») se ve entera. Así queda sitio para lo que falta. [Supuesto] También con ✗ No vamos.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
