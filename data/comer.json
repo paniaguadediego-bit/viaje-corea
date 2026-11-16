@@ -2972,5 +2972,25 @@
 "fuente": "Google (captura del usuario)",
 "fecha": "2026-11"
 }
+},
+{
+"id": "p-millennium-jjimdak",
+"ciudad": "andong",
+"nombre": "Millennium Andong Jjimdak",
+"ko": "밀레니엄안동찜닭",
+"tipo": "restaurante",
+"plato": "Andong jjimdak (pollo estofado con fideos de boniato)",
+"direccion": "9 Beonyeong-gil, Junggu-dong, Andong (calle del jjimdak, junto al mercado viejo de Andong) · ubicación aproximada",
+"horario": "Hasta las 21:00; abre a las 10:00 (Google, nov. 2026)",
+"precio": "10.000-20.000 ₩ por persona (Google)",
+"fuente": "propio",
+"url": null,
+"nota": "Comimos aquí en Andong. Uno de los locales clásicos de la calle del jjimdak del mercado viejo; en el cartel, «원조» (el original) y 250 plazas con reserva.",
+"opiniones": {
+"v": 4.3,
+"n": 485,
+"fuente": "Google (captura del usuario)",
+"fecha": "2026-11"
+}
 }
 ]
