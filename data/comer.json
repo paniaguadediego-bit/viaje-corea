@@ -3032,5 +3032,25 @@
 "fuente": "Google (captura del usuario)",
 "fecha": "2026-11"
 }
+},
+{
+"id": "p-did-kkotdongsan",
+"ciudad": "jeonju",
+"nombre": "DID (café, sucursal Kkotdongsan)",
+"ko": "디드 꽃동산점",
+"tipo": "café",
+"plato": "café de especialidad (latte) y affogato",
+"direccion": "2 Gonjisan 3-gil, Wansan-gu, Jeonju (barrio de Dongwansan-dong, al otro lado del río desde el mercado de Nambu) · ubicación aproximada",
+"horario": "Abre a las 7:00 (Google, nov. 2026; cierre VERIFICAR)",
+"precio": "1-10.000 ₩ por persona (Google)",
+"fuente": "propio",
+"url": null,
+"nota": "Estuvimos en Jeonju. Café pequeño y luminoso de especialidad, junto al río y cerca de Seohak-dong.",
+"opiniones": {
+"v": 4.8,
+"n": 55,
+"fuente": "Google (captura del usuario)",
+"fecha": "2026-11"
+}
 }
 ]

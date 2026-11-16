@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v312
+Caché del service worker: corea-v313
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -365,6 +365,7 @@ Caché del service worker: corea-v312
 - v310: en Planes, 🍲 Restaurantes / ☕ Cafeterías / 🍶 Bares / 🛒 Mercados / 🥢 Platos típicos salen al mismo nivel que Puntos de interés, Hotel, etc. (12 botones en 3 filas de 4; el botón Comer desaparece; los enlaces a «Comer» del mapa o del buscador abren el apartado del tipo del sitio). Lavandería quitada del todo (botón, fichas de PLANES, búsquedas de Naver y el 🧺 de «Alrededor»).
 - v311: el resto de apartados de Planes con fichas plegables como Comer (fichaPl en app.js; plegadas por defecto, ▸/▾): Curioso, PC y Ropa (icono, nombre, hangul, distancia y el desplegable de estado en la cabecera), Hotel (nombre y fechas), Estaciones (nombre, hangul y fechas), Eventos (título, Gratis y fechas) y «Qué probar» de Platos típicos. Puntos de interés ya lo era.
 - v312: Planes → Seúl → 👕 Ropa: SPAO Myeongdong ya estaba (a ≈500 m del hostal); se añade Lewking (no se encontró tienda ni dirección en Seúl; ficha sin ubicación con búsqueda en Naver por el nombre; [Supuesto] nombre tal cual lo escribió el usuario).
+- v313: Jeonju → ☕ Cafeterías: DID (디드 꽃동산점), 2 Gonjisan 3-gil, donde estuvieron; datos de la captura de Google (4,8 ★, 55 reseñas; 1-10.000 ₩; abre a las 7:00). Ubicación aproximada, al sur del río frente al mercado de Nambu.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
