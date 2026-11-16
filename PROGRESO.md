@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v300
+Caché del service worker: corea-v301
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -353,6 +353,7 @@ Caché del service worker: corea-v300
 - v298: en las paradas con foto de fondo, la audioguía iba en caja blanca con el texto en blanco (no se leía). Ahora va en caja oscura semitransparente con texto blanco, en claro y en oscuro.
 - v299: en Hoy, cada parada marcada ✓ Visitado (o ✗ No vamos) y el tramo que lleva a ella se compactan a una línea fina (casilla, número, nombre y «más»; sin foto, botones ni hangul; el tramo, solo «⬇️ Hasta X», punteado y atenuado). Al abrirla («más») se ve entera. Así queda sitio para lo que falta. [Supuesto] También con ✗ No vamos.
 - v300: iconos del mapa aún más pequeños: tamaño completo solo con el zoom máximo (18); 17: 90 %, 16: 80 %, 15: 70 %, 14: 58 %, 13: 48 %, 12 o menos: 40 %.
+- v301: las paradas visitadas compactadas que tenían foto de fondo dejaban el nombre en blanco sobre fondo claro; ahora usan el color de texto normal (oscuro en claro, claro en oscuro).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

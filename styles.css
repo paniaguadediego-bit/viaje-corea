@@ -1789,9 +1789,11 @@ details.audioguia .ag-play { margin: 6px 0 2px; }
 .sitios-dia details.sd:is(.hecho-card,.novamos-card):not([open]) > summary > b { font-size: .95rem !important; font-weight: 700 !important; margin: 0 !important; color: inherit !important; text-shadow: none !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
 .sitios-dia details.sd:is(.hecho-card,.novamos-card):not([open]) > summary .hk { flex: none; height: 22px !important; min-height: 22px !important; font-size: .68rem !important; padding: 0 6px !important; }
 .sitios-dia details.sd:is(.hecho-card,.novamos-card):not([open]) > summary::after { position: static !important; padding: 0 6px !important; font-size: .68rem !important; flex: none; }
-.sitios-dia details.sd.con-fondo:is(.hecho-card,.novamos-card):not([open]) > summary b { color: var(--ink, inherit) !important; }
+/* v301: la parada compactada que tenía foto de fondo conserva el texto blanco: aquí vuelve al color normal. */
+.sitios-dia details.sd.con-fondo:is(.hecho-card,.novamos-card):not([open]) { color: var(--fg) !important; }
+.sitios-dia details.sd.con-fondo:is(.hecho-card,.novamos-card):not([open]) > summary b, .sitios-dia details.sd.con-fondo:is(.hecho-card,.novamos-card):not([open]) > summary .ko-s { color: var(--fg) !important; text-shadow: none !important; }
 .sitios-dia details.tramo.tramo-hecho:not([open]) { padding: 1px 10px !important; margin: 0 auto !important; min-height: 0 !important; border-width: 1px !important; border-style: dotted !important; opacity: .55; width: 70%; }
 .sitios-dia details.tramo.tramo-hecho:not([open]) > summary { padding: 0 !important; min-height: 0 !important; font-size: .72rem; }
 .sitios-dia details.tramo.tramo-hecho:not([open]) > summary > :not(.tramo-hasta), .sitios-dia details.tramo.tramo-hecho:not([open]) .tr-nv { display: none !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v300"; }
+:root { --css-ver: "v301"; }
