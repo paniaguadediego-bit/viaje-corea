@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v299';
+const VERSION = 'v300';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1716,7 +1716,7 @@ function mpDibujar(el, m) {
   const vis = m.pts.map((p, i) => { const [x, y] = P(p.c); return { p, i, x, y, x0: x, y0: y, w: orden[p.capa] >= 4 ? 0.25 : 1 }; })
     .filter(o => o.x > -40 && o.y > -40 && o.x < W + 40 && o.y < H + 40);
   // v295: con poco zoom, iconos más pequeños (y la distancia mínima entre ellos, igual) para no tapar el mapa.
-  const S = z >= 15 ? 1 : z >= 14 ? 0.8 : z >= 13 ? 0.64 : 0.52, D = 28 * S;
+  const S = ({ 18: 1, 17: 0.9, 16: 0.8, 15: 0.7, 14: 0.58, 13: 0.48 })[Math.round(z)] || (z > 18 ? 1 : 0.4), D = 28 * S; // v300: solo el zoom máximo a tamaño completo
   for (let it = 0; it < 60; it++) {
     let mov = false;
     for (let a = 0; a < vis.length; a++) for (let c = a + 1; c < vis.length; c++) {
