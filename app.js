@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v309';
+const VERSION = 'v310';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1609,17 +1609,20 @@ function abrirAyuda() {
 // Qué ver (antes Explorar y Ciudades): por ciudad, Puntos de interés y Planes. El mapa de cada ciudad va en la pestaña Mapas.
 let ciudadSel = null, historiaAbierta = false, exSub = 'puntos';
 // Desde v223, lo que era Miscelánea se desgrana al mismo nivel: 7 apartados (los de Miscelánea solo si la ciudad tiene algo).
-const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['comer', '🍜 Comer'], ['hotel', '🛏️ Hotel'], ['estac', '🚉 Estaciones'], ['eventos', '🎟️ Eventos'], ['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
-const CATS_MISC = new Set(['curioso', 'servicio', 'lol', 'ropa']);
+// v310: los apartados de Comer (Restaurantes, Cafeterías, Bares, Mercados y Platos típicos) al mismo nivel que el resto; sin Lavandería.
+const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['c-restaurante', '🍲 Restaurantes'], ['c-café', '☕ Cafeterías'], ['c-bar', '🍶 Bares'], ['c-mercado', '🛒 Mercados'], ['platos', '🥢 Platos típicos'], ['hotel', '🛏️ Hotel'], ['estac', '🚉 Estaciones'], ['eventos', '🎟️ Eventos'], ['curioso', '✨ Curioso'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
+const CATS_MISC = new Set(['curioso', 'lol', 'ropa']);
 // Mapas: el mapa de cada ciudad (itinerario, más sitios, Comer, Planes y hotel). Al tocar un icono, su ficha enlaza con Qué ver o Comer.
 function viewMapas() {
   const botones = botonesCiudad(); if (!botones) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
   return `<h2>🗺️ Mapas</h2>${botones}<div class="mapas-ciudad" style="${varsTema(ciudadSel)}">${mapaCiudadHTML(ciudadSel)}</div>`;
 }
-const hayCat = (k, x) => x === 'platos' ? platosDe(k, true) : x === 'estac' ? estacionesViaje(k).length : !CATS_MISC.has(x) || (typeof PLANES !== 'undefined' && PLANES.some(p => p.ciudad === k && p.cat === x)) || (x === 'lol' && PC_BUSQ[k]);
+const hayCat = (k, x) => x.startsWith('c-') ? lugaresComer().some(l => l.ciudad === k && l.tipo === x.slice(2)) : x === 'platos' ? platosDe(k, true) : x === 'estac' ? estacionesViaje(k).length : !CATS_MISC.has(x) || (typeof PLANES !== 'undefined' && PLANES.some(p => p.ciudad === k && p.cat === x)) || (x === 'lol' && PC_BUSQ[k]);
 function viewCiudades() {
-  if (exSub === 'platos') { exSub = 'comer'; comerTipo = 'platos'; } // v309: Platos típicos va dentro de Comer
   if (exSub === 'pelu') exSub = 'curioso';
+  if (exSub === 'servicio') exSub = 'puntos';
+  // «comer» a secas (enlaces del mapa, buscador…): al subapartado del sitio buscado, o Restaurantes.
+  if (exSub === 'comer') { const t = (lugaresComer().find(l => qCom && norm(l.nombre) === norm(qCom)) || {}).tipo || (['restaurante', 'café', 'bar', 'mercado'].includes(comerTipo) ? comerTipo : 'restaurante'); exSub = t === 'plato' ? 'platos' : 'c-' + t; }
   if (exSub === 'planes') exSub = planesCat || 'curioso';
   if (!EX_SUBS.some(([x]) => x === exSub)) exSub = 'puntos';
   const uniq = ciudadesUnicas();
@@ -1644,7 +1647,7 @@ function viewCiudades() {
       const [ic, ...r] = tt.split(' '); // v286: sin nada en esta ciudad = botón apagado (se ve, pero no se puede tocar).
       return hay ? `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>` : `<button class="sec vacio" disabled aria-disabled="true" title="Nada apuntado en esta ciudad"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>
     ${exSub === 'puntos' ? rutasLP24(k) : ''}
-    ${CATS_MISC.has(exSub) ? planesDe(k, exSub) : ''}${exSub === 'hotel' ? hotelesDe(k) : ''}${exSub === 'estac' ? estacionesDe(k) : ''}${exSub === 'eventos' ? eventosCiudad(k) : ''}${exSub === 'comer' ? (comerCiudad = k, viewComer(true)) : ''}
+    ${CATS_MISC.has(exSub) ? planesDe(k, exSub) : ''}${exSub === 'hotel' ? hotelesDe(k) : ''}${exSub === 'estac' ? estacionesDe(k) : ''}${exSub === 'eventos' ? eventosCiudad(k) : ''}${exSub.startsWith('c-') ? (comerCiudad = k, comerTipo = exSub.slice(2), viewComer(true)) : ''}${exSub === 'platos' ? platosDe(k) : ''}
     ${exSub !== 'puntos' ? '</div>' : ''}${exSub === 'puntos' ? `
     ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
       ${INTRO_LP[k].plan ? `<details data-key="lp:${k}" ${abierto("lp:" + k, false) ? "open" : ""}><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
@@ -2514,15 +2517,13 @@ function viewCorea() {
 // ---------- Planes: League of Legends y cosmética ----------
 let planesCat = 'curioso';
 // Orden alfabético (Curioso es además la que se abre por defecto).
-const PCATS = [['curioso', '✨ Curioso'], ['servicio', '🧺 Lavandería'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
+const PCATS = [['curioso', '✨ Curioso'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
 // 🖥️ PC: cibercafés (PC방) junto a los hoteles. No se han encontrado nombres fiables, así que se buscan en Naver por zona.
 const PC_BUSQ = { seul: ['명동 PC방', '회현역 PC방', '충무로 PC방'], busan: ['해운대해수욕장 PC방', '해운대 PC방', '광안리 PC방'] };
 // v253: lavanderías de autoservicio junto al hotel (búsquedas de Naver, porque no hay datos fiables de cada una desde aquí).
 // v257: cafeterías con animales: búsquedas de Naver por zona (en internet no hay datos fiables y actuales de cada una).
 const ANIMAL_BUSQ = { busan: ['해운대 고양이카페', '광안리 고양이카페', '서면 고양이카페', '해운대 강아지카페'], seul: ['명동 고양이카페', '홍대 동물카페'], jeonju: ['전주 고양이카페'] };
 const animalBusca = k => ANIMAL_BUSQ[k] ? `<div class="card guia-txt"><b>🐱 Cafeterías de gatos y perros</b><p class="muted">Toca una zona para verlas en Naver con su nota y horario. Desde diciembre de 2023 Corea no deja abrir cafés con animales salvajes (mapaches, suricatas…) y los que quedan van cerrando: mejor los de gatos y perros.</p><div class="acciones">${ANIMAL_BUSQ[k].map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 ${esc(q)}</a>`).join('')}</div></div>` : '';
-const LAV_BUSQ = { busan: ['해운대해수욕장 코인세탁', '해운대 빨래방', '마린시티 코인세탁'] };
-const lavBusca = k => LAV_BUSQ[k] ? `<div class="card guia-txt"><b>🧺 Más lavanderías cerca del hotel</b><p class="muted">Toca una zona para verlas en Naver con su horario y reseñas.</p><div class="acciones">${LAV_BUSQ[k].map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 ${esc(q)}</a>`).join('')}</div></div>` : '';
 const pcBusca = k => PC_BUSQ[k] ? `<div class="card guia-txt"><b>🖥️ Cibercafés (PC방) cerca del hotel</b><p class="muted">Cibercafés de barrio, casi siempre 24 h y por horas (unos 1.000-2.000 ₩/h: VERIFICAR). Toca una zona para verlos en Naver con su nota y reseñas; si os gusta uno, mandadme la captura y lo añado.</p>
   <div class="acciones">${PC_BUSQ[k].map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 ${esc(q)}</a>`).join('')}</div></div>` : '';
 // Calendario del Mundial de LoL con la ciudad donde estaréis cada día.
@@ -2562,7 +2563,7 @@ function planesDe(k, cat) {
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
   return `<p class="muted">Horarios de webs (nov 2026): compruébalos antes de ir.</p>
-    ${(cat === 'lol' ? pcBusca(k) + PCBANG : '') + grupo(cat, '') + (cat === 'servicio' ? lavBusca(k) : '') + (cat === 'curioso' ? animalBusca(k) : '')}`;
+    ${(cat === 'lol' ? pcBusca(k) + PCBANG : '') + grupo(cat, '') + (cat === 'curioso' ? animalBusca(k) : '')}`;
 }
 
 // ---------- Seguro ----------
@@ -2721,8 +2722,6 @@ let DATOS_COMER = [];
 cargaDatos('data/comer.json', d => { DATOS_COMER = arr(d); });
 const CIUDADES_COMER = [['seul', 'Seúl'], ['andong', 'Andong'], ['gyeongju', 'Gyeongju'], ['busan', 'Busan'], ['jeonju', 'Jeonju']];
 const TIPOS = ['todos', 'restaurante', 'café', 'mercado', 'plato', 'bar'];
-const COMER_SUBS = [['restaurante', '🍲', 'Restaurantes'], ['café', '☕', 'Cafeterías'], ['bar', '🍶', 'Bares'], ['mercado', '🛒', 'Mercados'], ['platos', '🥢', 'Platos típicos']];
-let comerSubsHTML = '';
 const ESTADOS = [['quiero', 'Quiero'], ['visitado', 'Visitado'], ['nofuimos', 'No fuimos'], ['descartado', 'Descartado'], ['cerrado', 'Cerrado']];
 const FUENTES = { itinerario: 'Itinerario', guia: 'Guía web (no verificado)', lonely: 'Lonely Planet 2016', lonely24: 'Lonely Planet 2024', propio: 'Propio' };
 let platoGrupo = 0;
@@ -2752,7 +2751,7 @@ const NAVER_TOP = {
   jeonju: ['전주 한옥마을 맛집', '전주 남부시장 맛집', '전주 한옥마을 카페', '전주 빵집']
 };
 // 📍 Alrededor de donde estáis ahora: abre la app de Naver Map con la búsqueda hecha; la app busca en torno a vuestra posición.
-const AQUI_NAVER = [['🍽️', 'Comer', '맛집'], ['☕', 'Café', '카페'], ['🏪', 'Tienda 24 h', '편의점'], ['💊', 'Farmacia', '약국'], ['🧺', 'Lavandería', '코인세탁']];
+const AQUI_NAVER = [['🍽️', 'Comer', '맛집'], ['☕', 'Café', '카페'], ['🏪', 'Tienda 24 h', '편의점'], ['💊', 'Farmacia', '약국']];
 const aquiNaver = () => `<div class="card aqui-nv"><b>📍 Alrededor de donde estáis ahora</b> <small class="muted">· en la app de Naver Map, con la ubicación del móvil</small>
   <div class="acciones">${AQUI_NAVER.map(([ic, t, q]) => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">${ic} ${t}</a>`).join('')}</div></div>`;
 function naverTop(k) {
@@ -2775,12 +2774,7 @@ function platosDe(k, hay = false) {
     ${ps.length ? `<div class="qv-grupo">📌 Dónde probarlos</div>${ps.map(cardComer).join('')}` : ''}${probCiudad(k)}`;
 }
 function viewComer(dentro = false) {
-  // v309: dentro de Planes, Comer va por subapartados (Restaurantes, Cafeterías, Bares, Mercados y Platos típicos).
-  if (dentro && ['todos', 'plato'].includes(comerTipo)) comerTipo = 'restaurante';
-  if (dentro) { const k0 = comerCiudad || ck(ciudadActual()); const nT = t => lugaresComer().filter(l => l.ciudad === k0 && l.tipo === t).length;
-    const subs = `<div class="cm-subs">${COMER_SUBS.map(([t, ic, tt]) => { const nn = t === 'platos' ? '' : nT(t); return `<button class="${comerTipo === t ? '' : 'sec'} ${nn === 0 ? 'vacio' : ''}" data-ct="${t}" ${nn === 0 ? 'disabled' : ''}><span>${ic}</span>${tt}${nn ? ` <small>${nn}</small>` : ''}</button>`; }).join('')}</div>`;
-    if (comerTipo === 'platos') { comerCiudad = k0; return subs + platosDe(k0); }
-    comerSubsHTML = subs; } else comerSubsHTML = '';
+  if (dentro && !['restaurante', 'café', 'bar', 'mercado'].includes(comerTipo)) comerTipo = 'restaurante';
   if (comerCiudad === null) {
     const k = ck(ciudadActual());
     comerCiudad = CIUDADES_COMER.some(c => c[0] === k) ? k : 'todas';
@@ -2797,7 +2791,7 @@ function viewComer(dentro = false) {
   const chipN = (attr, v, t, nn, on, tit) => `<button class="chip ${on ? 'on' : ''}" ${attr}="${esc(v)}" title="${esc(tit)}">${esc(t)} <small>${nn}</small></button>`;
   const ordIc = { rec: '🏅', nota: '👥', dist: '📏', val: '★' };
   const ord = { rec: '🏅 Recomendado', nota: '👥 Mejor valorados', dist: '📏 Más cerca del hotel', val: '★ Mi valoración' }, sigOrd = { rec: 'nota', nota: 'dist', dist: 'val', val: 'rec' };
-  return comerSubsHTML + buscadorHTML('qcm', qCom, 'Buscar sitio para comer (nombre, plato…)', resComer(qCom)) + (dentro ? '' : `<div class="cc-row">${[['todas', 'Todas', '🌏'], ...CIUDADES_COMER.map(([k, t]) => [k, t, tema(k).ic])].map(([k, t, ic]) =>
+  return buscadorHTML('qcm', qCom, 'Buscar sitio para comer (nombre, plato…)', resComer(qCom)) + (dentro ? '' : `<div class="cc-row">${[['todas', 'Todas', '🌏'], ...CIUDADES_COMER.map(([k, t]) => [k, t, tema(k).ic])].map(([k, t, ic]) =>
       `<button class="cbtn ${comerCiudad === k ? 'on' : ''}" ${k !== 'todas' ? `style="${varsTema(k)}"` : ''} data-cc="${k}"><span>${ic}</span>${esc(t)}</button>`).join('')}</div>`) + `
     ${dentro ? '' : `<div class="chips qv-fila">${chipN('data-ct', 'todos', 'Todo', lugaresComer().filter(l => enC(l) && !(dentro && l.tipo === 'plato')).length, comerTipo === 'todos', 'Todo')}${tipos.map(([t, nt]) => chipN('data-ct', t, IC_COMER[t] || t, nt, comerTipo === t, t[0].toUpperCase() + t.slice(1))).join('')}</div>`}
     <div class="chips qv-fila"><button class="chip qv-ord" data-co="${sigOrd[comerOrden] || 'rec'}" title="Orden: ${esc(ord[comerOrden] || ord.rec)} (tocar para cambiar)">⇅${(ordIc[comerOrden] || ordIc.rec)}</button><span class="qv-sep"></span>${chipN('data-ce', 'cerca', '🛏️', base.filter(l => distKm(l) <= 1.2).length, comerEstado === 'cerca', 'Cerca del hotel (≤1,2 km)')}${chipN('data-ce', 'quiero', '🔖', n('quiero'), comerEstado === 'quiero', 'Quiero ir')}${chipN('data-ce', 'visitado', '✅', n('visitado'), comerEstado === 'visitado', 'Visitados')}${chipN('data-ce', 'pendiente', '☐', base.filter(l => !est(l)).length, comerEstado === 'pendiente', 'Sin marcar')}</div>

@@ -1825,4 +1825,4 @@ details.c2-pl .c2-nom, details.c2-pl .c2-sub { text-align: left; justify-content
 details.c2-pl:not([open]) .c2-nom b { font-size: 1rem; }
 .c2-esti { position: absolute; left: -4px; top: -6px; font-size: .9rem; z-index: 2; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v309"; }
+:root { --css-ver: "v310"; }
