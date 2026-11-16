@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v304
+Caché del service worker: corea-v305
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -357,6 +357,7 @@ Caché del service worker: corea-v304
 - v302: Comer → Jeonju: Jeondong Ddeokgalbi (전동 떡갈비), donde comieron el 16 nov; datos de la captura de Google (4,2 ★, 324 reseñas; 10.000-20.000 ₩; cierra a las 20:00; carta) y ubicación junto al muro oeste de Gyeonggijeon (aproximada, desde el mapa de la captura).
 - v303: el estado de cada sitio (Hoy, Planes y Miscelánea) es un desplegable que empieza en «☐ Marcar» y se elige directamente: 🔖 Quiero ir / ✅ Visitado / ✖️ No vamos (o volver a vacío). Ya no hay que pasar por Visitado, que plegaba la ficha, para llegar a No vamos. Tocar el desplegable no abre ni pliega la ficha; en la cabecera de Planes va en versión corta (solo icono); respeta 🔒 Bloquear marcas.
 - v304: en Hoy, cada bloque de 2 h del tiempo muestra siempre la temperatura y, si la lluvia es ≥25 %, debajo «💧 %» (antes el % sustituía a la temperatura); bloques algo más anchos. El carrusel de fotos, más bajo (proporción 2,3:1 en vez de 16:9).
+- v305: Comer → Jeonju: café 1938 Mansion (Cafe1938), 78 Eojin-gil, donde estuvieron el 16 nov; datos de la captura de Google (4,9 ★, 706 reseñas; 1-10.000 ₩; cierra 22:30; recomiendan el maldon salt latte). Sin hangul (no consta con seguridad); ubicación aproximada desde el mapa de la captura.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

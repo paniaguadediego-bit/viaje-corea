@@ -2952,5 +2952,25 @@
 "fuente": "Google (captura del usuario)",
 "fecha": "2026-11"
 }
+},
+{
+"id": "p-1938-mansion",
+"ciudad": "jeonju",
+"nombre": "1938 Mansion (Cafe1938)",
+"ko": null,
+"tipo": "café",
+"plato": "maldon salt latte (latte con sal Maldon)",
+"direccion": "78 Eojin-gil, Wansan-gu, Jeonju (junto a la esquina noreste de Gyeonggijeon, a unos pasos del hanok) · ubicación aproximada",
+"horario": "Cierra a las 22:30; para llevar hasta las 23:00 (Google, nov. 2026)",
+"precio": "1-10.000 ₩ por persona (Google)",
+"fuente": "propio",
+"url": null,
+"nota": "Fuimos el 16 de noviembre. Cafetería en una casa antigua con patio y decoración vintage. Los visitantes recomiendan el maldon salt latte (Google).",
+"opiniones": {
+"v": 4.9,
+"n": 706,
+"fuente": "Google (captura del usuario)",
+"fecha": "2026-11"
+}
 }
 ]
