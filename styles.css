@@ -1803,5 +1803,9 @@ select.hk-sel.no { border-color: #b03a2e !important; color: #b03a2e !important; 
 select.hk-sel.qi { background: #fff4d6 !important; border-color: #d4a017 !important; color: #8a6200 !important; }
 select.hk-sel option { color: #222; background: #fff; }
 .sitios-dia details.sd:is(.hecho-card,.novamos-card):not([open]) > summary select.hk-sel { height: 24px !important; min-height: 24px !important; font-size: .7rem !important; width: auto !important; max-width: none !important; padding: 0 4px !important; }
+/* v304: cada bloque horario muestra siempre la temperatura y, si hay lluvia, el % debajo; el carrusel, más bajo. */
+.t-h { max-width: 48px; padding: 3px 0; }
+.t-h small.t-p { font-size: .56rem; font-weight: 800; letter-spacing: -.02em; }
+.dia2 .dia-banner { aspect-ratio: 2.3 / 1; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v303"; }
+:root { --css-ver: "v304"; }

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v303';
+const VERSION = 'v304';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2966,7 +2966,7 @@ function horasTiempo(d) {
   for (let h = 8; h < 24; h += 2) { const xs = hs.filter(x => x[0] >= h && x[0] < h + 2); if (!xs.length) continue;
     const c = Math.max(...xs.map(x => x[1] ?? 0)), p = Math.max(...xs.map(x => x[2] ?? 0)), t = Math.round(xs.reduce((a, x) => a + (x[3] ?? 0), 0) / xs.length);
     bl.push({ h, c, p, t, ya: ahora >= h + 2 }); }
-  return `<div class="t-horas">${bl.map(b => `<span class="t-h ${b.p >= 50 ? 'lluvia' : b.p >= 25 ? 'quiza' : ''} ${b.ya ? 'ya' : ''}" title="${b.h}-${b.h + 2} h: ${descTiempo(b.c)}, ${b.p} % de lluvia"><small>${b.h}h</small><i>${icTiempo(b.c)}</i><small>${b.p >= 25 ? b.p + '%' : b.t + '°'}</small></span>`).join('')}</div>`;
+  return `<div class="t-horas">${bl.map(b => `<span class="t-h ${b.p >= 50 ? 'lluvia' : b.p >= 25 ? 'quiza' : ''} ${b.ya ? 'ya' : ''}" title="${b.h}-${b.h + 2} h: ${descTiempo(b.c)}, ${b.p} % de lluvia"><small>${b.h}h</small><i>${icTiempo(b.c)}</i><small>${b.t}°</small>${b.p >= 25 ? `<small class="t-p">💧${b.p}%</small>` : ''}</span>`).join('')}</div>`;
 }
 const miniTiempo = (k, f) => { const t = tiempoDe(k, f); return t ? `<span class="t-mini">${icTiempo(t[0])} ${Math.round(t[1])}°/${Math.round(t[2])}°</span>` : ''; };
 
