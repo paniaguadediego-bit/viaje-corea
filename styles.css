@@ -1770,5 +1770,9 @@ details.quiero-card { box-shadow: inset 4px 0 0 #d4a017; }
 .evento.pasado { opacity: .5; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sitios-dia details.sd > summary > b { color: color-mix(in srgb, var(--acc) 35%, white); } }
 :root[data-theme="dark"] .sitios-dia details.sd > summary > b { color: color-mix(in srgb, var(--acc) 35%, white); }
+/* v295: tamaño de los iconos del mapa según el zoom (--mps la pone mpDibujar). */
+.mp-capa .mp-pt { transform: translate(-50%, -50%) scale(var(--mps, 1)); }
+.mp-capa .mp-pt.sel { transform: translate(-50%, -50%) scale(calc(var(--mps, 1) * 1.25)); }
+.mp-capa .mp-pt.arrastra { transform: translate(-50%, -50%) scale(calc(var(--mps, 1) * 1.35)); }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v294"; }
+:root { --css-ver: "v295"; }

@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v294';
+const VERSION = 'v295';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1693,7 +1693,8 @@ function mpDibujar(el, m) {
   // con un muelle suave hacia su sitio; los importantes (hotel, itinerario) se mueven menos. Un hilo y un puntito marcan el sitio real.
   const vis = m.pts.map((p, i) => { const [x, y] = P(p.c); return { p, i, x, y, x0: x, y0: y, w: orden[p.capa] >= 4 ? 0.25 : 1 }; })
     .filter(o => o.x > -40 && o.y > -40 && o.x < W + 40 && o.y < H + 40);
-  const D = 28;
+  // v295: con poco zoom, iconos más pequeños (y la distancia mínima entre ellos, igual) para no tapar el mapa.
+  const S = z >= 15 ? 1 : z >= 14 ? 0.8 : z >= 13 ? 0.64 : 0.52, D = 28 * S;
   for (let it = 0; it < 60; it++) {
     let mov = false;
     for (let a = 0; a < vis.length; a++) for (let c = a + 1; c < vis.length; c++) {
@@ -1712,7 +1713,7 @@ function mpDibujar(el, m) {
     h += `<button class="mp-pt c-${p.capa} ${p.hecho ? 'hecho' : p.l && p.capa !== 'hotel' && noVamos(p.l) ? 'novamos' : p.l && p.capa !== 'hotel' && quiero(p.l) ? 'quiero' : p.pasado ? 'pasado' : ''} ${m.sel === i ? 'sel' : ''}" data-mpp="${i}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px">${p.num != null ? `<b>${esc(p.num)}</b>` : p.ic}</button>`;
   });
   if (m.yo) { const [x, y] = P(m.yo); h += `<span class="mp-yo" style="left:${x}px;top:${y}px"></span>`; }
-  const capa = el.querySelector('.mp-capa'); capa.style.transform = ''; capa.innerHTML = h;
+  const capa = el.querySelector('.mp-capa'); capa.style.transform = ''; capa.style.setProperty('--mps', S); capa.innerHTML = h;
   const inf = el.querySelector('.mp-info'), p = m.pts[m.sel];
   if (inf) { inf.innerHTML = p ? mpFicha(p, m) : ''; inf.classList.toggle('on', !!p); }
 }
