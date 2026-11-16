@@ -84,6 +84,8 @@ const CATALOGO = {
     { es: 'Mercado Nambu', ko: '남부시장', romanizacion: 'Nambu Sijang' },
     { es: 'Estación de Jeonju', ko: '전주역', romanizacion: 'Jeonju-yeok' },
     // v291: sitios de la Lonely Planet Corea 2024 (pp. 208-213) que no teníamos.
+    { es: 'Mapa mural de la antigua Jeonju', buscar: ['mapa mural'], tipo: 'Mural', desc: 'Gran mapa antiguo de la ciudad pintado en la pared oeste de la comisaría de Wansan, al norte de Pungnammun; parada 3 del paseo de la LP 2024 (p. 212). Hangul del lugar: buscad la comisaría en Naver.' },
+    { es: 'Café Jeonmang (azotea)', buscar: ['jeonmang'], tipo: 'Café', desc: 'Final del paseo de la LP 2024 (p. 212): bar-café en la azotea de un edificio de cuatro plantas del maeul, con vistas magníficas. 9:00-23:00.' },
     { es: 'Jeolla Gamyeong (antiguo gobierno provincial)', ko: '전라감영', buscar: ['jeolla gamyeong'], romanizacion: 'Jeolla Gamyeong', tipo: 'Histórico', desc: 'Sede del gobierno de Jeolla y Jeju durante más de 500 años de la dinastía Joseon, restaurada en 2018. Gratis; visitas guiadas en inglés a las 11:00 y las 14:00 (LP 2024).' },
     { es: 'Haengwon (café tradicional en un hanok)', ko: '행원', buscar: ['haengwon'], romanizacion: 'Haengwon', tipo: 'Casa de té', desc: 'Hanok con estructura japonesa y estanque, que fue de la última gisaeng de Jeonju y refugio de músicos durante la guerra. Hoy es un café tradicional con representaciones de pansori (LP 2024).' },
     { es: 'Biblioteca de Viajeros Daga', ko: '다가여행자도서관', buscar: ['daga'], romanizacion: 'Daga Yeohaengja Doseogwan', tipo: 'Biblioteca', desc: 'Tres plantas llenas de literatura de viajes y libros ilustrados, con zonas de lectura y una piscina para refrescar los pies (LP 2024).' },

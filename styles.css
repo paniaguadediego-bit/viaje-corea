@@ -1775,4 +1775,4 @@ details.quiero-card { box-shadow: inset 4px 0 0 #d4a017; }
 .mp-capa .mp-pt.sel { transform: translate(-50%, -50%) scale(calc(var(--mps, 1) * 1.25)); }
 .mp-capa .mp-pt.arrastra { transform: translate(-50%, -50%) scale(calc(var(--mps, 1) * 1.35)); }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v295"; }
+:root { --css-ver: "v296"; }
