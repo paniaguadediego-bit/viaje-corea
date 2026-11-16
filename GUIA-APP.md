@@ -55,6 +55,7 @@ Antes de salir, con wifi: Más → Datos y app → «Preparar para viajar». Des
 | contenido.js | Sitios por ciudad (CATALOGO, LP, IMPRES), horarios, frases, guía, Miscelánea (PLANES), «Mucho ojo con…», platos y snacks | Del país |
 | ciudades.js | Lectura larga de cada ciudad (historia, costumbres, famosos, sabores…) | Del país |
 | cultura.js | Fichas «Con ojos de guía» de los lugares emblemáticos | Del país |
+| audioguia.js | 🎧 Audioguía: por qué importa, qué ver e historia de cada parada, para escucharla en voz alta con la voz del móvil | Del país |
 | historia.js | Capítulos y línea del tiempo | Del país |
 | sociedad.js | País: política, educación, sueldos, población | Del país |
 | hangul.js | Lecciones del alfabeto y carteles | Del país (o se quita si el alfabeto es latino) |

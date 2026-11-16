@@ -77,7 +77,7 @@ móvil, 100 % offline. Viaje: Corea del Sur, 3-19 nov 2026
 6. Dato dudoso = "VERIFICAR". No inventar hangul, teléfonos,
    horarios ni precios. Si un objeto del JSON trae
    "verificar": true, mostrar una marca visible.
-7. Iconos: uno por significado (lista en PROGRESO v210): 📍 Puntos de interés, 🌐 Google, 🟢 Naver, 🧭 cómo llegar desde aquí, 🛣️ ruta entre paradas, 🗺️ mapas, 📏 distancias, 🏠 direcciones, 📌 fijar ubicación, 🏯 Planes, 📖 Diccionario, 🛤️ Ruta del día, 🧾 Resumen, 📙 LP 2016, 📕 LP 2024, 🔍 buscar, 🔎 verificar, ⭐ favoritas/estrellas, 🔖 Quiero, 😋 Probados, 🎫 T-money, 💶 dinero y pagos, 🎓 educación, 💝 regalos top, 🥄 en la mesa, 🚑 qué hacer si (Seguro), 🛒 mercados, 🧺 lavandería, 🛏️ hotel (también el filtro «cerca del hotel» de Comer), 🚉 estaciones, 🎟️ eventos, 💇 peluquería, 한 enseñar en coreano (desde v238, icono redondo arriba a la derecha de las fichas de Comer, Hotel y Miscelánea; solo si hay hangul). No reutilizar uno para otra cosa.
+7. Iconos: uno por significado (lista en PROGRESO v210): 📍 Puntos de interés, 🌐 Google, 🟢 Naver, 🧭 cómo llegar desde aquí, 🛣️ ruta entre paradas, 🗺️ mapas, 📏 distancias, 🏠 direcciones, 📌 fijar ubicación, 🏯 Planes, 📖 Diccionario, 🛤️ Ruta del día, 🧾 Resumen, 📙 LP 2016, 📕 LP 2024, 🔍 buscar, 🔎 verificar, ⭐ favoritas/estrellas, 🔖 Quiero, 😋 Probados, 🎫 T-money, 💶 dinero y pagos, 🎓 educación, 💝 regalos top, 🥄 en la mesa, 🚑 qué hacer si (Seguro), 🛒 mercados, 🧺 lavandería, 🛏️ hotel (también el filtro «cerca del hotel» de Comer), 🚉 estaciones, 🎟️ eventos, 🎧 audioguía, 💇 peluquería, 한 enseñar en coreano (desde v238, icono redondo arriba a la derecha de las fichas de Comer, Hotel y Miscelánea; solo si hay hangul). No reutilizar uno para otra cosa.
    7. Mobile-first, compacto pero legible, una mano, tema claro/oscuro. Estilo desde v109: papel hanji, franja
    dancheong y un color por pestaña (body[data-pest] → --acc; nunca data-tab en el body) en títulos, botones activos y filo de las tarjetas.
 8. Cada sesión acaba con: cómo probarlo en modo avión, versión
@@ -158,6 +158,7 @@ itinerario), HISTORIA (historia breve por ciudad, LP marcado),
 INTRO_LP (introducción de cada ciudad según la Lonely y su
 propuesta de visita), PLATOS (glosario de platos con hangul de la
 Lonely, en Comer),
+audioguia.js (desde v297, prueba): AUDIOGUIA[hangul sin espacios o nombre] = [por qué importa, qué ver, historia], texto para oír; desplegable «🎧 Audioguía» con ▶️ Escuchar (speechSynthesis es-ES) en la parada de Hoy y la ficha de Planes.
 cultura.js: GUIA_CULT (fichas "🎎 Con ojos de guía" de unos 30 lugares emblemáticos: gancho,
 historia, 👀 qué mirar y 💡 consejo; clave = hangul sin espacios; sale en Ciudades, Ruta del día y buscador).
 LP24_INDISP (recuadros «Indispensable» de la Lonely Planet Corea 2024 en español, con página; hangul y 🔊; sale en la ficha abierta de Planes y en la parada de Hoy; si un sitio lo tiene, manda sobre la LP 2016: no se muestra su «Más de la Lonely»). DIA_LP (lo que amplía la Lonely de cada sitio del itinerario y de los

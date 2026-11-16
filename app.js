@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v296';
+const VERSION = 'v297';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -982,7 +982,7 @@ function sitiosDia(d) {
     // Ficha plegable: se pliega sola al marcarla como visitada (y la foto, a la derecha, arriba).
     const key = 'sd:' + d.fecha + '|' + h, ab = abierto(key, false); // v262: plegadas por defecto
     return `${t}${extra ? encaje(l) : ''}<details class="sd ${sgK.has(h) ? 'sd-cerca' : ''} ${claseCard(l, k)}" data-key="${esc(key)}" ${ab ? 'open' : ''}><summary class="sd-tit">${miniFoto(l)}<span class="sd-qv">${irQV(l, k, true)}</span>${btnHecho(l, k)}${irMapas(l)}<span class="sd-lp">${lpPill(l)}</span><br><b>${n ? `<span class="sd-num">${n}</span>` : ''}${sgK.has(h) ? '<span class="sug-etq" title="Cercano añadido">＊</span>' : ''}${icSitio(l.es)} ${esc(l.es)}${ojoSup(l)}</b> <span class="ko-s">${esc(l.ko || '')}</span></summary>
-      <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${lp24(l)}</div></details>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}`;
+      <div class="sd-cuerpo">${horarioLinea(l, d.fecha)}${txt ? `<div class="muted">${resaltar(breve(l.desc || txt), true)}</div>` : ''}${audioguia(l, 'hoy')}${lp24(l)}</div></details>${num[h] && naverTras[num[h]] ? naverTras[num[h]] : ''}`;
   };
   // Añadidos: en el orden más corto desde el último sitio del itinerario (todas las combinaciones hasta 7).
   let extras = todos.filter(l => !auto.includes(l));
@@ -1286,7 +1286,29 @@ document.addEventListener('click', e => {
   const k = b.dataset.histc; histSub = 'ciudades'; histCap = null; abiertos['hcd:' + k] = true; ir('historia'); render();
   const el = document.querySelector(`details[data-key="hcd:${CSS.escape(k)}"]`); if (el) { el.scrollIntoView({ block: 'start' }); window.scrollBy(0, -10); }
 }, true);
-function guiaCult(l, ctx) { return lp24(l) + guiaCult0(l, ctx); }
+// 🎧 Audioguía (v297, prueba): AUDIOGUIA en audioguia.js; se lee en voz alta en español con la voz del móvil.
+function audioguia(l, ctx) {
+  const A = typeof AUDIOGUIA !== 'undefined' ? AUDIOGUIA : {}, k = l && l.ko ? String(l.ko).replace(/\s+/g, '') : '', t = A[k] || (l && A[l.es]);
+  if (!t) return ''; const key = 'ag:' + ctx + ':' + (k || l.es), min = Math.max(1, Math.round(t.join(' ').split(/\s+/).length / 150));
+  const tit = ['Por qué importa', 'Qué ver', 'Historia'];
+  return `<details class="audioguia" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}><summary>🎧 Audioguía <small class="muted">· ${min} min</small></summary>
+    <button class="btn mini ag-play" data-agplay="${esc(k || l.es)}">▶️ Escuchar</button>
+    ${t.map((p, i) => `<p><b>${tit[i] || ''}.</b> ${esc(p)}</p>`).join('')}</details>`;
+}
+let agSonando = null;
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-agplay]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+  if (!('speechSynthesis' in window)) return alert('Este móvil no puede leer en voz alta.');
+  const k = b.dataset.agplay, para = agSonando === k; speechSynthesis.cancel(); agSonando = null;
+  document.querySelectorAll('[data-agplay]').forEach(x => x.textContent = '▶️ Escuchar');
+  if (para) return;
+  const t = (AUDIOGUIA[k] || []).join(' '), u = new SpeechSynthesisUtterance(t), v = speechSynthesis.getVoices().find(x => /^es[-_]ES/i.test(x.lang)) || speechSynthesis.getVoices().find(x => /^es/i.test(x.lang));
+  u.lang = 'es-ES'; if (v) u.voice = v; u.rate = 1;
+  u.onend = u.onerror = () => { if (agSonando === k) { agSonando = null; document.querySelectorAll(`[data-agplay="${CSS.escape(k)}"]`).forEach(x => x.textContent = '▶️ Escuchar'); } };
+  agSonando = k; document.querySelectorAll(`[data-agplay="${CSS.escape(k)}"]`).forEach(x => x.textContent = '⏹ Parar');
+  speechSynthesis.speak(u);
+}, true);
+function guiaCult(l, ctx) { return audioguia(l, ctx) + lp24(l) + guiaCult0(l, ctx); }
 // 📕 Recuadro «Indispensable» de la Lonely Planet 2024 (LP24_INDISP en contenido.js), con hangul y 🔊.
 // 🚶 Rutas a pie de la LP 2024 (LP24_RUTAS): ficha plegada propia en Planes de su ciudad y en Hoy los días que pasan por ≥3 de sus paradas.
 function rutasLP24(k, d) {
@@ -1323,7 +1345,7 @@ function infoCompleta(l, desc) {
   const h = hKey(l), D = typeof DIA_LP !== 'undefined' ? DIA_LP : {}, I = typeof DIA_INFO !== 'undefined' ? DIA_INFO : {};
   const con24 = typeof LP24_INDISP !== 'undefined' && LP24_INDISP[h.slice(2)]; // la LP 2024 manda sobre la de 2016
   const gc = typeof GUIA_CULT !== 'undefined' && GUIA_CULT[h.slice(2)], lp = con24 ? null : D[h.slice(2)] || D[h], info = !lp && !con24 && I[h.slice(2)];
-  return `${desc ? `<p>${resaltar(desc, true)}</p>` : ''}${lp24(l)}
+  return `${desc ? `<p>${resaltar(desc, true)}</p>` : ''}${audioguia(l, 'qv')}${lp24(l)}
     ${lp && lp !== desc ? `<div class="qv-bloque"><b>📙 Más de la Lonely</b> <span class="badge otro">LP 2016</span><p>${resaltar(lp, true)}</p></div>` : ''}
     ${info && info !== desc ? `<div class="qv-bloque"><b>ℹ️ Más info</b><p>${resaltar(info, true)}</p></div>` : ''}
     ${gc ? `<div class="qv-bloque guia-cult-abierta"><b>🎎 Con ojos de guía</b><p class="gc-gancho">${esc(gc[0])}</p>${gc.slice(1).map(p => `<p class="${/^👀/.test(p) ? 'gc-mira' : /^💡/.test(p) ? 'gc-tip' : ''}">${resaltar(p, true)}</p>`).join('')}</div>` : ''}`;

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v296
+Caché del service worker: corea-v297
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -349,6 +349,7 @@ Caché del service worker: corea-v296
 - v294: en modo oscuro, el nombre de las paradas de Hoy va en el color de la pestaña muy aclarado (se veía poco sin foto). Nuevo apartado 🎟️ Eventos en Planes (tras Estaciones): EVENTOS y EVENTOS_WEB en contenido.js, buscados el 15 nov en agendas oficiales, prensa y calendarios; solo los que caen en vuestros días en esa ciudad (fechas ya pasadas no se muestran si hay otras por venir), con Gratis, hora, lugar en hangul (Naver), fuente y VERIFICAR; avisos 💡 (Jeonju tranquila entre semana; farolillos del Cheonggyecheon desde el 11 dic). Arriba, búsquedas en Naver «<ciudad> 공연 / 축제 / 무료 행사» y las agendas oficiales.
 - v295: en los mapas, los iconos encogen con poco zoom (zoom 15 o más: tamaño normal; 14: 80 %; 13: 64 %; 12 o menos: 52 %) y la separación entre los que se pisan se ajusta igual, para que no tapen el mapa.
 - v296: paseo de la LP 2024 de Jeonju completo como paradas: nuevos sitios «Mapa mural de la antigua Jeonju» (3) y «Café Jeonmang (azotea)» (13) en CATALOGO, y coordenadas de las 13 paradas sacadas del plano de la p. 212 (escala de 500 m; Biblioteca Daga mucho más al oeste). Día 16 del trip.json privado reescrito en el orden del paseo (desayuno en Nambu, 1→13, comida en Veteran o Gajok, Omokdae al atardecer, final en Jeonmang).
+- v297 (prueba para futuras apps): 🎧 Audioguía. audioguia.js (precacheado) con AUDIOGUIA: 31 paradas que quedan del viaje (Jeonju 16; Seúl 17 y 18), cada una en tres partes (por qué importa, qué ver, historia), escritas para oírse. Desplegable «🎧 Audioguía · n min» en la parada de Hoy y en la ficha de Planes, con ▶️ Escuchar / ⏹ Parar (speechSynthesis es-ES, sin conexión si el móvil tiene la voz española). [Supuesto] «Reproducir» = escuchar en voz alta con la voz del móvil.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

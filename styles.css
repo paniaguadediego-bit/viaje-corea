@@ -1774,5 +1774,12 @@ details.quiero-card { box-shadow: inset 4px 0 0 #d4a017; }
 .mp-capa .mp-pt { transform: translate(-50%, -50%) scale(var(--mps, 1)); }
 .mp-capa .mp-pt.sel { transform: translate(-50%, -50%) scale(calc(var(--mps, 1) * 1.25)); }
 .mp-capa .mp-pt.arrastra { transform: translate(-50%, -50%) scale(calc(var(--mps, 1) * 1.35)); }
+/* v297: 🎧 Audioguía en las fichas de Hoy y Planes. */
+details.audioguia { margin: 8px 0; padding: 6px 10px; border-radius: 10px; background: color-mix(in srgb, var(--acc) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent); }
+details.audioguia > summary { font-weight: 700; cursor: pointer; }
+details.audioguia p { margin: 6px 0; line-height: 1.5; }
+details.audioguia .ag-play { margin: 6px 0 2px; }
+.sitios-dia details.sd.con-fondo details.audioguia { background: rgba(255,255,255,.94); color: #222; }
+.sitios-dia details.sd.con-fondo details.audioguia * { color: #222 !important; text-shadow: none !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v296"; }
+:root { --css-ver: "v297"; }
