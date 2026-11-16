@@ -2932,5 +2932,25 @@
 "lp24": {
 "p": 213
 }
+},
+{
+"id": "p-jeondong-tteokgalbi",
+"ciudad": "jeonju",
+"nombre": "Jeondong Ddeokgalbi",
+"ko": "전동 떡갈비",
+"tipo": "restaurante",
+"plato": "tteokgalbi (costilla picada a la parrilla) y bibimbap",
+"direccion": "Junto al muro oeste de Gyeonggijeon, a la altura del Museo de Retratos Reales (al lado de Cafe Breeze) · ubicación aproximada",
+"horario": "Cierra a las 20:00 (Google, nov. 2026; resto del horario VERIFICAR)",
+"precio": "10.000-20.000 ₩ por persona (Google); en la carta, bibimbap de bulgogi o de setas 13.000 ₩ y bibimbap con tteokgalbi casero para dos 38.000 ₩",
+"fuente": "propio",
+"url": null,
+"nota": "Fuimos el 16 de noviembre. Tteokgalbi: carne de costilla picada, amasada y asada, típica de la región de Jeolla. Carta con inglés.",
+"opiniones": {
+"v": 4.2,
+"n": 324,
+"fuente": "Google (captura del usuario)",
+"fecha": "2026-11"
+}
 }
 ]

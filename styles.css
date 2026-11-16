@@ -1796,4 +1796,4 @@ details.audioguia .ag-play { margin: 6px 0 2px; }
 .sitios-dia details.tramo.tramo-hecho:not([open]) > summary { padding: 0 !important; min-height: 0 !important; font-size: .72rem; }
 .sitios-dia details.tramo.tramo-hecho:not([open]) > summary > :not(.tramo-hasta), .sitios-dia details.tramo.tramo-hecho:not([open]) .tr-nv { display: none !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v301"; }
+:root { --css-ver: "v302"; }
