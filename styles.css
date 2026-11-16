@@ -1807,5 +1807,22 @@ select.hk-sel option { color: #222; background: #fff; }
 .t-h { max-width: 48px; padding: 3px 0; }
 .t-h small.t-p { font-size: .56rem; font-weight: 800; letter-spacing: -.02em; }
 .dia2 .dia-banner { aspect-ratio: 2.3 / 1; }
+/* v309: Comer por subapartados y fichas plegables. */
+.cm-subs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; margin: 4px 0 8px; }
+.cm-subs button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-height: 48px !important; height: 48px; padding: 2px !important; margin: 0 !important; font-size: .66rem !important; line-height: 1.1; white-space: normal; text-align: center; width: 100%; }
+.cm-subs button span { font-size: 1.05rem; line-height: 1; }
+.cm-subs button small { font-size: .6rem; opacity: .8; }
+.cm-subs button.vacio { opacity: .38; filter: grayscale(1); border-style: dashed; }
+details.c2-pl > summary.c2-top { display: flex; list-style: none; cursor: pointer; position: relative; padding-right: 22px; }
+details.c2-pl > summary.c2-top::-webkit-details-marker { display: none; }
+details.c2-pl > summary.c2-top::after { content: '▸'; position: absolute; right: 2px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: .9rem; }
+details.c2-pl[open] > summary.c2-top::after { content: '▾'; }
+details.c2-pl:not([open]) { padding-top: 8px !important; padding-bottom: 8px !important; }
+details.c2-pl > summary.c2-top { text-align: left; align-items: center; }
+details.c2-pl:not([open]) .c2-txt > :not(.c2-nom):not(.c2-sub) { display: none !important; }
+details.c2-pl:not([open]) :is(.c2-foto, .c2-ic) { width: 44px !important; height: 44px !important; min-width: 44px; font-size: 1.3rem; }
+details.c2-pl .c2-nom, details.c2-pl .c2-sub { text-align: left; justify-content: flex-start; }
+details.c2-pl:not([open]) .c2-nom b { font-size: 1rem; }
+.c2-esti { position: absolute; left: -4px; top: -6px; font-size: .9rem; z-index: 2; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v308"; }
+:root { --css-ver: "v309"; }

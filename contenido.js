@@ -1109,27 +1109,13 @@ const PLANES = [
     desc: 'El barrio de compras de los jóvenes de Jeonju, alrededor del antiguo pabellón de huéspedes Gaeksa: tiendas de ropa, zapatillas, cafés y fotomatones. A 10-15 min a pie de la aldea hanok.',
     nota: 'Tiendas cambiantes: mirad Naver para lo que esté abierto.' },
   // v285: peluquería y head spa (💇, apartado propio). Dirección según varias webs (Trazy, Lifeguin); precio sin confirmar.
-  { id: 'pl-ecojardin', wiki: 'Hairdresser', ciudad: 'seul', cat: 'pelu', es: 'EcoJardin Myeongdong (peluquería y head spa)', ko: '에코쟈뎅 명동', romanizacion: 'Ekojadeng Myeongdong', aprox: true,
+  { id: 'pl-ecojardin', wiki: 'Hairdresser', ic: '💇', ciudad: 'seul', cat: 'curioso', es: 'EcoJardin Myeongdong (peluquería y head spa)', ko: '에코쟈뎅 명동', romanizacion: 'Ekojadeng Myeongdong', aprox: true,
     direccion_en: '3.ª planta, 8-10 Myeongdong 8-gil, Jung-gu (a unos 5 min a pie del hostal)',
     desc: 'Peluquería con tratamientos de cuero cabelludo y head spa (su tratamiento estrella es un head spa de 18 pasos). Muy valorada por turistas y con reserva previa.',
     precio: 'Reserva con señal desde 5.000 ₩ (Creatrip); el precio del tratamiento depende del menú: VERIFICAR en la reserva.',
     resenas: '4,8 ★ con unas 2.400 reseñas en Google (captura de nov. 2026).' },
 ];
 
-// Mundial de League of Legends 2026 (Worlds), en hora de Corea (KST). Datos de webs a 1 nov 2026:
-// el orden de los cuartos varía entre fuentes y las semis dependen de los cuartos: VERIFICAR en lolesports.com.
-const WORLDS = {
-  nota: 'Cuartos y semis en Allen (Texas), a las 16:00 de allí = 07:00 del día siguiente en Corea. Final en el Barclays Center de Nueva York a las 14:00 de allí = 04:00 del 15 en Corea. Al mejor de 5 (pueden durar 3-4 h).',
-  partidos: [
-    { f: '2026-11-04', h: '07:00', fase: 'Cuartos', p: 'Top Esports vs Invictus Gaming' },
-    { f: '2026-11-05', h: '07:00', fase: 'Cuartos', p: 'Gen.G vs LYON' },
-    { f: '2026-11-06', h: '07:00', fase: 'Cuartos', p: 'Dplus KIA vs Bilibili Gaming' },
-    { f: '2026-11-07', h: '07:00', fase: 'Cuartos', p: 'T1 vs Karmine Corp', t1: true },
-    { f: '2026-11-08', h: '07:00', fase: 'Semifinal 1', p: 'Por decidir' },
-    { f: '2026-11-09', h: '07:00', fase: 'Semifinal 2', p: 'Por decidir' },
-    { f: '2026-11-15', h: '04:00', fase: 'Final', p: 'Por decidir', final: true }
-  ]
-};
 
 // Horarios de los sitios del itinerario (noviembre, búsqueda web nov 2026). Clave: hangul sin espacios.
 // a/c = abre/cierra (HH:MM), u = última entrada, x = días de cierre (0 dom … 6 sáb), d = minutos de visita,

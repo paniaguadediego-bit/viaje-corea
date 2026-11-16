@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v308
+Caché del service worker: corea-v309
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -361,6 +361,7 @@ Caché del service worker: corea-v308
 - v306: Comer → Andong: Millennium Andong Jjimdak (밀레니엄안동찜닭), 9 Beonyeong-gil, donde comieron; datos de la captura de Google (4,3 ★, 485 reseñas; 10.000-20.000 ₩; 10:00-21:00). Ubicación aproximada junto al mercado viejo.
 - v307: Comer → Andong: Andonggwan (안동관), 40-17 Munhwagwangjang-gil; datos de la captura de Google (3,9 ★, 81 reseñas; 10.000-20.000 ₩; abre a las 11:00); jjimdak y caballa a la parrilla. Ubicación aproximada.
 - v308: Comer → Andong: café-panadería Kyukyukyu (큐큐큐), Yeongga-ro 11 (호안빌딩 1층), junto al Goryeo Hotel, donde estuvieron; datos de la captura de Google (4,8 ★, 14 reseñas; 1-10.000 ₩; abre a las 9:00). Ubicación aproximada.
+- v309: (1) Comer: nuevo estado «🙅 No fuimos» junto a Quiero/Visitado/Descartado/Cerrado (va al grupo plegado del final, como Descartados y Cerrados); cada sitio de Comer es una ficha plegable (plegada por defecto: icono, nombre, hangul y distancia; ▸/▾). (2) Planes sin 💇 Peluquería: EcoJardin pasa a ✨ Curioso. (3) Comer en Planes por subapartados: 🍲 Restaurantes / ☕ Cafeterías / 🍶 Bares / 🛒 Mercados / 🥢 Platos típicos (antes botón propio de Planes); sin la fila de tipos ni la leyenda; «Mucho ojo», «Alrededor» y «Lo mejor en Naver» bajan al final de la lista. (4) Fuera el calendario del Mundial de LoL (WORLDS borrado).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
