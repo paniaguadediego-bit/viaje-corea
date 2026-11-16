@@ -1779,7 +1779,8 @@ details.audioguia { margin: 8px 0; padding: 6px 10px; border-radius: 10px; backg
 details.audioguia > summary { font-weight: 700; cursor: pointer; }
 details.audioguia p { margin: 6px 0; line-height: 1.5; }
 details.audioguia .ag-play { margin: 6px 0 2px; }
-.sitios-dia details.sd.con-fondo details.audioguia { background: rgba(255,255,255,.94); color: #222; }
-.sitios-dia details.sd.con-fondo details.audioguia * { color: #222 !important; text-shadow: none !important; }
+/* v298: sobre la foto, la audioguía en caja oscura (el texto de esas fichas va en blanco). */
+.sitios-dia details.sd.con-fondo details.audioguia { background: rgba(10,14,22,.72); border-color: rgba(255,255,255,.25); color: #fff; }
+.sitios-dia details.sd.con-fondo details.audioguia p, .sitios-dia details.sd.con-fondo details.audioguia summary, .sitios-dia details.sd.con-fondo details.audioguia b, .sitios-dia details.sd.con-fondo details.audioguia small { color: #fff !important; text-shadow: none !important; opacity: 1; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v297"; }
+:root { --css-ver: "v298"; }
