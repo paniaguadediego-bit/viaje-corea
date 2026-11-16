@@ -3052,5 +3052,25 @@
 "fuente": "Google (captura del usuario)",
 "fecha": "2026-11"
 }
+},
+{
+"id": "p-do-not-disturb",
+"ciudad": "gyeongju",
+"nombre": "Do Not Disturb Bakers (café-panadería)",
+"ko": "두 낫 디스터브",
+"tipo": "café",
+"plato": "pan de sal (sogeumppang), cruasanes y café",
+"direccion": "71-1 Cheomseong-ro, Gyeongju (frente a los túmulos de Hwangnam-dong, a unos pasos de Gyodong Sundubu) · ubicación aproximada",
+"horario": "VERIFICAR",
+"precio": null,
+"fuente": "propio",
+"url": "https://polle.com/place/1nh7kf/%EB%91%90%20%EB%82%AB%20%EB%94%94%EC%8A%A4%ED%84%B0%EB%B8%8C",
+"nota": "Estuvimos en Gyeongju. Se pide y se paga en la planta baja y se toma en la de arriba, desde cuyas ventanas se ven los túmulos. Según reseñas: pan de sal (algo salado), a veces con helado; sin aparcamiento y lleno los fines de semana.",
+"opiniones": {
+"v": 3.5,
+"n": null,
+"fuente": "Polle",
+"fecha": "2026-11"
+}
 }
 ]
