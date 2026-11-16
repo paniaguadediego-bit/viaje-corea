@@ -1839,5 +1839,8 @@ details.pl-pl.hecho-card > summary .c2-nom b { color: var(--ok); }
 details.pl-pl.novamos-card { opacity: .6; }
 details.pl-pl.novamos-card > summary .c2-nom b { text-decoration: line-through; }
 details.hotel-pl > .card.aloj { box-shadow: none !important; border: 0 !important; margin: 0 !important; padding: 0 !important; background: none !important; }
+/* v317: «Buscar más en Naver» agrupa Alrededor y Lo mejor valorado (sin tarjetas dentro de tarjetas). */
+details.nv-mas > .card { box-shadow: none !important; border: 0 !important; margin: 6px 0 0 !important; padding: 4px 0 !important; background: none !important; }
+details.nv-mas > details.card > summary { padding-left: 0; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v316"; }
+:root { --css-ver: "v317"; }

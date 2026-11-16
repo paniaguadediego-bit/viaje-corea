@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v316';
+const VERSION = 'v317';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1642,7 +1642,7 @@ function viewCiudades() {
       ${t.lema ? `<div class="ciudad-lema">${esc(t.lema)}</div>` : ''}
       <div class="ciudad-fechas">${fechas}</div>${linkHist(k)}
     </div>
-    ${muchoOjo(k, 'planes')}
+    ${muchoOjo(k, 'todos')}
     <div class="exsubs7">${EX_SUBS.map(([x, tt]) => { const hay = hayCat(k, x);
       const [ic, ...r] = tt.split(' '); // v286: sin nada en esta ciudad = botón apagado (se ve, pero no se puede tocar).
       return hay ? `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>` : `<button class="sec vacio" disabled aria-disabled="true" title="Nada apuntado en esta ciudad"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>
@@ -2563,7 +2563,7 @@ function planesDe(k, cat) {
   };
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
-  return `<p class="muted">Horarios de webs (nov 2026): compruébalos antes de ir.</p>
+  return `
     ${(cat === 'lol' ? pcBusca(k) + PCBANG : '') + grupo(cat, '') + (cat === 'curioso' ? animalBusca(k) : '')}`;
 }
 
@@ -2737,9 +2737,9 @@ const ojoSup = l => { const o = l && ojoDe(l.id, l.ko); return o ? `<sup class="
 const ojoLinea = o => o ? `<div class="ojo">⚠️ <b>Mucho ojo:</b> ${esc(o.txt)}</div>` : '';
 // tipo: 'comer' (por defecto, en Comer) o 'planes' (en Planes, arriba de cada ciudad).
 function muchoOjo(ciudad, tipo = 'comer') {
-  const os = (typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).filter(o => (o.tipo || 'comer') === tipo && (!ciudad || ciudad === 'todas' || o.ciudad === ciudad)); if (!os.length) return '';
+  const os = (typeof MUCHO_OJO !== 'undefined' ? MUCHO_OJO : []).filter(o => (tipo === 'todos' || (o.tipo || 'comer') === tipo) && (!ciudad || ciudad === 'todas' || o.ciudad === ciudad)); if (!os.length) return '';
   const key = 'ojo:' + tipo + ':' + (ciudad || '');
-  return `<details class="card ojo-card" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}><summary><b>⚠️ Mucho ojo con… (${os.length})</b> <span class="muted">${tipo === 'planes' ? 'famosos con pegas' : 'famosos con quejas'}</span></summary>
+  return `<details class="card ojo-card" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}><summary><b>⚠️ Mucho ojo con… (${os.length})</b> <span class="muted">${tipo === 'planes' ? 'famosos con pegas' : tipo === 'todos' ? 'famosos con pegas' : 'famosos con quejas'}</span></summary>
     ${os.map(o => `<div class="ojo-item"><b>${esc(o.es)}</b><p>${esc(o.txt)}</p><div class="muted">Fuentes: ${o.fuentes.map(([t, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join(' · ')}</div></div>`).join('')}</details>`;
 }
 // 🔎 Lo mejor valorado según Naver: no se puede consultar desde aquí, así que botones que abren Naver Map con la búsqueda hecha
@@ -2797,7 +2797,7 @@ function viewComer(dentro = false) {
     ${dentro ? '' : `<div class="chips qv-fila">${chipN('data-ct', 'todos', 'Todo', lugaresComer().filter(l => enC(l) && !(dentro && l.tipo === 'plato')).length, comerTipo === 'todos', 'Todo')}${tipos.map(([t, nt]) => chipN('data-ct', t, IC_COMER[t] || t, nt, comerTipo === t, t[0].toUpperCase() + t.slice(1))).join('')}</div>`}
     <div class="chips qv-fila"><button class="chip qv-ord" data-co="${sigOrd[comerOrden] || 'rec'}" title="Orden: ${esc(ord[comerOrden] || ord.rec)} (tocar para cambiar)">⇅${(ordIc[comerOrden] || ordIc.rec)}</button><span class="qv-sep"></span>${chipN('data-ce', 'cerca', '🛏️', base.filter(l => distKm(l) <= 1.2).length, comerEstado === 'cerca', 'Cerca del hotel (≤1,2 km)')}${chipN('data-ce', 'quiero', '🔖', n('quiero'), comerEstado === 'quiero', 'Quiero ir')}${chipN('data-ce', 'visitado', '✅', n('visitado'), comerEstado === 'visitado', 'Visitados')}${chipN('data-ce', 'pendiente', '☐', base.filter(l => !est(l)).length, comerEstado === 'pendiente', 'Sin marcar')}</div>
     ${lista.map((l, i) => (comerFuera(l) && !(i && comerFuera(lista[i - 1])) ? `<div class="qv-grupo">👎 Descartados, no fuimos y cerrados · ${lista.filter(comerFuera).length}</div>` : '') + cardComer(l)).join('') || '<p class="muted">No hay lugares con este filtro.</p>'}
-    ${muchoOjo(comerCiudad)}${aquiNaver()}${naverTop(comerCiudad)}
+    ${dentro ? (key => `<details class="card nv-mas" data-key="${key}" ${abierto(key, false) ? 'open' : ''}><summary>🔍 <b>Buscar más en Naver</b> <small class="muted">· alrededor y lo mejor valorado</small></summary>${aquiNaver()}${naverTop(comerCiudad)}</details>`)('nvm:' + comerCiudad) : muchoOjo(comerCiudad) + aquiNaver() + naverTop(comerCiudad)}
     ${comerForm ? formComer() : '<button class="sec" data-act="comer-nuevo">＋ Añadir lugar</button>'}`;
 }
 
