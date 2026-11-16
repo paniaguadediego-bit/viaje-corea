@@ -3012,5 +3012,25 @@
 "fuente": "Google (captura del usuario)",
 "fecha": "2026-11"
 }
+},
+{
+"id": "p-kyukyukyu",
+"ciudad": "andong",
+"nombre": "Kyukyukyu (café-panadería)",
+"ko": "큐큐큐",
+"tipo": "café",
+"plato": "bollería: croissant de almendra, pan de judía roja",
+"direccion": "Yeongga-ro 11, edificio Hoan, planta baja (호안빌딩 1층), Andong; en el centro, al lado del Goryeo Hotel · ubicación aproximada",
+"horario": "Abre a las 9:00 (Google, nov. 2026; cierre VERIFICAR)",
+"precio": "1-10.000 ₩ por persona (Google); pan de judía roja, 3.500 ₩ (foto del mostrador)",
+"fuente": "propio",
+"url": null,
+"nota": "Estuvimos en Andong. Pequeño café-panadería con bollería recién hecha.",
+"opiniones": {
+"v": 4.8,
+"n": 14,
+"fuente": "Google (captura del usuario)",
+"fecha": "2026-11"
+}
 }
 ]

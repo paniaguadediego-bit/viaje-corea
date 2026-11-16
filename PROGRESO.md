@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v307
+Caché del service worker: corea-v308
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -360,6 +360,7 @@ Caché del service worker: corea-v307
 - v305: Comer → Jeonju: café 1938 Mansion (Cafe1938), 78 Eojin-gil, donde estuvieron el 16 nov; datos de la captura de Google (4,9 ★, 706 reseñas; 1-10.000 ₩; cierra 22:30; recomiendan el maldon salt latte). Sin hangul (no consta con seguridad); ubicación aproximada desde el mapa de la captura.
 - v306: Comer → Andong: Millennium Andong Jjimdak (밀레니엄안동찜닭), 9 Beonyeong-gil, donde comieron; datos de la captura de Google (4,3 ★, 485 reseñas; 10.000-20.000 ₩; 10:00-21:00). Ubicación aproximada junto al mercado viejo.
 - v307: Comer → Andong: Andonggwan (안동관), 40-17 Munhwagwangjang-gil; datos de la captura de Google (3,9 ★, 81 reseñas; 10.000-20.000 ₩; abre a las 11:00); jjimdak y caballa a la parrilla. Ubicación aproximada.
+- v308: Comer → Andong: café-panadería Kyukyukyu (큐큐큐), Yeongga-ro 11 (호안빌딩 1층), junto al Goryeo Hotel, donde estuvieron; datos de la captura de Google (4,8 ★, 14 reseñas; 1-10.000 ₩; abre a las 9:00). Ubicación aproximada.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
