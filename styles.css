@@ -1795,5 +1795,13 @@ details.audioguia .ag-play { margin: 6px 0 2px; }
 .sitios-dia details.tramo.tramo-hecho:not([open]) { padding: 1px 10px !important; margin: 0 auto !important; min-height: 0 !important; border-width: 1px !important; border-style: dotted !important; opacity: .55; width: 70%; }
 .sitios-dia details.tramo.tramo-hecho:not([open]) > summary { padding: 0 !important; min-height: 0 !important; font-size: .72rem; }
 .sitios-dia details.tramo.tramo-hecho:not([open]) > summary > :not(.tramo-hasta), .sitios-dia details.tramo.tramo-hecho:not([open]) .tr-nv { display: none !important; }
+/* v303: estado del sitio en un desplegable (☐ / 🔖 Quiero ir / ✅ Visitado / ✖️ No vamos). */
+select.hk-sel { height: 28px; min-height: 28px; padding: 0 6px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--card); color: var(--fg); font-size: .78rem; font-weight: 700; width: auto; flex: none; }
+select.hk-sel.corto { width: 3.1em; padding: 0 2px; text-align: center; font-size: 1rem; margin-left: auto; }
+select.hk-sel.on { background: var(--ok) !important; border-color: var(--ok) !important; color: #fff !important; }
+select.hk-sel.no { border-color: #b03a2e !important; color: #b03a2e !important; }
+select.hk-sel.qi { background: #fff4d6 !important; border-color: #d4a017 !important; color: #8a6200 !important; }
+select.hk-sel option { color: #222; background: #fff; }
+.sitios-dia details.sd:is(.hecho-card,.novamos-card):not([open]) > summary select.hk-sel { height: 24px !important; min-height: 24px !important; font-size: .7rem !important; width: auto !important; max-width: none !important; padding: 0 4px !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v302"; }
+:root { --css-ver: "v303"; }

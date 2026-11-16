@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v302';
+const VERSION = 'v303';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -15,7 +15,7 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-lock
 // 🔒 Bloqueo de marcas (Más → Bloquear): con la app bloqueada, nada que marque o desmarque responde al toque. Solo en este móvil.
 const K_LOCK = 'corea.lock';
 const bloqueado = () => { try { return localStorage.getItem(K_LOCK) === '1'; } catch { return false; } };
-const SEL_MARCA = '[data-hk],[data-est],[data-val],[data-stk],[data-sv],[data-prob],[data-prv],[data-docuso],[data-rgok],[data-rgdel],[data-rgadd],[data-cara],[data-etq],[data-avok],[data-hgleida],[data-verif],[data-fav],[data-agtog],[data-agdel],[data-delcomer],[data-delfoto],[data-gps],[data-gpsdel],.sug-add,.sd-x';
+const SEL_MARCA = '[data-hk],[data-hksel],[data-est],[data-val],[data-stk],[data-sv],[data-prob],[data-prv],[data-docuso],[data-rgok],[data-rgdel],[data-rgadd],[data-cara],[data-etq],[data-avok],[data-hgleida],[data-verif],[data-fav],[data-agtog],[data-agdel],[data-delcomer],[data-delfoto],[data-gps],[data-gpsdel],.sug-add,.sd-x';
 let avisoLock = 0;
 document.addEventListener('click', e => {
   if (!bloqueado() || !e.target.closest(SEL_MARCA)) return;
@@ -1391,7 +1391,7 @@ function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) 
   return `<details class="qv ${clase} ${claseCard(l, k)}" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}>
     <summary>${w ? `<div class="foto mini qv-f" data-wiki="${esc(w)}"><span>${ic}</span></div>` : `<div class="foto mini qv-f vacia"><span>${ic}</span></div>`}
       <span class="qv-cab"><b>${esc(l.es)}${ojoSup(l)}${lpPill(l)}</b><small>${plan ? `<span class="qv-dia">📅 ${fmtCorto(plan.fecha)}</span> ` : ''}${esc(breve(desc || l.nota || l.desc))}</small></span>
-      <button class="hd-ck qv-ck ${estHk(l, k)}" data-hk="${esc(hKey(l))}" data-v="${sigHk(l, k)}" aria-label="Quiero ir / Visitado / No vamos">${hecho(l, k) ? '✓' : noVamos(l) ? '✗' : quiero(l) ? '🔖' : ''}</button></summary>
+      ${selHecho(l, k, true)}</summary>
     <div class="qv-cuerpo">${w ? `<div class="foto" data-wiki="${esc(w)}"><span>📷</span></div><div class="credito" data-cred="${esc(w)}"></div>` : ''}
       <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}${btnGps(l)}</div>${estrBox(hKey(l), l.es)}
       <div class="ko-s">${esc(l.ko || '')}${distHotel(l, k)}</div>${extra}${ojoLinea(ojoDe(null, l.ko))}${horarioLinea(l)}
@@ -2709,7 +2709,23 @@ const quiero = l => !!(u().quiero || {})[hKey(l)];
 const sigHk = (l, k) => hecho(l, k) ? 'x' : noVamos(l) ? 0 : quiero(l) ? 1 : 'q';
 const estHk = (l, k) => hecho(l, k) ? 'on' : noVamos(l) ? 'no' : quiero(l) ? 'qi' : '';
 const claseCard = (l, k) => hecho(l, k) ? 'hecho-card' : noVamos(l) ? 'novamos-card' : quiero(l) ? 'quiero-card' : '';
-const btnHecho = (l, k) => `<button class="hk ${estHk(l, k)}" data-hk="${esc(hKey(l))}" data-v="${sigHk(l, k)}" aria-label="Quiero ir / Visitado / No vamos">${hecho(l, k) ? '✅ Visitado' : noVamos(l) ? '✖️ No vamos' : quiero(l) ? '🔖 Quiero ir' : '☐ Visitado'}</button>`;
+document.addEventListener('change', e => {
+  const sel = e.target.closest('select[data-hksel]'); if (!sel) return;
+  const h = sel.dataset.hksel, v = sel.value, U = u();
+  if (bloqueado()) { render(); return; }
+  U.noVamos = U.noVamos || {}; U.quiero = U.quiero || {};
+  if (v === 'x') U.noVamos[h] = todayISO(); else delete U.noVamos[h];
+  if (v === 'q') U.quiero[h] = todayISO(); else delete U.quiero[h];
+  marcarHecho(h, v === 'v'); saveUser();
+  if (v === 'v' || v === 'x') Object.keys(abiertos).concat('qv:' + h).forEach(k => { if (k === 'qv:' + h || k.endsWith('|' + h)) abiertos[k] = false; });
+  render();
+});
+// v303: desplegable en vez de casilla de pasos: se elige el estado directamente (sin pasar por Visitado, que pliega la ficha).
+const estSel = (l, k) => hecho(l, k) ? 'v' : noVamos(l) ? 'x' : quiero(l) ? 'q' : '';
+const OPC_HK = [['', '☐', '☐ Marcar'], ['q', '🔖', '🔖 Quiero ir'], ['v', '✅', '✅ Visitado'], ['x', '✖️', '✖️ No vamos']];
+const selHecho = (l, k, corto) => { const e = estSel(l, k);
+  return `<select class="hk-sel ${corto ? 'corto' : ''} ${estHk(l, k)}" data-hksel="${esc(hKey(l))}" aria-label="Estado: quiero ir, visitado o no vamos">${OPC_HK.map(([v, c, t]) => `<option value="${v}" ${v === e ? 'selected' : ''}>${corto ? (v === e ? c : t) : t}</option>`).join('')}</select>`; };
+const btnHecho = (l, k) => selHecho(l, k, false);
 
 
 // ---------- Comer (data/comer.json + lugares propios) ----------
@@ -3507,6 +3523,7 @@ document.addEventListener('click', e => {
     return; }
   const avb = e.target.closest('button[data-avok]');
   if (avb) { e.preventDefault(); const U = u(), o = U.avisosOk = U.avisosOk || {}, a = avb.dataset.avok; if (o[a]) delete o[a]; else o[a] = todayISO(); saveUser(); render(); return; }
+  if (e.target.closest('select[data-hksel]')) { e.stopPropagation(); return; } // abrir el desplegable no pliega ni abre la ficha
   const hk = e.target.closest('button[data-hk]');
   if (hk) { e.preventDefault(); const h = hk.dataset.hk, x = hk.dataset.v === 'x', v = hk.dataset.v === '1';
     const q = hk.dataset.v === 'q';
