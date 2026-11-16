@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v315
+Caché del service worker: corea-v316
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -368,6 +368,7 @@ Caché del service worker: corea-v315
 - v313: Jeonju → ☕ Cafeterías: DID (디드 꽃동산점), 2 Gonjisan 3-gil, donde estuvieron; datos de la captura de Google (4,8 ★, 55 reseñas; 1-10.000 ₩; abre a las 7:00). Ubicación aproximada, al sur del río frente al mercado de Nambu.
 - v314: Gyeongju → ☕ Cafeterías: Do Not Disturb Bakers (두 낫 디스터브), 71-1 Cheomseong-ro, donde estuvieron (nombre buscado por la dirección en Polle; 3,5 en Polle). El restaurante de Hwangnam-dong 328-1 ya estaba: Gyeongju Gyodong Sundubu, con la nota de su almuerzo del 10/11.
 - v315: nombre exacto que dio el usuario: «Do Not Disturb Bakers», 두낫디스터브 베이커스 경주 (para Naver y Enseñar).
+- v316: Seúl → ☕ Cafeterías: The Coffee Bean & Tea Leaf frente al ayuntamiento de Jongno (커피빈 종로구청앞점), 34 Jong-ro 3-gil; datos de la captura de Google (4,0 ★, 139 reseñas; 1-10.000 ₩; cierra 22:00). Ubicación aproximada.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

@@ -3072,5 +3072,25 @@
 "fuente": "Polle",
 "fecha": "2026-11"
 }
+},
+{
+"id": "p-coffeebean-jongno",
+"ciudad": "seul",
+"nombre": "The Coffee Bean & Tea Leaf (frente al ayuntamiento de distrito de Jongno)",
+"ko": "커피빈 종로구청앞점",
+"tipo": "café",
+"plato": "café y té (cadena)",
+"direccion": "34 Jong-ro 3-gil, Jongno-gu (Cheongjin-dong, entre Gwanghwamun e Insadong; cerca de LoL Park y la estación de Jonggak) · ubicación aproximada",
+"horario": "Cierra a las 22:00 (Google, nov. 2026; apertura VERIFICAR)",
+"precio": "1-10.000 ₩ por persona (Google)",
+"fuente": "propio",
+"url": null,
+"nota": "Añadida por nosotros. Cadena de cafeterías conocida; útil como parada entre Gwanghwamun, Insadong y LoL Park.",
+"opiniones": {
+"v": 4.0,
+"n": 139,
+"fuente": "Google (captura del usuario)",
+"fecha": "2026-11"
+}
 }
 ]
