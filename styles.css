@@ -1824,5 +1824,20 @@ details.c2-pl:not([open]) :is(.c2-foto, .c2-ic) { width: 44px !important; height
 details.c2-pl .c2-nom, details.c2-pl .c2-sub { text-align: left; justify-content: flex-start; }
 details.c2-pl:not([open]) .c2-nom b { font-size: 1rem; }
 .c2-esti { position: absolute; left: -4px; top: -6px; font-size: .9rem; z-index: 2; }
+/* v311: fichas plegables en el resto de apartados de Planes (mismo aspecto que Comer). */
+details.pl-pl > summary.pl-sum { display: flex; gap: 10px; align-items: center; list-style: none; cursor: pointer; position: relative; padding-right: 22px; text-align: left; }
+details.pl-pl > summary.pl-sum::-webkit-details-marker { display: none; }
+details.pl-pl > summary.pl-sum::after { content: '▸'; position: absolute; right: 2px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: .9rem; }
+details.pl-pl[open] > summary.pl-sum::after { content: '▾'; }
+details.pl-pl > summary.pl-sum .c2-ic { width: 44px; height: 44px; min-width: 44px; font-size: 1.3rem; }
+details.pl-pl > summary.pl-sum .c2-txt { flex: 1; min-width: 0; }
+details.pl-pl > summary.pl-sum .c2-nom b { font-size: 1rem; }
+details.pl-pl > summary.pl-sum select.hk-sel { margin-left: 0; }
+details.pl-pl:not([open]) { padding-top: 8px !important; padding-bottom: 8px !important; }
+details.pl-pl[open] > summary.pl-sum { margin-bottom: 8px; }
+details.pl-pl.hecho-card > summary .c2-nom b { color: var(--ok); }
+details.pl-pl.novamos-card { opacity: .6; }
+details.pl-pl.novamos-card > summary .c2-nom b { text-decoration: line-through; }
+details.hotel-pl > .card.aloj { box-shadow: none !important; border: 0 !important; margin: 0 !important; padding: 0 !important; background: none !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v310"; }
+:root { --css-ver: "v311"; }

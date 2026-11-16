@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v310';
+const VERSION = 'v311';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1037,11 +1037,11 @@ function eventosCiudad(k) {
   const busca = ko ? [`${ko} 공연`, `${ko} 축제`, `${ko} 무료 행사`].map(q => `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 ${esc(q)}</a>`).join('') : '';
   const webs = ((typeof EVENTOS_WEB !== 'undefined' && EVENTOS_WEB[k]) || []).map(([t, u]) => `<a class="btn sec mini" href="${esc(u)}" target="_blank" rel="noopener">🌐 ${esc(t)}</a>`).join('');
   const tarjeta = e => { const d0 = enDias(e), fut = d0.filter(([, b]) => b >= hoy), d = fut.length ? fut : d0, pas = !fut.length;
-    return `<div class="card evento ${e.nota ? 'ev-nota' : ''} ${pas ? 'pasado' : ''}"><div class="ev-cab">${e.nota ? '💡' : '🎟️'} <b>${esc(e.es)}</b>${e.gratis ? ' <span class="badge ok">Gratis</span>' : ''}${e.verificar ? ' <span class="ver">VERIFICAR</span>' : ''}</div>
+    return fichaPl('ev:' + e.es, `${icCab(e.nota ? '💡' : '🎟️')}<div class="c2-txt"><div class="c2-nom"><b>${esc(e.es)}</b>${e.gratis ? ' <span class="badge ok">Gratis</span>' : ''}</div>${e.nota ? '' : `<div class="c2-sub"><small class="muted">📅 ${d.map(([a, b]) => rango(a, b)).join(' · ')}</small></div>`}</div>`, `${e.verificar ? '<span class="ver">VERIFICAR</span>' : ''}
       ${e.nota ? '' : `<div class="ev-fecha">📅 ${d.map(([a, b]) => rango(a, b)).join(' · ')}${e.hora ? ` · 🕒 ${esc(e.hora)}` : ''}</div>`}
       ${e.lugar ? `<div class="muted">🏠 ${esc(e.lugar)}${e.ko ? ` <span class="ko-s">${esc(e.ko)}</span>` : ''}</div>` : ''}
       <div>${resaltar(e.desc || '')}</div>
-      <div class="acciones">${e.ko ? naver({ ko: e.ko }) : ''}${e.fuente ? `<a class="btn sec mini" href="${esc(e.fuente)}" target="_blank" rel="noopener">🔗 Fuente</a>` : ''}</div></div>`; };
+      <div class="acciones">${e.ko ? naver({ ko: e.ko }) : ''}${e.fuente ? `<a class="btn sec mini" href="${esc(e.fuente)}" target="_blank" rel="noopener">🔗 Fuente</a>` : ''}</div>`, `evento ${e.nota ? 'ev-nota' : ''} ${pas ? 'pasado' : ''}`); };
   return `<p class="muted centro">Lo que solo pasa los días que estáis aquí. Buscado el 15 nov; con conexión, mirad también:</p>
     <div class="acciones centro">${busca}${webs}</div>
     ${ev.length ? ev.map(tarjeta).join('') : '<p class="muted centro">No hemos encontrado nada especial para vuestros días en esta ciudad.</p>'}`;
@@ -1056,10 +1056,10 @@ function estacionesViaje(k) {
 function estacionesDe(k) {
   const hot = hotelDe(k);
   return estacionesViaje(k).map(e => { const c = coordsLugar(e), d = c && hot ? km(hot, c) : null;
-    return `<div class="card estac-card"><div class="estac-tit"><span class="estac-ic">${IC_EST[e.tipo] || '🚉'}</span><div><b>${esc(e.es)}</b>${e.verificar ? ' <span class="ver">VERIFICAR</span>' : ''}<div><span class="ko-s">${esc(e.ko)}</span> ${btnHabla(e.ko)}</div></div></div>
+    return fichaPl('est:' + e.ko, `${icCab(IC_EST[e.tipo] || '🚉')}<div class="c2-txt"><div class="c2-nom"><b>${esc(e.es)}</b></div><div class="c2-sub"><span class="ko-s">${esc(e.ko)}</span> <small class="muted">${e.fechas.map(fmtCorto).join(' · ')}</small></div></div>`, `${e.verificar ? '<span class="ver">VERIFICAR</span>' : ''} ${btnHabla(e.ko)}
       <div class="muted">${e.fechas.map(fmtCorto).join(' · ')}${d != null ? ` · 📏 ${fmtDist(d)} del hotel` : ''}</div>
       ${e.nota ? `<div class="muted">${resaltar(e.nota)}</div>` : ''}
-      <div class="acciones">${irMapas(e)}${btnGps(e)}${btnGpsDel(e)}</div></div>`; }).join('') || '<p class="muted centro">Ninguna estación de vuestros traslados en esta ciudad.</p>';
+      <div class="acciones">${irMapas(e)}${btnGps(e)}${btnGpsDel(e)}</div>`, 'estac-card'); }).join('') || '<p class="muted centro">Ninguna estación de vuestros traslados en esta ciudad.</p>';
 }
 function hotelesDe(k) {
   const hs = arr(trip.alojamientos).filter(a => ck(a.ciudad) === k);
@@ -1067,7 +1067,7 @@ function hotelesDe(k) {
   // v284: el mismo hotel en dos estancias (Seúl a la ida y a la vuelta) = una sola ficha con las dos fechas.
   const fch = a => `📅 ${esc(String(a.fechas || '').replace(/(\d{4})-(\d\d)-(\d\d)/g, (m0, y, mo, d) => fmtCorto(`${y}-${mo}-${d}`)))}${a.noches ? ` · ${a.noches} ${a.noches == 1 ? 'noche' : 'noches'}` : ''}`;
   const grupos = new Map(); hs.forEach(a => { const g = norm(a.nombre) || a.id; if (!grupos.has(g)) grupos.set(g, []); grupos.get(g).push(a); });
-  return [...grupos.values()].map(g => `<div class="muted centro hotel-fechas">${g.map(fch).join('<br>')}</div>${alojCard(g[0], false)}`).join('');
+  return [...grupos.values()].map(g => fichaPl('hpl:' + (g[0].id || g[0].nombre), `${icCab('🛏️')}<div class="c2-txt"><div class="c2-nom"><b>${esc(g[0].nombre)}</b></div><div class="c2-sub"><span class="ko-s">${esc(g[0].ko || '')}</span> <small class="muted">${g.map(fch).join(' · ')}</small></div></div>`, alojCard(g[0], false, true), 'hotel-pl')).join('');
 }
 // Hoy: hotel en una línea, como las paradas (🏯 lleva a Planes → Hotel; 🧭 y 🌐 para llegar).
 function hotelLinea(a, etiqueta) {
@@ -2535,6 +2535,9 @@ const PCBANG = `<details class="card pcbang" data-key="pcbang"><summary><b>🖥�
   <li>LoL viene instalado: entráis con vuestra cuenta de Riot. Ojo: vuestra cuenta es del servidor europeo (EUW), así que jugaréis con mucho ping. Crear cuenta en el servidor coreano suele pedir verificación coreana (VERIFICAR).</li>
   <li>Se pide comida desde el ordenador (ramen, tteokbokki…) y os la traen al sitio.</li></ul></details>`;
 const icPlan = p => p.ic || ({ lol: '🎮', servicio: '🧺', curioso: '✨', pelu: '💇', ropa: '👕' })[p.cat] || '🔹';
+// v311: ficha plegable común a los apartados de Planes (plegada por defecto): cabecera = lo esencial, cuerpo = el resto.
+const fichaPl = (key, cab, cuerpo, clase = '', antes = '') => `<details class="card pl-pl ${clase}" data-key="${esc(key)}" ${abierto(key, false) ? 'open' : ''}><summary class="c2-top pl-sum">${cab}</summary>${antes}${cuerpo}</details>`;
+const icCab = ic => `<div class="c2-ic">${ic}</div>`;
 function planesDe(k, cat) {
   planesCat = cat;
   const P = typeof PLANES !== 'undefined' ? PLANES : [];
@@ -2546,10 +2549,8 @@ function planesDe(k, cat) {
     const c = coordsLugar(p), i = P.indexOf(p);
     const otros = c ? P.filter(o => o !== p && o.ciudad === k && coordsLugar(o)).map(o => [o, km(c, coordsLugar(o))]).filter(([, d]) => d <= 1.5).sort((a, b) => a[1] - b[1]) : [];
     const plan = c ? sitios.map(l => [l, km(c, coordsLugar(l)), enPlan(l, k)]).filter(([, d, e]) => d <= 1 && e).sort((a, b) => a[2].n - b[2].n || a[1] - b[1]).slice(0, 4) : [];
-    return `<div class="card plan-card con-ko ${p.cat} ${hecho(p, k) ? 'hecho-card' : ''}">${btnKo('pl:' + i, p.ko)}
+    return fichaPl('ppl:' + (p.id || i), `${icCab(icPlan(p))}<div class="c2-txt"><div class="c2-nom"><b>${esc(p.es)}${ojoSup(p)}</b></div><div class="c2-sub"><span class="ko-s">${esc(p.ko || '')}</span>${distHotel(p, k)}</div></div>${selHecho(p, k, true)}`, `
       ${wikiDe(p) ? `<div class="foto banda" data-wiki="${esc(wikiDe(p))}"><span>${icPlan(p)}</span></div>` : ''}
-      <div class="sd-tit">${btnHecho(p, k)}<b>${icPlan(p)} ${esc(p.es)}${ojoSup(p)}</b></div>
-      <div class="ko-s">${esc(p.ko)}${distHotel(p, k)}</div>
       <div class="muted">${resaltar(p.desc, true)}</div>
       ${p.direccion_en ? `<div class="muted">🏠 ${esc(p.direccion_en)}</div>` : ''}
       ${p.nota ? `<div class="muted">🕒 ${resaltar(p.nota, true)}</div>` : ''}
@@ -2558,7 +2559,7 @@ function planesDe(k, cat) {
       ${otros.length || plan.length ? `<details class="pl-cerca" data-key="plc:${esc(p.id)}" ${abierto('plc:' + p.id, false) ? 'open' : ''}><summary>📏 Cerca${otros.length ? `: ${otros.length} ${otros.length === 1 ? 'plan' : 'planes'}` : ''}${plan.length ? ` · 📅 ${plan.length} de vuestro plan` : ''}</summary>
         ${otros.length ? `<div class="cerca">${otros.map(([o, d]) => `${icPlan(o)} ${esc(o.es)} <span class="muted">${fmtDist(d)}</span>`).join(' · ')}</div>` : ''}
         ${plan.length ? `<div class="cerca">📅 ${plan.map(([l, d, e]) => `${esc(l.es)} <span class="muted">(día ${e.n}, ${fmtDist(d)})</span>`).join(' · ')}</div>` : ''}</details>` : ''}
-      <div class="acciones">${naver(p)}</div>${estrBox(hKey(p), icPlan(p) + ' ' + p.es)}</div>`;
+      <div class="acciones">${naver(p)}</div>${estrBox(hKey(p), icPlan(p) + ' ' + p.es)}`, `plan-card con-ko ${p.cat} ${claseCard(p, k)}`, btnKo('pl:' + i, p.ko));
   };
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
@@ -2770,7 +2771,7 @@ function platosDe(k, hay = false) {
   const sab = typeof CIUDAD_INFO !== 'undefined' && arr(CIUDAD_INFO[k]).find(([ic]) => ic === '🍜');
   if (hay) return todos.length > 0 || !!sab || probGrupos().some(g => g[2] === k);
   const lin = sueltos.map(l => `<p>🍽️ <b>${esc(l.plato || l.nombre)}</b>${l.nota ? ` — ${esc(l.nota)}` : ''}</p>`).join('');
-  return `${sab || lin ? `<div class="card guia-txt platos-ciudad"><b>🥢 Qué probar en ${esc(nombreCiudad(k))}</b>${sab ? sab[2].map(p => `<p>${resaltar(p, true)}</p>`).join('') : ''}${lin}</div>` : ''}
+  return `${sab || lin ? fichaPl('qp:' + k, `${icCab('🥢')}<div class="c2-txt"><div class="c2-nom"><b>Qué probar en ${esc(nombreCiudad(k))}</b></div></div>`, `${sab ? sab[2].map(p => `<p>${resaltar(p, true)}</p>`).join('') : ''}${lin}`, 'guia-txt platos-ciudad') : ''}
     ${ps.length ? `<div class="qv-grupo">📌 Dónde probarlos</div>${ps.map(cardComer).join('')}` : ''}${probCiudad(k)}`;
 }
 function viewComer(dentro = false) {
