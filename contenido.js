@@ -1031,6 +1031,10 @@ const PLANES = [
     direccion_en: 'Centro de Andong, junto a la antigua estación (cerca del hotel)',
     desc: 'Uniqlo del centro de Andong, abierta en 2018 junto a la antigua estación de tren.',
     nota: 'Solo hay noticia de su apertura (2018): VERIFICAR en Naver que sigue abierta.', precio: 'Precios Uniqlo en Corea.' },
+  // v312: pedida por el usuario; no se encontró tienda en Seúl.
+  { id: 'pl-lewking', ic: '👕', ciudad: 'seul', cat: 'ropa', es: 'Lewking',
+    desc: 'Tienda pedida por vosotros. No hemos encontrado su dirección en Seúl (ni si hay una cerca del hostal): el botón de Naver la busca por el nombre.',
+    nota: 'Nombre y ubicación sin confirmar: VERIFICAR.' },
   // v223: más Curioso y Ropa en Busan y Jeonju (ubicaciones aproximadas; lo dudoso, VERIFICAR).
   { id: 'pl-happypower', wiki: 'Gamcheon_Culture_Village', ic: '🎨', ciudad: 'busan', cat: 'curioso', es: 'Gamnaegol Happy Power Station (talleres en Gamcheon)', ko: '감내골행복발전소', romanizacion: 'Gamnaegol Haengbok Baljeonso', aprox: true,
     precio: 'Talleres de 10.000-15.000 ₩ (LP 2024).',

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v311
+Caché del service worker: corea-v312
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -364,6 +364,7 @@ Caché del service worker: corea-v311
 - v309: (1) Comer: nuevo estado «🙅 No fuimos» junto a Quiero/Visitado/Descartado/Cerrado (va al grupo plegado del final, como Descartados y Cerrados); cada sitio de Comer es una ficha plegable (plegada por defecto: icono, nombre, hangul y distancia; ▸/▾). (2) Planes sin 💇 Peluquería: EcoJardin pasa a ✨ Curioso. (3) Comer en Planes por subapartados: 🍲 Restaurantes / ☕ Cafeterías / 🍶 Bares / 🛒 Mercados / 🥢 Platos típicos (antes botón propio de Planes); sin la fila de tipos ni la leyenda; «Mucho ojo», «Alrededor» y «Lo mejor en Naver» bajan al final de la lista. (4) Fuera el calendario del Mundial de LoL (WORLDS borrado).
 - v310: en Planes, 🍲 Restaurantes / ☕ Cafeterías / 🍶 Bares / 🛒 Mercados / 🥢 Platos típicos salen al mismo nivel que Puntos de interés, Hotel, etc. (12 botones en 3 filas de 4; el botón Comer desaparece; los enlaces a «Comer» del mapa o del buscador abren el apartado del tipo del sitio). Lavandería quitada del todo (botón, fichas de PLANES, búsquedas de Naver y el 🧺 de «Alrededor»).
 - v311: el resto de apartados de Planes con fichas plegables como Comer (fichaPl en app.js; plegadas por defecto, ▸/▾): Curioso, PC y Ropa (icono, nombre, hangul, distancia y el desplegable de estado en la cabecera), Hotel (nombre y fechas), Estaciones (nombre, hangul y fechas), Eventos (título, Gratis y fechas) y «Qué probar» de Platos típicos. Puntos de interés ya lo era.
+- v312: Planes → Seúl → 👕 Ropa: SPAO Myeongdong ya estaba (a ≈500 m del hostal); se añade Lewking (no se encontró tienda ni dirección en Seúl; ficha sin ubicación con búsqueda en Naver por el nombre; [Supuesto] nombre tal cual lo escribió el usuario).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
