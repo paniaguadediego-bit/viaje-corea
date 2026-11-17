@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v320';
+const VERSION = 'v321';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -3782,3 +3782,16 @@ if ('serviceWorker' in navigator) {
 }
 // Muestra la versión de caché en Más.
 if (window.caches) caches.keys().then(k => { const v = k.find(x => /^corea-v\d/.test(x)); window.VERSION = v; const e = $('#ver'); if (e && v) e.textContent = 'Versión: ' + v; });
+// v321: barra inferior bien colocada desde el principio. En la app instalada (Android, de borde a borde), al abrir
+// la ventana visible puede ser más baja que la de diseño hasta el primer scroll y la barra queda medio tapada:
+// se sube lo que sobre (visualViewport) y se da un «empujón» de 1 px al abrir, como hace el primer scroll.
+(function ajusteBarra() {
+  const nav = document.getElementById('tabs'), vv = window.visualViewport; if (!nav) return;
+  const fija = () => { const off = vv ? Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop)) : 0; nav.style.bottom = off ? off + 'px' : ''; };
+  if (vv) { vv.addEventListener('resize', fija); vv.addEventListener('scroll', fija); }
+  window.addEventListener('resize', fija);
+  const empuja = () => { fija(); if (window.scrollY === 0) { window.scrollTo(0, 1); requestAnimationFrame(() => { window.scrollTo(0, 0); fija(); }); } };
+  window.addEventListener('load', () => setTimeout(empuja, 50));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(fija, 100); });
+  setTimeout(fija, 400);
+})();

@@ -1848,4 +1848,4 @@ details.nv-mas > details.card > summary { padding-left: 0; }
 .ciudad .platos-bar small { margin-left: auto; color: var(--muted); font-size: .78rem; }
 .ciudad .platos-bar.on { background: color-mix(in srgb, #cd2e3a 22%, var(--card)) !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v320"; }
+:root { --css-ver: "v321"; }
