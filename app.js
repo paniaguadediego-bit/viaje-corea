@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v318';
+const VERSION = 'v319';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1059,7 +1059,7 @@ function estacionesDe(k) {
     return fichaPl('est:' + e.ko, `${icCab(IC_EST[e.tipo] || '🚉')}<div class="c2-txt"><div class="c2-nom"><b>${esc(e.es)}</b></div><div class="c2-sub"><span class="ko-s">${esc(e.ko)}</span> <small class="muted">${e.fechas.map(fmtCorto).join(' · ')}</small></div></div>`, `${e.verificar ? '<span class="ver">VERIFICAR</span>' : ''} ${btnHabla(e.ko)}
       <div class="muted">${e.fechas.map(fmtCorto).join(' · ')}${d != null ? ` · 📏 ${fmtDist(d)} del hotel` : ''}</div>
       ${e.nota ? `<div class="muted">${resaltar(e.nota)}</div>` : ''}
-      <div class="acciones">${irMapas(e)}${btnGps(e)}${btnGpsDel(e)}</div>`, 'estac-card'); }).join('') || '<p class="muted centro">Ninguna estación de vuestros traslados en esta ciudad.</p>';
+      <div class="acciones">${irMapas(e)}${btnMapaApp(e, k, 'estac', hKey(e))}${btnGps(e)}${btnGpsDel(e)}</div>`, 'estac-card'); }).join('') || '<p class="muted centro">Ninguna estación de vuestros traslados en esta ciudad.</p>';
 }
 function hotelesDe(k) {
   const hs = arr(trip.alojamientos).filter(a => ck(a.ciudad) === k);
@@ -1393,7 +1393,7 @@ function fichaQV(l, k, { desc = '', extra = '', clase = '', plan = null } = {}) 
       <span class="qv-cab"><b>${esc(l.es)}${ojoSup(l)}${lpPill(l)}</b><small>${plan ? `<span class="qv-dia">📅 ${fmtCorto(plan.fecha)}</span> ` : ''}${esc(breve(desc || l.nota || l.desc))}</small></span>
       ${selHecho(l, k, true)}</summary>
     <div class="qv-cuerpo">${w ? `<div class="foto" data-wiki="${esc(w)}"><span>📷</span></div><div class="credito" data-cred="${esc(w)}"></div>` : ''}
-      <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}${btnGps(l)}</div>${estrBox(hKey(l), l.es)}
+      <div class="qv-acc">${btnHecho(l, k)}${agendaBtn(l, k, 'qv')}${naver(l)}${btnMapaApp(l, k, 'sitios', hKey(l))}${btnGps(l)}</div>${estrBox(hKey(l), l.es)}
       <div class="ko-s">${esc(l.ko || '')}${distHotel(l, k)}</div>${extra}${ojoLinea(ojoDe(null, l.ko))}${horarioLinea(l)}
       ${infoCompleta(l, desc || l.nota || l.desc)}</div></details>`;
 }
@@ -1669,11 +1669,21 @@ let mpCapas = new Set(['itin', 'sitios', 'comer', 'planes', 'estac']), mapaCiuda
 const mapaDia = new Set();
 const recorta = (t, n) => { t = String(t || ''); return t.length > n ? t.slice(0, n - 1) + '…' : t; };
 
+// v319: 🗺️ Mapa = abre la pestaña Mapas de esa ciudad centrada en el sitio, con su ficha del mapa abierta.
+const btnMapaApp = (l, k, capa, key) => { const c = coordsLugar(l); return c && k ? `<button class="btn sec mini" data-irmapa="${esc(k)}|${esc(key)}|${c[0]},${c[1]}|${capa}" title="Ver en el mapa de la app">🗺️ Mapa</button>` : ''; };
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-irmapa]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+  const [k, key, ll, capa] = b.dataset.irmapa.split('|'), c = ll.split(',').map(Number);
+  ciudadSel = k; if (capa === 'sitios') { mpCapas.add('itin'); mpCapas.add('sitios'); } else mpCapas.add(capa);
+  const id = 'c:' + k; MP[id] = { ...(MP[id] || {}), z: 17, c: [c[0] - 0.0011, c[1]], selKey: key, sel: null }; // centro algo al sur: el sitio queda arriba, sin taparlo la ficha
+  ir('mapas'); render(); const el = document.querySelector(`[data-mapa="${CSS.escape(id)}"]`); if (el) el.scrollIntoView({ block: 'center' });
+}, true);
 // Registra un mapa (puntos y línea) y devuelve su HTML; se dibuja después de render().
 function mapaHTML(id, pts, { linea = null, fit = null, hotel = null, capas = '', mini = false } = {}) {
   const prev = MP[id];
   MP[id] = { ...(prev || {}), pts, linea, hotel, fit: fit || pts.map(p => p.c), k: id.startsWith('c:') ? id.slice(2) : ck((arr(trip.dias).find(x => x.fecha === id.replace(/^d[m]?:/, '')) || {}).ciudad || '') };
   if (prev && prev.pts && prev.pts.length !== pts.length) MP[id].sel = null; // cambiaron las capas: se cierra la ficha
+  if (MP[id].selKey) { const sk = MP[id].selKey, i = pts.findIndex(p => p.l && (String(p.l.id) === sk || hKey(p.l) === sk)); if (i >= 0) MP[id].sel = i; delete MP[id].selKey; }
   if (!pts.length) return '<div class="muted">No hay sitios con ubicación para el mapa.</div>';
   if (mini) return `<div class="mapa mini" data-mapa="${esc(id)}"><div class="mp-vista"><div class="mp-capa"></div></div></div>`;
   return `${capas}<div class="mapa" data-mapa="${esc(id)}">
@@ -2559,7 +2569,7 @@ function planesDe(k, cat) {
       ${otros.length || plan.length ? `<details class="pl-cerca" data-key="plc:${esc(p.id)}" ${abierto('plc:' + p.id, false) ? 'open' : ''}><summary>📏 Cerca${otros.length ? `: ${otros.length} ${otros.length === 1 ? 'plan' : 'planes'}` : ''}${plan.length ? ` · 📅 ${plan.length} de vuestro plan` : ''}</summary>
         ${otros.length ? `<div class="cerca">${otros.map(([o, d]) => `${icPlan(o)} ${esc(o.es)} <span class="muted">${fmtDist(d)}</span>`).join(' · ')}</div>` : ''}
         ${plan.length ? `<div class="cerca">📅 ${plan.map(([l, d, e]) => `${esc(l.es)} <span class="muted">(día ${e.n}, ${fmtDist(d)})</span>`).join(' · ')}</div>` : ''}</details>` : ''}
-      <div class="acciones">${naver(p)}</div>${estrBox(hKey(p), icPlan(p) + ' ' + p.es)}`, `plan-card con-ko ${p.cat} ${claseCard(p, k)}`, btnKo('pl:' + i, p.ko));
+      <div class="acciones">${naver(p)}${btnMapaApp(p, k, 'planes', hKey(p))}</div>${estrBox(hKey(p), icPlan(p) + ' ' + p.es)}`, `plan-card con-ko ${p.cat} ${claseCard(p, k)}`, btnKo('pl:' + i, p.ko));
   };
   const grupo = (cat, t) => { const ls = P.filter(p => p.ciudad === k && p.cat === cat).sort((a, b) => (km(hotelDe(k) || [0, 0], coordsLugar(a) || [0, 0]) - km(hotelDe(k) || [0, 0], coordsLugar(b) || [0, 0])));
     return ls.length ? (t ? `<h2>${t}</h2>` : '') + ls.map(card).join('') : ''; };
@@ -2862,7 +2872,7 @@ function cardComer0(l) {
     </summary>${btnKo('k:' + id, l.ko)}
     <div class="c2-acc">
       ${ESTADOS.map(([k, t]) => `<button class="c2-est ${e.estado === k ? 'on' : ''} e-${k}" data-est="${esc(id)}" data-v="${k}" title="${t}">${{ quiero: '🔖', visitado: '✅', nofuimos: '🙅', descartado: '👎', cerrado: '🚫' }[k]}<small>${t}</small></button>`).join('')}
-      ${q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 Naver</a>${googleMaps((l.ko || l.nombre || '') + ' ' + ciudad)}` : ''}
+      ${q ? `<a class="btn sec mini" href="https://m.map.naver.com/search2/search.naver?query=${encodeURIComponent(q)}" data-app="naver" data-q="${esc(q)}" target="_blank" rel="noopener">🟢 Naver</a>${googleMaps((l.ko || l.nombre || '') + ' ' + ciudad)}` : ''}${btnMapaApp(l, l.ciudad, 'comer', id)}
     </div>
     <details class="c2-mas" data-key="cm:${esc(id)}" ${abierto('cm:' + id, false) ? 'open' : ''}><summary>Más detalles${e.nota ? ' · 📝' : ''}${Number(e.val) ? ' · ' + '★'.repeat(Number(e.val)) : ''}</summary>
       ${l.direccion ? `<div class="muted">🏠 ${esc(l.direccion)}</div>` : ''}

@@ -1843,4 +1843,4 @@ details.hotel-pl > .card.aloj { box-shadow: none !important; border: 0 !importan
 details.nv-mas > .card { box-shadow: none !important; border: 0 !important; margin: 6px 0 0 !important; padding: 4px 0 !important; background: none !important; }
 details.nv-mas > details.card > summary { padding-left: 0; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v318"; }
+:root { --css-ver: "v319"; }
