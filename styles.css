@@ -1842,5 +1842,10 @@ details.hotel-pl > .card.aloj { box-shadow: none !important; border: 0 !importan
 /* v317: «Buscar más en Naver» agrupa Alrededor y Lo mejor valorado (sin tarjetas dentro de tarjetas). */
 details.nv-mas > .card { box-shadow: none !important; border: 0 !important; margin: 6px 0 0 !important; padding: 4px 0 !important; background: none !important; }
 details.nv-mas > details.card > summary { padding-left: 0; }
+/* v320: 🥢 Platos típicos como barra horizontal bajo «Mucho ojo con…» (distinta de los 12 botones). */
+.ciudad .platos-bar { display: flex; align-items: center; gap: 8px; width: calc(100% - 16px); margin: 0 8px 8px !important; padding: 8px 12px !important; min-height: 0 !important; border-radius: 12px; text-align: left; background: color-mix(in srgb, #cd2e3a 9%, var(--card)) !important; color: var(--fg) !important; border: 1px solid color-mix(in srgb, #cd2e3a 35%, var(--line)) !important; border-left: 4px solid #cd2e3a !important; box-shadow: none; font-size: .95rem; }
+.ciudad .platos-bar span { font-size: 1.2rem; }
+.ciudad .platos-bar small { margin-left: auto; color: var(--muted); font-size: .78rem; }
+.ciudad .platos-bar.on { background: color-mix(in srgb, #cd2e3a 22%, var(--card)) !important; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v319"; }
+:root { --css-ver: "v320"; }

@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v319
+Caché del service worker: corea-v320
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -372,6 +372,7 @@ Caché del service worker: corea-v319
 - v317: Planes ordenado igual en todos los botones: ciudad → un solo «⚠️ Mucho ojo con…» (sitios y restaurantes juntos; antes había otro al final de Comer) → botones → buscador y filtros → lista → al final, en Restaurantes/Cafeterías/Bares/Mercados, un único desplegable «🔍 Buscar más en Naver» con «Alrededor de donde estáis» y «Lo mejor valorado en Naver» (antes dos tarjetas sueltas). Quitada la línea «Horarios de webs…» de Curioso, PC y Ropa.
 - v318: Jeonju → ☕ Cafeterías: OLOL bakery (Our Loaf Our Lounge), 31 Gyeonggijeon-gil 1층, donde desayunaron el 17 nov; datos de la captura de Google (5,0 ★, 34 reseñas; 10.000-20.000 ₩; cierra 21:00). Sin hangul (no consta); ubicación aproximada desde el mapa de la captura.
 - v319: botón «🗺️ Mapa» en las fichas de Planes (Puntos de interés, Restaurantes, Cafeterías, Bares, Mercados, Curioso, PC, Ropa y Estaciones), junto a Naver y Google: abre la pestaña Mapas de esa ciudad a zoom 17, con la capa encendida, el sitio resaltado en la parte de arriba y su ficha del mapa abierta (btnMapaApp; MP[id].selKey).
+- v320: Planes: nuevo botón 🌳 Parques (2.º de la rejilla) con los sitios cuyo tipo es parque, jardín, bosque o pinar, que salen de Puntos de interés (esParque; los enlaces a la ficha van al apartado que toca). 🥢 Platos típicos deja la rejilla y pasa a una barra horizontal roja «Platos típicos y bebidas» bajo «Mucho ojo con…»; la rejilla sigue con 12 botones en 3 filas. Busan: Yongdusan (ahora en Parques) y Lotte Gwangbok ya estaban; nuevo en Restaurantes: Dotori Donkatsu (도토리돈까스), junto al parque Yongdusan, de la captura de Google (4,5 ★, 15 reseñas; 10.000-20.000 ₩; cierra 20:00; ubicación aproximada).
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.

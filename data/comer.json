@@ -3112,5 +3112,25 @@
 "fuente": "Google (captura del usuario)",
 "fecha": "2026-11"
 }
+},
+{
+"id": "p-dotori-donkatsu",
+"ciudad": "busan",
+"nombre": "Dotori Donkatsu",
+"ko": "도토리돈까스",
+"tipo": "restaurante",
+"plato": "tonkatsu (cerdo empanado), también con queso",
+"direccion": "Nampo-dong, al pie del parque Yongdusan por el norte (cerca de Coffee Bubu e Ilmi Milmyeon) · ubicación aproximada",
+"horario": "Cierra a las 20:00 (Google, nov. 2026; apertura VERIFICAR)",
+"precio": "10.000-20.000 ₩ por persona (Google)",
+"fuente": "propio",
+"url": null,
+"nota": "Añadido por nosotros (Busan). Local pequeño de tonkatsu con barra a la calle.",
+"opiniones": {
+"v": 4.5,
+"n": 15,
+"fuente": "Google (captura del usuario)",
+"fecha": "2026-11"
+}
 }
 ]

@@ -22,7 +22,7 @@ Una comparación útil: la app es una **libreta de viaje con dos tipos de hojas*
 - **Ruta:** vuelos, mapa del país y línea de tiempo con estancias y traslados.
 - **Planes:** cada ciudad con sus botones:
   - Puntos de interés;
-  - Restaurantes, Cafeterías, Bares, Mercados y Platos típicos;
+  - Parques, Restaurantes, Cafeterías, Bares y Mercados (y, en una barra aparte, Platos típicos y bebidas);
   - Hotel, Estaciones y Eventos (lo que solo pasa esos días);
   - Curioso, PC y Ropa (apagados si la ciudad no tiene nada).
 

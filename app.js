@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v319';
+const VERSION = 'v320';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -1367,7 +1367,7 @@ const QV_TIPOS = [[/palacio/i, '🏯 Palacios'], [/museo|biblioteca|prisión|mem
 const tipoQV = l => (QV_TIPOS.find(([re]) => re.test((l.tipo || '') + ' ' + l.es)) || [0, '✨ Otros'])[1];
 let qvOrden = 'itin', qvFiltro = 'todos', qvMarca = '';
 function qvPuntos(k, c) {
-  const todos = qvLista(k, c), U = u();
+  const todos = qvLista(k, c).filter(o => exSub === 'parques' ? esParque(o.l) : !esParque(o.l)), U = u();
   const F = { todos: () => true, itin: o => o.plan, lp: o => esLP(o.l), otros: o => !o.plan && !esLP(o.l) };
   // ✅ Marcados / ☐ No marcados: se suma al otro filtro (p. ej. Itinerario + No marcados = lo que os queda del plan).
   const base = todos.filter(F[qvFiltro] || F.todos), M = { si: o => hecho(o.l, k), qi: o => !hecho(o.l, k) && quiero(o.l), no: o => !hecho(o.l, k) && !noVamos(o.l) };
@@ -1610,21 +1610,22 @@ function abrirAyuda() {
 let ciudadSel = null, historiaAbierta = false, exSub = 'puntos';
 // Desde v223, lo que era Miscelánea se desgrana al mismo nivel: 7 apartados (los de Miscelánea solo si la ciudad tiene algo).
 // v310: los apartados de Comer (Restaurantes, Cafeterías, Bares, Mercados y Platos típicos) al mismo nivel que el resto; sin Lavandería.
-const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['c-restaurante', '🍲 Restaurantes'], ['c-café', '☕ Cafeterías'], ['c-bar', '🍶 Bares'], ['c-mercado', '🛒 Mercados'], ['platos', '🥢 Platos típicos'], ['hotel', '🛏️ Hotel'], ['estac', '🚉 Estaciones'], ['eventos', '🎟️ Eventos'], ['curioso', '✨ Curioso'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
+const EX_SUBS = [['puntos', '📍 Puntos de interés'], ['parques', '🌳 Parques'], ['c-restaurante', '🍲 Restaurantes'], ['c-café', '☕ Cafeterías'], ['c-bar', '🍶 Bares'], ['c-mercado', '🛒 Mercados'], ['hotel', '🛏️ Hotel'], ['estac', '🚉 Estaciones'], ['eventos', '🎟️ Eventos'], ['curioso', '✨ Curioso'], ['lol', '🖥️ PC'], ['ropa', '👕 Ropa']];
 const CATS_MISC = new Set(['curioso', 'lol', 'ropa']);
 // Mapas: el mapa de cada ciudad (itinerario, más sitios, Comer, Planes y hotel). Al tocar un icono, su ficha enlaza con Qué ver o Comer.
 function viewMapas() {
   const botones = botonesCiudad(); if (!botones) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
   return `<h2>🗺️ Mapas</h2>${botones}<div class="mapas-ciudad" style="${varsTema(ciudadSel)}">${mapaCiudadHTML(ciudadSel)}</div>`;
 }
-const hayCat = (k, x) => x.startsWith('c-') ? lugaresComer().some(l => l.ciudad === k && l.tipo === x.slice(2)) : x === 'platos' ? platosDe(k, true) : x === 'estac' ? estacionesViaje(k).length : !CATS_MISC.has(x) || (typeof PLANES !== 'undefined' && PLANES.some(p => p.ciudad === k && p.cat === x)) || (x === 'lol' && PC_BUSQ[k]);
+const esParque = l => /parque|jard[ií]n|bosque|arboreto|pinar/i.test(l.tipo || l.es || ''); // v320: van a 🌳 Parques, no a Puntos
+const hayCat = (k, x) => x === 'parques' ? qvLista(k, null).some(o => esParque(o.l)) : x.startsWith('c-') ? lugaresComer().some(l => l.ciudad === k && l.tipo === x.slice(2)) : x === 'platos' ? platosDe(k, true) : x === 'estac' ? estacionesViaje(k).length : !CATS_MISC.has(x) || (typeof PLANES !== 'undefined' && PLANES.some(p => p.ciudad === k && p.cat === x)) || (x === 'lol' && PC_BUSQ[k]);
 function viewCiudades() {
   if (exSub === 'pelu') exSub = 'curioso';
   if (exSub === 'servicio') exSub = 'puntos';
   // «comer» a secas (enlaces del mapa, buscador…): al subapartado del sitio buscado, o Restaurantes.
   if (exSub === 'comer') { const t = (lugaresComer().find(l => qCom && norm(l.nombre) === norm(qCom)) || {}).tipo || (['restaurante', 'café', 'bar', 'mercado'].includes(comerTipo) ? comerTipo : 'restaurante'); exSub = t === 'plato' ? 'platos' : 'c-' + t; }
   if (exSub === 'planes') exSub = planesCat || 'curioso';
-  if (!EX_SUBS.some(([x]) => x === exSub)) exSub = 'puntos';
+  if (exSub !== 'platos' && !EX_SUBS.some(([x]) => x === exSub)) exSub = 'puntos';
   const uniq = ciudadesUnicas();
   if (!uniq.length) return '<p class="muted">No hay ciudades (clave "ciudades").</p>';
   const botones = botonesCiudad();
@@ -1643,13 +1644,14 @@ function viewCiudades() {
       <div class="ciudad-fechas">${fechas}</div>${linkHist(k)}
     </div>
     ${muchoOjo(k, 'todos')}
+    ${hayCat(k, 'platos') ? `<button class="platos-bar ${exSub === 'platos' ? 'on' : ''}" data-exs="platos"><span>🥢</span><b>Platos típicos y bebidas</b><small>▸</small></button>` : ''}
     <div class="exsubs7">${EX_SUBS.map(([x, tt]) => { const hay = hayCat(k, x);
       const [ic, ...r] = tt.split(' '); // v286: sin nada en esta ciudad = botón apagado (se ve, pero no se puede tocar).
       return hay ? `<button class="${x === exSub ? '' : 'sec'}" data-exs="${x}"><span class="hs-i">${ic}</span>${r.join(' ')}</button>` : `<button class="sec vacio" disabled aria-disabled="true" title="Nada apuntado en esta ciudad"><span class="hs-i">${ic}</span>${r.join(' ')}</button>`; }).join('')}</div>
     ${exSub === 'puntos' ? rutasLP24(k) : ''}
     ${CATS_MISC.has(exSub) ? planesDe(k, exSub) : ''}${exSub === 'hotel' ? hotelesDe(k) : ''}${exSub === 'estac' ? estacionesDe(k) : ''}${exSub === 'eventos' ? eventosCiudad(k) : ''}${exSub.startsWith('c-') ? (comerCiudad = k, comerTipo = exSub.slice(2), viewComer(true)) : ''}${exSub === 'platos' ? platosDe(k) : ''}
-    ${exSub !== 'puntos' ? '</div>' : ''}${exSub === 'puntos' ? `
-    ${typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
+    ${!['puntos', 'parques'].includes(exSub) ? '</div>' : ''}${['puntos', 'parques'].includes(exSub) ? `
+    ${exSub === 'puntos' && typeof INTRO_LP !== 'undefined' && INTRO_LP[k] ? `<div class="intro-lp"><span class="lp-logo mini">LP</span><div><p>${esc(INTRO_LP[k].txt)}</p>
       ${INTRO_LP[k].plan ? `<details data-key="lp:${k}" ${abierto("lp:" + k, false) ? "open" : ""}><summary>La Lonely propone</summary><ul>${INTRO_LP[k].plan.map(x => `<li>${resaltar(x)}</li>`).join('')}</ul></details>` : ''}</div></div>` : ''}
     ${qvPuntos(k, c)}</div>` : ''}`;
 }
@@ -3554,7 +3556,7 @@ document.addEventListener('click', e => {
   const qo = e.target.closest('[data-qvo],[data-qvf],[data-qvm]');
   if (qo) { if (qo.dataset.qvo) qvOrden = qo.dataset.qvo; else if (qo.dataset.qvm) qvMarca = qvMarca === qo.dataset.qvm ? '' : qo.dataset.qvm; else qvFiltro = qo.dataset.qvf; render(); return; }
   const iq = e.target.closest('[data-irqv]');
-  if (iq) { ciudadSel = iq.dataset.irqv; exSub = 'puntos'; qCiu = ''; qvFiltro = 'todos'; qvMarca = ''; abiertos['qv:' + iq.dataset.h] = true; ir('ciudades'); render();
+  if (iq) { ciudadSel = iq.dataset.irqv; exSub = qvLista(iq.dataset.irqv, null).some(o => hKey(o.l) === iq.dataset.h && esParque(o.l)) ? 'parques' : 'puntos'; qCiu = ''; qvFiltro = 'todos'; qvMarca = ''; abiertos['qv:' + iq.dataset.h] = true; ir('ciudades'); render();
     const el = document.querySelector(`details[data-key="${CSS.escape('qv:' + iq.dataset.h)}"]`); if (el) { el.scrollIntoView({ block: 'start' }); window.scrollBy(0, -80); } return; }
   const irc = e.target.closest('[data-ircomer],[data-irplan],[data-irhotel],[data-irestac]');
   if (irc) {
