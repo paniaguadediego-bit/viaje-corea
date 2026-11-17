@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v321';
+const VERSION = 'v322';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -2930,18 +2930,18 @@ function coordsCiudad(k) {
 }
 async function actualizarTiempo() {
   if (!trip || !navigator.onLine) return;
-  if (TIEMPO && TIEMPO.ts && TIEMPO.h && Date.now() - TIEMPO.ts < 3 * 3600e3) return;
+  if (TIEMPO && TIEMPO.ts && TIEMPO.h && TIEMPO.mm && Date.now() - TIEMPO.ts < 3 * 3600e3) return; // .mm: pronóstico ya con milímetros (v322)
   const ks = [...new Set(arr(trip.dias).map(d => ck(d.ciudad)))].filter(k => coordsCiudad(k));
-  const nuevo = { ts: Date.now(), c: {}, h: {} };
+  const nuevo = { ts: Date.now(), c: {}, h: {}, mm: 1 };
   await Promise.all(ks.map(async k => {
     const [la, lo] = coordsCiudad(k);
     try {
-      const d = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la.toFixed(3)}&longitude=${lo.toFixed(3)}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&hourly=weather_code,precipitation_probability,temperature_2m&timezone=Asia%2FSeoul&forecast_days=16`, { cache: 'no-store' })).json();
+      const d = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la.toFixed(3)}&longitude=${lo.toFixed(3)}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum&hourly=weather_code,precipitation_probability,temperature_2m,precipitation&timezone=Asia%2FSeoul&forecast_days=16`, { cache: 'no-store' })).json();
       const t = d && d.daily; if (!t || !t.time) return;
-      nuevo.c[k] = {}; t.time.forEach((f, i) => { nuevo.c[k][f] = [t.weather_code[i], t.temperature_2m_max[i], t.temperature_2m_min[i], t.precipitation_probability_max[i]]; });
+      nuevo.c[k] = {}; t.time.forEach((f, i) => { nuevo.c[k][f] = [t.weather_code[i], t.temperature_2m_max[i], t.temperature_2m_min[i], t.precipitation_probability_max[i], (t.precipitation_sum || [])[i]]; });
       // Por horas, solo de 8 a 23 h (lo que se vive del día): [hora, código, % lluvia, temperatura].
       const hh = d.hourly; if (hh && hh.time) { nuevo.h[k] = {}; hh.time.forEach((x, i) => { const f = x.slice(0, 10), h = +x.slice(11, 13); if (h < 8 || h > 23) return;
-        (nuevo.h[k][f] = nuevo.h[k][f] || []).push([h, hh.weather_code[i], hh.precipitation_probability[i], hh.temperature_2m[i]]); }); }
+        (nuevo.h[k][f] = nuevo.h[k][f] || []).push([h, hh.weather_code[i], hh.precipitation_probability[i], hh.temperature_2m[i], (hh.precipitation || [])[i]]); }); }
     } catch { /* sin conexión o servicio caído */ }
   }));
   if (!Object.keys(nuevo.c).length) return;
@@ -2958,17 +2958,21 @@ function lineaTiempo(d) {
 }
 function chipTiempo(d) {
   const t = tiempoDe(ck(d.ciudad), d.fecha); if (!t) return '';
-  const [c, mx, mn, p] = t;
-  return `<div class="dia-tiempo"><span class="t-ic">${icTiempo(c)}</span><b>${Math.round(mn)}° / ${Math.round(mx)}°</b><span>${descTiempo(c)}</span>${p != null ? `<span>💧 ${p} %</span>` : ''}<small>${haceTiempo()}</small></div>`;
+  const [c, mx, mn, p, mm] = t;
+  return `<div class="dia-tiempo"><span class="t-ic">${icTiempo(c)}</span><b>${Math.round(mn)}° / ${Math.round(mx)}°</b><span>${descTiempo(c)}</span>${p != null ? `<span>💧 ${p} %</span>` : ''}${mm >= 0.1 ? `<span title="Lluvia prevista en todo el día">☔ ${fmtMm(mm)} · ${cuantaLluvia(mm)}</span>` : ''}<small>${haceTiempo()}</small></div>`;
 }
 // ⏱️ Por horas, en bloques de 2 h (8-10 … 22-24): el peor cielo y la mayor probabilidad de lluvia de cada bloque. Una fila.
+// v322: cantidad de lluvia en mm (= litros por m²). Orientativo, de Open-Meteo: en el día, < 2 mm poca, 2-10 algo, 10-30 bastante, > 30 mucha;
+// en un bloque de 2 h, < 1 mm débil, 1-5 moderada, > 5 fuerte.
+const fmtMm = v => (v < 10 ? Number(v).toLocaleString('es-ES', { maximumFractionDigits: 1 }) : Math.round(v)) + ' mm';
+const cuantaLluvia = v => v < 2 ? 'poca' : v < 10 ? 'algo' : v < 30 ? 'bastante' : 'mucha';
 function horasTiempo(d) {
   const hs = TIEMPO && TIEMPO.h && TIEMPO.h[ck(d.ciudad)] && TIEMPO.h[ck(d.ciudad)][d.fecha]; if (!hs || !hs.length) return '';
   const ahora = d.fecha === todayISO() ? new Date().getHours() : -1, bl = [];
   for (let h = 8; h < 24; h += 2) { const xs = hs.filter(x => x[0] >= h && x[0] < h + 2); if (!xs.length) continue;
-    const c = Math.max(...xs.map(x => x[1] ?? 0)), p = Math.max(...xs.map(x => x[2] ?? 0)), t = Math.round(xs.reduce((a, x) => a + (x[3] ?? 0), 0) / xs.length);
-    bl.push({ h, c, p, t, ya: ahora >= h + 2 }); }
-  return `<div class="t-horas">${bl.map(b => `<span class="t-h ${b.p >= 50 ? 'lluvia' : b.p >= 25 ? 'quiza' : ''} ${b.ya ? 'ya' : ''}" title="${b.h}-${b.h + 2} h: ${descTiempo(b.c)}, ${b.p} % de lluvia"><small>${b.h}h</small><i>${icTiempo(b.c)}</i><small>${b.t}°</small>${b.p >= 25 ? `<small class="t-p">💧${b.p}%</small>` : ''}</span>`).join('')}</div>`;
+    const c = Math.max(...xs.map(x => x[1] ?? 0)), p = Math.max(...xs.map(x => x[2] ?? 0)), t = Math.round(xs.reduce((a, x) => a + (x[3] ?? 0), 0) / xs.length), mm = xs.reduce((a, x) => a + (x[4] ?? 0), 0);
+    bl.push({ h, c, p, t, mm, ya: ahora >= h + 2 }); }
+  return `<div class="t-horas">${bl.map(b => `<span class="t-h ${b.p >= 50 ? 'lluvia' : b.p >= 25 ? 'quiza' : ''} ${b.ya ? 'ya' : ''}" title="${b.h}-${b.h + 2} h: ${descTiempo(b.c)}, ${b.p} % de lluvia${b.mm >= 0.1 ? ', ' + fmtMm(b.mm) : ''}"><small>${b.h}h</small><i>${icTiempo(b.c)}</i><small>${b.t}°</small>${b.p >= 25 ? `<small class="t-p">💧${b.p}%</small>` : ''}${b.mm >= 0.1 ? `<small class="t-mm ${b.mm > 5 ? 'fuerte' : b.mm >= 1 ? 'mod' : ''}">${fmtMm(b.mm).replace(' mm', '')}mm</small>` : ''}</span>`).join('')}</div>`;
 }
 const miniTiempo = (k, f) => { const t = tiempoDe(k, f); return t ? `<span class="t-mini">${icTiempo(t[0])} ${Math.round(t[1])}°/${Math.round(t[2])}°</span>` : ''; };
 

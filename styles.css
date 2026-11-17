@@ -1847,5 +1847,7 @@ details.nv-mas > details.card > summary { padding-left: 0; }
 .ciudad .platos-bar span { font-size: 1.2rem; }
 .ciudad .platos-bar small { margin-left: auto; color: var(--muted); font-size: .78rem; }
 .ciudad .platos-bar.on { background: color-mix(in srgb, #cd2e3a 22%, var(--card)) !important; }
+.t-h small.t-mm { font-size: .55rem; font-weight: 800; opacity: .9; }
+.t-h small.t-mm.mod { color: #cfe6ff; } .t-h small.t-mm.fuerte { color: #fff; background: rgba(0,0,0,.25); border-radius: 4px; padding: 0 2px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v321"; }
+:root { --css-ver: "v322"; }

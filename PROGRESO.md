@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v321
+Caché del service worker: corea-v322
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -374,6 +374,7 @@ Caché del service worker: corea-v321
 - v319: botón «🗺️ Mapa» en las fichas de Planes (Puntos de interés, Restaurantes, Cafeterías, Bares, Mercados, Curioso, PC, Ropa y Estaciones), junto a Naver y Google: abre la pestaña Mapas de esa ciudad a zoom 17, con la capa encendida, el sitio resaltado en la parte de arriba y su ficha del mapa abierta (btnMapaApp; MP[id].selKey).
 - v320: Planes: nuevo botón 🌳 Parques (2.º de la rejilla) con los sitios cuyo tipo es parque, jardín, bosque o pinar, que salen de Puntos de interés (esParque; los enlaces a la ficha van al apartado que toca). 🥢 Platos típicos deja la rejilla y pasa a una barra horizontal roja «Platos típicos y bebidas» bajo «Mucho ojo con…»; la rejilla sigue con 12 botones en 3 filas. Busan: Yongdusan (ahora en Parques) y Lotte Gwangbok ya estaban; nuevo en Restaurantes: Dotori Donkatsu (도토리돈까스), junto al parque Yongdusan, de la captura de Google (4,5 ★, 15 reseñas; 10.000-20.000 ₩; cierra 20:00; ubicación aproximada).
 - v321: barra inferior medio tapada al abrir la app instalada (Xiaomi) hasta el primer scroll: al cargar se da un «empujón» de 1 px de scroll (lo que hacía el usuario a mano) y la barra se recoloca con visualViewport si la zona visible es más baja que la de diseño (también al volver a la app). [Supuesto] Causa: Android de borde a borde calcula mal la altura visible hasta el primer scroll; no se puede reproducir aquí, VERIFICAR en el móvil.
+- v322: cantidad de lluvia en mm (Open-Meteo: precipitation_sum diario y precipitation por horas). En el tiempo del día de Hoy, «☔ X mm · poca/algo/bastante/mucha» (< 2 / 2-10 / 10-30 / > 30 mm en el día); en cada bloque de 2 h, los mm debajo del % (más claro de 1 a 5 mm, resaltado si > 5 mm). El pronóstico guardado sin mm se vuelve a pedir al tener conexión.
 - (sin versión, solo trip.json privado) 17 nov: fuera Museo Nacional, Dragon Hill Spa y Roof Cat Me (marcados ✗); entran Museo de Historia de Seúl, Deoksugung y su muro de piedra (pasan del 18 al 17).
 
 ## Supuestos
