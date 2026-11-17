@@ -3092,5 +3092,25 @@
 "fuente": "Google (captura del usuario)",
 "fecha": "2026-11"
 }
+},
+{
+"id": "p-olol-bakery",
+"ciudad": "jeonju",
+"nombre": "OLOL bakery (Our Loaf Our Lounge)",
+"ko": null,
+"tipo": "café",
+"plato": "panadería-café: bollería y pan recién hecho",
+"direccion": "31 Gyeonggijeon-gil, planta baja (1층), Jeonju; al norte de 1938 Mansion y de Gyeonggijeon · ubicación aproximada",
+"horario": "Cierra a las 21:00 (Google, nov. 2026; apertura VERIFICAR)",
+"precio": "10.000-20.000 ₩ por persona (Google)",
+"fuente": "propio",
+"url": null,
+"nota": "Fuimos la mañana del 17 de noviembre. Panadería-café con mucho encanto, de ladrillo y madera, con vitrina de bollería.",
+"opiniones": {
+"v": 5.0,
+"n": 34,
+"fuente": "Google (captura del usuario)",
+"fecha": "2026-11"
+}
 }
 ]

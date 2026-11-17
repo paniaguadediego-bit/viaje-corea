@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v317
+Caché del service worker: corea-v318
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -370,6 +370,7 @@ Caché del service worker: corea-v317
 - v315: nombre exacto que dio el usuario: «Do Not Disturb Bakers», 두낫디스터브 베이커스 경주 (para Naver y Enseñar).
 - v316: Seúl → ☕ Cafeterías: The Coffee Bean & Tea Leaf frente al ayuntamiento de Jongno (커피빈 종로구청앞점), 34 Jong-ro 3-gil; datos de la captura de Google (4,0 ★, 139 reseñas; 1-10.000 ₩; cierra 22:00). Ubicación aproximada.
 - v317: Planes ordenado igual en todos los botones: ciudad → un solo «⚠️ Mucho ojo con…» (sitios y restaurantes juntos; antes había otro al final de Comer) → botones → buscador y filtros → lista → al final, en Restaurantes/Cafeterías/Bares/Mercados, un único desplegable «🔍 Buscar más en Naver» con «Alrededor de donde estáis» y «Lo mejor valorado en Naver» (antes dos tarjetas sueltas). Quitada la línea «Horarios de webs…» de Curioso, PC y Ropa.
+- v318: Jeonju → ☕ Cafeterías: OLOL bakery (Our Loaf Our Lounge), 31 Gyeonggijeon-gil 1층, donde desayunaron el 17 nov; datos de la captura de Google (5,0 ★, 34 reseñas; 10.000-20.000 ₩; cierra 21:00). Sin hangul (no consta); ubicación aproximada desde el mapa de la captura.
 
 ## Supuestos
 - [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
