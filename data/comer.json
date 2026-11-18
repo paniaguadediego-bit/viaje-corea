@@ -3132,5 +3132,19 @@
 "fuente": "Google (captura del usuario)",
 "fecha": "2026-11"
 }
+},
+{
+"id": "p-onjeong-sotbap",
+"ciudad": "seul",
+"nombre": "Onjeong Sotbap (Hyundai City Outlets Dongdaemun)",
+"ko": "온정솥밥 현대아울렛동대문점",
+"tipo": "restaurante",
+"plato": "sotbap: arroz hecho al momento en olla de hierro individual",
+"direccion": "장충단로13길 20, sótano B2 (zona de restaurantes) del Hyundai City Outlets Dongdaemun, Jung-gu · ubicación aproximada",
+"horario": "VERIFICAR (el del centro comercial)",
+"precio": "VERIFICAR",
+"fuente": "propio",
+"url": null,
+"nota": "Añadido por el usuario. Está en la planta de comida B2 del outlet, junto a la estación Dongdaemun History & Culture Park."
 }
 ]

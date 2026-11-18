@@ -1850,4 +1850,4 @@ details.nv-mas > details.card > summary { padding-left: 0; }
 .t-h small.t-mm { font-size: .55rem; font-weight: 800; opacity: .9; }
 .t-h small.t-mm.mod { color: #cfe6ff; } .t-h small.t-mm.fuerte { color: #fff; background: rgba(0,0,0,.25); border-radius: 4px; padding: 0 2px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v322"; }
+:root { --css-ver: "v323"; }
