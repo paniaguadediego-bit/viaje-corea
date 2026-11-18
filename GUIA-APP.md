@@ -32,7 +32,7 @@ Una comparación útil: la app es una **libreta de viaje con dos tipos de hojas*
 - **Corea (la guía del país):** moverse, dinero, comida, costumbres, salud y país.
 - **Idioma:** favoritas, alfabeto, frases, diccionario y tarjetas «Enseñar» a pantalla completa (para el taxista), con 🔊.
 - **Más:**
-  - Maleta, Seguro, Verificar, Documentos (fotos y PDF guardados solo en el móvil), Notas, Regalos, Resumen del viaje (Word y PDF) y Escala;
+  - Maleta, Seguro, Verificar, Documentos (fotos y PDF guardados solo en el móvil), Notas, Regalos, Resumen del viaje (Word y PDF por capítulos de ciudad, con mapa del recorrido y consejos editables) y Escala;
   - Datos y app: importar, exportar, pasar marcas al otro móvil, preparar para viajar y actualizar;
   - 🔒 Bloquear marcas, para que un toque sin querer no marque ni desmarque nada (se desbloquea con el 🔒 de arriba);
   - esta guía.

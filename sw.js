@@ -1,5 +1,5 @@
 // Sube CACHE en cada sesión (y VERSION en app.js) para que el móvil coja la versión nueva.
-const CACHE = 'corea-v323';
+const CACHE = 'corea-v324';
 // Fotos de Wikipedia: caché aparte que no se borra al actualizar la app.
 const FOTOS = 'corea-fotos';
 // Calles del mapa (OpenStreetMap): solo las zonas que se han visto; tampoco se borra al actualizar.
@@ -42,9 +42,10 @@ self.addEventListener('fetch', e => {
   }
   if (host === 'tile.openstreetmap.org') {
     e.respondWith(caches.open(MAPA).then(async c => {
-      const g = await c.match(req.url); if (g) return g;
+      // El Word y el PDF del resumen leen la tesela (mode cors): las guardadas «opacas» no sirven y se renuevan con conexión.
+      const g = await c.match(req.url); if (g && (g.type !== 'opaque' || req.mode !== 'cors')) return g;
       // Se pide con CORS (ocupa menos en el móvil); si no, como venga.
-      let r; try { r = await fetch(req.url, { mode: 'cors', credentials: 'omit' }); } catch { r = await fetch(req); }
+      let r; try { r = await fetch(req.url, { mode: 'cors', credentials: 'omit' }); } catch { if (g) return g; r = await fetch(req); }
       if (r.ok || r.type === 'opaque') c.put(req.url, r.clone()); return r;
     }));
     return;

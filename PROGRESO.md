@@ -1,7 +1,7 @@
 # Progreso
 - [x] S1  - [x] S2  - [x] S3  - [x] S4  - [x] S5  - [x] S6  - [x] SX Comer
 
-Caché del service worker: corea-v323
+Caché del service worker: corea-v324
 
 ## Pendiente (para después)
 - (Hecho en v20) Distancia al hotel.
@@ -376,65 +376,4 @@ Caché del service worker: corea-v323
 - v321: barra inferior medio tapada al abrir la app instalada (Xiaomi) hasta el primer scroll: al cargar se da un «empujón» de 1 px de scroll (lo que hacía el usuario a mano) y la barra se recoloca con visualViewport si la zona visible es más baja que la de diseño (también al volver a la app). [Supuesto] Causa: Android de borde a borde calcula mal la altura visible hasta el primer scroll; no se puede reproducir aquí, VERIFICAR en el móvil.
 - v322: cantidad de lluvia en mm (Open-Meteo: precipitation_sum diario y precipitation por horas). En el tiempo del día de Hoy, «☔ X mm · poca/algo/bastante/mucha» (< 2 / 2-10 / 10-30 / > 30 mm en el día); en cada bloque de 2 h, los mm debajo del % (más claro de 1 a 5 mm, resaltado si > 5 mm). El pronóstico guardado sin mm se vuelve a pedir al tener conexión.
 - v323: Onjeong Sotbap (온정솥밥, Seúl) en Comer: arroz en olla individual, sótano B2 del Hyundai City Outlets Dongdaemun (dirección del edificio por otros locales de la misma planta); ubicación aproximada, horario y precio VERIFICAR.
-- (sin versión, solo trip.json privado) 17 nov: fuera Museo Nacional, Dragon Hill Spa y Roof Cat Me (marcados ✗); entran Museo de Historia de Seúl, Deoksugung y su muro de piedra (pasan del 18 al 17).
-
-## Supuestos
-- [Supuesto] Botón "Probar con datos de ejemplo" en la bienvenida, para probar la app sin el trip.json real.
-- [Supuesto] Tema (Auto/Claro/Oscuro) e Importar/Exportar/Borrar viven en la pestaña Más.
-- [Supuesto] "Importar viaje" acepta también una copia exportada por la app (restaura viaje + gastos/checklist/notas).
-- [Supuesto] Un traslado es "pendiente" si su estado contiene "pendiente"; "comprado" si contiene "comprad" o tren.comprado = true.
-- [Supuesto] En Hoy se muestra el alojamiento cuya "ciudad" coincide con la ciudad del día.
-- [Supuesto] Pestañas de sesiones futuras muestran "Llega en la sesión Sx".
-
-- [Supuesto] El mapa es un SVG dibujado a mano (contorno aproximado, sin Jeju), sin tiles ni internet. Si una ciudad no trae lat/lon se usan coordenadas aproximadas de Seúl, Incheon, Andong, Gyeongju, Busan y Jeonju.
-- [Supuesto] Enseñar usa solo "lugares" (como dice la hoja de ruta). Si quieres tarjetas de los hoteles, añádelos a "lugares" con su hangul.
-- [Supuesto] Si el hangul no termina en sílaba coreana (p. ej. un número), se muestra "(으)로" con aviso VERIFICAR.
-- [Supuesto] Corea: frases primero (lo más usado), luego la guía en apartados plegables.
-- [Supuesto] "Estación de Gyeongju" = 경주역 (antes 신경주역), marcado VERIFICAR.
-- [Supuesto] El usuario pidió "lo siguiente": se hicieron S4 y S5 en la misma sesión.
-- [Supuesto] Los gastos se guardan en su moneda y se pasan a € con el cambio actual.
-- [Supuesto] Museo de Máscaras de Hahoe sin hangul (la guía no lo da): marca "falta hangul".
-- [Supuesto] Naver busca por dirección en coreano; si no hay, por hangul del nombre, dirección en inglés o nombre.
-- [Supuesto] "Mañana" se calcula respecto al día que se está viendo (no solo hoy).
-- [Supuesto] Solo imágenes (no PDF): de un PDF, haz captura de pantalla y súbela.
-- [Supuesto] 9 pestañas no caben: la barra queda en Hoy, Ruta, Enseñar, Comer, Más; Corea, Seguro, Gastos y Checklist van como botones grandes arriba de Más (la pestaña Más se marca al estar en ellas; el botón atrás vuelve).
-- [Supuesto] Ciudad por defecto en Comer: la del día actual; antes del viaje, Seúl. "Todas" disponible.
-- [Supuesto] Tocar otra vez un estado lo quita. Descartado/Cerrado se ven atenuados.
-- [Supuesto] Lugares propios sin hangul: Enseñar muestra "falta hangul" y Naver busca por el nombre.
-- [Supuesto] No se añaden de la Lonely: tiendas, estadios, karaoke, festivales fuera de fechas y lo de la isla de Ulleungdo/costa de Pohang (la guía lo mete en la zona de Gyeongju).
-- [Supuesto] Duplicados guía web/Lonely se unen en una tarjeta (fuente Lonely + enlace web).
-- [Supuesto] Cambio automático: api.frankfurter.dev (y .app de reserva), datos del Banco Central Europeo; se actualiza como mucho cada 6 h. Escribir un cambio a mano lo fija hasta pulsar "Usar cambio automático".
-- [Supuesto] Lista Verificar incluye todos los lugares de Comer (salvo los marcados Cerrado), lo marcado con verificar en el viaje y los sitios dudosos.
-- [Supuesto] "Valoración": no hay puntuaciones públicas sin conexión ni API sin cuenta; se usa una valoración propia (1-5) y un orden "Recomendado" (Quiero, itinerario, ★ Lonely, guía web; Descartado/Cerrado al final; Visitado baja).
-- [Supuesto] El mismo sitio se reconoce por su hangul (o por el nombre si no tiene): p. ej. "Mercado Gwangjang" en Comer y en Ciudades comparten marca. Las marcas antiguas del checklist se respetan.
-- [Supuesto] Si un artículo de Wikipedia no tiene foto (o no existe), se queda el marcador 📷 sin romper nada.
-- [Supuesto] "Justificado en el medio" = bloques y títulos centrados; las listas y textos largos siguen alineados a la izquierda para leerse bien.
-- [Supuesto] La detección del plan es automática: puede fallar con nombres muy distintos (p. ej. "Mercado de electrónica de Yongsan" coincide con el KTX a Yongsan). Si algo no cuadra, se corrige con un alias en contenido.js.
-
-## Verificar por el usuario
-- Prueba real en tu móvil: abrir con wifi, cerrar, modo avión, abrir y recorrer las 8 pestañas.
-- Exportar una copia antes de salir y guardarla en Drive o enviártela por correo.
-- Activar GitHub Pages (Settings → Pages → rama main, carpeta / root).
-- Importar el trip.json real y revisar Hoy y Ruta.
-- Probar en modo avión tras abrir una vez con wifi.
-- Añadir a "lugares" del trip.json los hoteles con su hangul (copiado de Naver Map o de la reserva).
-- Revisar en Seguro que teléfono y póliza son los correctos.
-- K-ETA / tarjeta de llegada: comprobar en la web oficial antes de salir.
-- Hacer fotos del pasaporte, reservas y póliza y añadirlas en Más → Fotos de documentos.
-- Comer: comprobar con Naver que los sitios siguen abiertos y marcar los cerrados.
-- Con wifi: Más → "Descargar fotos de los imprescindibles" y comprobar en Ciudades que salen las fotos (también en modo avión).
-
-## Propuestas pendientes (preguntar al usuario tras el compact)
-Propuestas por Claude el 2/11/2026; el usuario pidió apuntarlas y que se le pregunten después.
-Recomendadas antes de salir (1, 2 y 3). Hechas en v75: 1 y 2. La 3 descartada por el usuario:
-1. Botón "Preparar para viajar": con wifi descarga fotos, tiempo y cambio y comprueba la caché offline; muestra un resumen (✓ N fotos · ✓ tiempo hasta X · ✓ cambio).
-2. Tarjeta "🆘 Ayuda" a un toque desde Hoy: hotel de esa noche en hangul grande con dirección, 112 / 119 / 1330, teléfono del seguro y Embajada de España en Seúl (VERIFICAR teléfono).
-3. Exportar a calendario (.ics): vuelos, trenes, check-ins y reservas (Sky Capsule), con alarmas del móvil que funcionan sin la app y sin conexión. Necesita el trip.json.
-Durante el viaje (4 y 8 hechas en v77):
-4. Diario del día en Hoy (nota, foto, carita).
-5. (Hecho en v145) Compartir marcas con Cristina (pasar visitados, notas, añadidos y valoraciones a su móvil).
-6. "Antes de salir" en días de traslado (pasaporte, cargadores, T-money, pagar hotel, hora del tren).
-Retoques (6 hecha en v83; 7 descartada: 7 pestañas van bien):
-7. Menos pestañas en la barra (juntar Planes con Ciudades o Comer).
-8. Hoy más limpio una vez empezado el viaje (quitar cuenta atrás y lo que ya no sirve).
-Descartado por Claude: gastos (el usuario usa otra app) y mapas de metro offline (derechos de las imágenes; Naver lo hace mejor).
+- v324: Resumen del viaje (Word y PDF) rehecho por capítulos de ciudad, a petición del usuario: banda con el color, icono, hangul, lema y foto de cada ciudad y franja dancheong; hotel con ★; «🗺️ Nuestro recorrido» (mapa dibujado en canvas con las calles de OpenStreetMap guardadas o con conexión; si no hay ninguna, esquema en papel hanji con la N; una línea por día del hotel a los sitios visitados en orden, cada día de un color, con leyenda; hotel = H; sitios numerados igual que en «✅ Lo que vimos», con sus ★); cada día lleva además su propio mapa pequeño (en Seúl el general queda lejos por Gangnam); «🍜 Dónde comimos» dentro de su ciudad. Fuera de capítulos: Ruta y Cómo nos movimos al principio, «✈️ Ida y vuelta» (días en España), «Lo que probamos», «📍 Otros sitios» (comidas cuya ciudad no es del viaje) y «💡 Consejos prácticos», que ahora se editan en Más → Resumen (✏️, ✕ y añadir; user.consejos; sin tocar, los de serie). Quitado «⭐ Imprescindibles» (las ★ ya salen en cada ciudad). El texto (.txt/copiar) agrupa Dónde comimos por ciudad. sw.js: las teselas guardadas «opacas» se renuevan con CORS al pedirlas para el mapa. [Supuesto] Seúl es un solo capítulo con las dos estancias (ida y vuelta), en el lugar de la primera; si se prefiere, se separa.

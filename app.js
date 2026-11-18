@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v323';
+const VERSION = 'v324';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -406,6 +406,8 @@ const CONSEJOS_RES = ['Apps: Naver Map o Kakao Map (Google Maps no da rutas a pi
   'Tarjeta T-money para metro y bus (se recarga en tiendas 24 h y en las máquinas del metro).',
   'Trenes KTX con Korail o Trip.com; autobuses entre ciudades con Kobus o Klook.',
   'Tax Free con el pasaporte en tiendas con el logo (cosmética y ropa).'];
+// 💡 Consejos prácticos: editables en Más → Resumen (user.consejos); si no se han tocado, los de serie.
+const consejosRes = () => { const c = u().consejos; return Array.isArray(c) ? c : CONSEJOS_RES.slice(); };
 function datosResumen() {
   const U = u(), NS = { ...(U.estrellas || {}) }, una = t => String(t || '').replace(/\n+/g, ' ').trim();
   const usa = k => { const x = NS[k]; return x ? Number(x.v) || 0 : 0; };
@@ -422,17 +424,30 @@ function datosResumen() {
   const lc = lugaresComer(), est = c => estadoDe(String(c.id)), cn = c => (CIUDADES_COMER.find(x => x[0] === c.ciudad) || [])[1] || c.ciudad;
   D.comidos = lc.filter(c => est(c).estado === 'visitado' || Number(est(c).val) > 0 || hecho(c, c.ciudad))
     .sort((a, b) => (Number(est(b).val) || 0) - (Number(est(a).val) || 0))
-    .map(c => ({ ciudad: cn(c), nombre: c.nombre, ko: c.ko || '', plato: c.plato || '', val: Number(est(c).val) || 0, nota: una(est(c).nota), wiki: wikiDe(c) }));
+    .map(c => ({ k: c.ciudad, ciudad: cn(c), nombre: c.nombre, ko: c.ko || '', plato: c.plato || '', val: Number(est(c).val) || 0, nota: una(est(c).nota), wiki: wikiDe(c) }));
   // ✅ Planes realizados por ciudad: los del itinerario en su orden y después el resto (Planes y Miscelánea), con sus estrellas.
   D.planes = ciudadesUnicas().filter(c => !/espa/i.test(c.nombre)).map(c => { const k = ck(c.nombre), vistos = new Set(), items = [];
-    const add = l => { const h = hKey(l); if (!l || vistos.has(h) || !hecho(l, k)) return; vistos.add(h); items.push({ es: l.es, v: usa(h), h }); };
+    const add = l => { const h = hKey(l); if (!l || vistos.has(h) || !hecho(l, k)) return; vistos.add(h); items.push({ es: l.es, v: usa(h), h, co: coordsLugar(l) || null }); };
     dias.filter(d => ck(d.ciudad) === k).forEach(d => listaDia(d).forEach(add));
     qvLista(k, c).forEach(o => add(o.l)); (typeof PLANES !== 'undefined' ? PLANES : []).filter(p => p.ciudad === k).forEach(add);
-    return { ciudad: nombreCiudad(k), items }; }).filter(g => g.items.length);
-  // ⭐ Imprescindibles: solo lo de 5 estrellas (sitios y Comer).
-  D.top = [...D.planes.flatMap(g => g.items.filter(x => x.v === 5).map(x => ({ nombre: x.es, ciudad: g.ciudad }))), ...D.comidos.filter(c => c.val === 5).map(c => ({ nombre: '🍜 ' + c.nombre, ciudad: c.ciudad }))];
+    return { k, ciudad: nombreCiudad(k), items }; }).filter(g => g.items.length);
+  // 📖 Capítulos por ciudad (Word y PDF): estancias, hoteles, recorrido para el mapa, lo visto (numerado como en el mapa), días y comidas.
+  const DCOL = ['#cd2e3a', '#0047a0', '#2e8b57', '#c2630a', '#6b3fa0', '#0b6e78', '#b8860b', '#d6336c'];
+  const coH = a => a && a.lat != null && a.lon != null ? [Number(a.lat), Number(a.lon)] : null;
+  D.caps = [...new Set(D.ruta.map(r => ck(r.ciudad)))].map(k => { const t = tema(k), est = D.ruta.filter(r => ck(r.ciudad) === k);
+    const items = ((D.planes.find(g => g.k === k) || {}).items || []).map((x, i) => ({ ...x, n: i + 1 })), num = h => (items.find(x => x.h === h) || {}).n;
+    const ds = dias.filter(d => ck(d.ciudad) === k);
+    const recorrido = ds.map((d, i) => { const al = alojDe(d.fecha), a = [al.noche, al.sale].find(a => a && ck(a.ciudad) === k), hc = coH(conFixHotel(a)) || hotelDe(k);
+      const ns = listaDia(d).filter(l => hecho(l, k)).map(l => num(hKey(l))).filter(Boolean);
+      return { fecha: d.fecha, n: D.dias.find(x => x.fecha === d.fecha).n, col: DCOL[i % DCOL.length], hotel: hc, ns }; }).filter(r => r.ns.length);
+    return { k, ciudad: nombreCiudad(k), ko: (est[0] || {}).ko || '', ic: t.ic, c1: t.c1, c2: t.c2, lema: t.lema, estancias: est,
+      noches: est.reduce((n, r) => n + (r.noches || 0), 0), hoteles: est.filter(r => r.hotel).filter((r, i, a) => a.findIndex(x => x.hotel === r.hotel) === i).map(r => ({ nombre: r.hotel, val: r.val })),
+      dias: D.dias.filter(d => ck(d.ciudad) === k), items, recorrido, comidos: D.comidos.filter(c => c.k === k) }; });
+  // 📍 Otros: lo comido fuera de las ciudades del viaje (sitios propios sin ciudad, escalas…).
+  D.otros = D.comidos.filter(c => !D.caps.some(x => x.k === c.k));
+  D.diasFuera = D.dias.filter(d => !D.caps.some(x => x.k === ck(d.ciudad)));
   D.probados = probGrupos().map(([t, ic, k, xs]) => ({ t: ic + ' ' + t, xs: xs.filter(x => probado(x[1])).map(x => { const v = probVal(x[1]); return x[0] + (typeof v === 'number' ? ' ' + '★'.repeat(v) : v === 'ns' ? ' (NS/NR)' : ''); }) })).filter(g => g.xs.length);
-  D.consejos = CONSEJOS_RES;
+  D.consejos = consejosRes();
   return D;
 }
 function textoResumen() {
@@ -446,9 +461,10 @@ function textoResumen() {
   D.dias.forEach(d => { L.push(`Día ${d.n} · ${fmtCorto(d.fecha)} · ${d.ciudad}${d.titulo ? ' — ' + d.titulo : ''}${d.cara ? ` ${d.cara}${CARA_TXT[d.cara] ? ' (' + CARA_TXT[d.cara] + ')' : ''}` : ''}`);
     if (d.sitios.length) L.push(`   ${d.visto ? '✅' : '▫️ Plan:'} ${d.sitios.join(', ')}`);
     if (d.tags.length) L.push(`   🏷️ ${d.tags.join(' · ')}`); if (d.diario) L.push(`   📔 ${d.diario}`); });
+  const lc = c => `  • ${c.nombre}${c.ko ? ` (${c.ko})` : ''}${c.plato ? ' — ' + c.plato : ''}${c.val ? ' ' + '★'.repeat(c.val) : ''}${c.nota ? ' · ' + c.nota : ''}`;
   if (D.comidos.length) { L.push('', '🍜 DÓNDE COMIMOS');
-    D.comidos.forEach(c => L.push(`• ${c.ciudad} · ${c.nombre}${c.ko ? ` (${c.ko})` : ''}${c.plato ? ' — ' + c.plato : ''}${c.val ? ' ' + '★'.repeat(c.val) : ''}${c.nota ? ' · ' + c.nota : ''}`)); }
-  if (D.top.length) { L.push('', '🌟 IMPRESCINDIBLES (5 ESTRELLAS)'); D.top.forEach(c => L.push(`• ${c.nombre} (${c.ciudad})`)); }
+    D.caps.filter(x => x.comidos.length).forEach(x => L.push(x.ciudad.toUpperCase(), ...x.comidos.map(lc)));
+    if (D.otros.length) L.push('OTROS', ...D.otros.map(lc)); }
   if (D.planes.length) { L.push('', '✅ PLANES REALIZADOS'); D.planes.forEach(g => { L.push(g.ciudad.toUpperCase()); g.items.forEach((x, i) => L.push(`  ${i + 1}. ${x.es}${x.v ? ' ' + estrTxt(x.v) : ''}`)); }); }
   if (D.probados.length) { L.push('', '🥢 LO QUE PROBAMOS'); D.probados.forEach(g => L.push(`• ${g.t}: ${g.xs.join(', ')}`)); }
   L.push('', '💡 CONSEJOS PRÁCTICOS', ...D.consejos.map(c => '• ' + c));
@@ -456,14 +472,17 @@ function textoResumen() {
 }
 function viewResumen() {
   const t = textoResumen(), D = datosResumen();
-  const lista = D.planes.length ? `<h2>✅ Planes realizados</h2><p class="muted">Toca las estrellas para valorarlos (5 ★ = Imprescindibles).</p>
+  const lista = D.planes.length ? `<h2>✅ Planes realizados</h2><p class="muted">Toca las estrellas para valorarlos: salen en el capítulo de cada ciudad del Word y del PDF.</p>
     ${D.planes.map(g => `<div class="card res-ciudad"><b>${esc(g.ciudad)}</b><ol>${g.items.map(x => `<li><div class="res-fila"><span>${esc(x.es)}</span><span class="estrellas">${[1, 2, 3, 4, 5].map(n => `<button class="star ${x.v >= n ? 'on' : ''}" data-stk="${esc(x.h)}" data-stn="${esc(x.es)}" data-sv="${n}" aria-label="${n} estrellas">★</button>`).join('')}</span></div></li>`).join('')}</ol></div>`).join('')}`
     : '<p class="muted">Cuando marquéis sitios como visitados (☐ Visitado en Planes u Hoy), saldrán aquí por ciudad para ponerles estrellas.</p>';
   return `<h2>🧾 Resumen del viaje</h2>
     <p class="muted">Se genera con lo que habéis marcado: visitados y sus ⭐ (Planes realizados por ciudad), hoteles y traslados, caritas y notas del diario y Comer (✅, estrellas y notas). Ideal para pasárselo a quien prepare su viaje.</p>
     <div class="acciones"><button data-resumen="word">📘 Word con fotos</button><button data-resumen="pdf">🖨️ PDF con fotos</button></div>
     <div class="acciones"><button data-resumen="copiar">📋 Copiar</button><button class="sec" data-resumen="compartir">📤 Compartir</button><button class="sec" data-resumen="txt">⬇️ Descargar .txt</button></div>
-    ${lista}<h2>📄 Texto</h2><pre class="resumen">${esc(t)}</pre>`;
+    ${lista}<h2>💡 Consejos prácticos</h2><p class="muted">Salen al final del Word y del PDF. Añade, corrige (✏️) o quita (✕) los que quieras.</p>
+    <div class="card"><ol class="cons-lista">${D.consejos.map((c, i) => `<li><span>${esc(c)}</span><span class="cons-bt"><button class="sec mini" data-consed="${i}" aria-label="Editar">✏️</button><button class="sec mini" data-consdel="${i}" aria-label="Quitar">✕</button></span></li>`).join('')}</ol>
+      <div class="cons-add"><textarea id="cons-nuevo" rows="2" placeholder="Nuevo consejo…"></textarea><button data-consadd="1">➕ Añadir</button></div></div>
+    <h2>📄 Texto</h2><pre class="resumen">${esc(t)}</pre>`;
 }
 // ☔ Plan B si llueve: si el pronóstico del día marca lluvia, sitios a cubierto de la ciudad (los del día, primero).
 function planLluvia(d) {
@@ -3459,6 +3478,12 @@ document.addEventListener('click', e => {
     if (U.favs.some(f => f.k === d.fav)) U.favs = U.favs.filter(f => f.k !== d.fav); else U.favs.unshift({ k: d.fav, es: d.es, ko: d.ko, rom: d.rom });
     saveUser(); render(); return; }
   const rgd = e.target.closest('[data-rgde]'); if (rgd) { rgDe = rgd.dataset.rgde; render(); return; }
+  const cns = e.target.closest('[data-consadd],[data-consed],[data-consdel]');
+  if (cns) { const U = u(), L = consejosRes(), d = cns.dataset;
+    if (d.consadd) { const v = ((document.getElementById('cons-nuevo') || {}).value || '').trim(); if (!v) { alert('Escribe el consejo.'); return; } L.push(v); }
+    else if (d.consed != null) { const v = prompt('Editar consejo:', L[+d.consed]); if (v == null) return; if (v.trim()) L[+d.consed] = v.trim(); else L.splice(+d.consed, 1); }
+    else { if (!confirm('¿Quitar este consejo?')) return; L.splice(+d.consdel, 1); }
+    U.consejos = L; saveUser(); render(); return; }
   const rg = e.target.closest('[data-rgadd],[data-rgok],[data-rgdel],[data-resumen]');
   if (rg) { const U = u(), d = rg.dataset; U.regalos = arr(U.regalos);
     if (d.rgadd != null) { const v = id => (document.getElementById(id) || {}).value || '', que = v('rg-que').trim(); if (!que) { alert('Escribe qué quieres comprar.'); return; }
