@@ -1,7 +1,7 @@
 'use strict';
 
 // Versión visible arriba. Súbela a la vez que CACHE en sw.js y --css-ver al final de styles.css.
-const VERSION = 'v324';
+const VERSION = 'v325';
 // Si el móvil mezcla el app.js nuevo con la hoja de estilos vieja (red lenta al actualizar), se vuelve a pedir la hoja.
 addEventListener('load', () => { try {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--css-ver').replace(/["'\s]/g, '');
@@ -3075,7 +3075,7 @@ function viewAvisos() {
 // Más con rejilla de iconos, como la Guía de Corea: se toca un tema y sale debajo.
 let masSub = 'maleta';
 const MAS_SUB = [['maleta', 'Maleta', '🧳'], ['seguro', 'Seguro', '🛡️'], ['verificar', 'Verificar', '🔎'], ['avisos', 'Avisos', '📢'],
-  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['probados', 'Probados', '😋'], ['resumen', 'Resumen del viaje', '🧾'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️'], ['bloqueo', 'Bloquear marcas', '🔒'], ['guiaapp', 'Guía de la app', '🛠️']];
+  ['docs', 'Documentos', '📄'], ['notas', 'Notas', '📝'], ['regalos', 'Regalos', '🎁'], ['probados', 'Probados', '😋'], ['resumen', 'Resumen del viaje', '🧾'], ['trivial', 'Trivial', '🧀'], ['escala', 'Escala Pekín', '🇨🇳'], ['datos', 'Datos y app', '⚙️'], ['bloqueo', 'Bloquear marcas', '🔒'], ['guiaapp', 'Guía de la app', '🛠️']];
 // ---------- 🛠️ Guía de la app: GUIA-APP.md (precacheado), también sin viaje; sirve para hacer otra app de otro país ----------
 let GUIA_MD = null;
 function cargaGuiaApp() { fetch('GUIA-APP.md').then(r => r.ok ? r.text() : Promise.reject()).then(t => { GUIA_MD = t; renderLuego(); }).catch(() => { GUIA_MD = ''; renderLuego(); }); }
@@ -3153,6 +3153,7 @@ function viewMas() {
   else if (masSub === 'escala') c = viewEscala();
   else if (masSub === 'regalos') c = viewRegalos();
   else if (masSub === 'resumen') c = viewResumen();
+  else if (masSub === 'trivial') c = viewTrivial();
   else if (masSub === 'probados') c = viewProbados();
   else if (masSub === 'guiaapp') c = viewGuiaApp();
   else if (masSub === 'bloqueo') c = `<h2>🔒 Bloquear marcas</h2><div class="card centro"><p>${bloqueado() ? '<b>Ahora está BLOQUEADA.</b> Nada se marca ni se desmarca al tocar: visitados, ✗, estrellas, probados, documentos usados, regalos, diario, favoritas…' : 'Bloquéala cuando solo vayáis a mirar (en el metro, enseñándola a alguien…): así no se marca ni desmarca nada por un toque sin querer.'}</p>

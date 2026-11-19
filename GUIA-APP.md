@@ -32,7 +32,7 @@ Una comparación útil: la app es una **libreta de viaje con dos tipos de hojas*
 - **Corea (la guía del país):** moverse, dinero, comida, costumbres, salud y país.
 - **Idioma:** favoritas, alfabeto, frases, diccionario y tarjetas «Enseñar» a pantalla completa (para el taxista), con 🔊.
 - **Más:**
-  - Maleta, Seguro, Verificar, Documentos (fotos y PDF guardados solo en el móvil), Notas, Regalos, Resumen del viaje (Word y PDF por capítulos de ciudad, con mapa del recorrido y consejos editables) y Escala;
+  - Maleta, Seguro, Verificar, Documentos (fotos y PDF guardados solo en el móvil), Notas, Regalos, Resumen del viaje (Word y PDF por capítulos de ciudad, con mapa del recorrido y consejos editables), 🧀 Trivial para dos (quesos por temas, con preguntas del país y del propio viaje) y Escala;
   - Datos y app: importar, exportar, pasar marcas al otro móvil, preparar para viajar y actualizar;
   - 🔒 Bloquear marcas, para que un toque sin querer no marque ni desmarque nada (se desbloquea con el 🔒 de arriba);
   - esta guía.
@@ -60,6 +60,7 @@ Antes de salir, con wifi: Más → Datos y app → «Preparar para viajar». Des
 | hangul.js | Lecciones del alfabeto y carteles | Del país (o se quita si el alfabeto es latino) |
 | diccionario.js | Diccionario ES → idioma local | Del país |
 | exportar.js | Resumen del viaje en Word y PDF, sin librerías | Genérico |
+| trivial.js | 🧀 Trivial para dos: preguntas fijas por tema y generadas con el contenido y el viaje | Preguntas fijas, del país |
 | data/comer.json | Restaurantes, cafés, mercados y bares | Del país |
 | data/coords.json | Coordenadas aproximadas de los sitios públicos | Del país |
 | data/metro.json | Estaciones y líneas de metro para calcular trayectos | Del país |

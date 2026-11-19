@@ -1880,5 +1880,31 @@ details.nv-mas > details.card > summary { padding-left: 0; }
 .cons-lista .cons-bt { display: inline-flex; gap: 4px; margin-left: 6px; vertical-align: middle; }
 .cons-add { display: flex; gap: 6px; align-items: stretch; }
 .cons-add textarea { flex: 1; min-width: 0; }
+/* 🧀 Trivial del viaje (Más → Trivial) */
+.trv-temas { display: flex; flex-wrap: wrap; gap: 6px; }
+.trv-temas span { border-left: 5px solid var(--tc); background: var(--card, #fff); border-radius: 8px; padding: 3px 9px; font-size: .9rem; }
+.trv-marc { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 6px 0 10px; }
+.trv-jug { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 14px; border: 2px solid transparent; background: var(--card, #fff); opacity: .65; }
+.trv-jug.on { border-color: var(--acc); opacity: 1; box-shadow: 0 2px 10px rgba(0,0,0,.12); }
+.trv-jug.gana { border-color: #e3b23c; opacity: 1; }
+.trv-jug b { display: block; font-size: 1.05rem; overflow-wrap: anywhere; } .trv-jug small { color: var(--muted, #777); }
+.trv-turno, .trv-fin { text-align: center; }
+.trv-turno p { font-size: 1.15rem; margin: 4px 0 10px; }
+.trv-dado { width: 86px; height: 86px; margin: 0 auto 12px; border-radius: 20px; display: grid; place-items: center; font-size: 2.8rem; background: #f3ead6; box-shadow: inset 0 -4px 0 rgba(0,0,0,.15), 0 3px 10px rgba(0,0,0,.15); transition: background .1s; }
+.trv-dado.rueda { animation: trv-gira .22s linear infinite; }
+@keyframes trv-gira { 0% { transform: rotate(-12deg) scale(1.04); } 50% { transform: rotate(12deg) scale(.96); } 100% { transform: rotate(-12deg) scale(1.04); } }
+.trv-preg { border-top: 6px solid var(--tc); }
+.trv-cab { display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: var(--tc); }
+.trv-cab span { letter-spacing: 3px; }
+.trv-q { font-size: 1.12rem; font-weight: 600; margin: 8px 0 12px; line-height: 1.35; }
+.trv-ops { display: grid; gap: 8px; }
+.trv-op { text-align: left; background: var(--card, #fff); color: inherit; border: 2px solid var(--tc); font-weight: 500; white-space: normal; }
+.trv-op.bien { background: #2e8b57; border-color: #2e8b57; color: #fff; }
+.trv-op.mal { background: #c0392b; border-color: #c0392b; color: #fff; }
+.trv-op.apag { opacity: .45; }
+.trv-op:disabled { cursor: default; }
+.trv-res { font-size: 1.2rem; font-weight: 700; text-align: center; margin: 12px 0 4px; }
+.trv-res.bien { color: #2e8b57; } .trv-res.mal { color: #c0392b; }
+.trv-fin h3 { font-size: 1.4rem; margin: 8px 0 4px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v324"; }
+:root { --css-ver: "v325"; }
