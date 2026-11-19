@@ -13,6 +13,12 @@ const TRV_MINIS = 3;
 // [pregunta, correcta, [incorrectas], explicación]
 const TRV_FIJAS = {
   hist: [
+    ['¿De qué reino era Gwanggaeto el Grande, el que más amplió el territorio coreano?', 'Goguryeo', ['Silla', 'Baekje', 'Joseon'], 'Reinó a finales del siglo IV y principios del V, hasta Manchuria.'],
+    ['¿De qué dinastía viene el nombre «Corea»?', 'Goryeo', ['Joseon', 'Silla', 'Gojoseon'], 'Goryeo (918-1392) fue la que conocieron los comerciantes que llegaban a Asia.'],
+    ['¿Qué son las Tripitaka Koreana del templo Haeinsa?', 'Más de 80.000 tablillas de madera con textos budistas', ['Las coronas de oro de Silla', 'Los primeros mapas de Corea', 'Un código de leyes de Joseon'], 'Se tallaron en el siglo XIII, en Goryeo, para pedir protección contra los mongoles.'],
+    ['¿Qué es el Jikji?', 'El libro más antiguo conservado impreso con tipos móviles de metal', ['Una espada real', 'El primer diccionario de hangul', 'Un tratado de paz con Japón'], 'Se imprimió en 1377, en Goryeo, décadas antes de Gutenberg.'],
+    ['¿Por qué paralelo se dividió Corea en 1945?', 'El 38', ['El 40', 'El 36', 'El 42'], 'Estados Unidos ocupó el sur y la Unión Soviética el norte.'],
+    ['¿Quién fue la primera mujer presidenta de Corea del Sur?', 'Park Geun-hye', ['Kang Kyung-wha', 'Han Myeong-sook', 'Shin Saimdang'], 'Elegida en 2012; destituida en 2017.'],
     ['¿Qué dinastía gobernó Corea de 1392 a 1910?', 'Joseon', ['Goryeo', 'Silla', 'Baekje'], 'Joseon duró más de cinco siglos; Gyeongbokgung era su palacio principal.'],
     ['¿Qué rey creó el alfabeto hangul?', 'Sejong el Grande', ['Taejo', 'Gojong', 'Jeongjo'], 'Lo presentó en 1446 para que todo el pueblo pudiera leer. Sale en el billete de 10.000 ₩.'],
     ['¿De qué reino fue capital Gyeongju durante casi mil años?', 'Silla', ['Baekje', 'Goguryeo', 'Joseon'], 'Por eso la llaman «el museo sin paredes».'],
@@ -35,6 +41,12 @@ const TRV_FIJAS = {
     ['Según la leyenda, ¿quién fundó el primer reino coreano, Gojoseon?', 'Dangun', ['Jumong', 'Sejong', 'Bak Hyeokgeose'], 'Hijo de un dios y de una osa convertida en mujer; el 3 de octubre es la Fiesta de la Fundación.']
   ],
   lug: [
+    ['¿Cuál es la montaña más alta de Corea del Sur?', 'Hallasan, en Jeju', ['Seoraksan', 'Bukhansan', 'Jirisan'], 'Un volcán de 1.947 m.'],
+    ['¿Qué es la DMZ?', 'La franja desmilitarizada que separa las dos Coreas', ['Una zona comercial libre de impuestos', 'Un parque nacional de Busan', 'El barrio diplomático de Seúl'], 'Unos 4 km de ancho y unos 250 km de largo.'],
+    ['¿Quién diseñó el Dongdaemun Design Plaza (DDP), en Seúl?', 'Zaha Hadid', ['Frank Gehry', 'Norman Foster', 'Tadao Ando'], 'Un edificio curvo de aluminio inaugurado en 2014.'],
+    ['¿Cómo se llama el estanque de Gyeongju que se ilumina de noche junto al palacio Donggung?', 'Wolji (antes Anapji)', ['Gyeonghoeru', 'Hyangwonji', 'Seokchon'], 'Era el jardín de recreo del palacio de Silla.'],
+    ['¿Qué ciudad se presenta como la «capital del espíritu» (la cultura confuciana) de Corea?', 'Andong', ['Gyeongju', 'Jeonju', 'Seúl'], 'Por sus academias como Dosan Seowon y sus aldeas de linaje.'],
+    ['¿Cómo se llama el gran puente iluminado frente a la playa de Gwangalli, en Busan?', 'Gwangan (el «Puente Diamante»)', ['Banpo', 'Yeongdo', 'Incheon'], 'De noche cambia de colores; hay espectáculos de drones.'],
     ['¿Cómo se llama la puerta principal del palacio Gyeongbokgung?', 'Gwanghwamun', ['Namdaemun', 'Dongdaemun', 'Daehanmun'], 'Delante se hace el cambio de guardia.'],
     ['¿Qué río atraviesa Seúl?', 'Han', ['Nakdong', 'Geum', 'Yalu'], 'El Hangang divide la ciudad en norte (el centro histórico) y sur (Gangnam).'],
     ['¿Cómo se llama el arroyo recuperado en pleno centro de Seúl?', 'Cheonggyecheon', ['Hangang', 'Yangjaecheon', 'Gwangalli'], 'Estuvo tapado por una autopista hasta 2005.'],
@@ -55,6 +67,12 @@ const TRV_FIJAS = {
     ['¿Qué ciudad era conocida como Hanyang en la época Joseon?', 'Seúl', ['Gyeongju', 'Busan', 'Jeonju'], 'Taejo la hizo capital en 1394.']
   ],
   com: [
+    ['¿Qué es el japchae?', 'Fideos de boniato salteados con verduras', ['Arroz frito con kimchi', 'Una sopa de algas', 'Tortitas de patata'], 'Los fideos (dangmyeon) son transparentes y elásticos.'],
+    ['¿Qué lleva el budae jjigae, el «estofado del ejército»?', 'Spam, salchichas y fideos instantáneos', ['Ternera y castañas', 'Marisco y tofu', 'Pollo y ginseng'], 'Nació tras la guerra con lo que salía de las bases estadounidenses.'],
+    ['¿Qué es el sundae coreano?', 'Una especie de morcilla rellena de fideos', ['Un helado con sirope', 'Un pastel de arroz', 'Una brocheta de pollo'], 'Nada que ver con el postre: se come con sal y pimienta o en sopa.'],
+    ['¿Qué es el bingsu?', 'Hielo raspado con fruta, judía roja o leche condensada', ['Un té frío de cebada', 'Un pastel de arroz relleno', 'Una bebida de yogur'], 'El postre del verano; el de injeolmi (harina de soja tostada) es un clásico.'],
+    ['¿Qué sabor tiene la famosa leche en botellita «barril» de Binggrae?', 'Plátano', ['Fresa', 'Melón', 'Café'], 'Existe desde 1974 y es de lo más vendido en las tiendas 24 h.'],
+    ['¿Qué es el gimbap?', 'Rollos de arroz y relleno envueltos en alga', ['Arroz en cuenco de piedra', 'Fideos fríos de trigo', 'Una tortita de marisco'], 'Parecido al maki japonés, pero el arroz va con aceite de sésamo y no con vinagre.'],
     ['¿Con qué verdura se hace el kimchi más común?', 'Col china (baechu)', ['Pepino', 'Rábano', 'Lechuga'], 'También hay de rábano (kkakdugi) y de pepino (oi-sobagi), pero el clásico es de col.'],
     ['¿Qué es el makgeolli?', 'Un vino de arroz turbio y suave', ['Un licor de ciruela', 'Una cerveza de cebada', 'Un té de jengibre'], 'Va genial con un pajeon los días de lluvia.'],
     ['¿Qué es el soju?', 'Un licor transparente, normalmente de unos 16-20°', ['Un vino de arroz turbio', 'Un refresco de yogur', 'Una salsa de soja'], 'Se sirve en vasitos y siempre se lo sirves al otro, no a ti mismo.'],
@@ -75,6 +93,10 @@ const TRV_FIJAS = {
     ['¿Qué día de noviembre se regalan Pepero en Corea?', 'El 11 de noviembre', ['El 1 de noviembre', 'El 14 de noviembre', 'El 20 de noviembre'], 'Porque 11/11 parece cuatro palitos de Pepero.']
   ],
   idi: [
+    ['¿Qué le dices a alguien que se va (y tú te quedas)?', '안녕히 가세요 (annyeonghi gaseyo)', ['안녕히 계세요 (annyeonghi gyeseyo)', '안녕하세요 (annyeonghaseyo)', '잘 먹겠습니다 (jal meokgetseumnida)'], 'Si el que se va eres tú, dices 안녕히 계세요 («quédese en paz»).'],
+    ['¿Qué significa «매워요» (maewoyo)?', '¡Pica!', ['¡Está frío!', '¡Es caro!', '¡Está salado!'], 'Y «sin picante, por favor» es 안 맵게 해 주세요 (an maepge hae juseyo).'],
+    ['¿Qué significa «물» (mul)?', 'Agua', ['Arroz', 'Fuego', 'Té'], 'En muchos restaurantes el agua es gratis y te la sirves tú.'],
+    ['¿Qué significa «배고파요» (baegopayo)?', 'Tengo hambre', ['Estoy cansado', 'Tengo frío', 'Estoy lleno'], '«Estoy lleno» es 배불러요 (baebulleoyo).'],
     ['¿Cuántas letras básicas tiene el hangul actual?', '24', ['14', '26', '40'], '14 consonantes y 10 vocales que se juntan en bloques de sílaba.'],
     ['¿Qué día se celebra el Día del Hangul en Corea del Sur?', '9 de octubre', ['15 de agosto', '1 de marzo', '25 de diciembre'], 'Hangeullal, festivo nacional.'],
     ['¿Qué significa «네» (ne)?', 'Sí', ['No', 'Hola', 'Gracias'], '«No» es 아니요 (aniyo).'],
@@ -95,6 +117,22 @@ const TRV_FIJAS = {
     ['¿Qué número es «일» (il) en los números sino-coreanos?', 'Uno', ['Dos', 'Cinco', 'Diez'], 'En los coreanos nativos, uno es 하나 (hana).']
   ],
   cos: [
+    ['¿Qué se celebra en Seollal?', 'El Año Nuevo lunar', ['La cosecha', 'El cumpleaños de Buda', 'La fundación del país'], 'Los jóvenes hacen una reverencia (sebae) a los mayores y reciben dinero.'],
+    ['¿Qué sopa se toma en Año Nuevo, con la que se dice que «cumples un año»?', 'Tteokguk (sopa de pastel de arroz)', ['Miyeokguk (sopa de algas)', 'Samgyetang', 'Kimchi jjigae'], 'Las rodajas blancas de tteok simbolizan empezar limpio el año.'],
+    ['¿Qué sopa se toma tradicionalmente el día del cumpleaños?', 'Miyeokguk (sopa de algas)', ['Tteokguk', 'Doenjang jjigae', 'Galbitang'], 'Es la que toman las madres tras dar a luz: se recuerda a la madre.'],
+    ['¿Qué pastelito de arroz con forma de media luna se come en Chuseok?', 'Songpyeon', ['Hotteok', 'Bungeoppang', 'Hwangnam-ppang'], 'Se cuece al vapor sobre agujas de pino.'],
+    ['¿Qué se regala tradicionalmente al ir a una casa nueva?', 'Papel higiénico o detergente', ['Un reloj', 'Unos zapatos', 'Flores blancas'], 'Se dice que la vida irá «como la seda» y que la suerte crecerá como la espuma.'],
+    ['¿Qué es el «nunchi»?', 'Saber leer el ambiente y lo que sienten los demás', ['Un tipo de reverencia', 'El respeto a los mayores', 'La comida de cumpleaños'], 'Tener buen nunchi es una gran virtud en Corea.'],
+    ['¿Qué expresa «ppalli ppalli» (빨리빨리)?', 'La cultura de las prisas: «¡rápido, rápido!»', ['«Poco a poco»', '«Buen provecho»', '«Hasta luego»'], 'Entregas en minutos, wifi rapidísimo, ascensores con el botón de cerrar gastado…'],
+    ['En la mesa, ¿quién suele empezar a comer?', 'La persona mayor', ['El invitado más joven', 'Quien ha cocinado', 'Cada uno cuando quiere'], 'Y es de buena educación no levantarse antes de que termine.'],
+    ['¿Qué hacen los solteros el «Black Day», el 14 de abril?', 'Comer jjajangmyeon (fideos con salsa negra)', ['Vestir de negro para buscar pareja', 'No comer en todo el día', 'Regalarse chocolate negro'], 'Después del 14 de febrero (ellas regalan) y del 14 de marzo (ellos regalan).'],
+    ['¿Cuál es el apellido más común de Corea?', 'Kim', ['Lee', 'Park', 'Choi'], 'Más o menos uno de cada cinco coreanos; Lee y Park van detrás.'],
+    ['Al casarse, ¿cambian las mujeres de apellido?', 'No: mantienen el suyo', ['Sí, toman el del marido', 'Usan los dos', 'Lo cambian solo si tienen hijos'], 'Los hijos llevan normalmente el del padre.'],
+    ['¿Qué es el ondol?', 'Calefacción tradicional por el suelo', ['Una mesa baja', 'Una puerta corredera de papel', 'Un tejado de tejas'], 'Por eso tanta vida se hace sentado en el suelo.'],
+    ['¿Qué es un hagwon?', 'Una academia privada después del colegio', ['Un templo confuciano', 'Una residencia universitaria', 'Un gimnasio de taekwondo'], 'Muchos estudiantes van hasta la noche.'],
+    ['¿Qué arte marcial es originario de Corea?', 'Taekwondo', ['Kárate', 'Judo', 'Kung-fu'], 'Es deporte olímpico desde Sídney 2000.'],
+    ['¿A qué juego de tablero y palos se juega en familia en Año Nuevo?', 'Yut nori', ['Baduk', 'Janggi', 'Hwatu'], 'Se tiran cuatro palos y según cómo caen avanzan las fichas.'],
+    ['¿Es obligatorio el servicio militar en Corea del Sur?', 'Sí, para los hombres (unos 18-21 meses)', ['No, es voluntario', 'Sí, para hombres y mujeres', 'Solo en caso de guerra'], 'Por eso tantos idols «se van a la mili» a mitad de carrera.'],
     ['¿Qué se hace al entrar en una casa coreana?', 'Quitarse los zapatos', ['Dar dos besos', 'Dejar un regalo en la puerta', 'Inclinarse tres veces'], 'También en muchos restaurantes de suelo y en algunos alojamientos.'],
     ['¿Qué número se evita por traer mala suerte?', 'El 4', ['El 7', 'El 13', 'El 9'], 'Se pronuncia «sa», como «muerte»; en los ascensores a veces pone F.'],
     ['¿Por qué no se escribe el nombre de alguien en tinta roja?', 'Se asocia con los muertos', ['Es de mala educación escribir nombres', 'Solo lo usan los profesores', 'Significa que le odias'], 'Antiguamente los nombres de los difuntos se escribían en rojo.'],
@@ -121,6 +159,8 @@ const TRV_FIJAS = {
     ['¿Quién suele pagar la cuenta cuando sale un grupo a comer?', 'Uno invita (a menudo el mayor) y la próxima otro', ['Se divide siempre a partes iguales', 'Paga el más joven', 'Cada uno pide en caja lo suyo'], 'Aunque entre amigos jóvenes ya se divide cada vez más.']
   ],
   via: [
+    ['¿Con qué se puede pagar el taxi además de en efectivo?', 'Con tarjeta o T-money', ['Solo en efectivo', 'Solo con la app', 'Con wones y euros'], 'Casi todos los taxis aceptan tarjeta.'],
+    ['¿Qué tren de alta velocidad sale de Suseo (Gangnam) además del KTX?', 'SRT', ['AREX', 'ITX', 'Mugunghwa'], 'Va al sur (Busan, Mokpo) sin pasar por la estación de Seúl.'],
     ['¿Cuál es el gran aeropuerto internacional de Seúl?', 'Incheon', ['Gimpo', 'Gimhae', 'Jeju'], 'Gimpo es sobre todo para vuelos nacionales y cercanos.'],
     ['¿A qué velocidad máxima va más o menos el tren KTX?', 'Unos 300 km/h', ['Unos 150 km/h', 'Unos 200 km/h', 'Unos 400 km/h'], 'Seúl-Busan en unas dos horas y media.'],
     ['¿Cómo se llama la tarjeta recargable para el metro y el bus?', 'T-money', ['Oyster', 'Suica', 'Octopus'], 'Se recarga en las tiendas 24 h y en las máquinas del metro.'],

@@ -1907,4 +1907,4 @@ details.nv-mas > details.card > summary { padding-left: 0; }
 .trv-res.bien { color: #2e8b57; } .trv-res.mal { color: #c0392b; }
 .trv-fin h3 { font-size: 1.4rem; margin: 8px 0 4px; }
 /* Versión de esta hoja (igual que VERSION en app.js y CACHE en sw.js): si no coincide, app.js la vuelve a pedir. */
-:root { --css-ver: "v325"; }
+:root { --css-ver: "v326"; }
