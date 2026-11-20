@@ -23,12 +23,12 @@ Escala Pekín, Lonely Planet, trip.json de viaje. Mejor borrar que arrastrar.
 
 ## Reglas
 1. Repo PÚBLICO (GitHub Pages). Nunca subir direcciones de casa, emails,
-   teléfonos ni claves secretas (la `service_role` de Supabase JAMÁS).
-   La clave `anon` de Supabase sí puede ir en el código: es pública y la
-   protegen las reglas RLS.
+   teléfonos, cuentas de servicio ni claves privadas de Firebase. El
+   `firebaseConfig` de la app web sí puede ir en el código: es público y
+   lo que protege los datos son las reglas de Firestore.
 2. HTML, CSS y JS puro. Sin frameworks, sin CDN, sin build.
-   Excepción aprobada: **Supabase** como única nube, llamado con `fetch`
-   a su API REST (sin SDK).
+   Excepción aprobada: **Firebase** (Auth con Google y Firestore) como
+   única nube, con su SDK copiado en el repo.
 3. Rutas relativas en todo (vive en /FamiliadeAMuchis.Escapadas/):
    start_url "./index.html", sin id ni scope.
 4. Funciona sin conexión: las marcas se guardan primero en el móvil y se
@@ -54,23 +54,31 @@ Los Silos, Puerto de la Cruz, San Cristóbal de La Laguna, San Juan de la
 Rambla, San Miguel de Abona, Santa Cruz de Tenerife, Santa Úrsula,
 Santiago del Teide, Tacoronte, Tegueste, Vilaflor de Chasna.
 
-## Compartir en el grupo (Supabase)
-- El usuario crea un proyecto gratuito en supabase.com (la sesión le guía
-  paso a paso) y pega en el chat la URL y la clave anon.
-- Entrada con **código de 6 cifras por email** (no enlace: en una PWA
-  instalada el enlace abre el navegador, no la app). Una vez por móvil.
-- Tablas (SQL en `supabase/esquema.sql`, versionado en el repo):
-  - `perfiles(id = auth.uid, nombre, emoji, color)`
-  - `grupos(id, nombre, codigo_invitacion)` y
-    `miembros(grupo_id, user_id)`: se entra a un grupo con su código
-  - `marcas(user_id, grupo_id, sitio_id, estado quiero|fuimos|no,
-    estrellas, nota, fecha, updated_at)`, clave (user_id, grupo_id, sitio_id)
-  - Más adelante `planes(id, grupo_id, sitio_id, fecha, propone,
-    apuntados[])`
-- RLS: cada uno escribe solo sus marcas; lee las de los grupos a los que
-  pertenece.
-- Sincronización: al abrir la app, al volver a ella, cada ~60 s mientras
-  está abierta y justo después de marcar. Sin conexión, cola local.
+## Compartir en el grupo (Firebase, de Google)
+- El usuario lo hace todo desde el móvil: la sesión le guía con pasos muy
+  sencillos para crear el proyecto en console.firebase.google.com (gratis,
+  plan Spark), activar la entrada con Google y Firestore, añadir
+  `paniaguadediego-bit.github.io` a los dominios autorizados y pegar en el
+  chat el `firebaseConfig` de la app web.
+- Entrada con **cuenta de Google** (`signInWithPopup`; en una PWA instalada
+  el redirect falla por el bloqueo de almacenamiento de terceros: probarlo
+  en el móvil del usuario). Una vez por móvil.
+- SDK de Firebase (app, auth y firestore) **copiado en el repo** (carpeta
+  `vendor/`, versión fija y precacheada), sin CDN.
+- Datos en Firestore:
+  - `perfiles/{uid}`: nombre, emoji, color
+  - `grupos/{gid}`: nombre, codigoInvitacion, miembros [uid]
+  - `grupos/{gid}/marcas/{uid}_{sitioId}`: uid, sitioId, estado
+    (quiero|fuimos|no), estrellas, nota, fecha, actualizado
+  - Más adelante `grupos/{gid}/planes/{id}`: sitioId, fecha, propone,
+    apuntados [uid]
+- Reglas de seguridad en `firebase/firestore.rules` (en el repo; el usuario
+  las pega en la consola): cada uno escribe solo sus marcas y su perfil;
+  lee las marcas de los grupos en los que está; se entra a un grupo con
+  su código de invitación.
+- Al día y sin conexión: `onSnapshot` (las marcas de los demás aparecen al
+  momento) y la persistencia offline de Firestore (lo marcado sin red se
+  envía solo al volver).
 - En cada ficha: caritas de quién fue (✅), quién quiere ir (🔖) y sus ⭐.
   Pestaña 👥 Grupo: quién lleva más sitios, últimas marcas y «nadie ha ido
   todavía».
@@ -82,11 +90,11 @@ Santiago del Teide, Tacoronte, Tegueste, Vilaflor de Chasna.
   solo en el móvil. Instrucciones para activar GitHub Pages.
 - **S2** Catálogo: unos 100-150 sitios repartidos por los 31 municipios,
   con coordenadas, descripción propia y fuente; dudosos con VERIFICAR.
-- **S3** Supabase: guía para crear el proyecto, esquema.sql con RLS,
-  entrada por código de email, perfil (nombre y emoji), grupo
+- **S3** Firebase: guía para crear el proyecto desde el móvil, reglas de
+  Firestore, entrada con Google, perfil (nombre y emoji), grupo
   «Familia de A Muchis» con código de invitación.
-- **S4** Sincronización de marcas, cola sin conexión, caritas en fichas y
-  mapa, pestaña Grupo.
+- **S4** Marcas compartidas al momento (onSnapshot), sin conexión con la
+  persistencia de Firestore, caritas en fichas y mapa, pestaña Grupo.
 - **S5** Este finde: tiempo por zona (norte/sur/cumbre), «🎲 Sorpréndeme»
   (algo que nadie del grupo o tú no hayáis hecho, según tiempo y tiempo
   disponible), distancia desde casa (la ubicación de casa solo en el móvil).
@@ -100,3 +108,5 @@ Santiago del Teide, Tacoronte, Tegueste, Vilaflor de Chasna.
 - Lo ya visitado se marcará con la app hecha.
 - Marcas compartidas y automáticas desde el principio del diseño; amigos
   poco a poco (grupos con código de invitación).
+- Nube: Firebase con cuenta de Google (no Supabase: ya tiene 2 proyectos).
+- Todo se hace desde el móvil.
